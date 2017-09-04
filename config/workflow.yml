@@ -1,0 +1,11 @@
+---
+swimlanes:
+  - 'Lobby'
+  - 'Backlog'
+  - 'Development'
+  - 'Demo'
+  - 'Code Review'
+  - 'Acceptance'
+  - 'Acceptance - Done'
+  - 'Deploying'
+  - 'Closed'
