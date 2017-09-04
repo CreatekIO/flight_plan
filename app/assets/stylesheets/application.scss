@@ -16,3 +16,12 @@
 
 @import "bootstrap-sprockets";
 @import "bootstrap";
+
+.board {
+  overflow-x: scroll;
+  width: auto; 
+  
+  .col-xs-1 {
+    width: (100% / 9) !important;
+  }
+}

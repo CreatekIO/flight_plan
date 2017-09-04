@@ -18,6 +18,7 @@ ActiveRecord::Schema.define(version: 20170904132644) do
     t.string "remote_title"
     t.text "remote_body"
     t.string "remote_state"
+    t.string "state"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end

@@ -11,7 +11,7 @@ UTIL = {
 
   init: function() {
     var body = document.body,
-      controller = body=getAttribute("data-controller"),
+      controller = body.getAttribute("data-controller"),
       action = body.getAttribute("data-action");
 
     UTIL.exec("common");

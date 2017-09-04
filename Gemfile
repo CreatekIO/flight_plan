@@ -37,6 +37,7 @@ gem 'jbuilder', '~> 2.5'
 
 gem 'haml'
 gem 'octokit'
+gem 'jquery-rails'
 gem 'bootstrap-sass'
 
 group :development, :test do

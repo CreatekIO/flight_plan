@@ -6,6 +6,7 @@ class CreateTickets < ActiveRecord::Migration[5.1]
       t.string :remote_title
       t.text :remote_body
       t.string :remote_state
+      t.string :state
       t.timestamps
     end
   end
