@@ -14,4 +14,7 @@
 //= require turbolinks
 //= require jquery
 //= require bootstrap
-//= require_tree .
+//= require flight-plan-app
+//= require_tree ./flight-plan/common
+//= require_tree ./flight-plan
+//= require flight-plan-exec
