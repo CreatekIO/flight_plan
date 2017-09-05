@@ -7,7 +7,9 @@
           .panel-heading
             = ticket.remote_title
           .panel-body
-            hello world
+            %p
+              Current state:
+              = ticket.current_state_duration
           .panel-footer
             .btn-group
               =link_to(swimlane.transition_to.first, ticket_path(ticket, ticket: { state: swimlane.transition_to.first }), data: { method: 'patch' }, class: 'btn btn-danger')

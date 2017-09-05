@@ -5,6 +5,24 @@ class Ticket < ApplicationRecord
   after_save :update_timesheet, if: :saved_change_to_state?
   after_commit :update_remote, on: :update, if: :saved_change_to_state?
 
+  def state_durations
+    timesheets.each_with_object(Hash.new 0) do |timesheet, durations|
+      durations[timesheet.state] += (timesheet.ended_at || Time.now) - timesheet.started_at
+    end
+  end
+
+  def current_state_duration
+    duration = state_durations[state]
+
+    if duration < 1.hour
+      "< 1h"
+    elsif duration < 24.hours
+      "#{(duration / 1.hour).floor}h"
+    else
+      "#{(duration / 24.hours).floor}d"
+    end
+  end
+
   private
 
   def update_timesheet
