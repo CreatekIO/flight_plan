@@ -1,6 +1,9 @@
 require 'rails_helper'
 
 RSpec.describe Ticket do
+  describe 'associations' do
+    it { is_expected.to have_many(:comments) }
+  end
 
   describe '#save' do
     context 'when an issue is moved to "Closed"' do
@@ -28,5 +31,4 @@ RSpec.describe Ticket do
     end
 
   end
-
 end
