@@ -14,7 +14,7 @@ ActiveRecord::Schema.define(version: 20170905092442) do
 
   create_table "comments", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.bigint "ticket_id"
-    t.string "remote_body"
+    t.text "remote_body"
     t.string "remote_id"
     t.string "remote_author_id"
     t.string "remote_author"
