@@ -26,7 +26,14 @@ RSpec.describe Ticket do
         expect(stub).to have_been_requested
       end
     end
-
   end
 
+  describe '#update_timesheet' do
+    subject { create(:ticket, remote_number: '4') }
+
+    it 'doesn\t create/update any new timesheets' do
+      subject
+      expect{ subject.update_attributes(remote_number: '5') }.to_not change{ Timesheet.count }
+    end
+  end
 end
