@@ -1,5 +1,5 @@
-class Ticket < ApplicationRecord
-
+class Ticket < ApplicationRecord 
+  has_many :timesheets
   after_commit :update_remote, on: :update
 
   private
