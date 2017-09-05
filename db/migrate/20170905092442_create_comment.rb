@@ -1,7 +1,11 @@
 class CreateComment < ActiveRecord::Migration[5.1]
   def change
     create_table :comments do |t|
-      t.references :tickets
+      t.references :ticket
+      t.string :remote_body
+      t.string :remote_id
+      t.string :remote_author_id
+      t.string :remote_author
       t.timestamps
     end
   end

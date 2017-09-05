@@ -5,7 +5,7 @@
       - swimlane.tickets.each do |ticket|
         .panel.panel-default
           .panel-heading
-            = link_to(ticket.remote_title, ticket_path(ticket), data: { remote: true }, class: 'ticket-title' )
+            = link_to(ticket.remote_title, '', data: { url: ticket_path(ticket), target: '#ticketModal', toggle: 'modal' })
           .panel-body
             hello world
           .panel-footer
