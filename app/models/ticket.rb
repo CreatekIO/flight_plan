@@ -13,18 +13,36 @@ class Ticket < ApplicationRecord
   end
 
   def current_state_duration
-    duration = state_durations[state]
+    format_duration(state_durations[state])
+  end
 
-    if duration < 1.hour
-      "< 1h"
-    elsif duration < 24.hours
-      "#{(duration / 1.hour).floor}h"
-    else
-      "#{(duration / 24.hours).floor}d"
-    end
+  def displayable_durations
+    durations = state_durations
+
+    Swimlane.duration_displayable.map do |swimlane|
+      next if durations[swimlane.name].zero?
+      {
+        name: swimlane.name,
+        duration: format_duration(durations[swimlane.name])
+      }
+    end.compact
+  end
+
+  def swimlane
+    Swimlane.all.find { |swimlane| swimlane.name == state }
   end
 
   private
+
+  def format_duration(seconds)
+    if seconds < 1.hour
+      "< 1h"
+    elsif seconds < 24.hours
+      "#{(seconds / 1.hour).floor}h"
+    else
+      "#{(seconds / 24.hours).floor}d"
+    end
+  end
 
   def update_timesheet
     time_now = Time.now

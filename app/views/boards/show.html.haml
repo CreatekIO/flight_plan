@@ -7,9 +7,10 @@
           .panel-heading
             = link_to(ticket.remote_title, '', data: { url: ticket_path(ticket), target: '#applicationModal', hook: '_showTicketAjax', toggle: 'modal' })
           .panel-body
-            %p
-              Current state:
-              = ticket.current_state_duration
+            - if ticket.swimlane.display_duration?
+              %p
+                Current state:
+                = ticket.current_state_duration
           .panel-footer
             .btn-group
               =link_to(swimlane.transition_to.first, ticket_path(ticket, ticket: { state: swimlane.transition_to.first }), data: { method: 'patch' }, class: 'btn btn-danger')

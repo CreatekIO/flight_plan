@@ -25,7 +25,17 @@ FPLAN.boards = {
             + '<br><span class="label label-danger">'
             + comment.author
             + '</span>'
-            + '</div>');
+            + '</div>'
+        );
+      })
+      $.each(data.state_durations, function(index, state_duration) {
+        modalBody.append(
+          '<span class="label label-success">'
+            + state_duration.name
+            + ': '
+            + state_duration.duration
+            + '</span>'
+        );
       })
     })
   }

@@ -2,20 +2,29 @@
 swimlanes:
   - name: 'Lobby'
     transition_to: ['Backlog', 'Closed']
+    display_duration: false
   - name: 'Backlog'
     transition_to: ['Development', 'Lobby', 'Closed']
+    display_duration: false
   - name: 'Development'
     transition_to: ['Demo', 'Closed']
+    display_duration: true
   - name: 'Demo'
     transition_to: ['Code Review', 'Closed']
+    display_duration: true
   - name: 'Code Review'
     transition_to: ['Acceptance', 'Closed']
+    display_duration: true
   - name: 'Acceptance'
     transition_to: ['Acceptance - Done', 'Closed']
+    display_duration: true
   - name: 'Acceptance - Done'
     transition_to: ['Deploying', 'Closed']
+    display_duration: true
   - name: 'Deploying'
     transition_to: ['Closed']
+    display_duration: true
   - name: 'Closed'
     transition_to: ['Lobby']
+    display_duration: false
 
