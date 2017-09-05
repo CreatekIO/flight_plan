@@ -51,6 +51,7 @@ group :development, :test do
   gem 'factory_girl'
   gem 'shoulda-matchers'
   gem 'spring-commands-rspec'
+  gem 'webmock'
 end
 
 group :development do

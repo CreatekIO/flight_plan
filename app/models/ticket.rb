@@ -1,6 +1,6 @@
 class Ticket < ApplicationRecord
 
-  after_commit :update_remote
+  after_commit :update_remote, on: :update
 
   private
 
