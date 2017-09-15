@@ -10,7 +10,22 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170905105505) do
+ActiveRecord::Schema.define(version: 20170915152223) do
+
+  create_table "board_repos", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.bigint "board_id"
+    t.bigint "repo_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["board_id"], name: "index_board_repos_on_board_id"
+    t.index ["repo_id"], name: "index_board_repos_on_repo_id"
+  end
+
+  create_table "boards", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.string "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
   create_table "comments", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.bigint "ticket_id"
@@ -23,6 +38,13 @@ ActiveRecord::Schema.define(version: 20170905105505) do
     t.index ["ticket_id"], name: "index_comments_on_ticket_id"
   end
 
+  create_table "repos", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.string "name"
+    t.string "remote_url"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "tickets", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.string "remote_id"
     t.string "remote_number"
@@ -32,6 +54,8 @@ ActiveRecord::Schema.define(version: 20170905105505) do
     t.string "state"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "repo_id"
+    t.index ["repo_id"], name: "index_tickets_on_repo_id"
   end
 
   create_table "timesheets", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
@@ -46,4 +70,5 @@ ActiveRecord::Schema.define(version: 20170905105505) do
     t.index ["ticket_id"], name: "index_timesheets_on_ticket_id"
   end
 
+  add_foreign_key "tickets", "repos"
 end

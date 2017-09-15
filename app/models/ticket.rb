@@ -3,6 +3,8 @@ class Ticket < ApplicationRecord
   has_one :open_timesheet, -> { where(ended_at: nil) }, class_name: "Timesheet"
   has_many :comments
 
+  belongs_to :repo
+
   after_save :update_timesheet, if: :saved_change_to_state?
   after_commit :update_remote, on: :update, if: :saved_change_to_state?
 
