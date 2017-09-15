@@ -17,6 +17,7 @@ default: &default
   password: <%= ENV['DB_PASSWORD'] %>
   host: <%= ENV['DB_HOST'] %>
 
+
 development:
   <<: *default
   database: flight_plan_development
@@ -27,4 +28,4 @@ test:
 
 production:
   <<: *default
-  password: <%= ENV['FLIGHT_PLAN_DATABASE_PASSWORD'] %>
+  url: <%= ENV['CLEARDB_DATABASE_URL'] %>
