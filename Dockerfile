@@ -12,3 +12,9 @@ RUN \
   rm -rf /usr/lib/lib/ruby/gems/*/cache/*
 
 WORKDIR /flight_plan
+
+COPY Gemfile Gemfile.lock ./
+
+RUN \
+  bundle install --jobs 20 && \
+  yarn install
