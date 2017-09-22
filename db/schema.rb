@@ -12,7 +12,7 @@
 
 ActiveRecord::Schema.define(version: 20170915152223) do
 
-  create_table "board_repos", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+  create_table "board_repos", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin" do |t|
     t.bigint "board_id"
     t.bigint "repo_id"
     t.datetime "created_at", null: false
@@ -21,13 +21,13 @@ ActiveRecord::Schema.define(version: 20170915152223) do
     t.index ["repo_id"], name: "index_board_repos_on_repo_id"
   end
 
-  create_table "boards", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+  create_table "boards", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin" do |t|
     t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
-  create_table "comments", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+  create_table "comments", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin" do |t|
     t.bigint "ticket_id"
     t.text "remote_body"
     t.string "remote_id"
@@ -38,14 +38,14 @@ ActiveRecord::Schema.define(version: 20170915152223) do
     t.index ["ticket_id"], name: "index_comments_on_ticket_id"
   end
 
-  create_table "repos", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+  create_table "repos", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin" do |t|
     t.string "name"
     t.string "remote_url"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
-  create_table "tickets", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+  create_table "tickets", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin" do |t|
     t.string "remote_id"
     t.string "remote_number"
     t.string "remote_title"
@@ -58,7 +58,7 @@ ActiveRecord::Schema.define(version: 20170915152223) do
     t.index ["repo_id"], name: "index_tickets_on_repo_id"
   end
 
-  create_table "timesheets", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+  create_table "timesheets", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin" do |t|
     t.bigint "ticket_id"
     t.datetime "started_at"
     t.datetime "ended_at"
