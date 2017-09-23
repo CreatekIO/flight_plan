@@ -2,6 +2,7 @@ class Ticket < ApplicationRecord
   has_many :timesheets
   has_one :open_timesheet, -> { where(ended_at: nil) }, class_name: "Timesheet"
   has_many :comments
+  has_many :board_tickets
 
   belongs_to :repo
 

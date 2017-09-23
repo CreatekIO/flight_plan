@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170915152223) do
+ActiveRecord::Schema.define(version: 20170922153153) do
 
   create_table "board_repos", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin" do |t|
     t.bigint "board_id"
@@ -19,6 +19,17 @@ ActiveRecord::Schema.define(version: 20170915152223) do
     t.datetime "updated_at", null: false
     t.index ["board_id"], name: "index_board_repos_on_board_id"
     t.index ["repo_id"], name: "index_board_repos_on_repo_id"
+  end
+
+  create_table "board_tickets", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin" do |t|
+    t.bigint "board_id"
+    t.bigint "ticket_id"
+    t.bigint "swimlane_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["board_id"], name: "index_board_tickets_on_board_id"
+    t.index ["swimlane_id"], name: "index_board_tickets_on_swimlane_id"
+    t.index ["ticket_id"], name: "index_board_tickets_on_ticket_id"
   end
 
   create_table "boards", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin" do |t|
@@ -43,6 +54,25 @@ ActiveRecord::Schema.define(version: 20170915152223) do
     t.string "remote_url"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "swimlane_transitions", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin" do |t|
+    t.bigint "swimlane_id"
+    t.integer "transition_id"
+    t.integer "position"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["swimlane_id"], name: "index_swimlane_transitions_on_swimlane_id"
+  end
+
+  create_table "swimlanes", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin" do |t|
+    t.bigint "board_id"
+    t.string "name"
+    t.integer "position"
+    t.boolean "display_duration"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["board_id"], name: "index_swimlanes_on_board_id"
   end
 
   create_table "tickets", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin" do |t|
