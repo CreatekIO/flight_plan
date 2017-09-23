@@ -1,5 +1,5 @@
 .container-fluid.board
-  - @swimlanes.each do |swimlane|
+  - @board.swimlanes.each do |swimlane|
     .col-xs-1
       %h3.h3= swimlane.name
       - swimlane.tickets.each do |ticket|
@@ -12,14 +12,15 @@
                 Current state:
                 = ticket.current_state_duration
           .panel-footer
-            .btn-group
-              =link_to(swimlane.transition_to.first, ticket_path(ticket, ticket: { state: swimlane.transition_to.first }), data: { method: 'patch' }, class: 'btn btn-danger')
-              %button.btn.btn-danger.dropdown-toggle{"aria-expanded" => "false", "aria-haspopup" => "true", "data-toggle" => "dropdown", :type => "button"}
-                %span.caret
-                %span.sr-only Toggle Dropdown
-              %ul.dropdown-menu
-                - swimlane.transition_to[1..-1].each do |transition|
-                  %li
-                    =link_to(transition, ticket_path(ticket, ticket: { state: transition }), data: { method: 'patch' })
+            - if swimlane.transitions.any?
+              .btn-group
+                =link_to(swimlane.transitions.first, ticket_path(ticket, ticket: { state: swimlane.transitions.first }), data: { method: 'patch' }, class: 'btn btn-danger')
+                %button.btn.btn-danger.dropdown-toggle{"aria-expanded" => "false", "aria-haspopup" => "true", "data-toggle" => "dropdown", :type => "button"}
+                  %span.caret
+                  %span.sr-only Toggle Dropdown
+                %ul.dropdown-menu
+                  - swimlane.transitions[1..-1].each do |transition|
+                    %li
+                      =link_to(transition, ticket_path(ticket, ticket: { state: transition }), data: { method: 'patch' })
 
 

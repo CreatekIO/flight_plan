@@ -1,5 +1,8 @@
 class BoardsController < ApplicationController
   def show
-    @swimlanes = Swimlane.all
+  end
+
+  def index
+    redirect_to @boards.first
   end
 end
