@@ -31,10 +31,6 @@ class Ticket < ApplicationRecord
     end.compact
   end
 
-  def swimlane
-    Swimlane.all.find { |swimlane| swimlane.name == state }
-  end
-
   private
 
   def format_duration(seconds)
