@@ -3,6 +3,6 @@ class Ability
 
   def initialize(user)
     can :read, Board
-    can :read, Ticket
+    can :manage, Ticket
   end
 end
