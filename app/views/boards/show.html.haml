@@ -16,7 +16,7 @@
       - swimlane.tickets.each do |ticket|
         .panel.panel-default
           .panel-heading
-            = link_to(ticket.remote_title, '', data: { url: ticket_path(ticket), target: '#applicationModal', hook: '_showTicketAjax', toggle: 'modal' })
+            = link_to(ticket.remote_title, '', data: { url: board_ticket_path(@board, ticket), target: '#applicationModal', hook: '_showTicketAjax', toggle: 'modal' })
           .panel-body
             - if ticket.swimlane.display_duration?
               %p
@@ -25,13 +25,13 @@
           .panel-footer
             - if swimlane.transitions.any?
               .btn-group
-                =link_to(swimlane.transitions.first, ticket_path(ticket, ticket: { state: swimlane.transitions.first }), data: { method: 'patch' }, class: 'btn btn-danger')
+                =link_to(swimlane.transitions.first, board_ticket_path(@board, ticket, ticket: { state: swimlane.transitions.first }), data: { method: 'patch' }, class: 'btn btn-danger')
                 %button.btn.btn-danger.dropdown-toggle{"aria-expanded" => "false", "aria-haspopup" => "true", "data-toggle" => "dropdown", :type => "button"}
                   %span.caret
                   %span.sr-only Toggle Dropdown
                 %ul.dropdown-menu
                   - swimlane.transitions[1..-1].each do |transition|
                     %li
-                      =link_to(transition, ticket_path(ticket, ticket: { state: transition }), data: { method: 'patch' })
+                      =link_to(transition, board_ticket_path(@board, ticket, ticket: { state: transition }), data: { method: 'patch' })
 
 
