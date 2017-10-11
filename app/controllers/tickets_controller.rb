@@ -6,14 +6,17 @@ class TicketsController < ApplicationController
   end
 
   def update
-    ticket = Ticket.find(params[:id])
-    ticket.update_attributes(ticket_params)
+    board_ticket.update(swimlane_id: params[:ticket][:swimlane_id])
     redirect_to root_path
+  end
+
+  def board_ticket
+    @ticket.board_tickets.find_by(board: @board)
   end
 
   private
 
   def ticket_params
-    params.require(:ticket).permit(:state)
+    params.require(:ticket).permit(:swimlane_id)
   end
 end
