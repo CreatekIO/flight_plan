@@ -1,4 +1,5 @@
 class TicketsController < ApplicationController
+  load_and_authorize_resource :board
 
   def show
     @ticket = Ticket.find(params[:id])

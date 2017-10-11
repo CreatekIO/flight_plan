@@ -19,10 +19,10 @@ class Ticket < ApplicationRecord
     format_duration(state_durations[state])
   end
 
-  def displayable_durations
+  def displayable_durations(board)
     durations = state_durations
 
-    Swimlane.duration_displayable.map do |swimlane|
+    board.swimlanes.where(display_duration: true).map do |swimlane|
       next if durations[swimlane.name].zero?
       {
         name: swimlane.name,
