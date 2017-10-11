@@ -13,25 +13,27 @@
   - @board.swimlanes.each do |swimlane|
     .col-xs-1
       %h3.h3= swimlane.name
-      - swimlane.tickets.each do |ticket|
+      - swimlane.board_tickets.each do |board_ticket|
+        - ticket = board_ticket.ticket
         .panel.panel-default
           .panel-heading
             = link_to(ticket.remote_title, '', data: { url: board_ticket_path(@board, ticket), target: '#applicationModal', hook: '_showTicketAjax', toggle: 'modal' })
           .panel-body
-            - if ticket.swimlane.display_duration?
+            - if swimlane.display_duration?
               %p
                 Current state:
                 = ticket.current_state_duration
           .panel-footer
             - if swimlane.transitions.any?
               .btn-group
-                =link_to(swimlane.transitions.first, board_ticket_path(@board, ticket, ticket: { state: swimlane.transitions.first }), data: { method: 'patch' }, class: 'btn btn-danger')
-                %button.btn.btn-danger.dropdown-toggle{"aria-expanded" => "false", "aria-haspopup" => "true", "data-toggle" => "dropdown", :type => "button"}
-                  %span.caret
-                  %span.sr-only Toggle Dropdown
-                %ul.dropdown-menu
-                  - swimlane.transitions[1..-1].each do |transition|
-                    %li
-                      =link_to(transition, board_ticket_path(@board, ticket, ticket: { state: transition }), data: { method: 'patch' })
+                =link_to(swimlane.transitions.first.name, board_ticket_path(@board, ticket, ticket: { swimlane_id: swimlane.transitions.first.id }), data: { method: 'patch' }, class: 'btn btn-danger')
+                - if swimlane.transitions.count > 1
+                  %button.btn.btn-danger.dropdown-toggle{"aria-expanded" => "false", "aria-haspopup" => "true", "data-toggle" => "dropdown", :type => "button"}
+                    %span.caret
+                    %span.sr-only Toggle Dropdown
+                  %ul.dropdown-menu
+                    - swimlane.transitions[1..-1].each do |transition|
+                      %li
+                        =link_to(transition.name, board_ticket_path(@board, ticket, ticket: { swimlane_id: transition.id }), data: { method: 'patch' })
 
 
