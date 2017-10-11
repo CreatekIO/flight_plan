@@ -1,3 +1,14 @@
+.dropdown.pull-right
+  %button.btn.btn-default.dropdown-toggle#boards_menu{ data: { toggle: 'dropdown' } }
+    = @board.name
+    %span.caret
+
+  %ul.dropdown-menu{ aria: { labelledby: 'boards_menu' } }
+    - @boards.each do |board|
+      - next if board.id == @board.id 
+      %li
+        = link_to board.name, board_path(board)
+
 .container-fluid.board
   - @board.swimlanes.each do |swimlane|
     .col-xs-1
