@@ -2,7 +2,7 @@ FROM ruby:2.4.1-alpine3.6
 
 MAINTAINER CreatekIO
 
-ENV BUILD_PACKAGES='build-base git mysql-dev nodejs nodejs-npm tzdata inotify-tools'
+ENV BUILD_PACKAGES='build-base git mysql-dev nodejs nodejs-npm tzdata inotify-tools curl'
 
 RUN \
   apk add --update --upgrade $BUILD_PACKAGES && \
