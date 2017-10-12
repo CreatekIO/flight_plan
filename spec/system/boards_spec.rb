@@ -1,16 +1,15 @@
 require 'rails_helper'
 
 RSpec.describe 'boards' do
+
+  let(:board) { create(:board) }
+  let!(:swimlanes) { create_list(:swimlane, 3, board: board) }
+
   it 'shows the swim lanes' do
-    visit root_path
-    expect(page).to have_css :h3, text: 'Lobby'
-    expect(page).to have_css :h3, text: 'Backlog'
-    expect(page).to have_css :h3, text: 'Development'
-    expect(page).to have_css :h3, text: 'Demo'
-    expect(page).to have_css :h3, text: 'Code Review'
-    expect(page).to have_css :h3, text: 'Acceptance'
-    expect(page).to have_css :h3, text: 'Acceptance - Done'
-    expect(page).to have_css :h3, text: 'Deploying'
-    expect(page).to have_css :h3, text: 'Closed'
+    page.driver.browser.basic_authorize('test', 'test')
+    visit board_path(board)
+    swimlanes.each do |swimlane|
+      expect(page).to have_css :h3, text: swimlane.name
+    end
   end
 end
