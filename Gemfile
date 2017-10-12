@@ -54,6 +54,7 @@ group :development, :test do
   gem 'shoulda-matchers'
   gem 'spring-commands-rspec'
   gem 'webmock'
+  gem 'capybara-screenshot'
 end
 
 group :development do
