@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170922153153) do
+ActiveRecord::Schema.define(version: 20171012051704) do
 
   create_table "board_repos", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin" do |t|
     t.bigint "board_id"
@@ -89,16 +89,21 @@ ActiveRecord::Schema.define(version: 20170922153153) do
   end
 
   create_table "timesheets", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin" do |t|
-    t.bigint "ticket_id"
     t.datetime "started_at"
     t.datetime "ended_at"
-    t.string "state"
-    t.string "before_state"
-    t.string "after_state"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["ticket_id"], name: "index_timesheets_on_ticket_id"
+    t.bigint "board_ticket_id"
+    t.bigint "swimlane_id"
+    t.bigint "before_swimlane_id"
+    t.bigint "after_swimlane_id"
+    t.index ["after_swimlane_id"], name: "index_timesheets_on_after_swimlane_id"
+    t.index ["before_swimlane_id"], name: "index_timesheets_on_before_swimlane_id"
+    t.index ["board_ticket_id"], name: "index_timesheets_on_board_ticket_id"
+    t.index ["swimlane_id"], name: "index_timesheets_on_swimlane_id"
   end
 
   add_foreign_key "tickets", "repos"
+  add_foreign_key "timesheets", "swimlanes", column: "after_swimlane_id"
+  add_foreign_key "timesheets", "swimlanes", column: "before_swimlane_id"
 end

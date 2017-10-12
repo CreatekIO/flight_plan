@@ -22,7 +22,7 @@
             - if swimlane.display_duration?
               %p
                 Current state:
-                = ticket.current_state_duration
+                = board_ticket.current_state_duration
           .panel-footer
             - if swimlane.transitions.any?
               .btn-group
