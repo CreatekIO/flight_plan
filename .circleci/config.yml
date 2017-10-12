@@ -5,42 +5,43 @@
 version: 2
 jobs:
   build:
+    workDir: /flight_plan
+
     docker:
-      # specify the version you desire here
-       - image: circleci/ruby:2.4.1-node-browsers
-      
-      # Specify service dependencies here if necessary
-      # CircleCI maintains a library of pre-built images
-      # documented at https://circleci.com/docs/2.0/circleci-images/
-      # - image: circleci/postgres:9.4
+      - image: createkio/flight_plan:latest
+        environemt:
+          DB_HOST: 127.0.0.1
+          DB_USERNAME: root
+          DB_PASSWORD: mysecretpassword
+          RAILS_ENV: test
+      - image: mysql:5.7
+        environment:
+          MYSQL_ROOT_PASSWORD: mysecretpassword
 
     working_directory: ~/repo
 
     steps:
       - checkout
 
-      # Download and cache dependencies
-      - restore_cache:
-          keys:
-          - v1-dependencies-{{ checksum "Gemfile.lock" }}
-          # fallback to using the latest cache if no exact match is found
-          - v1-dependencies-
-
       - run:
           name: install dependencies
           command: |
             bundle install --jobs=4 --retry=3 --path vendor/bundle
+
+      - run:
+          name: database setup
+          command: |
+            until curl -s -o /dev/null $DB_HOST:3306; do
+              sleep 5;
+              echo "Waiting for MySQL";
+            done;
+            rake db:reset
 
       - save_cache:
           paths:
             - ./vendor/bundle
           key: v1-dependencies-{{ checksum "Gemfile.lock" }}
         
-      # Database setup
-      - run: bundle exec rake db:create
-      - run: bundle exec rake db:schema:load
-
-      # run tests!
       - run:
           name: run tests
           command: |
@@ -53,7 +54,6 @@ jobs:
                             --format progress \
                             "${TEST_FILES}"
 
-      # collect reports
       - store_test_results:
           path: /tmp/test-results
       - store_artifacts:
