@@ -63,12 +63,16 @@ class BoardTicket < ApplicationRecord
     # TODO: need to be able to recover if github does not respond,
     # possibly moving to a background job
     
-    # TODO: need to signify which column is the closed column on a board via config (not hard coded)
-    if swimlane.name == 'Closed'
-      Octokit.close_issue('createkio/flight_plan', remote_number)
-    elsif attribute_before_last_save(:state) == 'Closed'
-      Octokit.reopen_issue('createkio/flight_plan', remote_number)
+    if swimlane_id == closed_swimlane.id
+      Octokit.close_issue('createkio/flight_plan', ticket.remote_number)
+    elsif attribute_before_last_save(:swimlane_id) == closed_swimlane.id
+      Octokit.reopen_issue('createkio/flight_plan', ticket.remote_number)
     end
+  end
+
+  def closed_swimlane
+    # TODO: need to signify which column is the closed column on a board via config (not hard coded)
+    board.swimlanes.find_by(name: 'Closed')
   end
 
 end
