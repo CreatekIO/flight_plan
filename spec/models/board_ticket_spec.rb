@@ -5,6 +5,8 @@ RSpec.describe BoardTicket, type: :model do
     it { is_expected.to belong_to(:board) }
     it { is_expected.to belong_to(:ticket) }
     it { is_expected.to belong_to(:swimlane) }
+    it { is_expected.to have_many(:timesheets) }
+    it { is_expected.to have_one(:open_timesheet) }
   end
 
   describe '#save' do
