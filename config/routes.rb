@@ -1,5 +1,7 @@
 Rails.application.routes.draw do
-  root to: 'boards#show'
+  root to: 'boards#index'
 
-  resources :tickets
+  resources :boards do
+    resources :board_tickets
+  end
 end

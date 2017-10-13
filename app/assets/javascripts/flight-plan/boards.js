@@ -16,9 +16,9 @@ FPLAN.boards = {
       var modal = $('#applicationModal');
       var modalBody = modal.find('.modal-body')
 
-      modal.find('.modal-title').html(data.title);
-      modalBody.html('<div class="well">' + data.body + '</div>');
-      $.each(data.comments, function(index, comment) {
+      modal.find('.modal-title').html(data.ticket.title);
+      modalBody.html('<div class="well">' + data.ticket.body + '</div>');
+      $.each(data.ticket.comments, function(index, comment) {
         modalBody.append(
           '<div class="well">'
             + comment.body

@@ -32,13 +32,12 @@ gem 'jbuilder', '~> 2.5'
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
 
-# Use Capistrano for deployment
-# gem 'capistrano-rails', group: :development
-
 gem 'haml'
 gem 'octokit'
 gem 'jquery-rails'
 gem 'bootstrap-sass'
+
+gem 'cancancan', '~> 2.0.0'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
@@ -52,6 +51,7 @@ group :development, :test do
   gem 'shoulda-matchers'
   gem 'spring-commands-rspec'
   gem 'webmock'
+  gem 'capybara-screenshot'
 end
 
 group :development do

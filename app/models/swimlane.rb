@@ -1,16 +1,8 @@
-class Swimlane
-  def self.all
-    WORKFLOW[:swimlanes].map do |swimlane|
-      OpenStruct.new(
-        name: swimlane['name'],
-        tickets: Ticket.where(state: swimlane['name']),
-        transition_to: swimlane['transition_to'],
-        display_duration?: swimlane['display_duration']
-      )
-    end
-  end
+class Swimlane < ApplicationRecord
+  belongs_to :board
 
-  def self.duration_displayable
-    all.select(&:display_duration?)
-  end
+  has_many :board_tickets, dependent: :destroy
+  has_many :tickets, through: :board_tickets
+  has_many :swimlane_transitions, dependent: :destroy
+  has_many :transitions, through: :swimlane_transitions
 end

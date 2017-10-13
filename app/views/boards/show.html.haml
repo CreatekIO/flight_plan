@@ -1,25 +1,39 @@
+.dropdown.pull-right
+  %button.btn.btn-default.dropdown-toggle#boards_menu{ data: { toggle: 'dropdown' } }
+    = @board.name
+    %span.caret
+
+  %ul.dropdown-menu{ aria: { labelledby: 'boards_menu' } }
+    - @boards.each do |board|
+      - next if board.id == @board.id 
+      %li
+        = link_to board.name, board_path(board)
+
 .container-fluid.board
-  - @swimlanes.each do |swimlane|
+  - @board.swimlanes.each do |swimlane|
     .col-xs-1
       %h3.h3= swimlane.name
-      - swimlane.tickets.each do |ticket|
+      - swimlane.board_tickets.each do |board_ticket|
+        - ticket = board_ticket.ticket
         .panel.panel-default
           .panel-heading
-            = link_to(ticket.remote_title, '', data: { url: ticket_path(ticket), target: '#applicationModal', hook: '_showTicketAjax', toggle: 'modal' })
+            = link_to(ticket.remote_title, '', data: { url: board_board_ticket_path(@board, board_ticket), target: '#applicationModal', hook: '_showTicketAjax', toggle: 'modal' })
           .panel-body
-            - if ticket.swimlane.display_duration?
+            - if swimlane.display_duration?
               %p
                 Current state:
-                = ticket.current_state_duration
+                = board_ticket.current_state_duration
           .panel-footer
-            .btn-group
-              =link_to(swimlane.transition_to.first, ticket_path(ticket, ticket: { state: swimlane.transition_to.first }), data: { method: 'patch' }, class: 'btn btn-danger')
-              %button.btn.btn-danger.dropdown-toggle{"aria-expanded" => "false", "aria-haspopup" => "true", "data-toggle" => "dropdown", :type => "button"}
-                %span.caret
-                %span.sr-only Toggle Dropdown
-              %ul.dropdown-menu
-                - swimlane.transition_to[1..-1].each do |transition|
-                  %li
-                    =link_to(transition, ticket_path(ticket, ticket: { state: transition }), data: { method: 'patch' })
+            - if swimlane.transitions.any?
+              .btn-group
+                =link_to(swimlane.transitions.first.name, board_board_ticket_path(@board, board_ticket, board_ticket: { swimlane_id: swimlane.transitions.first.id }), data: { method: 'patch' }, class: 'btn btn-danger')
+                - if swimlane.transitions.count > 1
+                  %button.btn.btn-danger.dropdown-toggle{"aria-expanded" => "false", "aria-haspopup" => "true", "data-toggle" => "dropdown", :type => "button"}
+                    %span.caret
+                    %span.sr-only Toggle Dropdown
+                  %ul.dropdown-menu
+                    - swimlane.transitions[1..-1].each do |transition|
+                      %li
+                        =link_to(transition.name, board_board_ticket_path(@board, board_ticket, board_ticket: { swimlane_id: transition.id }), data: { method: 'patch' })
 
 
