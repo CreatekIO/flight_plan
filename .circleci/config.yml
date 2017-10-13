@@ -14,7 +14,7 @@ jobs:
         environment:
           MYSQL_ROOT_PASSWORD: mysecretpassword
 
-    working_directory: /flight_plan
+    working_directory: ~/repo
 
     parallelism: 2
     steps:
