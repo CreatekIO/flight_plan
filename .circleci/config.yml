@@ -1,15 +1,11 @@
-# Ruby CircleCI 2.0 configuration file
-#
-# Check https://circleci.com/docs/2.0/language-ruby/ for more details
-#
+---
+
 version: 2
 jobs:
   build:
-    workDir: /flight_plan
-
     docker:
       - image: createkio/flight_plan:latest
-        environemt:
+        environment:
           DB_HOST: 127.0.0.1
           DB_USERNAME: root
           DB_PASSWORD: mysecretpassword
@@ -18,44 +14,33 @@ jobs:
         environment:
           MYSQL_ROOT_PASSWORD: mysecretpassword
 
-    working_directory: ~/repo
+    working_directory: /flight_plan
 
+    parallelism: 2
     steps:
       - checkout
-
       - run:
-          name: install dependencies
+          name: Bundle Install
           command: |
-            bundle install --jobs=4 --retry=3 --path vendor/bundle
-
+            bundle install \
+            --jobs 20 \
+            --retry 2 \
+            --without development
       - run:
-          name: database setup
+          name: Database setup
           command: |
             until curl -s -o /dev/null $DB_HOST:3306; do
               sleep 5;
               echo "Waiting for MySQL";
             done;
             rake db:reset
-
-      - save_cache:
-          paths:
-            - ./vendor/bundle
-          key: v1-dependencies-{{ checksum "Gemfile.lock" }}
-        
       - run:
-          name: run tests
-          command: |
-            mkdir /tmp/test-results
-            TEST_FILES="$(circleci tests glob "spec/**/*_spec.rb" | circleci tests split --split-by=timings)"
-            
-            bundle exec rspec --format progress \
-                            --format RspecJunitFormatter \
-                            --out /tmp/test-results/rspec.xml \
-                            --format progress \
-                            "${TEST_FILES}"
-
-      - store_test_results:
-          path: /tmp/test-results
+          name: Run Specs
+          environment:
+            DISABLE_SPRING: 1
+          command: >
+            circleci tests glob "spec/**/*_spec.rb" | circleci tests split | \
+              xargs bin/rspec 
       - store_artifacts:
-          path: /tmp/test-results
-          destination: test-results
+          path: tmp/capybara
+          destination: capybara
