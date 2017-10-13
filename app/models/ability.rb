@@ -2,7 +2,8 @@ class Ability
   include CanCan::Ability
 
   def initialize(user)
-    can :read, Board
+    can :manage, Board
     can :manage, Ticket
+    can :manage, BoardTicket
   end
 end

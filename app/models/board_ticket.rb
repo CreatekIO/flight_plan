@@ -10,7 +10,7 @@ class BoardTicket < ApplicationRecord
 
   def state_durations
     timesheets.each_with_object(Hash.new 0) do |timesheet, durations|
-      durations[timesheet.name] += (timesheet.ended_at || Time.now) - timesheet.started_at
+      durations[timesheet.swimlane.name] += (timesheet.ended_at || Time.now) - timesheet.started_at
     end
   end
 
@@ -72,7 +72,7 @@ class BoardTicket < ApplicationRecord
 
   def closed_swimlane
     # TODO: need to signify which column is the closed column on a board via config (not hard coded)
-    board.swimlanes.find_by(name: 'Closed')
+    board.swimlanes.order(:position).last
   end
 
 end

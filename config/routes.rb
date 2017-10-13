@@ -2,6 +2,6 @@ Rails.application.routes.draw do
   root to: 'boards#index'
 
   resources :boards do
-    resources :tickets
+    resources :board_tickets
   end
 end
