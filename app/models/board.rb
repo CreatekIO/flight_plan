@@ -7,4 +7,9 @@ class Board < ApplicationRecord
   def open_swimlane
     swimlanes.order(:position).first
   end
+
+  def closed_swimlane
+    # TODO: need to signify which column is the closed column on a board via config (not hard coded)
+    swimlanes.order(:position).last
+  end
 end

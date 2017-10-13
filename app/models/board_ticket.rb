@@ -86,8 +86,7 @@ class BoardTicket < ApplicationRecord
   end
 
   def closed_swimlane
-    # TODO: need to signify which column is the closed column on a board via config (not hard coded)
-    board.swimlanes.order(:position).last
+    board.closed_swimlane
   end
 
 end
