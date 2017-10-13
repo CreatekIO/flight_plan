@@ -12,9 +12,9 @@ RSpec.describe BoardTicket, type: :model do
   describe '#save' do
     let(:repo) { create(:repo) }
     let(:board) { create(:board, repos: [ repo ]) }
-    let!(:backlog) { create(:swimlane, name: 'Backlog', board: board) }
-    let!(:dev) { create(:swimlane, name: 'Dev', board: board) }
-    let!(:closed) { create(:swimlane, name: 'Closed', board: board) }
+    let!(:backlog) { create(:swimlane, name: 'Backlog', board: board, position: 1) }
+    let!(:dev) { create(:swimlane, name: 'Dev', board: board, position: 2) }
+    let!(:closed) { create(:swimlane, name: 'Closed', board: board, position: 3) }
 
     let(:ticket) { create(:ticket, remote_number: '4', repo: repo) }
     subject { create(:board_ticket, board: board, ticket: ticket, swimlane: backlog) }
