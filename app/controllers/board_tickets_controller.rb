@@ -5,7 +5,13 @@ class BoardTicketsController < ApplicationController
   end
 
   def update
-    @board_ticket.update(swimlane_id: params[:ticket][:swimlane_id])
+    @board_ticket.update(board_ticket_params)
     redirect_to root_path
+  end
+
+  private 
+
+  def board_ticket_params
+    params.require(:board_ticket).permit(:swimlane_id)
   end
 end
