@@ -12,7 +12,11 @@ services:
 
   app:
     image: createkio/flight_plan:latest
-    command: sleep 100d
+    command: sh -c '
+      rm -f /flight_plan/tmp/pids/server.pid &&
+      bundle &&
+      if [ "$BYEBUG" -eq "1" ]; then sleep 100d; else rails s; fi
+      '
     volumes:
       - .:/flight_plan
     depends_on:
