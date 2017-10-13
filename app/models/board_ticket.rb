@@ -8,6 +8,8 @@ class BoardTicket < ApplicationRecord
   after_save :update_timesheet, if: :saved_change_to_swimlane_id?
   after_commit :update_remote, on: :update, if: :saved_change_to_swimlane_id?
 
+  attr_writer :should_update_remote
+
   def state_durations
     timesheets.each_with_object(Hash.new 0) do |timesheet, durations|
       durations[timesheet.swimlane.name] += (timesheet.ended_at || Time.now) - timesheet.started_at
@@ -30,7 +32,18 @@ class BoardTicket < ApplicationRecord
     end.compact
   end
 
+  def close(update_remote: true)
+    update(swimlane: closed_swimlane, should_update_remote: update_remote)
+  end
+
   private
+
+  def should_update_remote?
+    unless defined? @should_update_remote
+      @should_update_remote = true
+    end
+    @should_update_remote 
+  end
 
   def format_duration(seconds)
     if seconds < 1.hour
@@ -60,6 +73,8 @@ class BoardTicket < ApplicationRecord
   end
 
   def update_remote
+    return unless should_update_remote?
+
     # TODO: need to be able to recover if github does not respond,
     # possibly moving to a background job
     
