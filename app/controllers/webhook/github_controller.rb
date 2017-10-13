@@ -11,6 +11,8 @@ class Webhook::GithubController < Webhook::BaseController
 
   def github_issues(_payload)
     case json_body[:action] 
+    when 'opened'
+      ticket = Ticket.import_from_remote(json_body[:issue], json_body[:repository])
     when 'labeled'
       new_swimlane = board_ticket.board.swimlanes.find_by_label!(json_body[:label][:name])
       board_ticket.update(swimlane: new_swimlane)
