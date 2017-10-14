@@ -83,6 +83,22 @@ class BoardTicket < ApplicationRecord
     elsif attribute_before_last_save(:swimlane_id) == closed_swimlane.id
       Octokit.reopen_issue(ticket.repo.remote_url, ticket.remote_number)
     end
+
+    Octokit.replace_all_labels(
+      ticket.repo.remote_url, 
+      ticket.remote_number, 
+      new_github_labels
+    )
+  end
+
+  def new_github_labels 
+    Octokit.labels_for_issue(
+      ticket.repo.remote_url, 
+      ticket.remote_number
+    ).
+    map(&:name).
+    select { |label| !label.start_with? 'status:' } +
+    [ "status: #{swimlane.name.downcase}" ]
   end
 
   def closed_swimlane

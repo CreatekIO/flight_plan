@@ -67,6 +67,15 @@ RSpec.describe BoardTicket, type: :model do
           subject.reload.open_timesheet.id
         }
       end
+
+      it 'changes labels on the remote' do
+        stub = stub_request(:put, "https://api.github.com/repos/#{remote_url}/issues/4/labels").
+          with(body: "[\"status: dev\"]")
+        subject.swimlane = dev
+        subject.save
+
+        expect(stub).to have_been_requested
+      end
     end
   end
 end
