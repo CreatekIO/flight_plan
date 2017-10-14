@@ -6,9 +6,9 @@ class BoardTicket < ApplicationRecord
   has_one :open_timesheet, -> { where(ended_at: nil) }, class_name: "Timesheet"
    
   after_save :update_timesheet, if: :saved_change_to_swimlane_id?
-  after_commit :update_remote, on: :update, if: :saved_change_to_swimlane_id?
+  after_commit :update_github, on: :update, if: :saved_change_to_swimlane_id?
 
-  attr_writer :should_update_remote
+  attr_writer :update_remote
 
   def state_durations
     timesheets.each_with_object(Hash.new 0) do |timesheet, durations|
@@ -33,16 +33,16 @@ class BoardTicket < ApplicationRecord
   end
 
   def close(update_remote: true)
-    update(swimlane: closed_swimlane, should_update_remote: update_remote)
+    update(swimlane: closed_swimlane, update_remote: update_remote)
   end
 
   private
 
-  def should_update_remote?
-    unless defined? @should_update_remote
-      @should_update_remote = true
+  def update_remote?
+    unless defined? @update_remote
+      @update_remote = true
     end
-    @should_update_remote 
+    @update_remote 
   end
 
   def format_duration(seconds)
@@ -72,16 +72,16 @@ class BoardTicket < ApplicationRecord
     )
   end
 
-  def update_remote
-    return unless should_update_remote?
+  def update_github
+    return unless update_remote?
 
     # TODO: need to be able to recover if github does not respond,
     # possibly moving to a background job
     
     if swimlane_id == closed_swimlane.id
-      Octokit.close_issue('createkio/flight_plan', ticket.remote_number)
+      Octokit.close_issue(ticket.repo.remote_url, ticket.remote_number)
     elsif attribute_before_last_save(:swimlane_id) == closed_swimlane.id
-      Octokit.reopen_issue('createkio/flight_plan', ticket.remote_number)
+      Octokit.reopen_issue(ticket.repo.remote_url, ticket.remote_number)
     end
   end
 

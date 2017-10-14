@@ -16,13 +16,35 @@ class Ticket < ApplicationRecord
       remote_state: issue[:state],
     )
 
-    ticket.repo.boards.each do |board|
-      BoardTicket.find_or_create_by(
-        ticket: ticket, 
-        board: board,
-      ) do |bt|
-        bt.swimlane = board.open_swimlane 
+    ticket.update_board_tickets_from_remote(issue)
+    ticket
+  end
+
+  def update_board_tickets_from_remote(issue)
+    repo.boards.each do |board|
+      bt = board_tickets.find_or_initialize_by(board: board)
+      bt.update_remote = false
+      bt.swimlane = swimlane_from_remote(issue, board)
+      bt.save
+    end
+  end
+
+  private
+
+  def swimlane_from_remote(issue, board)
+    if issue['state'] == 'closed'
+      return board.closed_swimlane
+    else
+      status_label = issue[:labels].find do |label|
+        label[:name].starts_with? 'status:'
+      end
+
+      if status_label
+        return board.swimlanes.find_by_label!(status_label[:name])
+      else
+        return board.open_swimlane
       end
     end
   end
+
 end

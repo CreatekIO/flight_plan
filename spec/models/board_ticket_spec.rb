@@ -10,11 +10,7 @@ RSpec.describe BoardTicket, type: :model do
   end
 
   describe '#save' do
-    let(:repo) { create(:repo) }
-    let(:board) { create(:board, repos: [ repo ]) }
-    let!(:backlog) { create(:swimlane, name: 'Backlog', board: board, position: 1) }
-    let!(:dev) { create(:swimlane, name: 'Dev', board: board, position: 2) }
-    let!(:closed) { create(:swimlane, name: 'Closed', board: board, position: 3) }
+    include_context 'board with swimlanes'
 
     let(:ticket) { create(:ticket, remote_number: '4', repo: repo) }
     subject { create(:board_ticket, board: board, ticket: ticket, swimlane: backlog) }
@@ -25,7 +21,7 @@ RSpec.describe BoardTicket, type: :model do
 
     context 'when an issue is moved to "Closed"' do
       it 'updates the GitHub issue via the API' do
-        stub = stub_request(:patch, "https://api.github.com/repos/createkio/flight_plan/issues/4").
+        stub = stub_request(:patch, "https://api.github.com/repos/#{remote_url}/issues/4").
           with(body: "{\"state\":\"closed\"}")
         subject.swimlane = closed
         subject.save
@@ -38,7 +34,7 @@ RSpec.describe BoardTicket, type: :model do
       subject { create(:board_ticket, swimlane: closed, ticket: ticket, board: board) }
 
       it 'updates the GitHub issue via the API' do
-        stub = stub_request(:patch, "https://api.github.com/repos/createkio/flight_plan/issues/4").
+        stub = stub_request(:patch, "https://api.github.com/repos/#{remote_url}/issues/4").
           with(body: "{\"state\":\"open\"}")
         subject.swimlane = backlog
         subject.save
