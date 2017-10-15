@@ -2,7 +2,7 @@ class Comment < ApplicationRecord
   belongs_to :ticket
 
   def self.import_from_remote(comment_json, issue_json, repo_json)
-    comment = Comment.find_or_initialize_by(remote_id: comment_json[:id])
+    comment = find_by_remote(comment_json)
     if comment.ticket_id.blank?
       comment.ticket = Ticket.find_by_remote(issue_json, repo_json)
     end
@@ -15,5 +15,7 @@ class Comment < ApplicationRecord
     comment.save!
   end
 
-
+  def self.find_by_remote(comment_json)
+    Comment.find_or_initialize_by(remote_id: comment_json[:id])
+  end
 end
