@@ -9,19 +9,12 @@ class Webhook::GithubController < Webhook::BaseController
     p paylog
   end
 
-  def github_issues(_payload)
-    Ticket.import_from_remote(json_body[:issue], json_body[:repository])
+  def github_issues(payload)
+    Ticket.import_from_remote(payload[:issue], payload[:repository])
   end
 
-  def board_ticket
-    ticket = Ticket.find_by!(remote_id: json_body[:issue][:id])
-    ticket.board_tickets.first!
-  end
-
-  def no_status_labels?
-    json_body[:issue][:labels].none? do |label|
-      label[:name].start_with? 'status:'
-    end
+  def github_issue_comment(payload)
+    Comment.import_from_remote(payload[:comment], payload[:issue], payload[:repo])
   end
 
   def not_found

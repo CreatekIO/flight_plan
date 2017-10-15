@@ -5,10 +5,7 @@ class Ticket < ApplicationRecord
   has_many :board_tickets, dependent: :destroy
 
   def self.import_from_remote(issue, repo)
-    ticket = Ticket.find_or_initialize_by(remote_id: issue[:id])
-    if ticket.repo_id.blank?
-      ticket.repo = Repo.find_by(remote_url: repo[:full_name]) 
-    end
+    ticket = find_by_remote(issue, repo)
     ticket.update_attributes(
       remote_number: issue[:number],
       remote_title: issue[:title],
@@ -17,6 +14,14 @@ class Ticket < ApplicationRecord
     )
 
     ticket.update_board_tickets_from_remote(issue)
+    ticket
+  end
+
+  def self.find_by_remote(issue, repo)
+    ticket = Ticket.find_or_initialize_by(remote_id: issue[:id])
+    if ticket.repo_id.blank?
+      ticket.repo = Repo.find_by(remote_url: repo[:full_name]) 
+    end
     ticket
   end
 
