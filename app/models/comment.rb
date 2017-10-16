@@ -1,7 +1,7 @@
 class Comment < ApplicationRecord
   belongs_to :ticket
 
-  def self.import_from_remote(comment_json, issue_json, repo_json)
+  def self.import(comment_json, issue_json, repo_json)
     comment = find_by_remote(comment_json)
     if comment.ticket_id.blank?
       comment.ticket = Ticket.find_by_remote(issue_json, repo_json)

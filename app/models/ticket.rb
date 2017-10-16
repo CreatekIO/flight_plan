@@ -4,7 +4,7 @@ class Ticket < ApplicationRecord
   has_many :comments, dependent: :destroy
   has_many :board_tickets, dependent: :destroy
 
-  def self.import_from_remote(issue, repo)
+  def self.import(issue, repo)
     ticket = find_by_remote(issue, repo)
     ticket.update_attributes(
       remote_number: issue[:number],

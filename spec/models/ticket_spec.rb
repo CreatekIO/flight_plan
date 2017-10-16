@@ -33,7 +33,7 @@ RSpec.describe Ticket do
     context 'when the ticket does not already exist' do
       it 'adds the issue to the repo' do
         expect {
-          described_class.import_from_remote(issue_json, repo_json)
+          described_class.import(issue_json, repo_json)
         }.to change { repo.tickets.count }.by(1)
       end
     end
@@ -42,7 +42,7 @@ RSpec.describe Ticket do
       it 'updates the ticket' do
         ticket = create(:ticket, remote_title: 'before title', repo: repo, remote_id: issue_id)
         expect {
-          described_class.import_from_remote(issue_json, repo_json)
+          described_class.import(issue_json, repo_json)
         }.not_to change { repo.tickets.count }
         expect(ticket.reload.remote_title).to eq('issue title')
       end

@@ -6,7 +6,7 @@ class Webhook::GithubController < Webhook::BaseController
   private
 
   def github_issues(payload)
-    Ticket.import_from_remote(payload[:issue], payload[:repository])
+    Ticket.import(payload[:issue], payload[:repository])
   end
 
   def github_issue_comment(payload)
@@ -14,7 +14,7 @@ class Webhook::GithubController < Webhook::BaseController
       comment = Comment.find_by_remote(payload[:comment])
       comment.destroy if comment.persisted?
     else
-      Comment.import_from_remote(payload[:comment], payload[:issue], payload[:repo])
+      Comment.import(payload[:comment], payload[:issue], payload[:repo])
     end
   end
 
