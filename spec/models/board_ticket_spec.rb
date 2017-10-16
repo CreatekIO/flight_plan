@@ -18,13 +18,13 @@ RSpec.describe BoardTicket, type: :model do
 
     before(:each) do
       subject # force creation of subject in database
+
+      stub_get_issue_labels_request
+      stub_put_issue_labels_request
     end
 
     context 'when an issue is moved to "Closed"' do
       it 'updates the GitHub issue via the API' do
-        stub_get_issue_labels_request
-        stub_put_issue_labels_request
-
         stub = stub_request(:patch, "https://api.github.com/repos/#{remote_url}/issues/#{remote_number}").
           with(body: "{\"state\":\"closed\"}")
 
@@ -39,8 +39,6 @@ RSpec.describe BoardTicket, type: :model do
       subject { create(:board_ticket, swimlane: closed, ticket: ticket, board: board) }
 
       it 'updates the GitHub issue via the API' do
-        stub_get_issue_labels_request
-        stub_put_issue_labels_request
         stub = stub_request(:patch, "https://api.github.com/repos/#{remote_url}/issues/#{remote_number}").
           with(body: "{\"state\":\"open\"}")
           subject.swimlane = backlog
@@ -60,11 +58,6 @@ RSpec.describe BoardTicket, type: :model do
 
     context 'when state changes' do
       subject { create(:board_ticket, swimlane: backlog, ticket: ticket, board: board) }
-      before do
-        stub_get_issue_labels_request
-        stub_put_issue_labels_request
-      end
-
       it 'creates a new open timesheet' do
         expect {
           subject.update_attributes(swimlane_id: dev.id)
@@ -104,7 +97,7 @@ RSpec.describe BoardTicket, type: :model do
   def stub_put_issue_labels_request
     stub_request(
       :put, 
-      "https://api.github.com/repos/org_name/repo_name/issues/#{remote_number}/labels"
+      "https://api.github.com/repos/#{remote_url}/issues/#{remote_number}/labels"
     )
   end
 end
