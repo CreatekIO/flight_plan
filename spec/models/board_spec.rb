@@ -9,10 +9,16 @@ RSpec.describe Board, type: :model do
   end
 
   describe '#open_swimlane' do
-    pending
+    include_context 'board with swimlanes'
+    it 'returns the first swimlane' do
+      expect(board.open_swimlane).to eq(backlog)
+    end
   end
 
   describe '#closed_swimlane' do
-    pending
+    include_context 'board with swimlanes'
+    it 'returns the last swimlane' do
+      expect(board.closed_swimlane).to eq(closed)
+    end
   end
 end
