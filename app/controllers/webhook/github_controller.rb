@@ -5,10 +5,6 @@ class Webhook::GithubController < Webhook::BaseController
 
   private
 
-  def github_ping(paylog)
-    p paylog
-  end
-
   def github_issues(payload)
     Ticket.import_from_remote(payload[:issue], payload[:repository])
   end
