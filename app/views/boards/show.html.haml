@@ -1,39 +1,42 @@
-.dropdown.pull-right
-  %button.btn.btn-default.dropdown-toggle#boards_menu{ data: { toggle: 'dropdown' } }
-    = @board.name
-    %span.caret
+.board-header
+  .dropdown.pull-right
+    %button.btn.btn-warning.dropdown-toggle#boards_menu{ data: { toggle: 'dropdown' } }
+      = @board.name
+      %span.caret
 
-  %ul.dropdown-menu{ aria: { labelledby: 'boards_menu' } }
-    - @boards.each do |board|
-      - next if board.id == @board.id 
-      %li
-        = link_to board.name, board_path(board)
+    %ul.dropdown-menu{ aria: { labelledby: 'boards_menu' } }
+      - @boards.each do |board|
+        - next if board.id == @board.id 
+        %li
+          = link_to board.name, board_path(board)
+  .clearfix
 
-.container-fluid.board
+.board
   - @board.swimlanes.each do |swimlane|
-    .col-xs-1
-      %h3.h3= swimlane.name
-      - swimlane.board_tickets.each do |board_ticket|
-        - ticket = board_ticket.ticket
-        .panel.panel-default
-          .panel-heading
-            = link_to(ticket.remote_title, '', data: { url: board_board_ticket_path(@board, board_ticket), target: '#applicationModal', hook: '_showTicketAjax', toggle: 'modal' })
-          .panel-body
-            - if swimlane.display_duration?
-              %p
-                Current state:
-                = board_ticket.current_state_duration
-          .panel-footer
-            - if swimlane.transitions.any?
-              .btn-group
-                =link_to(swimlane.transitions.first.name, board_board_ticket_path(@board, board_ticket, board_ticket: { swimlane_id: swimlane.transitions.first.id }), data: { method: 'patch' }, class: 'btn btn-danger')
-                - if swimlane.transitions.count > 1
-                  %button.btn.btn-danger.dropdown-toggle{"aria-expanded" => "false", "aria-haspopup" => "true", "data-toggle" => "dropdown", :type => "button"}
-                    %span.caret
-                    %span.sr-only Toggle Dropdown
-                  %ul.dropdown-menu
-                    - swimlane.transitions[1..-1].each do |transition|
-                      %li
-                        =link_to(transition.name, board_board_ticket_path(@board, board_ticket, board_ticket: { swimlane_id: transition.id }), data: { method: 'patch' })
+    .swimlane
+      .header= swimlane.name
+      .body
+        - swimlane.board_tickets.each do |board_ticket|
+          - ticket = board_ticket.ticket
+          .panel.panel-default
+            .panel-heading
+              = link_to(ticket.remote_title, '', data: { url: board_board_ticket_path(@board, board_ticket), target: '#applicationModal', hook: '_showTicketAjax', toggle: 'modal' })
+            .panel-body
+              - if swimlane.display_duration?
+                %p
+                  Current state:
+                  = board_ticket.current_state_duration
+            .panel-footer
+              - if swimlane.transitions.any?
+                .btn-group
+                  =link_to(swimlane.transitions.first.name, board_board_ticket_path(@board, board_ticket, board_ticket: { swimlane_id: swimlane.transitions.first.id }), data: { method: 'patch' }, class: 'btn btn-sm btn-info ')
+                  - if swimlane.transitions.count > 1
+                    %button.btn.btn-sm.btn-info.dropdown-toggle{"aria-expanded" => "false", "aria-haspopup" => "true", "data-toggle" => "dropdown", :type => "button"}
+                      %span.caret
+                      %span.sr-only Toggle Dropdown
+                    %ul.dropdown-menu
+                      - swimlane.transitions[1..-1].each do |transition|
+                        %li
+                          =link_to(transition.name, board_board_ticket_path(@board, board_ticket, board_ticket: { swimlane_id: transition.id }), data: { method: 'patch' })
 
 
