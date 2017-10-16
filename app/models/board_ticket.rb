@@ -32,10 +32,6 @@ class BoardTicket < ApplicationRecord
     end.compact
   end
 
-  def close(update_remote: true)
-    update(swimlane: closed_swimlane, update_remote: update_remote)
-  end
-
   private
 
   def update_remote?
