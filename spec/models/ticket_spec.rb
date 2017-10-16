@@ -7,7 +7,7 @@ RSpec.describe Ticket do
     it { is_expected.to have_many(:board_tickets) }
   end
 
-  describe '.import_for_remote' do
+  describe '.import' do
     include_context 'board with swimlanes'
     let(:issue_id) { 888 }
     let(:issue_json) {
@@ -21,7 +21,7 @@ RSpec.describe Ticket do
             name: 'status: dev'
           }
         ]
-      }
+    }
     }
 
     let(:repo_json) {
@@ -47,6 +47,37 @@ RSpec.describe Ticket do
         expect(ticket.reload.remote_title).to eq('issue title')
       end
     end
+  end
 
+  describe '.find_by_remote' do
+    let(:remote_issue_id) { 100 }
+    let(:remote_issue) { 
+      {
+        id: remote_issue_id
+      }
+    }
+    let(:remote_repo) { 
+      {
+        full_name: 'org_name/repo_name'
+      }
+    }
+    let(:repo) { create(:repo) }
+    context "when the ticket doesn't exist" do
+      it 'creates a new ticket' do
+        ticket = described_class.find_by_remote(remote_issue, remote_repo)
+        expect(ticket.persisted?).to be(false)
+      end
+    end
+    context "when the ticket exists" do
+      it 'finds the ticket' do
+        create(:ticket, repo: repo, remote_id: remote_issue_id)
+        ticket = described_class.find_by_remote(remote_issue, remote_repo)
+        expect(ticket.persisted?).to be(true)
+      end
+    end
+  end
+
+  describe '#update_board_tickets_from_remote' do
+    pending
   end
 end

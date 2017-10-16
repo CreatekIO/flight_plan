@@ -8,4 +8,8 @@ RSpec.describe Swimlane, type: :model do
     it { is_expected.to have_many(:swimlane_transitions) }
     it { is_expected.to have_many(:transitions).through(:swimlane_transitions) }
   end
+
+  describe '.find_by_label!' do
+    pending
+  end
 end

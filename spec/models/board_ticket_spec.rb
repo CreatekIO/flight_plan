@@ -85,6 +85,18 @@ RSpec.describe BoardTicket, type: :model do
     end
   end
 
+  describe '#state_durations' do
+    pending 'this may changes so not creating a test yet'
+  end
+
+  describe '#current_state_duration' do
+    pending
+  end
+
+  describe '#displayable_durations' do
+    pending
+  end
+
   def stub_get_issue_labels_request
     stub_request(:get, "https://api.github.com/repos/#{remote_url}/issues/#{remote_number}/labels?per_page=100").
       to_return(
