@@ -12,7 +12,7 @@ class Comment < ApplicationRecord
       remote_author_id: comment_json[:user][:id],
       remote_author: comment_json[:user][:login]
     )
-    comment.save!
+    comment
   end
 
   def self.find_by_remote(comment_json)

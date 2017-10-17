@@ -9,31 +9,12 @@ RSpec.describe Ticket do
 
   describe '.import' do
     include_context 'board with swimlanes'
-    let(:issue_id) { 888 }
-    let(:issue_json) {
-      { id: issue_id,
-        number: 100,
-        title: 'issue title',
-        body: 'issue body',
-        state: 'open',
-        labels: [
-          {
-            name: 'status: dev'
-          }
-        ]
-    }
-    }
-
-    let(:repo_json) {
-      {
-        full_name: remote_url
-      }
-    }
+    include_context 'remote issue'
 
     context 'when the ticket does not already exist' do
       it 'adds the issue to the repo' do
         expect {
-          described_class.import(issue_json, repo_json)
+          described_class.import(remote_issue, remote_repo)
         }.to change { repo.tickets.count }.by(1)
       end
     end
@@ -42,7 +23,7 @@ RSpec.describe Ticket do
       it 'updates the ticket' do
         ticket = create(:ticket, remote_title: 'before title', repo: repo, remote_id: issue_id)
         expect {
-          described_class.import(issue_json, repo_json)
+          described_class.import(remote_issue, remote_repo)
         }.not_to change { repo.tickets.count }
         expect(ticket.reload.remote_title).to eq('issue title')
       end
