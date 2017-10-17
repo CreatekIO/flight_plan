@@ -41,6 +41,10 @@
 
     .body {
       overflow-y: auto;
+
+      .panel {
+        overflow: hidden;
+      }
     }
   }
 }
