@@ -8,7 +8,7 @@ RSpec.describe 'boards' do
   it 'shows the swim lanes' do
     visit board_path(board)
     swimlanes.each do |swimlane|
-      expect(page).to have_css :h3, text: swimlane.name
+      expect(page).to have_css 'div.header', text: swimlane.name
     end
   end
 end
