@@ -4,50 +4,50 @@ class Ticket < ApplicationRecord
   has_many :comments, dependent: :destroy
   has_many :board_tickets, dependent: :destroy
 
-  def self.import(issue, repo)
-    ticket = find_by_remote(issue, repo)
+  def self.import(remote_issue, remote_repo)
+    ticket = find_by_remote(remote_issue, remote_repo)
     ticket.update_attributes(
-      remote_number: issue[:number],
-      remote_title: issue[:title],
-      remote_body: issue[:body],
-      remote_state: issue[:state],
+      remote_number: remote_issue[:number],
+      remote_title: remote_issue[:title],
+      remote_body: remote_issue[:body],
+      remote_state: remote_issue[:state],
     )
 
-    ticket.update_board_tickets_from_remote(issue)
+    ticket.update_board_tickets_from_remote(remote_issue)
     ticket
   end
 
-  def self.find_by_remote(issue, repo)
-    ticket = Ticket.find_or_initialize_by(remote_id: issue[:id])
+  def self.find_by_remote(remote_issue, remote_repo)
+    ticket = Ticket.find_or_initialize_by(remote_id: remote_issue[:id])
     if ticket.repo_id.blank?
-      ticket.repo = Repo.find_by(remote_url: repo[:full_name]) 
+      ticket.repo = Repo.find_by!(remote_url: remote_repo[:full_name]) 
     end
     ticket
   end
 
-  def update_board_tickets_from_remote(issue)
+  def update_board_tickets_from_remote(remote_issue)
     repo.boards.each do |board|
       bt = board_tickets.find_or_initialize_by(board: board)
       bt.update_remote = false
-      bt.swimlane = swimlane_from_remote(issue, board)
+      bt.swimlane = swimlane_from_remote(remote_issue, board)
       bt.save
     end
   end
 
   private
 
-  def swimlane_from_remote(issue, board)
-    if issue['state'] == 'closed'
-      return board.closed_swimlane
+  def swimlane_from_remote(remote_issue, board)
+    if remote_issue['state'] == 'closed'
+      board.closed_swimlane
     else
-      status_label = issue[:labels].find do |label|
+      status_label = remote_issue[:labels].find do |label|
         label[:name].starts_with? 'status:'
       end
 
       if status_label
-        return board.swimlanes.find_by_label!(status_label[:name])
+        board.swimlanes.find_by_label!(status_label[:name])
       else
-        return board.open_swimlane
+        board.open_swimlane
       end
     end
   end

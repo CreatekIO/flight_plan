@@ -1,21 +1,21 @@
 class Comment < ApplicationRecord
   belongs_to :ticket
 
-  def self.import(comment_json, issue_json, repo_json)
-    comment = find_by_remote(comment_json)
+  def self.import(remote_comment, remote_issue, remote_repo)
+    comment = find_by_remote(remote_comment)
     if comment.ticket_id.blank?
-      comment.ticket = Ticket.find_by_remote(issue_json, repo_json)
+      comment.ticket = Ticket.find_by_remote(remote_issue, remote_repo)
     end
 
     comment.update_attributes(
-      remote_body: comment_json[:body],
-      remote_author_id: comment_json[:user][:id],
-      remote_author: comment_json[:user][:login]
+      remote_body: remote_comment[:body],
+      remote_author_id: remote_comment[:user][:id],
+      remote_author: remote_comment[:user][:login]
     )
     comment
   end
 
-  def self.find_by_remote(comment_json)
-    Comment.find_or_initialize_by(remote_id: comment_json[:id])
+  def self.find_by_remote(remote_comment)
+    Comment.find_or_initialize_by(remote_id: remote_comment[:id])
   end
 end
