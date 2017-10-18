@@ -16,12 +16,36 @@
 
 @import "bootstrap-sprockets";
 @import "bootstrap";
+.board-header {
+  padding: 4px;
+}
 
 .board {
-  overflow-x: scroll;
-  width: auto; 
-  
-  .col-xs-1 {
-    width: (100% / 9) !important;
+  border-top: 1px solid #e8eff9;
+
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+
+  .swimlane {
+    width: 250px;
+    padding: 6px;
+    border-left: 3px solid #e8eff9;
+    flex: 0 0 auto;
+
+    .header {
+      font-size: medium;
+      text-align: center;
+      height: 33px;
+    }
+
+    .body {
+      overflow-y: auto;
+      height: calc(100vh - 90px);
+
+      .panel-heading {
+        overflow: hidden;
+      }
+    }
   }
 }
