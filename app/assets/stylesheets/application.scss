@@ -41,6 +41,7 @@
 
     .body {
       overflow-y: auto;
+      height: calc(100vh - 90px);
 
       .panel-heading {
         overflow: hidden;
