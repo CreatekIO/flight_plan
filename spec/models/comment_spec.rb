@@ -18,22 +18,22 @@ RSpec.describe Comment do
         }
       }
     }
+    let!(:repo) { create(:repo, remote_url: remote_url) }
     context 'when the comment does not already exist' do
       it 'creates a new comment for the issue' do
         expect { 
           described_class.import(remote_comment, remote_issue, remote_repo)  
-        }.to change { Comment.all.count }.by(1)
+        }.to change { Comment.count }.by(1)
       end
     end
     
     context 'when the comment already exists' do
-      include_context 'board with swimlanes'
       let(:ticket) { create(:ticket, repo: repo) }
       it 'updates the comment' do
         comment = create(:comment, remote_body: 'before text', remote_id: comment_id, ticket: ticket)
         expect { 
           described_class.import(remote_comment, remote_issue, remote_repo)  
-        }.not_to change { Comment.all.count }
+        }.not_to change { Comment.count }
         expect(comment.reload.remote_body).to eq('text')
       end
     end

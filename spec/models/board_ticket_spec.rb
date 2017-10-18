@@ -50,8 +50,6 @@ RSpec.describe BoardTicket, type: :model do
 
     context 'with no state change' do
       it 'doesn\'t create/update any new timesheets' do
-        stub_get_issue_labels_request
-        stub_put_issue_labels_request
         expect{ subject.touch }.to_not change{ Timesheet.count }
       end
     end

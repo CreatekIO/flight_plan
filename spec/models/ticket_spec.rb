@@ -14,8 +14,9 @@ RSpec.describe Ticket do
     context 'when the ticket does not already exist' do
       it 'adds the issue to the repo' do
         expect {
-          described_class.import(remote_issue, remote_repo)
+          @ticket = described_class.import(remote_issue, remote_repo)
         }.to change { repo.tickets.count }.by(1)
+        expect(@ticket.remote_title).to eq('issue title')
       end
     end
 
@@ -42,9 +43,9 @@ RSpec.describe Ticket do
         full_name: 'org_name/repo_name'
       }
     }
-    let(:repo) { create(:repo) }
+    let!(:repo) { create(:repo, remote_url: 'org_name/repo_name') }
     context "when the ticket doesn't exist" do
-      it 'creates a new ticket' do
+      it 'builds a new ticket' do
         ticket = described_class.find_by_remote(remote_issue, remote_repo)
         expect(ticket.persisted?).to be(false)
       end
