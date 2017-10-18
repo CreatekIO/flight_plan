@@ -93,7 +93,7 @@ class BoardTicket < ApplicationRecord
       ticket.remote_number
     ).
     map(&:name).
-    select { |label| !label.start_with? 'status:' } +
+    reject { |label| label.start_with? 'status:' } +
     [ "status: #{swimlane.name.downcase}" ]
   end
 
