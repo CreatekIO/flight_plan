@@ -28,6 +28,8 @@ gem 'octokit'
 gem 'jquery-rails'
 gem 'bootstrap-sass'
 
+gem 'devise'
+gem 'omniauth-github'
 gem 'cancancan', '~> 2.0.0'
 
 gem 'github_webhook', '~> 1.1'

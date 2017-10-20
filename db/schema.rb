@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171012051704) do
+ActiveRecord::Schema.define(version: 20171020153946) do
 
   create_table "board_repos", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin" do |t|
     t.bigint "board_id"
@@ -101,6 +101,15 @@ ActiveRecord::Schema.define(version: 20171012051704) do
     t.index ["before_swimlane_id"], name: "index_timesheets_on_before_swimlane_id"
     t.index ["board_ticket_id"], name: "index_timesheets_on_board_ticket_id"
     t.index ["swimlane_id"], name: "index_timesheets_on_swimlane_id"
+  end
+
+  create_table "users", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin" do |t|
+    t.string "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "provider"
+    t.string "uid"
+    t.datetime "remember_created_at"
   end
 
   add_foreign_key "tickets", "repos"
