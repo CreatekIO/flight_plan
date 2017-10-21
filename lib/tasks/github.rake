@@ -57,16 +57,16 @@ namespace :github do
       SwimlaneTransition.find_or_create_by(swimlane: cr, transition: dev).update(position: 2)
       SwimlaneTransition.find_or_create_by(swimlane: cr, transition: done).update(position: 3)
 
-      SwimlaneTransition.find_or_create_by(swimlane: cr_done, transition: accept)
-      SwimlaneTransition.find_or_create_by(swimlane: cr_done, transition: done)
+      SwimlaneTransition.find_or_create_by(swimlane: cr_done, transition: accept).update(position: 1)
+      SwimlaneTransition.find_or_create_by(swimlane: cr_done, transition: done).update(position: 2)
 
-      SwimlaneTransition.find_or_create_by(swimlane: accept, transition: accept_done)
-      SwimlaneTransition.find_or_create_by(swimlane: accept, transition: done)
+      SwimlaneTransition.find_or_create_by(swimlane: accept, transition: accept_done).update(position: 1)
+      SwimlaneTransition.find_or_create_by(swimlane: accept, transition: done).update(position: 2)
 
-      SwimlaneTransition.find_or_create_by(swimlane: accept_done, transition: deploy)
-      SwimlaneTransition.find_or_create_by(swimlane: accept_done, transition: done)
+      SwimlaneTransition.find_or_create_by(swimlane: accept_done, transition: deploy).update(position: 1)
+      SwimlaneTransition.find_or_create_by(swimlane: accept_done, transition: done).update(position: 2)
 
-      SwimlaneTransition.find_or_create_by(swimlane: deploy, transition: done)
+      SwimlaneTransition.find_or_create_by(swimlane: deploy, transition: done).update(position: 1)
     end
 
     Repo.all.each do |repo|
