@@ -73,10 +73,10 @@ namespace :github do
       puts "Processing repo #{repo.name}"
 
       remote_repo = { full_name: repo.remote_url }
-      Octokit.issues(repo.remote_url).each do |issue|
-        next if issue.pull_request.present?
-        puts "  issue #{issue.number}"
-        Ticket.import(issue, remote_repo)
+      Octokit.issues(repo.remote_url).each do |remote_issue|
+        next if remote_issue.pull_request.present?
+        puts "  issue #{remote_issue.number}"
+        Ticket.import(remote_issue, remote_repo)
       end
     end
   end
