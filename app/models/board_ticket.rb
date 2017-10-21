@@ -6,6 +6,7 @@ class BoardTicket < ApplicationRecord
   has_one :open_timesheet, -> { where(ended_at: nil) }, class_name: "Timesheet"
    
   after_save :update_timesheet, if: :saved_change_to_swimlane_id?
+  after_save :schedule_next_deployment, if: :saved_change_to_swimlane_id?
   after_commit :update_github, on: :update, if: :saved_change_to_swimlane_id?
 
   attr_writer :update_remote
@@ -33,6 +34,12 @@ class BoardTicket < ApplicationRecord
   end
 
   private
+
+  def schedule_next_deployment
+    if swimlane_id == board.deploy_swimlane_id
+      board.schedule_next_deployment
+    end
+  end
 
   def update_remote?
     unless defined? @update_remote
