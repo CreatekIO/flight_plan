@@ -63,74 +63,12 @@ namespace :github do
 
     Repo.all.each do |repo|
       puts "Processing repo #{repo.name}"
-      board = repo.boards.first
 
-      @lanes = {}
-      board.swimlanes.each do |swimlane| 
-        @lanes["status: #{swimlane.name.downcase}"] = swimlane.id
-      end
-
+      remote_repo = { full_name: repo.remote_url }
       Octokit.issues(repo.remote_url).each do |issue|
+        next if issue.pull_request.present?
         puts "  issue #{issue.number}"
-        ticket = Ticket.find_or_initialize_by(remote_id: issue.id)
-        ticket.state = 'Backlog' unless ticket.persisted?
-        ticket.update_attributes(
-          remote_number: issue.number,
-          remote_title: issue.title,
-          remote_body: issue.body,
-          remote_state: issue.state,
-          repo_id: repo.id
-        )
-
-        status = issue.labels.select { |label| label.name.start_with? 'status:' }
-        board_ticket = BoardTicket.find_or_create_by(ticket: ticket, board: board)
-        if status.count == 1
-          swimlane = @lanes[status.first.name]
-        else
-          swimlane = @lanes['status: backlog']
-        end
-
-      end
-
-      Repo.all.each do |repo|
-        puts "Processing repo #{repo.name}"
-        board = repo.boards.first
-
-        @lanes = {}
-        board.swimlanes.each do |swimlane| 
-          @lanes["status: #{swimlane.name.downcase}"] = swimlane.id
-        end
-
-        Octokit.issues(repo.remote_url).each do |issue|
-          puts "  issue #{issue.number}"
-          ticket = Ticket.find_or_initialize_by(remote_id: issue.id)
-          ticket.update_attributes(
-            remote_number: issue.number,
-            remote_title: issue.title,
-            remote_body: issue.body,
-            remote_state: issue.state,
-            repo_id: repo.id
-          )
-
-          status = issue.labels.select { |label| label.name.start_with? 'status:' }
-          board_ticket = BoardTicket.find_or_create_by(ticket: ticket, board: board)
-          if status.count == 1
-            swimlane = @lanes[status.first.name]
-          else
-            swimlane = @lanes['status: backlog']
-          end
-          board_ticket.update_attributes(swimlane_id: swimlane)
-
-          Octokit.issue_comments(repo.remote_url, issue.number).each do |issue_comment|
-            comment = Comment.find_or_initialize_by(remote_id: issue_comment.id)
-            comment.update_attributes(
-              ticket_id: ticket.id,
-              remote_body: issue_comment.body,
-              remote_author_id: issue_comment.user.id,
-              remote_author: issue_comment.user.login
-            )
-          end
-        end
+        Ticket.import(issue, remote_repo)
       end
     end
   end
