@@ -3,6 +3,9 @@ class Board < ApplicationRecord
   has_many :repos, through: :board_repos
   has_many :swimlanes, dependent: :destroy
   has_many :board_tickets, dependent: :destroy
+  belongs_to :deploy_swimlane, class_name: 'Swimlane', optional: true
+
+  DEPLOY_DELAY = 10.minutes
 
   def open_swimlane
     swimlanes.order(:position).first
