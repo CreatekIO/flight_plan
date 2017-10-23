@@ -17,7 +17,7 @@ class Board < ApplicationRecord
 
   def schedule_next_deployment
     if pending_auto_deployment?
-      self.next_deployment = calculate_next_deployment
+      update_attributes(next_deployment: calculate_next_deployment)
     end
   end
 
