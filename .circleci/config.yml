@@ -27,6 +27,9 @@ jobs:
             --retry 2 \
             --without development
       - run:
+          name: Yarn
+          command: yarn install
+      - run:
           name: Database setup
           command: |
             until curl -s -o /dev/null $DB_HOST:3306; do
