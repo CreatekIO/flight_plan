@@ -22,9 +22,11 @@ services:
     depends_on:
       - db
       - selenium
+      - redis
     expose:
       - 3000
     environment:
+      - REDIS_URL=redis://redis:6379
       - SELENIUM_REMOTE_HOST=selenium
       - DB_HOST=db
       - DB_USERNAME=root
@@ -42,4 +44,26 @@ services:
     image: selenium/standalone-chrome-debug:3.5.2
     ports:
       - 4444:4444
+
+  redis:
+    image: redis:3.2
+
+  sidekiq:
+    image: createkio/flight_plan:latest
+    command: sh -c 'bundle && bundle exec sidekiq'
+    volumes:
+      - .:/flight_plan
+    depends_on:
+      - db
+      - redis
+    environment:
+      - REDIS_URL=redis://redis:6379
+      - DB_HOST=db
+      - DB_USERNAME=root
+      - DB_PASSWORD
+    env_file: 
+      - .env
+
+
+
 
