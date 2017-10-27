@@ -18,3 +18,4 @@
 //= require_tree ./flight-plan/common
 //= require_tree ./flight-plan
 //= require flight-plan-exec
+//= require showdown
