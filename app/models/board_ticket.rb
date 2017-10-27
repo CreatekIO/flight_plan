@@ -37,7 +37,7 @@ class BoardTicket < ApplicationRecord
 
   def schedule_next_deployment
     if swimlane_id == board.deploy_swimlane_id
-      board.schedule_next_deployment
+      AutoDeploy.new(board).schedule_next_deployment
     end
   end
 
