@@ -1,13 +1,15 @@
-require 'octokit'
-require 'colorize'
-
 class Relsr
 
-  attr_reader :repo_name, :issues, :release_branch_name, :extra_branches
+  #TODO: write tests
+  #TODO: recover from merge conflicts
+  #TODO: extra_branches
+  #TODO: logging
 
-  def initialize(repo_name:, issues:, extra_branches: [])
+  attr_reader :repo_name, :tickets, :release_branch_name, :extra_branches
+
+  def initialize(repo_name:, tickets:, extra_branches: [])
     @repo_name = repo_name
-    @issues = issues
+    @tickets = tickets
     @release_branch_name = Time.now.strftime('release/%Y%m%d-%H%M%S')
     @extra_branches = extra_branches
     Octokit.auto_paginate = true
@@ -27,7 +29,12 @@ class Relsr
       release_branch_name,
       pr_body
     )
-    puts 'done'.green
+    log 'done'
+    true
+  rescue Octokit::UnprocessableEntity
+    log 'Could not create pull request, deleting branch'
+    client.delete_branch(repo_name, release_branch_name)
+    false 
   end
 
   private
@@ -35,7 +42,7 @@ class Relsr
   def initialize_release_branch
     log "Creating release branch '#{release_branch_name}' on '#{repo_name}'..."  
     client.create_ref(repo_name, "heads/#{release_branch_name}", master.object.sha)
-    puts 'done'.green
+    log 'done'
   end
 
   def merge_work_branches
@@ -47,7 +54,7 @@ class Relsr
         work_branch, 
         commit_message: "Merging #{work_branch} into release"
       )
-      puts 'done'.green
+      log 'done'
     end
   end
 
@@ -66,9 +73,9 @@ class Relsr
   def branches_to_merge
     branches_to_merge = []
 
-    issues.each do |issue|
+    tickets.each do |ticket|
       branch_names.each do |branch|
-        if branch.include? "##{issue.number}"
+        if branch.include? "##{ticket.remote_number}"
           branches_to_merge << branch
         end
       end
@@ -81,8 +88,8 @@ class Relsr
   end
 
   def pr_body
-    messages = issues.collect do |issue|
-      "Connects ##{issue.number} - #{issue.title}"
+    messages = tickets.collect do |ticket|
+      "Connects ##{ticket.remote_number} - #{ticket.remote_title}"
     end 
     messages += extra_branches.collect do |branch|
       "Merging in additional branch '#{branch}'"
@@ -92,5 +99,6 @@ class Relsr
   end
 
   def log(message)
+    puts message
   end
 end
