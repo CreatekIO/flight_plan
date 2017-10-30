@@ -67,7 +67,7 @@ services:
 
   clockwork:
     image: createkio/flight_plan:latest
-    command: sh -c 'bundle && clockwork clock.rb'
+    command: sh -c 'bundle && bundle exec clockwork clock.rb'
     volumes:
       - .:/flight_plan
     depends_on:
