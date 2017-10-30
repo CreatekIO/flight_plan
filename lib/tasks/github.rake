@@ -1,5 +1,6 @@
 namespace :github do
   task :pull => :environment do
+    d = Repo.find_or_create_by(name: 'Dummy', remote_url: 'jcleary/dummy')
     fp = Repo.find_or_create_by(name: 'FlightPlan', remote_url: 'CreatekIO/flight_plan')
     myr = Repo.find_or_create_by(name: 'MyRewards', remote_url: 'CorporateRewards/myrewards')
     gps = Repo.find_or_create_by(name: 'GPS', remote_url: 'CorporateRewards/redstone')
@@ -9,19 +10,25 @@ namespace :github do
       board.save
     end
 
+    d_board = Board.find_or_create_by(name: 'Dummy') do |board|
+      board.repos << d
+      board.save
+    end
+
     cr_board = Board.find_or_create_by(name: 'Corporate Rewards') do |board|
       board.repos << myr
       board.repos << gps
       board.save
     end
 
-    [fp_board, cr_board].each do |board|
+    [fp_board, cr_board, d_board].each do |board|
       position = 0
       backlog = Swimlane.find_or_create_by(board: board, name: 'Backlog', position: position+=1)
       bugs = Swimlane.find_or_create_by(board: board, name: 'Backlog - Bugs', position: position+=1)
       plan = Swimlane.find_or_create_by(board: board, name: 'Planning', position: position+=1)
       plan_done = Swimlane.find_or_create_by(board: board, name: 'Planning - DONE', position: position+=1)
       dev = Swimlane.find_or_create_by(board: board, name: 'Development', display_duration: true, position: position+=1)
+      blocked = Swimlane.find_or_create_by(board: board, name: 'Development - blocked', display_duration: true, position: position+=1)
       cr = Swimlane.find_or_create_by(board: board, name: 'Code Review', display_duration: true, position: position+=1)
       cr_done = Swimlane.find_or_create_by(board: board, name: 'Code Review - DONE', display_duration: true, position: position+=1)
       accept = Swimlane.find_or_create_by(board: board, name: 'Acceptance', display_duration: true, position: position+=1)
