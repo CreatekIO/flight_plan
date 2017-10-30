@@ -5,7 +5,7 @@ class ReleaseManager
   #TODO: extra_branches
   #TODO: logging
 
-  DEPLOY_DELAY = 10.seconds
+  DEPLOY_DELAY = 10.minutes
 
   def initialize(board, repo)
     @board = board
