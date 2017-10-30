@@ -6,7 +6,7 @@ class BoardTicketsController < ApplicationController
 
   def update
     @board_ticket.update(board_ticket_params)
-    redirect_to root_path
+    redirect_to board_path(@board)
   end
 
   private 
