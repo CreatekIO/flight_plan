@@ -7,7 +7,11 @@ module Clockwork
     puts "Running #{job}"
   end
 
-  every 10.seconds, 'Auto Deployment' do
-    AutoDeploy.deploy_all
+  every 1.minute, 'Auto Deployment' do
+    Board.where(auto_deploy: true).each do |board|
+      if board.deploy_swimlane.tickets.any?
+        DeployWorker.perform_async(board.id)
+      end
+    end
   end
 end
