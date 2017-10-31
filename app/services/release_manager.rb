@@ -22,7 +22,7 @@ class ReleaseManager
   end
 
   def cooled_off?
-    Time.now > deploy_after
+    Time.now >= deploy_after
   end
 
   def create_release
@@ -143,7 +143,7 @@ class ReleaseManager
   end
 
   def deploy_after
-    last_ticket = board.deploy_swimlane.board_tickets.order(:updated_at).last
+    last_ticket = board.deploy_swimlane.board_tickets.order(:updated_at).last!
 
     deploy_after = last_ticket.updated_at + DEPLOY_DELAY
 
@@ -160,6 +160,8 @@ class ReleaseManager
     end
 
     deploy_after
+  rescue ActiveRecord::RecordNotFound
+    nil
   end
 
 end
