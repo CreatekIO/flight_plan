@@ -17,7 +17,7 @@ class ReleaseManager
 
   def open_pr?
     client.pull_requests(repo.remote_url).any? do |pr|
-      pr.base.ref == 'master'
+      pr[:base][:ref] == 'master'
     end
   end
 
