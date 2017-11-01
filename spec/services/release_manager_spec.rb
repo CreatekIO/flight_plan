@@ -29,7 +29,7 @@ RSpec.describe ReleaseManager, type: :service do
         before do
           board_ticket.update_attributes(updated_at: (time_now - delay) + 1.second)
         end
-        it 'retursn false' do
+        it 'returns false' do
           expect(subject.cooled_off?).to eq(false)
         end
       end

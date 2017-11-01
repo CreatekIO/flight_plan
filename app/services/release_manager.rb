@@ -147,9 +147,9 @@ class ReleaseManager
 
     deploy_after = last_ticket.updated_at + DEPLOY_DELAY
 
-    if deploy_after < '9am'
+    if deploy_after < Time.parse('9am')
       deploy_after = deploy_after.change(hour: 9, minute: 0, second: 0)
-    elsif deploy_after > '5pm'
+    elsif deploy_after > Time.parse('5pm')
       deploy_after = deploy_after.change(hour: 9, minute: 0, second: 0)
       deploy_after += 1.day
     end
