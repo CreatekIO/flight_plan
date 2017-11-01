@@ -13,8 +13,8 @@ RUN \
 
 WORKDIR /flight_plan
 
-COPY Gemfile Gemfile.lock ./
+COPY package.json yarn.lock ./
+RUN yarn install
 
-RUN \
-  bundle install --jobs 20 && \
-  yarn install
+COPY Gemfile Gemfile.lock ./
+RUN bundle install --jobs 20 
