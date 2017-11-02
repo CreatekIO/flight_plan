@@ -1,5 +1,4 @@
 class ReleaseManager
-
   #TODO: write tests
   #TODO: extra_branches
   #TODO: logging
@@ -16,7 +15,7 @@ class ReleaseManager
   end
 
   def open_pr?
-    client.pull_requests(repo.remote_url).any? do |pr|
+    repo.pull_requests.any? do |pr|
       pr[:base][:ref] == 'master'
     end
   end
@@ -43,8 +42,7 @@ class ReleaseManager
 
   def create_pull_request
     log "Creating pull request..."
-    client.create_pull_request(
-      repo.remote_url,
+    repo.create_pull_request(
       'master',
       release_branch_name,
       release_branch_name,
@@ -54,13 +52,13 @@ class ReleaseManager
     true
   rescue Octokit::UnprocessableEntity
     log 'Could not create pull request, deleting branch'
-    client.delete_branch(repo.remote_url, release_branch_name)
+    repo.delete_branch(release_branch_name)
     false 
   end
 
   def initialize_release_branch
     log "Creating release branch '#{release_branch_name}' on '#{repo.remote_url}'..."  
-    client.create_ref(repo.remote_url, "heads/#{release_branch_name}", master.object.sha)
+    repo.create_ref("heads/#{release_branch_name}", master.object.sha)
     log 'done'
   end
 
@@ -68,8 +66,7 @@ class ReleaseManager
     branches_to_merge.each do |work_branch|
       begin
         log "Merging '#{work_branch}' into release..."
-        client.merge(
-          repo.remote_url, 
+        repo.merge(
           release_branch_name, 
           work_branch, 
           commit_message: "Merging #{work_branch} into release"
@@ -81,27 +78,15 @@ class ReleaseManager
     end
   end
 
-  def client
-    @client ||= Octokit::Client.new(netrc: true)
-  end
-
-  def repo
-    @repo ||= client.repo(repo.remote_url)
-  end
-
   def tickets
     board.deploy_swimlane.tickets.where(repo_id: repo.id)
-  end
-
-  def branch_names
-    @branch_names ||= client.branches(repo.remote_url).collect { |b| b.name }
   end
 
   def branches_to_merge
     branches_to_merge = []
 
     tickets.each do |ticket|
-      branch_names.each do |branch|
+      repo.branch_names.each do |branch|
         if branch.include? "##{ticket.remote_number}"
           branches_to_merge << branch
         end
@@ -111,7 +96,7 @@ class ReleaseManager
   end
 
   def master
-    @master ||= client.refs(repo.remote_url, 'heads/master')
+    @master ||= repo.refs('heads/master')
   end
 
   def pr_body

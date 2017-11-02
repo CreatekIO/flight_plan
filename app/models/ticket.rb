@@ -4,6 +4,9 @@ class Ticket < ApplicationRecord
   has_many :comments, dependent: :destroy
   has_many :board_tickets, dependent: :destroy
 
+  scope :merged, -> { where(merged: true) }
+  scope :unmerged, -> { where(merged: false) }
+
   def self.import(remote_issue, remote_repo)
     ticket = find_by_remote(remote_issue, remote_repo)
     ticket.update_attributes(
@@ -23,6 +26,16 @@ class Ticket < ApplicationRecord
       ticket.repo = Repo.find_by!(remote_url: remote_repo[:full_name]) 
     end
     ticket
+  end
+
+  def merged_to?(target_branch)
+    branch_names.inject(true) do |merged, branch| 
+      merged && (repo.compare(target_branch, branch).total_commits == 0)
+    end
+  end
+
+  def branch_names
+    repo.branch_names.select { |branch| branch.include? "##{remote_number}" }
   end
 
   def update_board_tickets_from_remote(remote_issue)
