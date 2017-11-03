@@ -61,7 +61,7 @@ class BoardTicket < ApplicationRecord
       )
     end
 
-    what = timesheets.create!(
+    timesheets.create!(
       started_at: time_now,
       swimlane: swimlane,
       before_swimlane_id: attribute_before_last_save(:swimlane_id)

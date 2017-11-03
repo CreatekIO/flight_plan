@@ -27,12 +27,12 @@ gem 'haml'
 gem 'octokit'
 gem 'jquery-rails'
 gem 'bootstrap-sass'
-
 gem 'devise'
 gem 'omniauth-github'
 gem 'cancancan', '~> 2.0.0'
-
 gem 'github_webhook', '~> 1.1'
+gem 'clockwork'
+gem 'sidekiq'
 
 group :development, :test do
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]

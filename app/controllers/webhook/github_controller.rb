@@ -18,12 +18,23 @@ class Webhook::GithubController < Webhook::BaseController
     end
   end
 
+  def github_push(payload)
+    repo = Repo.find_by!(remote_url: payload['repository']['full_name']) 
+
+    issue_number = payload['ref'][/#[0-9]*/, 0][1..-1]
+    if issue_number
+      ticket = repo.tickets.find_by!(remote_number: issue_number)
+      ticket.update_attributes(merged: false)
+    elsif payload['ref'] == 'refs/heads/master'
+      repo.update_merged_tickets
+    end
+  end
+
   def not_found
-    head :not_found
+    head :ok
   end
 
   def webhook_secret(_payload)
     ENV['GITHUB_WEBHOOK_SECRET']
   end
-
 end
