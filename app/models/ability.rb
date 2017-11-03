@@ -5,5 +5,6 @@ class Ability
     can :manage, Board
     can :manage, Ticket
     can :manage, BoardTicket
+    can :manage, User
   end
 end
