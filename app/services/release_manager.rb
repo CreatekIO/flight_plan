@@ -38,6 +38,7 @@ class ReleaseManager
   def create_release_branch
     initialize_release_branch
     merge_work_branches
+    repo.update_merged_tickets
   end
 
   def create_pull_request
@@ -79,20 +80,13 @@ class ReleaseManager
   end
 
   def tickets
-    board.deploy_swimlane.tickets.where(repo_id: repo.id)
+    board.deploy_swimlane.tickets.where(repo_id: repo.id).umerged
   end
 
   def branches_to_merge
-    branches_to_merge = []
-
-    tickets.each do |ticket|
-      repo.branch_names.each do |branch|
-        if branch.include? "##{ticket.remote_number}"
-          branches_to_merge << branch
-        end
-      end
-    end
-    branches_to_merge + extra_branches
+    tickets.inject([]) do |branches, ticket|
+      branches + ticket.branch_names
+    end + extra_branches
   end
 
   def master
