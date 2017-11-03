@@ -2,6 +2,11 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
   def github
     @user = User.from_omniauth(request.env["omniauth.auth"])
 
+    login = request.env['omniauth.auth'].extra.raw_info.login
+    unless Octokit.organization_member?('CreatekIO', login)
+      raise 'Not a memeber of Createk'
+    end
+
     session["github.token"] = request.env['omniauth.auth'][:credentials].token
 
     if @user.persisted?
