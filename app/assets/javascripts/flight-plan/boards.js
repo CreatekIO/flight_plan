@@ -24,30 +24,39 @@ FPLAN.boards = {
             var modalBody = modal.find('.modal-body')
 
             modal.find('.modal-title').html(data.ticket.title);
-            modalBody.html(
-                '<div class="well">' 
-                    + FPLAN.boards._parseMarkdown(data.ticket.body)
-                    + '</div>'
-            );
+            modalBody.html(FPLAN.boards._headerHtml(data));
+
             $.each(data.ticket.comments, function(index, comment) {
-                modalBody.append(
-                    '<div class="well">'
-                        + FPLAN.boards._parseMarkdown(comment.body) 
-                        + '<br><span class="label label-danger">'
-                        + comment.author
-                        + '</span>'
-                        + '</div>'
-                );
+                modalBody.append(FPLAN.boards._commentHtml(comment));
             })
+
             $.each(data.state_durations, function(index, state_duration) {
-                modalBody.append(
-                    '<span class="label label-success">'
-                        + state_duration.name
-                        + ': '
-                        + state_duration.duration
-                        + '</span>'
-                );
+                modalBody.append(FPLAN.boards._durationHtml(state_duration));
             })
         })
+    },
+
+    _headerHtml: function(data) {
+        return '<div class="well">' 
+            + FPLAN.boards._parseMarkdown(data.ticket.body)
+            + '</div>';
+    },
+
+    _commentHtml: function(comment) {
+        return '<div class="well">'
+            + FPLAN.boards._parseMarkdown(comment.body) 
+            + '<br><span class="label label-danger">'
+            + comment.author
+            + '</span>'
+            + '</div>';
+    },
+
+    _durationHtml: function(state_duration) {
+        return '<span class="label label-success">'
+            + state_duration.name
+            + ': '
+            + state_duration.duration
+            + '</span>';
     }
+
 }
