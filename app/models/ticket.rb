@@ -30,7 +30,7 @@ class Ticket < ApplicationRecord
 
   def merged_to?(target_branch)
     branch_names.inject(true) do |merged, branch| 
-      merged && (repo.compare(target_branch, branch).total_commits == 0)
+      merged && (repo.compare(target_branch, branch).total_commits.zero?)
     end
   end
 
