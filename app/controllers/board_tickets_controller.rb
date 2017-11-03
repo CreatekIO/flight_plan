@@ -1,6 +1,5 @@
-class BoardTicketsController < ApplicationController
+class BoardTicketsController < AuthenticatedController
   load_and_authorize_resource :board
-  load_and_authorize_resource
 
   def show
   end

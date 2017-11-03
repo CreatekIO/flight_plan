@@ -1,5 +1,10 @@
 Rails.application.routes.draw do
-  root to: 'boards#index'
+
+  authenticated :user do
+    root to: 'boards#index', as: :authenticated_root
+  end
+
+  root to: 'pages#index'
 
   devise_for :users, :controllers => { :omniauth_callbacks => "users/omniauth_callbacks" }
 

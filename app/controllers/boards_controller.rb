@@ -1,5 +1,4 @@
-class BoardsController < ApplicationController
-  load_and_authorize_resource
+class BoardsController < AuthenticatedController
 
   def show
     # todo: this needs to come from the logged in user
