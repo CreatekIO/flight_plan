@@ -85,6 +85,8 @@ namespace :github do
         puts "  issue #{remote_issue.number}"
         Ticket.import(remote_issue, remote_repo)
       end
+
+      repo.update_merged_tickets
     end
   end
 end
