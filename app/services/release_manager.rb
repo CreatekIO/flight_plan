@@ -1,8 +1,4 @@
 class ReleaseManager
-  #TODO: write tests
-  #TODO: extra_branches
-  #TODO: logging
-  #TODO: dont create new PR after this has merged (branch diff)
 
   DEPLOY_DELAY = 10.minutes
 
