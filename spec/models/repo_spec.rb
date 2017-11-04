@@ -18,15 +18,20 @@ RSpec.describe Repo, type: :model do
       ]
     }
     it 'returns the names of all the branches on a repo' do
-      stub_request(:get, "https://api.github.com/repos/user/repo_name/branches?per_page=100")
+      stub = stub_request(:get, "https://api.github.com/repos/user/repo_name/branches?per_page=100")
         .to_return(status: 200, body: branches)
 
       expect(subject.branch_names).to include('master', 'develop', 'feature/#1-fix-me')
+      expect(stub).to have_been_requested.once
     end
   end
 
   describe '#compare' do
-    pending
+    it 'returns the diff between two branches' do
+      stub = stub_request(:get, "https://api.github.com/repos/user/repo_name/compare/develop...master")
+      subject.compare('develop', 'master')
+      expect(stub).to have_been_requested.once
+    end 
   end
 
   describe '#pull_requests' do
