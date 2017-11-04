@@ -30,12 +30,18 @@ RSpec.describe Repo, type: :model do
     it 'returns the diff between two branches' do
       stub = stub_request(:get, "https://api.github.com/repos/user/repo_name/compare/develop...master")
       subject.compare('develop', 'master')
+
       expect(stub).to have_been_requested.once
     end 
   end
 
   describe '#pull_requests' do
-    pending
+    it 'returns pull request details' do
+      stub = stub_request(:get, "https://api.github.com/repos/user/repo_name/pulls?per_page=100")
+      subject.pull_requests
+
+      expect(stub).to have_been_requested.once
+    end
   end
 
   describe '#create_pull_request' do
