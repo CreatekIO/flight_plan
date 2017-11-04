@@ -7,8 +7,22 @@ RSpec.describe Repo, type: :model do
     it { is_expected.to have_many(:board_repos) }
   end
 
+  subject { create(:repo) }
+
   describe '#branch_names' do
-    pending
+    let(:branches) { 
+      [ 
+        { name: 'develop' },
+        { name: 'master' },
+        { name: 'feature/#1-fix-me' }
+      ]
+    }
+    it 'returns the names of all the branches on a repo' do
+      stub_request(:get, "https://api.github.com/repos/user/repo_name/branches?per_page=100")
+        .to_return(status: 200, body: branches)
+
+      expect(subject.branch_names).to include('master', 'develop', 'feature/#1-fix-me')
+    end
   end
 
   describe '#compare' do
