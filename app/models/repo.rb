@@ -29,8 +29,8 @@ class Repo < ApplicationRecord
     client.pull_requests(remote_url)
   end
 
-  def create_pull_request(target, source, name, body)
-    client.create_pull_request(remote_url, target, source, name, pr_body)
+  def create_pull_request(target, source, title, body)
+    client.create_pull_request(remote_url, target, source, title, body)
   end
 
   def create_ref(ref, sha)

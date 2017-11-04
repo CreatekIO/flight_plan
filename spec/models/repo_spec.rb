@@ -45,7 +45,24 @@ RSpec.describe Repo, type: :model do
   end
 
   describe '#create_pull_request' do
-    pending
+    let(:title) { 'Pull Request Name' }
+    let(:body) { 'Body text' }
+    let(:base) { 'master' }
+    let(:head) { 'branch-to-be-merged ' }
+    let(:params) { 
+      {
+        base: base,
+        head: head,
+        title: title,
+        body: body
+      }
+    }
+    it 'creates a pull requests' do
+      stub = stub_request(:post, "https://api.github.com/repos/user/repo_name/pulls").with(body: params)
+      subject.create_pull_request(base, head, title, body)
+
+      expect(stub).to have_been_requested.once
+    end
   end
   
   describe '#create_ref' do
