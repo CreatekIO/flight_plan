@@ -66,7 +66,21 @@ RSpec.describe Repo, type: :model do
   end
   
   describe '#create_ref' do
-    pending
+    let(:branch_name) { 'release/123' }
+    let(:sha) { '5g32345676a44545' }
+    let(:params) {  
+      {
+        ref: "refs/#{branch_name}",
+        sha: sha,
+      }
+    }
+    it 'create a branch on github' do
+      stub = stub_request(:post, "https://api.github.com/repos/user/repo_name/git/refs").
+        with(body: params)
+      subject.create_ref(branch_name, sha)
+
+      expect(stub).to have_been_requested.once
+    end
   end
   
   describe '#merge' do
