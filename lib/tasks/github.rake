@@ -23,18 +23,18 @@ namespace :github do
 
     [fp_board, cr_board, d_board].each do |board|
       position = 0
-      backlog = Swimlane.find_or_create_by(board: board, name: 'Backlog', position: position+=1)
-      bugs = Swimlane.find_or_create_by(board: board, name: 'Backlog - Bugs', position: position+=1)
-      plan = Swimlane.find_or_create_by(board: board, name: 'Planning', position: position+=1)
-      plan_done = Swimlane.find_or_create_by(board: board, name: 'Planning - DONE', position: position+=1)
-      dev = Swimlane.find_or_create_by(board: board, name: 'Development', display_duration: true, position: position+=1)
-      blocked = Swimlane.find_or_create_by(board: board, name: 'Development - blocked', display_duration: true, position: position+=1)
-      cr = Swimlane.find_or_create_by(board: board, name: 'Code Review', display_duration: true, position: position+=1)
-      cr_done = Swimlane.find_or_create_by(board: board, name: 'Code Review - DONE', display_duration: true, position: position+=1)
-      accept = Swimlane.find_or_create_by(board: board, name: 'Acceptance', display_duration: true, position: position+=1)
-      accept_done = Swimlane.find_or_create_by(board: board, name: 'Acceptance - DONE', display_duration: true, position: position+=1)
-      deploy = Swimlane.find_or_create_by(board: board, name: 'Deploying', display_duration: true, position: position+=1)
-      done = Swimlane.find_or_create_by(board: board, name: 'Deploying - DONE', position: position+=1)
+      backlog = Swimlane.find_or_create_by(board: board, name: 'Backlog').tap{ |s|s.update_attributes(position: position+=1) }
+      bugs = Swimlane.find_or_create_by(board: board, name: 'Backlog - Bugs').tap{ |s|s.update_attributes(position: position+=1) }
+      plan = Swimlane.find_or_create_by(board: board, name: 'Planning').tap{ |s|s.update_attributes(position: position+=1) }
+      plan_done = Swimlane.find_or_create_by(board: board, name: 'Planning - DONE').tap{ |s|s.update_attributes(position: position+=1) }
+      dev = Swimlane.find_or_create_by(board: board, name: 'Development', display_duration: true).tap{ |s|s.update_attributes(position: position+=1) }
+      blocked = Swimlane.find_or_create_by(board: board, name: 'Development - blocked', display_duration: true).tap{ |s|s.update_attributes(position: position+=1) }
+      cr = Swimlane.find_or_create_by(board: board, name: 'Code Review', display_duration: true).tap{ |s|s.update_attributes(position: position+=1) }
+      cr_done = Swimlane.find_or_create_by(board: board, name: 'Code Review - DONE', display_duration: true).tap{ |s|s.update_attributes(position: position+=1) }
+      accept = Swimlane.find_or_create_by(board: board, name: 'Acceptance', display_duration: true).tap{ |s|s.update_attributes(position: position+=1) }
+      accept_done = Swimlane.find_or_create_by(board: board, name: 'Acceptance - DONE', display_duration: true).tap{ |s|s.update_attributes(position: position+=1) }
+      deploy = Swimlane.find_or_create_by(board: board, name: 'Deploying', display_duration: true).tap{ |s|s.update_attributes(position: position+=1) }
+      done = Swimlane.find_or_create_by(board: board, name: 'Deploying - DONE').tap{ |s|s.update_attributes(position: position+=1) }
 
       SwimlaneTransition.find_or_create_by(swimlane: backlog, transition: plan).update(position: 1)
       SwimlaneTransition.find_or_create_by(swimlane: backlog, transition: bugs).update(position: 2)
@@ -90,3 +90,4 @@ namespace :github do
     end
   end
 end
+
