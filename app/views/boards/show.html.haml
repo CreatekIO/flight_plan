@@ -13,7 +13,7 @@
 
 - show_repo_name = @board.repos.count > 1
 .board
-  - @board.swimlanes.each do |swimlane|
+  - @board.swimlanes.ordered.each do |swimlane|
     .swimlane
       .header= swimlane.name
       .body

@@ -6,6 +6,8 @@ class Swimlane < ApplicationRecord
   has_many :swimlane_transitions, -> { order(:position) }, dependent: :destroy
   has_many :transitions, through: :swimlane_transitions
 
+  scope :ordered, -> { order(:position) }
+
   def self.find_by_label!(label)
     where('LOWER(name) = ?', label.gsub(/^status: /, '')).first!
   end
