@@ -12,7 +12,7 @@ class BoardTicket < ApplicationRecord
 
   def state_durations
     timesheets.each_with_object(Hash.new 0) do |timesheet, durations|
-      durations[timesheet.swimlane.name] += (timesheet.ended_at || Time.now) - timesheet.started_at
+      durations[timesheet.swimlane.name] += timesheet.started_at.business_time_until(timesheet.ended_at || Time.now)
     end
   end
 
@@ -26,6 +26,7 @@ class BoardTicket < ApplicationRecord
     board.swimlanes.where(display_duration: true).map do |swimlane|
       next if durations[swimlane.name].zero?
       {
+        id: swimlane.id,
         name: swimlane.name,
         duration: format_duration(durations[swimlane.name])
       }
@@ -44,10 +45,10 @@ class BoardTicket < ApplicationRecord
   def format_duration(seconds)
     if seconds < 1.hour
       "< 1h"
-    elsif seconds < 24.hours
+    elsif seconds < 8.hours
       "#{(seconds / 1.hour).floor}h"
     else
-      "#{(seconds / 24.hours).floor}d"
+      "#{(seconds / 8.hours).floor}d"
     end
   end
 
