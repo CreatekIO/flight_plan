@@ -18,7 +18,7 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
   def ensure_org_member
     login = auth.extra.raw_info.login
     unless Octokit.organization_member?('CreatekIO', login)
-      raise 'Not a memeber of Createk'
+      raise 'Not a member of Createk'
     end
   end
 
