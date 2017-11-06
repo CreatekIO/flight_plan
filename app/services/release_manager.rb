@@ -76,7 +76,7 @@ class ReleaseManager
   end
 
   def tickets
-    board.deploy_swimlane.tickets.where(repo_id: repo.id).umerged
+    board.deploy_swimlane.tickets.where(repo_id: repo.id).unmerged
   end
 
   def branches_to_merge
