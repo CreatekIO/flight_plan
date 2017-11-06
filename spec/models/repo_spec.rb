@@ -7,24 +7,80 @@ RSpec.describe Repo, type: :model do
     it { is_expected.to have_many(:board_repos) }
   end
 
+  subject { create(:repo) }
+
   describe '#branch_names' do
-    pending
+    let(:branches) { 
+      [ 
+        { name: 'develop' },
+        { name: 'master' },
+        { name: 'feature/#1-fix-me' }
+      ]
+    }
+    it 'returns the names of all the branches on a repo' do
+      stub = stub_request(:get, "https://api.github.com/repos/user/repo_name/branches?per_page=100")
+        .to_return(status: 200, body: branches)
+
+      expect(subject.branch_names).to include('master', 'develop', 'feature/#1-fix-me')
+      expect(stub).to have_been_requested.once
+    end
   end
 
   describe '#compare' do
-    pending
+    it 'returns the diff between two branches' do
+      stub = stub_request(:get, "https://api.github.com/repos/user/repo_name/compare/develop...master")
+      subject.compare('develop', 'master')
+
+      expect(stub).to have_been_requested.once
+    end 
   end
 
   describe '#pull_requests' do
-    pending
+    it 'returns pull request details' do
+      stub = stub_request(:get, "https://api.github.com/repos/user/repo_name/pulls?per_page=100")
+      subject.pull_requests
+
+      expect(stub).to have_been_requested.once
+    end
   end
 
   describe '#create_pull_request' do
-    pending
+    let(:title) { 'Pull Request Name' }
+    let(:body) { 'Body text' }
+    let(:base) { 'master' }
+    let(:head) { 'branch-to-be-merged ' }
+    let(:params) { 
+      {
+        base: base,
+        head: head,
+        title: title,
+        body: body
+      }
+    }
+    it 'creates a pull requests' do
+      stub = stub_request(:post, "https://api.github.com/repos/user/repo_name/pulls").with(body: params)
+      subject.create_pull_request(base, head, title, body)
+
+      expect(stub).to have_been_requested.once
+    end
   end
   
   describe '#create_ref' do
-    pending
+    let(:branch_name) { 'release/123' }
+    let(:sha) { '5g32345676a44545' }
+    let(:params) {  
+      {
+        ref: "refs/#{branch_name}",
+        sha: sha,
+      }
+    }
+    it 'create a branch on github' do
+      stub = stub_request(:post, "https://api.github.com/repos/user/repo_name/git/refs").
+        with(body: params)
+      subject.create_ref(branch_name, sha)
+
+      expect(stub).to have_been_requested.once
+    end
   end
   
   describe '#merge' do

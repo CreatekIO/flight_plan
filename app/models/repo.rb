@@ -14,7 +14,7 @@ class Repo < ApplicationRecord
   end
 
   def branch_names
-    @branch_names ||= client.branches(remote_url).collect { |b| b.name }
+    @branch_names ||= client.branches(remote_url).collect { |b| b[:name] }
   end
 
   def compare(target_branch, branch)
@@ -29,8 +29,8 @@ class Repo < ApplicationRecord
     client.pull_requests(remote_url)
   end
 
-  def create_pull_request(target, source, name, body)
-    client.create_pull_request(remote_url, target, source, name, pr_body)
+  def create_pull_request(target, source, title, body)
+    client.create_pull_request(remote_url, target, source, title, body)
   end
 
   def create_ref(ref, sha)
