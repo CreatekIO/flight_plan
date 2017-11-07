@@ -1,0 +1,13 @@
+business_time:
+  beginning_of_workday: 9:00 am
+  end_of_workday: 5:00 pm
+  holidays:
+    - December 25th, 2017
+    - December 26th, 2017
+    - Jan 01, 2018
+  work_week:
+    - mon
+    - tue
+    - wed
+    - thu
+    - fri

@@ -49,6 +49,9 @@ GEM
       autoprefixer-rails (>= 5.2.1)
       sass (>= 3.3.4)
     builder (3.2.3)
+    business_time (0.9.3)
+      activesupport (>= 3.2.0)
+      tzinfo
     byebug (9.1.0)
     cancancan (2.0.0)
     capybara (2.15.1)
@@ -278,6 +281,7 @@ PLATFORMS
 
 DEPENDENCIES
   bootstrap-sass
+  business_time
   byebug
   cancancan (~> 2.0.0)
   capybara
