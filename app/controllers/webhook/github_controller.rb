@@ -6,7 +6,9 @@ class Webhook::GithubController < Webhook::BaseController
   private
 
   def github_issues(payload)
-    Ticket.import(payload[:issue], payload[:repository])
+    Repo.find_by!(remote_url: payload[:repository][:full_name]).with_lock do
+      Ticket.import(payload[:issue], payload[:repository])
+    end
   end
 
   def github_issue_comment(payload)
