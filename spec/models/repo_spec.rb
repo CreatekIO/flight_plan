@@ -37,21 +37,21 @@ RSpec.describe Repo, type: :model do
          l10n_develop 
       ) 
     }
-    let(:regex) { raise NotImplemented }
+    let(:regex) { raise NotImplementedError }
     let(:result) { subject.regex_branches(regex ) }
  
     before do
       allow(subject).to receive(:branch_names).and_return(branch_names)
     end
     context 'when it\'s a literal string' do
-      let(:regex) { /l10n_develop/ }
+      let(:regex) { /^l10n_develop$/ }
       it 'returns just that branch' do
         expect(result).to contain_exactly('l10n_develop')
       end
     end
 
     context 'when it matches more than one branch name' do
-      let(:regex) { /^l10n_develop$|^config_changes$/ }
+      let(:regex) { /^l10n_develop|config_changes$/ }
       it 'returns the matching branches' do
         expect(result).to contain_exactly('l10n_develop', 'config_changes')
       end
