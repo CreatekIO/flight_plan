@@ -33,7 +33,11 @@ class ReleaseManager
   def extra_branches
     @extra_branches ||= 
       if board.additional_branches_regex.present?
-        repo.regex_branches(Regexp.new(board.additional_branches_regex))
+        begin
+          repo.regex_branches(Regexp.new(board.additional_branches_regex))
+        rescue RegexpError
+          []
+        end
       else
         []
       end
