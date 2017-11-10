@@ -6,7 +6,7 @@ class Repo < ApplicationRecord
   has_many :tickets, dependent: :destroy
 
   def regex_branches(regex)
-    branch_names.select { |branch| regex =~ branch }
+    branch_names.grep(regex)
   end
 
   def update_merged_tickets
