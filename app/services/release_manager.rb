@@ -6,7 +6,6 @@ class ReleaseManager
     @board = board
     @repo = repo
     @release_branch_name = Time.now.strftime('release/%Y%m%d-%H%M%S')
-    @extra_branches = []
     @merge_conflicts = []
   end
 
@@ -29,7 +28,20 @@ class ReleaseManager
 
   private
 
-  attr_reader :board, :repo, :release_branch_name, :extra_branches, :merge_conflicts
+  attr_reader :board, :repo, :release_branch_name, :merge_conflicts
+
+  def extra_branches
+    @extra_branches ||= 
+      if board.additional_branches_regex.present?
+        begin
+          repo.regex_branches(Regexp.new(board.additional_branches_regex))
+        rescue RegexpError
+          []
+        end
+      else
+        []
+      end
+  end
 
   def create_release_branch
     initialize_release_branch

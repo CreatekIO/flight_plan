@@ -5,6 +5,10 @@ class Repo < ApplicationRecord
   has_many :boards, through: :board_repos
   has_many :tickets, dependent: :destroy
 
+  def regex_branches(regex)
+    branch_names.grep(regex)
+  end
+
   def update_merged_tickets
     tickets.unmerged.each do |ticket|
       if ticket.merged_to?('master')

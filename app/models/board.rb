@@ -4,6 +4,7 @@ class Board < ApplicationRecord
   has_many :swimlanes, dependent: :destroy
   has_many :board_tickets, dependent: :destroy
   belongs_to :deploy_swimlane, class_name: 'Swimlane', optional: true
+  validate :check_additional_branches_regex
 
   def open_swimlane
     swimlanes.order(:position).first
@@ -11,5 +12,13 @@ class Board < ApplicationRecord
 
   def closed_swimlane
     swimlanes.order(:position).last
+  end
+
+  private
+
+  def check_additional_branches_regex
+    Regexp.new(additional_branches_regex.to_s)
+  rescue RegexpError => e
+    errors.add(:additional_branches_regex, e.message)
   end
 end
