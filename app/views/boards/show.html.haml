@@ -29,22 +29,22 @@
                 .meta
                   %span.repo-name
                     = ticket.repo.name
-            .panel-body
-              - if swimlane.display_duration?
-                %p
-                  Current state:
-                  = board_ticket.current_state_duration
-            .panel-footer
-              - if swimlane.transitions.any?
-                .btn-group
-                  =link_to(swimlane.transitions[0].name, board_board_ticket_path(@board, board_ticket, board_ticket: { swimlane_id: swimlane.transitions[0].id }), data: { method: 'patch' }, class: 'btn btn-sm btn-info ')
+            - if swimlane.display_duration?
+              .content
+                .description
+                  %p
+                    Current state:
+                    = board_ticket.current_state_duration
+            - if swimlane.transitions.any?
+              .extra.content
+                .ui.right.floated.primary.buttons
+                  = link_to(swimlane.transitions[0].name, board_board_ticket_path(@board, board_ticket, board_ticket: { swimlane_id: swimlane.transitions[0].id }), data: { method: 'patch' }, class: 'ui button')
                   - if swimlane.transitions.count > 1
-                    %button.btn.btn-sm.btn-info.dropdown-toggle{"aria-expanded" => "false", "aria-haspopup" => "true", "data-toggle" => "dropdown", :type => "button"}
-                      %span.caret
-                      %span.sr-only Toggle Dropdown
-                    %ul.dropdown-menu
-                      - swimlane.transitions[1..-1].each do |transition|
-                        %li
-                          =link_to(transition.name, board_board_ticket_path(@board, board_ticket, board_ticket: { swimlane_id: transition.id }), data: { method: 'patch' })
+                    .ui.floating.dropdown.icon.button
+                      %i.dropdown.icon
+                      .left.menu
+                        - swimlane.transitions.drop(1).each do |transition|
+                          .item
+                            = link_to(transition.name, board_board_ticket_path(@board, board_ticket, board_ticket: { swimlane_id: transition.id }), data: { method: 'patch' })
 
 
