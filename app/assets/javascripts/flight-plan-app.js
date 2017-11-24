@@ -1,5 +1,8 @@
 FPLAN = {
     common: {
-        // application wide code here
+        init: function(){
+            // application wide code here
+            FPLAN.common.semantic.init();
+        }
     }
 }
