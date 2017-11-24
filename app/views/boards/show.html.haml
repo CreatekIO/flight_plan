@@ -23,7 +23,7 @@
               .header
                 = link_to "##{ticket.remote_number}", "http://github.com/#{ticket.repo.remote_url}/issues/#{ticket.remote_number}", target: '_blank', class: 'ui yellow circular label'
 
-                = link_to(ticket.remote_title, '', data: { url: board_board_ticket_path(@board, board_ticket), target: '#applicationModal', hook: '_showTicketAjax', toggle: 'modal' })
+                = link_to(ticket.remote_title, '', data: { url: board_board_ticket_path(@board, board_ticket), target: '#applicationModal', hook: '_showTicketAjax' }, class: 'issue-title')
 
               - if show_repo_name
                 .meta

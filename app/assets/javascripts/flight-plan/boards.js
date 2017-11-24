@@ -1,12 +1,12 @@
 FPLAN.boards = {
     show: function() {
         var parent = this;
-        $('#applicationModal').on('show.bs.modal', function(event) {
-            var relatedTarget = $(event.relatedTarget);
-            if(relatedTarget.data('hook').length > 0) {
-                eval('parent.' + relatedTarget.data('hook') + '(relatedTarget)')
-            }
-        });
+
+        $(document).on('click', '.issue-title', function(event) {
+            event.preventDefault();
+            var target = $(event.target);
+            parent._showTicketAjax(target);
+        }); 
     },
 
     _parseMarkdown: function(text) {
@@ -19,36 +19,43 @@ FPLAN.boards = {
     _showTicketAjax: function(link) {
         $.ajax({
             url: link.data('url')
-        }).success(function(data) {
+        }).then(function(data) {
             var modal = $('#applicationModal');
-            var modalBody = modal.find('.modal-body')
+            var modalBody = modal.children('.content').empty()
 
-            modal.find('.modal-title').html(data.ticket.title);
+            modal.find('.header').html(data.ticket.title);
             modalBody.html(FPLAN.boards._headerHtml(data));
 
             $.each(data.ticket.comments, function(index, comment) {
                 modalBody.append(FPLAN.boards._commentHtml(comment));
             })
 
+            modalBody.append('<div class="ui feed">');
             $.each(data.state_durations, function(index, state_duration) {
                 modalBody.append(FPLAN.boards._durationHtml(state_duration));
             })
+            modalBody.append('</div>');
+            modal.modal('show');
         })
     },
 
     _headerHtml: function(data) {
-        return '<div class="well">' 
-            + FPLAN.boards._parseMarkdown(data.ticket.body)
-            + '</div>';
+        return FPLAN.boards._parseMarkdown(data.ticket.body);
     },
 
     _commentHtml: function(comment) {
-        return '<div class="well">'
-            + FPLAN.boards._parseMarkdown(comment.body) 
-            + '<br><span class="label label-danger">'
-            + comment.author
-            + '</span>'
-            + '</div>';
+        return '<div class="event">'
+            + '<div class="content">'
+                + '<div class="summary">'
+                    + '<div class="user">'
+                        + comment.author
+                    + '</div>'
+                + '</div>'
+                + '<div class="extra text">'
+                    + FPLAN.boards._parseMarkdown(comment.body) 
+                + '</div>'
+            + '</div>'
+        + '</div>';
     },
 
     _durationHtml: function(state_duration) {
