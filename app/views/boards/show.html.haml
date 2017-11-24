@@ -1,5 +1,5 @@
 .board-header
-  .ui.right.floated.selection.dropdown
+  .ui.selection.dropdown
     %i.dropdown.icon
     .default.text= @board.name
 
@@ -14,20 +14,21 @@
 .board
   - @board.swimlanes.ordered.each do |swimlane|
     .swimlane
-      .header= swimlane.name
+      .swimlane-header= swimlane.name
       .body
         - swimlane.board_tickets.each do |board_ticket|
           - ticket = board_ticket.ticket
-          .panel.panel-default
-            .panel-heading
-              .remote-details
-                %span.issue-number
-                  = link_to ticket.remote_number, "http://github.com/#{ticket.repo.remote_url}/issues/#{ticket.remote_number}", target: '_blank'
-                - if show_repo_name
+          .ui.card
+            .content
+              .header
+                = link_to "##{ticket.remote_number}", "http://github.com/#{ticket.repo.remote_url}/issues/#{ticket.remote_number}", target: '_blank', class: 'ui yellow circular label'
+
+                = link_to(ticket.remote_title, '', data: { url: board_board_ticket_path(@board, board_ticket), target: '#applicationModal', hook: '_showTicketAjax', toggle: 'modal' })
+
+              - if show_repo_name
+                .meta
                   %span.repo-name
                     = ticket.repo.name
-
-              = link_to(ticket.remote_title, '', data: { url: board_board_ticket_path(@board, board_ticket), target: '#applicationModal', hook: '_showTicketAjax', toggle: 'modal' })
             .panel-body
               - if swimlane.display_duration?
                 %p
