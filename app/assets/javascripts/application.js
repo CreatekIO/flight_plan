@@ -12,8 +12,8 @@
 //
 //= require rails-ujs
 //= require turbolinks
-//= require jquery
-//= require bootstrap
+//= require jquery3
+//= require semantic
 //= require flight-plan-app
 //= require_tree ./flight-plan/common
 //= require_tree ./flight-plan
