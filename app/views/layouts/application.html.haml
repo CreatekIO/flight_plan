@@ -7,15 +7,13 @@
     = stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload'
     = javascript_include_tag 'application', 'data-turbolinks-track': 'reload'
   %body{"data-action" => action_name, "data-controller" => controller_path.gsub('/', '__')}
-    = yield
+    .ui.container
+      = yield
 
-    #applicationModal.modal.fade
-      .modal-dialog
-        .modal-content
-          .modal-header
-            %button.close{"data-dismiss" => "modal", :type => "button"}
-              %span ×
-            %h4.modal-title
-          .modal-body
-          .modal-footer
-            %button.btn.btn-default{"data-dismiss" => "modal", :type => "button"} Close
+    #applicationModal.ui.modal
+      %i.close.icon
+      .header
+      .content Test
+      .actions
+        %button.ui.button Cancel
+        %button.ui.button OK
