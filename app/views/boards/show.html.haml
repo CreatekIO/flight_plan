@@ -6,8 +6,7 @@
     .menu
       - @boards.each do |board|
         - next if board.id == @board.id 
-        .item
-          = link_to board.name, board_path(board)
+        = link_to board.name, board_path(board), class: 'item'
 
 - show_repo_name = @board.repos.count > 1
 .board
