@@ -16,6 +16,8 @@ Rails.application.routes.draw do
     resources :board_tickets
   end
 
+  resources :react_boards
+
   namespace :webhook do
     resource :github, only: :create, defaults: { formats: :json }, controller: 'github'
   end

@@ -8,7 +8,6 @@
         - next if board.id == @board.id 
         .item
           = link_to board.name, board_path(board)
-  .clearfix
 
 - show_repo_name = @board.repos.count > 1
 .board
