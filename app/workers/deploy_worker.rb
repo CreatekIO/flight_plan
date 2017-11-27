@@ -7,7 +7,6 @@ class DeployWorker
     board.repos.each do |repo|
       manager = ReleaseManager.new(board, repo)
       next if manager.open_pr?
-      next unless manager.cooled_off?
 
       manager.create_release
     end
