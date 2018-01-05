@@ -51,6 +51,7 @@ jobs:
     deployment:
       production:
         branch: master
-        heroku:
-          appname: flight-plan-createk
+        commands:
+          - git push git@heroku.com:flight-plan-createk.git $CIRCLE_SHA1:master
+          - heroku run rake db:migrate --app flight-plan-createk
 
