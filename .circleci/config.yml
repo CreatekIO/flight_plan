@@ -47,3 +47,10 @@ jobs:
       - store_artifacts:
           path: tmp/capybara
           destination: capybara
+
+    deployment:
+      staging:
+        branch: master
+        heroku:
+          appname: flight-plan-createk
+
