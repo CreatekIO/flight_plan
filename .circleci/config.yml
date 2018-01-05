@@ -49,7 +49,7 @@ jobs:
           destination: capybara
 
     deployment:
-      staging:
+      production:
         branch: master
         heroku:
           appname: flight-plan-createk
