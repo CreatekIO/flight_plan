@@ -20,7 +20,7 @@ class ReleaseManager
   end
 
   def create_release
-    if tickets.any?
+    if unmerged_tickets.any?
       create_release_branch
       create_pull_request
     end
@@ -41,6 +41,10 @@ class ReleaseManager
       else
         []
       end
+  end
+
+  def unmerged_tickets
+    @unmerged_tickets ||= tickets.reject { |t| t.merged_to?('master') }
   end
 
   def create_release_branch
@@ -92,9 +96,7 @@ class ReleaseManager
   end
 
   def branches_to_merge
-    tickets.inject([]) do |branches, ticket|
-      branches + ticket.branch_names
-    end + extra_branches
+    unmerged_tickets.flat_map(&:branch_names) + extra_branches
   end
 
   def master
@@ -102,7 +104,7 @@ class ReleaseManager
   end
 
   def pr_body
-    messages = tickets.collect do |ticket|
+    messages = unmerged_tickets.collect do |ticket|
       "Connects ##{ticket.remote_number} - #{ticket.remote_title}"
     end 
 
