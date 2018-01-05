@@ -35,7 +35,7 @@ class Ticket < ApplicationRecord
   end
 
   def branch_names
-    repo.branch_names.select { |branch| branch.include? "##{remote_number}" }
+    repo.branch_names.grep(/##{remote_number}[^0-9]/)
   end
 
   def update_board_tickets_from_remote(remote_issue)
