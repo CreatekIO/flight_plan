@@ -54,7 +54,7 @@ jobs:
           name: deploy to heroku
           command: |
             if [ "${CIRCLE_BRANCH}" == "master" ]; then
-                sh .circleci/setup-heroku.sh
+                sh .circleci/setup_heroku.sh
                 git push git@heroku.com:flight-plan-createk.git HEAD:refs/heads/master
                 heroku run rake db:migrate --app flight-plan-createk
                 heroku restart --app flight-plan-createk
