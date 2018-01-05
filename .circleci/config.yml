@@ -47,3 +47,11 @@ jobs:
       - store_artifacts:
           path: tmp/capybara
           destination: capybara
+
+    deployment:
+      production:
+        branch: master
+        commands:
+          - git push git@heroku.com:flight-plan-createk.git $CIRCLE_SHA1:master
+          - heroku run rake db:migrate --app flight-plan-createk
+
