@@ -47,6 +47,16 @@ class Ticket < ApplicationRecord
     end
   end
 
+  def to_builder
+    Jbuilder.new do |ticket|
+      ticket.remote_id remote_id
+      ticket.remote_number remote_number
+      ticket.remote_title remote_title
+      ticket.remote_body remote_body
+      ticket.remote_state remote_state
+    end
+  end
+
   private
 
   def swimlane_from_remote(remote_issue, board)
