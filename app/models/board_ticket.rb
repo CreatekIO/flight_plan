@@ -8,6 +8,9 @@ class BoardTicket < ApplicationRecord
   after_save :update_timesheet, if: :saved_change_to_swimlane_id?
   after_commit :update_github, on: :update, if: :saved_change_to_swimlane_id?
 
+  scope :for_board, ->(board_id) { where(board_id: board_id) }
+  scope :for_repo, ->(repo_id) { where(tickets: { repo_id: repo_id }) }
+
   attr_writer :update_remote
 
   def state_durations
