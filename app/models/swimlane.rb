@@ -11,4 +11,13 @@ class Swimlane < ApplicationRecord
   def self.find_by_label!(label)
     where('LOWER(name) = ?', label.gsub(/^status: /, '')).first!
   end
+
+  def to_builder
+    Jbuilder.new do |swimlane|
+      swimlane.id id
+      swimlane.name name
+      swimlane.position position
+      swimlane.display_duration display_duration
+    end
+  end
 end

@@ -20,4 +20,8 @@ Rails.application.routes.draw do
     resource :github, only: :create, defaults: { formats: :json }, controller: 'github'
   end
 
+  namespace :api do
+    resources :board_tickets
+  end
+
 end
