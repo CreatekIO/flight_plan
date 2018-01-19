@@ -11,6 +11,7 @@ class CreateReleases < ActiveRecord::Migration[5.1]
       t.integer :remote_number
       t.string :remote_url
       t.string :remote_state
+      t.datetime :remote_merged_at
 
       t.timestamps
     end

@@ -72,6 +72,7 @@ ActiveRecord::Schema.define(version: 20180119144340) do
     t.integer "remote_number"
     t.string "remote_url"
     t.string "remote_state"
+    t.datetime "remote_merged_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["board_id"], name: "index_releases_on_board_id"
