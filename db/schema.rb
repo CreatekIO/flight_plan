@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171109072942) do
+ActiveRecord::Schema.define(version: 20180119144340) do
 
   create_table "board_repos", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin" do |t|
     t.bigint "board_id"
@@ -50,6 +50,32 @@ ActiveRecord::Schema.define(version: 20171109072942) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["ticket_id"], name: "index_comments_on_ticket_id"
+  end
+
+  create_table "release_board_tickets", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin" do |t|
+    t.bigint "release_id"
+    t.bigint "board_ticket_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["board_ticket_id"], name: "index_release_board_tickets_on_board_ticket_id"
+    t.index ["release_id"], name: "index_release_board_tickets_on_release_id"
+  end
+
+  create_table "releases", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin" do |t|
+    t.bigint "board_id"
+    t.bigint "repo_id"
+    t.string "title"
+    t.string "source_branch"
+    t.string "target_branch"
+    t.string "remote_title"
+    t.integer "remote_id"
+    t.integer "remote_number"
+    t.string "remote_url"
+    t.string "remote_state"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["board_id"], name: "index_releases_on_board_id"
+    t.index ["repo_id"], name: "index_releases_on_repo_id"
   end
 
   create_table "repos", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin" do |t|

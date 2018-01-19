@@ -4,6 +4,7 @@ class Repo < ApplicationRecord
   has_many :board_repos, dependent: :destroy
   has_many :boards, through: :board_repos
   has_many :tickets, dependent: :destroy
+  has_many :releases, dependent: :destroy
 
   def regex_branches(regex)
     branch_names.grep(regex)
@@ -23,8 +24,8 @@ class Repo < ApplicationRecord
 
   def compare(target_branch, branch)
     client.compare(
-      remote_url, 
-      target_branch, 
+      remote_url,
+      target_branch,
       branch
     )
   end
