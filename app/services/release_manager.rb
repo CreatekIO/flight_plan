@@ -25,7 +25,7 @@ class ReleaseManager
   def merge_prs(branch = 'master')
     repo.pull_requests.each do |pr|
       next unless pr[:base][:ref] == branch
-      next if pr[:title].include?('CONFLICT')
+      next if pr[:title].include?('CONFLICTS')
       log "Merging PR ##{pr[:number]} - #{pr[:title]}"
 
       repo.merge_pull_request(pr[:number])
