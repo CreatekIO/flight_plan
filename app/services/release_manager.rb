@@ -15,10 +15,6 @@ class ReleaseManager
     end
   end
 
-  def cooled_off?
-    Time.now >= deploy_after
-  end
-
   def create_release
     if unmerged_tickets.any?
       create_release_branch
@@ -112,53 +108,42 @@ class ReleaseManager
   end
 
   def pr_body
-    messages = unmerged_tickets.collect do |ticket|
+    messages = ['**Issues**'] + unmerged_tickets.collect do |ticket|
       "Connects ##{ticket.remote_number} - #{ticket.remote_title}"
     end 
 
-    messages += extra_branches.collect do |branch|
-      "Merging in additional branch '#{branch}'"
-    end
-
-    if merge_conflicts.any?
-      messages << 'Could not merge all branches. Please manually merge and resolve conflicts for the following:'
-      messages << '```'
-      messages << '    git fetch'
-      messages << "    git checkout #{release_branch_name}"
-      merge_conflicts.each do |work_branch|
-        messages << "    git merge origin/#{work_branch}"
-        messages << "    // resolve conflicts and finish merge"
-      end
-      messages << "    git push"
-    end
+    messages += extra_branches_pr_messages if extra_branches.any?
+    messages += merge_conflict_pr_messages if merge_conflicts.any?
 
     messages.join("\n")
   end
 
+  def extra_branches_pr_messages
+    ['', '**Extra branches**'] + extra_branches.collect do |branch|
+      "Merging in additional branch '#{branch}'"
+  end
+    end
+
+  def merge_conflict_pr_messages
+    messages = [
+      '',
+      '**Conflicts**',
+      'Could not merge all branches. Please manually merge and resolve conflicts:',
+      '```',
+      '    git fetch',
+      "    git checkout #{release_branch_name}"
+    ]
+    merge_conflicts.each do |work_branch|
+      messages << "    git merge origin/#{work_branch}"
+      messages << '    // resolve conflicts and finish merge'
+    end
+    messages + [
+      '    git push',
+      '```'
+    ]
+  end
 
   def log(message)
+    puts message
   end
-
-  def deploy_after
-    last_ticket = board.deploy_swimlane.board_tickets.order(:updated_at).last!
-
-    deploy_after = last_ticket.updated_at + DEPLOY_DELAY
-
-    if deploy_after < Time.parse('9am')
-      deploy_after = deploy_after.change(hour: 9, minute: 0, second: 0)
-    elsif deploy_after > Time.parse('5pm')
-      deploy_after = deploy_after.change(hour: 9, minute: 0, second: 0)
-      deploy_after += 1.day
-    end
-
-    loop do
-      break if (1..5).include? deploy_after.wday
-      deploy_after += 1.day
-    end
-
-    deploy_after
-  rescue ActiveRecord::RecordNotFound
-    nil
-  end
-
 end
