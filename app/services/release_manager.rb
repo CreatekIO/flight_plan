@@ -30,6 +30,14 @@ class ReleaseManager
 
   attr_reader :board, :repo, :release_branch_name, :merge_conflicts
 
+  def release_pr_name
+    if merge_conflicts.any?
+      "#{release_branch_name} (CONFLICTS)"
+    else
+      release_branch_name
+    end
+  end
+
   def extra_branches
     @extra_branches ||= 
       if board.additional_branches_regex.present?
@@ -54,11 +62,11 @@ class ReleaseManager
   end
 
   def create_pull_request
-    log "Creating pull request..."
+    log 'Creating pull request...'
     repo.create_pull_request(
       'master',
       release_branch_name,
-      release_branch_name,
+      release_pr_name,
       pr_body
     )
     log 'done'
