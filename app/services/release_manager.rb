@@ -1,7 +1,4 @@
 class ReleaseManager
-
-  DEPLOY_DELAY = 10.minutes
-
   def initialize(board, repo)
     @board = board
     @repo = repo
@@ -16,9 +13,10 @@ class ReleaseManager
   end
 
   def create_release
-    if unmerged_tickets.any?
-      create_release_branch
-      create_pull_request
+    return unless unmerged_tickets.any?
+    create_release_branch
+    if create_pull_request
+      announce_pr_opened if send_to_slack?
     end
   end
 
@@ -34,7 +32,7 @@ class ReleaseManager
 
   private
 
-  attr_reader :board, :repo, :release_branch_name, :merge_conflicts
+  attr_reader :board, :repo, :release_branch_name, :merge_conflicts, :release_pr
 
   def release_pr_name
     if merge_conflicts.any?
@@ -69,7 +67,7 @@ class ReleaseManager
 
   def create_pull_request
     log 'Creating pull request...'
-    repo.create_pull_request(
+    @release_pr = repo.create_pull_request(
       'master',
       release_branch_name,
       release_pr_name,
@@ -151,6 +149,44 @@ class ReleaseManager
       '    git push',
       '```'
     ]
+  end
+
+  def send_to_slack?
+    ENV['SLACK_API_TOKEN'].present?
+  end
+
+  def announce_pr_opened
+    tickets = unmerged_tickets.collect do |ticket|
+      "• #{ticket.remote_number} : #{ticket.remote_title}"
+    end
+
+    attachments = [
+      {
+        fallback: "#{repo.name} : #{release_pr_name}",
+        title: "#{repo.name} : #{release_pr_name}",
+        title_link: release_pr[:html_url],
+        text: tickets.join("\n"),
+        color: 'good'
+      }
+    ]
+
+    unless merge_conflicts.any?
+      attachments << {
+        title: 'This PR has conflicts and can not be merged automatically.',
+        color: 'warning'
+      }
+    end
+
+    slack_client.chat_postMessage(
+      channel: ENV['SLACK_CHANNEL'],
+      text: '*Pull Request Created*',
+      attachments: attachments,
+      as_user: true
+    )
+  end
+
+  def slack_client
+    Slack::Web::Client.new
   end
 
   def log(message)
