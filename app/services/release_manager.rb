@@ -170,7 +170,7 @@ class ReleaseManager
       }
     ]
 
-    unless merge_conflicts.any?
+    if merge_conflicts.any?
       attachments << {
         title: 'This PR has conflicts and can not be merged automatically.',
         color: 'warning'
