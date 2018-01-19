@@ -22,6 +22,16 @@ class ReleaseManager
     end
   end
 
+  def merge_prs(branch = 'master')
+    repo.pull_requests.each do |pr|
+      next unless pr[:base][:ref] == branch
+      next if pr[:title].include?('CONFLICT')
+      log "Merging PR ##{pr[:number]} - #{pr[:title]}"
+
+      repo.merge_pull_request(pr[:number])
+    end
+  end
+
   private
 
   attr_reader :board, :repo, :release_branch_name, :merge_conflicts
@@ -35,7 +45,7 @@ class ReleaseManager
   end
 
   def extra_branches
-    @extra_branches ||= 
+    @extra_branches ||=
       if board.additional_branches_regex.present?
         begin
           repo.regex_branches(Regexp.new(board.additional_branches_regex))
@@ -70,11 +80,11 @@ class ReleaseManager
   rescue Octokit::UnprocessableEntity
     log 'Could not create pull request, deleting branch'
     repo.delete_branch(release_branch_name)
-    false 
+    false
   end
 
   def initialize_release_branch
-    log "Creating release branch '#{release_branch_name}' on '#{repo.remote_url}'..."  
+    log "Creating release branch '#{release_branch_name}' on '#{repo.remote_url}'..."
     repo.create_ref("heads/#{release_branch_name}", master.object.sha)
     log 'done'
   end
@@ -84,8 +94,8 @@ class ReleaseManager
       begin
         log "Merging '#{work_branch}' into release..."
         repo.merge(
-          release_branch_name, 
-          work_branch, 
+          release_branch_name,
+          work_branch,
           commit_message: "Merging #{work_branch} into release"
         )
         log 'done'
@@ -110,7 +120,7 @@ class ReleaseManager
   def pr_body
     messages = ['**Issues**'] + unmerged_tickets.collect do |ticket|
       "Connects ##{ticket.remote_number} - #{ticket.remote_title}"
-    end 
+    end
 
     messages += extra_branches_pr_messages if extra_branches.any?
     messages += merge_conflict_pr_messages if merge_conflicts.any?
@@ -121,8 +131,8 @@ class ReleaseManager
   def extra_branches_pr_messages
     ['', '**Extra branches**'] + extra_branches.collect do |branch|
       "Merging in additional branch '#{branch}'"
-  end
     end
+  end
 
   def merge_conflict_pr_messages
     messages = [
