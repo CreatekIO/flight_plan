@@ -33,7 +33,7 @@ class ReleaseManager
 
   private
 
-  attr_reader :board, :repo, :release_branch_name, :merge_conflicts, :release_pr
+  attr_reader :board, :repo, :release_branch_name, :merge_conflicts, :remote_pr
 
   def create_release_model
     release = Release.new(
@@ -42,11 +42,11 @@ class ReleaseManager
       title: release_pr_name,
       source_branch: release_branch_name,
       target_branch: 'master',
-      remote_title: release_pr[:title],
-      remote_id: release_pr[:id],
-      remote_number: release_pr[:number],
-      remote_url: release_pr[:html_url],
-      remote_state: release_pr[:state]
+      remote_title: remote_pr[:title],
+      remote_id: remote_pr[:id],
+      remote_number: remote_pr[:number],
+      remote_url: remote_pr[:html_url],
+      remote_state: remote_pr[:state]
     )
     unmerged_tickets.each do |ticket|
       release.board_tickets << board.board_tickets.find_by(ticket: ticket)
@@ -87,7 +87,7 @@ class ReleaseManager
 
   def create_pull_request
     log 'Creating pull request...'
-    @release_pr = repo.create_pull_request(
+    @remote_pr = repo.create_pull_request(
       'master',
       release_branch_name,
       release_pr_name,
@@ -184,7 +184,7 @@ class ReleaseManager
       {
         fallback: "#{repo.name} : #{release_pr_name}",
         title: "#{repo.name} : #{release_pr_name}",
-        title_link: release_pr[:html_url],
+        title_link: remote_pr[:html_url],
         text: tickets.join("\n"),
         color: 'good'
       }
