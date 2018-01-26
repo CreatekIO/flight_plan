@@ -3,6 +3,6 @@ class Api::BoardsController < Api::BaseController
   respond_to :json
 
   def index
-    respond_with Board.all.pluck(:name)
+    respond_with Board.all
   end
 end

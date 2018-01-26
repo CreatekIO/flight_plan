@@ -16,11 +16,10 @@ class Boards extends Component {
   }
 
   render() {
-    let boardComponent;
-    if (this.state.apiData.boards) {
+    if (this.state.apiData.boards.length >= 1) {
       return <Header boards={this.state.apiData.boards} />;
     } else {
-      return <Header boards="No boards" />;
+      return <Header boards={[{ name: "no boards" }]} />;
     }
   }
 }
