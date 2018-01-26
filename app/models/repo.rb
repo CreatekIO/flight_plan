@@ -33,6 +33,10 @@ class Repo < ApplicationRecord
     client.pull_requests(remote_url)
   end
 
+  def merge_pull_request(number, comment = '')
+    client.merge_pull_request(remote_url, number, comment)
+  end
+
   def create_pull_request(target, source, title, body)
     client.create_pull_request(remote_url, target, source, title, body)
   end
@@ -43,9 +47,9 @@ class Repo < ApplicationRecord
 
   def merge(target, source, commit_message: nil)
     client.merge(
-      remote_url, 
-      target, 
-      source, 
+      remote_url,
+      target,
+      source,
       commit_message: commit_message
     )
   end

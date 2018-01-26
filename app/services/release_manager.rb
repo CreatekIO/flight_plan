@@ -1,7 +1,4 @@
 class ReleaseManager
-
-  DEPLOY_DELAY = 10.minutes
-
   def initialize(board, repo)
     @board = board
     @repo = repo
@@ -15,23 +12,38 @@ class ReleaseManager
     end
   end
 
-  def cooled_off?
-    Time.now >= deploy_after
+  def create_release
+    return unless unmerged_tickets.any?
+    create_release_branch
+    if create_pull_request
+      announce_pr_opened if send_to_slack?
+    end
   end
 
-  def create_release
-    if unmerged_tickets.any?
-      create_release_branch
-      create_pull_request
+  def merge_prs(branch = 'master')
+    repo.pull_requests.each do |pr|
+      next unless pr[:base][:ref] == branch
+      next if pr[:title].include?('CONFLICTS')
+      log "Merging PR ##{pr[:number]} - #{pr[:title]}"
+
+      repo.merge_pull_request(pr[:number])
     end
   end
 
   private
 
-  attr_reader :board, :repo, :release_branch_name, :merge_conflicts
+  attr_reader :board, :repo, :release_branch_name, :merge_conflicts, :release_pr
+
+  def release_pr_name
+    if merge_conflicts.any?
+      "#{release_branch_name} (CONFLICTS)"
+    else
+      release_branch_name
+    end
+  end
 
   def extra_branches
-    @extra_branches ||= 
+    @extra_branches ||=
       if board.additional_branches_regex.present?
         begin
           repo.regex_branches(Regexp.new(board.additional_branches_regex))
@@ -54,11 +66,11 @@ class ReleaseManager
   end
 
   def create_pull_request
-    log "Creating pull request..."
-    repo.create_pull_request(
+    log 'Creating pull request...'
+    @release_pr = repo.create_pull_request(
       'master',
       release_branch_name,
-      release_branch_name,
+      release_pr_name,
       pr_body
     )
     log 'done'
@@ -66,11 +78,11 @@ class ReleaseManager
   rescue Octokit::UnprocessableEntity
     log 'Could not create pull request, deleting branch'
     repo.delete_branch(release_branch_name)
-    false 
+    false
   end
 
   def initialize_release_branch
-    log "Creating release branch '#{release_branch_name}' on '#{repo.remote_url}'..."  
+    log "Creating release branch '#{release_branch_name}' on '#{repo.remote_url}'..."
     repo.create_ref("heads/#{release_branch_name}", master.object.sha)
     log 'done'
   end
@@ -80,8 +92,8 @@ class ReleaseManager
       begin
         log "Merging '#{work_branch}' into release..."
         repo.merge(
-          release_branch_name, 
-          work_branch, 
+          release_branch_name,
+          work_branch,
           commit_message: "Merging #{work_branch} into release"
         )
         log 'done'
@@ -104,53 +116,80 @@ class ReleaseManager
   end
 
   def pr_body
-    messages = unmerged_tickets.collect do |ticket|
+    messages = ['**Issues**'] + unmerged_tickets.collect do |ticket|
       "Connects ##{ticket.remote_number} - #{ticket.remote_title}"
-    end 
-
-    messages += extra_branches.collect do |branch|
-      "Merging in additional branch '#{branch}'"
     end
 
-    if merge_conflicts.any?
-      messages << 'Could not merge all branches. Please manually merge and resolve conflicts for the following:'
-      messages << '```'
-      messages << '    git fetch'
-      messages << "    git checkout #{release_branch_name}"
-      merge_conflicts.each do |work_branch|
-        messages << "    git merge origin/#{work_branch}"
-        messages << "    // resolve conflicts and finish merge"
-      end
-      messages << "    git push"
-    end
+    messages += extra_branches_pr_messages if extra_branches.any?
+    messages += merge_conflict_pr_messages if merge_conflicts.any?
 
     messages.join("\n")
   end
 
+  def extra_branches_pr_messages
+    ['', '**Extra branches**'] + extra_branches.collect do |branch|
+      "Merging in additional branch '#{branch}'"
+    end
+  end
+
+  def merge_conflict_pr_messages
+    messages = [
+      '',
+      '**Conflicts**',
+      'Could not merge all branches. Please manually merge and resolve conflicts:',
+      '```',
+      '    git fetch',
+      "    git checkout #{release_branch_name}"
+    ]
+    merge_conflicts.each do |work_branch|
+      messages << "    git merge origin/#{work_branch}"
+      messages << '    // resolve conflicts and finish merge'
+    end
+    messages + [
+      '    git push',
+      '```'
+    ]
+  end
+
+  def send_to_slack?
+    ENV['SLACK_API_TOKEN'].present?
+  end
+
+  def announce_pr_opened
+    tickets = unmerged_tickets.collect do |ticket|
+      "• #{ticket.remote_number} : #{ticket.remote_title}"
+    end
+
+    attachments = [
+      {
+        fallback: "#{repo.name} : #{release_pr_name}",
+        title: "#{repo.name} : #{release_pr_name}",
+        title_link: release_pr[:html_url],
+        text: tickets.join("\n"),
+        color: 'good'
+      }
+    ]
+
+    unless merge_conflicts.any?
+      attachments << {
+        title: 'This PR has conflicts and can not be merged automatically.',
+        color: 'warning'
+      }
+    end
+
+    slack_client.chat_postMessage(
+      channel: ENV['SLACK_CHANNEL'],
+      text: '*Pull Request Created*',
+      attachments: attachments,
+      as_user: true
+    )
+  end
+
+  def slack_client
+    Slack::Web::Client.new
+  end
 
   def log(message)
+    puts message
   end
-
-  def deploy_after
-    last_ticket = board.deploy_swimlane.board_tickets.order(:updated_at).last!
-
-    deploy_after = last_ticket.updated_at + DEPLOY_DELAY
-
-    if deploy_after < Time.parse('9am')
-      deploy_after = deploy_after.change(hour: 9, minute: 0, second: 0)
-    elsif deploy_after > Time.parse('5pm')
-      deploy_after = deploy_after.change(hour: 9, minute: 0, second: 0)
-      deploy_after += 1.day
-    end
-
-    loop do
-      break if (1..5).include? deploy_after.wday
-      deploy_after += 1.day
-    end
-
-    deploy_after
-  rescue ActiveRecord::RecordNotFound
-    nil
-  end
-
 end
