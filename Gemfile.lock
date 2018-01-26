@@ -313,6 +313,7 @@ DEPENDENCIES
   omniauth-github
   puma (~> 3.7)
   rails (~> 5.1.4)
+  responders
   rspec-rails
   sass-rails (~> 5.0)
   selenium-webdriver
