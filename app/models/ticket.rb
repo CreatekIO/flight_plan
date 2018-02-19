@@ -3,6 +3,8 @@ class Ticket < ApplicationRecord
 
   has_many :comments, dependent: :destroy
   has_many :board_tickets, dependent: :destroy
+  has_many :pull_request_connections
+  has_many :pull_requests, through: :pull_request_connections
 
   scope :merged, -> { where(merged: true) }
   scope :unmerged, -> { where(merged: false) }

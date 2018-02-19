@@ -1,5 +1,7 @@
 class PullRequest < ApplicationRecord
   belongs_to :repo
+  has_many :pull_request_connections, autosave: true
+  has_many :tickets, through: :pull_request_connections
 
   def self.import(remote_pr, remote_repo)
     pull_request = find_by_remote(remote_pr, remote_repo)
