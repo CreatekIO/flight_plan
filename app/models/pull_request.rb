@@ -3,6 +3,8 @@ class PullRequest < ApplicationRecord
   has_many :pull_request_connections, autosave: true
   has_many :tickets, through: :pull_request_connections
 
+  before_save :update_pull_request_connections
+
   def self.import(remote_pr, remote_repo)
     pull_request = find_by_remote(remote_pr, remote_repo)
     pull_request.update_attributes(
@@ -23,5 +25,44 @@ class PullRequest < ApplicationRecord
       pull_request.repo = Repo.find_by!(remote_url: remote_repo[:full_name])
     end
     pull_request
+  end
+
+  private
+
+  def update_pull_request_connections
+    to_keep, to_delete = pull_request_connections.includes(:ticket).partition do |conn|
+      referenced_issue_numbers.include?(conn.ticket.remote_number)
+    end
+
+    to_delete.map(&:destroy)
+
+    existing_issue_numbers = to_keep.map {|conn| conn.ticket.remote_number }
+
+    referenced_issue_numbers.each do |number|
+      next if existing_issue_numbers.include?(number)
+
+      matching_ticket = repo.tickets.find_by(remote_number: number)
+      next if matching_ticket.blank?
+
+      pull_request_connections.build(ticket: matching_ticket)
+    end
+  end
+
+  NUMBER_IN_BRANCH = /(?<=#)\d+/
+  NUMBER_IN_BODY = /connect(?:s|ed)?(?: to)? #(\d+)/i
+
+  def number_from_branch_name
+    remote_head_branch[NUMBER_IN_BRANCH]
+  end
+
+  def numbers_from_body
+    remote_body.to_s.scan(NUMBER_IN_BODY).flatten
+  end
+
+  def referenced_issue_numbers
+    @referenced_issue_numbers ||= [
+      *number_from_branch_name,
+      *numbers_from_body
+    ].to_set
   end
 end
