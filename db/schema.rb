@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171109072942) do
+ActiveRecord::Schema.define(version: 20180216163649) do
 
   create_table "board_repos", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin" do |t|
     t.bigint "board_id"
@@ -50,6 +50,21 @@ ActiveRecord::Schema.define(version: 20171109072942) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["ticket_id"], name: "index_comments_on_ticket_id"
+  end
+
+  create_table "pull_requests", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin" do |t|
+    t.string "remote_id"
+    t.string "remote_number"
+    t.string "remote_title"
+    t.text "remote_body"
+    t.string "remote_state"
+    t.string "remote_head_branch"
+    t.string "remote_head_sha"
+    t.string "remote_base_branch"
+    t.bigint "repo_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["repo_id"], name: "index_pull_requests_on_repo_id"
   end
 
   create_table "repos", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin" do |t|
@@ -116,6 +131,7 @@ ActiveRecord::Schema.define(version: 20171109072942) do
     t.datetime "remember_created_at"
   end
 
+  add_foreign_key "pull_requests", "repos"
   add_foreign_key "tickets", "repos"
   add_foreign_key "timesheets", "swimlanes", column: "after_swimlane_id"
   add_foreign_key "timesheets", "swimlanes", column: "before_swimlane_id"
