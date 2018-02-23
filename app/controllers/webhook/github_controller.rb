@@ -6,7 +6,7 @@ class Webhook::GithubController < Webhook::BaseController
   private
 
   def github_issues(payload)
-    Repo.find_by!(remote_url: payload[:repository][:full_name]).with_lock do
+    repo.with_lock do
       Ticket.import(payload[:issue], payload[:repository])
     end
   end
@@ -21,9 +21,8 @@ class Webhook::GithubController < Webhook::BaseController
   end
 
   def github_push(payload)
-    repo = Repo.find_by!(remote_url: payload['repository']['full_name']) 
-
     issue_number = payload['ref'][/#[0-9]*/, 0]
+
     if issue_number
       ticket = repo.tickets.find_by!(remote_number: issue_number[1..-1])
       ticket.update_attributes(merged: false)
@@ -38,5 +37,9 @@ class Webhook::GithubController < Webhook::BaseController
 
   def webhook_secret(_payload)
     ENV['GITHUB_WEBHOOK_SECRET']
+  end
+
+  def repo
+    @repo ||= Repo.find_by!(remote_url: json_body[:repository][:full_name])
   end
 end
