@@ -1,5 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe PullRequestConnection, type: :model do
-  pending "add some examples to (or delete) #{__FILE__}"
+  describe 'associations' do
+    it { should belong_to(:pull_request) }
+    it { should belong_to(:ticket) }
+  end
 end
