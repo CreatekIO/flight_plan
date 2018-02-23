@@ -31,6 +31,12 @@ class Webhook::GithubController < Webhook::BaseController
     end
   end
 
+  def github_pull_request(payload)
+    repo.with_lock do
+      PullRequest.import(payload[:pull_request], payload[:repository])
+    end
+  end
+
   def not_found
     head :ok
   end
