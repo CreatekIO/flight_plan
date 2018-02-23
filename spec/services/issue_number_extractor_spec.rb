@@ -10,6 +10,13 @@ RSpec.describe IssueNumberExtractor do
       expect(described_class.from_branch('feature/123-test')).to be_nil
     end
 
+    it 'ignores octothorpe-prefixed non-numbers' do
+      aggregate_failures do
+        expect(described_class.from_branch('feature/#test')).to be_nil
+        expect(described_class.from_branch('feature/#')).to be_nil
+      end
+    end
+
     context 'with multiple matches' do
       it 'returns only the first match' do
         expect(described_class.from_branch('#123-test-#999')).to eq('123')
