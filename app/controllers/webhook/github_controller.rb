@@ -2,6 +2,7 @@ class Webhook::GithubController < Webhook::BaseController
   include GithubWebhook::Processor
 
   rescue_from ActiveRecord::RecordNotFound, with: :not_found
+  rescue_from NoMethodError, with: :unhandled_event
 
   private
 
@@ -39,6 +40,14 @@ class Webhook::GithubController < Webhook::BaseController
 
   def not_found
     head :ok
+  end
+
+  def unhandled_event(error)
+    if error.message.include?('GithubWebhooksController')
+      head :ok
+    else
+      raise error
+    end
   end
 
   def webhook_secret(_payload)
