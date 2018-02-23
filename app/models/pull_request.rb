@@ -48,15 +48,12 @@ class PullRequest < ApplicationRecord
     end
   end
 
-  NUMBER_IN_BRANCH = /(?<=#)\d+/
-  NUMBER_IN_BODY = /connect(?:s|ed)?(?: to)? #(\d+)/i
-
   def number_from_branch_name
-    remote_head_branch[NUMBER_IN_BRANCH]
+    IssueNumberExtractor.from_branch(remote_head_branch)
   end
 
   def numbers_from_body
-    remote_body.to_s.scan(NUMBER_IN_BODY).flatten
+    IssueNumberExtractor.connections(remote_body)
   end
 
   def referenced_issue_numbers
