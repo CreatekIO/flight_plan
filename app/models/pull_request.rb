@@ -30,6 +30,8 @@ class PullRequest < ApplicationRecord
   private
 
   def update_pull_request_connections
+    @referenced_issue_numbers = nil # reset cache
+
     to_keep, to_delete = pull_request_connections.includes(:ticket).partition do |conn|
       referenced_issue_numbers.include?(conn.ticket.remote_number)
     end
