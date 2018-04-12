@@ -27,6 +27,7 @@ class ReleaseManager
       log "Merging PR ##{pr[:number]} - #{pr[:title]}"
 
       repo.merge_pull_request(pr[:number])
+      announce_pr_merged(pr)
     end
   end
 
@@ -181,6 +182,23 @@ class ReleaseManager
       channel: ENV['SLACK_CHANNEL'],
       text: '*Pull Request Created*',
       attachments: attachments,
+      as_user: true
+    )
+  end
+
+  def announce_pr_merged(pr)
+    slack_client.chat_postMessage(
+      channel: ENV['SLACK_CHANNEL'],
+      text: '*Pull Request Merged*',
+      attachments: [
+        {
+          fallback: "#{repo.name}: Merged PR ##{pr[:number]} #{pr[:title]}",
+          title: "#{repo.name}: Merged PR ##{pr[:number]} #{pr[:title]}",
+          title_link: pr[:html_url],
+          text: pr[:body],
+          color: 'good'
+        }
+      ],
       as_user: true
     )
   end
