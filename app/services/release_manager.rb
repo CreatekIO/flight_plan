@@ -15,9 +15,8 @@ class ReleaseManager
   def create_release
     return unless unmerged_tickets.any?
     create_release_branch
-    if create_pull_request
-      announce_pr_opened if send_to_slack?
-    end
+
+    announce_pr_opened if create_pull_request
   end
 
   def merge_prs(branch = 'master')
@@ -152,10 +151,6 @@ class ReleaseManager
     ]
   end
 
-  def send_to_slack?
-    ENV['SLACK_API_TOKEN'].present?
-  end
-
   def announce_pr_opened
     tickets = unmerged_tickets.collect do |ticket|
       "• #{ticket.remote_number} : #{ticket.remote_title}"
@@ -163,7 +158,6 @@ class ReleaseManager
 
     attachments = [
       {
-        fallback: "#{repo.name} : #{release_pr_name}",
         title: "#{repo.name} : #{release_pr_name}",
         title_link: release_pr[:html_url],
         text: tickets.join("\n"),
@@ -178,33 +172,23 @@ class ReleaseManager
       }
     end
 
-    slack_client.chat_postMessage(
-      channel: ENV['SLACK_CHANNEL'],
-      text: '*Pull Request Created*',
-      attachments: attachments,
-      as_user: true
-    )
+    slack_notifier.notify('*Pull Request Created*', attachments: attachments)
   end
 
   def announce_pr_merged(pr)
-    slack_client.chat_postMessage(
-      channel: ENV['SLACK_CHANNEL'],
-      text: '*Pull Request Merged*',
-      attachments: [
-        {
-          fallback: "#{repo.name}: Merged PR ##{pr[:number]} #{pr[:title]}",
-          title: "#{repo.name}: Merged PR ##{pr[:number]} #{pr[:title]}",
-          title_link: pr[:html_url],
-          text: pr[:body],
-          color: 'good'
-        }
-      ],
-      as_user: true
+    slack_notifier.notify(
+      '*Pull Request Merged*',
+      attachments: {
+        title: "#{repo.name}: Merged PR ##{pr[:number]} #{pr[:title]}",
+        title_link: pr[:html_url],
+        text: pr[:body],
+        color: 'good'
+      }
     )
   end
 
-  def slack_client
-    Slack::Web::Client.new
+  def slack_notifier
+    @slack_notifier ||= SlackNotifier.new
   end
 
   def log(message)
