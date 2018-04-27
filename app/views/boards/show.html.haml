@@ -17,7 +17,7 @@
     .swimlane
       .header= swimlane.name
       .body
-        - swimlane.board_tickets.each do |board_ticket|
+        - swimlane.board_tickets.includes(ticket: :pull_requests).each do |board_ticket|
           - ticket = board_ticket.ticket
           .panel.panel-default
             .panel-heading
@@ -34,6 +34,9 @@
                 %p
                   Current state:
                   = board_ticket.current_state_duration
+              %ul.list-unstyled
+                - ticket.pull_requests.each do |pull_request|
+                  %li= pull_request.slice(:remote_number, :remote_state).values.join(' - ')
             .panel-footer
               - if swimlane.transitions.any?
                 .btn-group
