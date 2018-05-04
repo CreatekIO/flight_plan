@@ -5,6 +5,7 @@ class Repo < ApplicationRecord
   has_many :boards, through: :board_repos
   has_many :tickets, dependent: :destroy
   has_many :releases, dependent: :destroy
+  has_many :pull_request_models, class_name: 'PullRequest'
 
   def regex_branches(regex)
     branch_names.grep(regex)
@@ -62,5 +63,4 @@ class Repo < ApplicationRecord
   def delete_branch(branch)
     client.delete_branch(remote_url, release_branch_name)
   end
-
 end
