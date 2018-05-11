@@ -21,7 +21,8 @@ class PullRequest < ApplicationRecord
       remote_head_branch: remote_pr[:head][:ref],
       remote_head_sha: remote_pr[:head][:sha],
       remote_base_branch: remote_pr[:base][:ref],
-      merge_status: remote_pr[:mergeable]
+      merge_status: remote_pr[:mergeable],
+      merged: remote_pr[:merged]
     )
     pull_request
   end
@@ -43,6 +44,10 @@ class PullRequest < ApplicationRecord
 
   def merge_status=(value)
     super(GITHUB_MERGE_STATUSES.fetch(value, value))
+  end
+
+  def unmerged?
+    !merged?
   end
 
   private
