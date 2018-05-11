@@ -1,4 +1,10 @@
 class PullRequest < ApplicationRecord
+  enum merge_status: {
+    merge_status_unknown: 'unknown',
+    merge_conflicts: 'merge_conflicts',
+    merge_ok: 'ok'
+  }
+
   belongs_to :repo
   has_many :pull_request_connections, autosave: true
   has_many :tickets, through: :pull_request_connections

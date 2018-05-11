@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180504144033) do
+ActiveRecord::Schema.define(version: 20180511133413) do
 
   create_table "board_repos", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin" do |t|
     t.bigint "board_id"
@@ -73,6 +73,8 @@ ActiveRecord::Schema.define(version: 20180504144033) do
     t.bigint "repo_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "merge_status"
+    t.index ["merge_status"], name: "index_pull_requests_on_merge_status"
     t.index ["repo_id"], name: "index_pull_requests_on_repo_id"
   end
 
