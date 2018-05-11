@@ -50,6 +50,12 @@ class PullRequest < ApplicationRecord
     !merged?
   end
 
+  URL_TEMPLATE = 'https://github.com/%{repo}/pull/%{number}'.freeze
+
+  def html_url
+    format(URL_TEMPLATE, repo: repo.remote_url, number: remote_number)
+  end
+
   private
 
   def update_pull_request_connections
