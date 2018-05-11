@@ -21,6 +21,7 @@ class PullRequest < ApplicationRecord
       remote_head_branch: remote_pr[:head][:ref],
       remote_head_sha: remote_pr[:head][:sha],
       remote_base_branch: remote_pr[:base][:ref],
+      merge_status: remote_pr[:mergeable]
     )
     pull_request
   end
@@ -31,6 +32,17 @@ class PullRequest < ApplicationRecord
       pull_request.repo = Repo.find_by!(remote_url: remote_repo[:full_name])
     end
     pull_request
+  end
+
+  # See: https://developer.github.com/v3/pulls/#response-1
+  GITHUB_MERGE_STATUSES = {
+    nil => 'unknown',
+    false => 'merge_conflicts',
+    true => 'ok'
+  }.freeze
+
+  def merge_status=(value)
+    super(GITHUB_MERGE_STATUSES.fetch(value, value))
   end
 
   private
