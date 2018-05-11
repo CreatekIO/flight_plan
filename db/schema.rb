@@ -83,8 +83,8 @@ ActiveRecord::Schema.define(version: 20180511135740) do
   create_table "repo_events", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin" do |t|
     t.string "type", null: false
     t.bigint "repo_id"
-    t.string "user_id"
-    t.string "username"
+    t.string "remote_user_id"
+    t.string "remote_username"
     t.string "record_type"
     t.bigint "record_id"
     t.string "action"
@@ -98,9 +98,9 @@ ActiveRecord::Schema.define(version: 20180511135740) do
     t.index ["action"], name: "index_repo_events_on_action"
     t.index ["id", "type"], name: "index_repo_events_on_id_and_type"
     t.index ["record_type", "record_id"], name: "index_repo_events_on_record_type_and_record_id"
+    t.index ["remote_user_id"], name: "index_repo_events_on_remote_user_id"
     t.index ["repo_id"], name: "index_repo_events_on_repo_id"
     t.index ["state"], name: "index_repo_events_on_state"
-    t.index ["user_id"], name: "index_repo_events_on_user_id"
   end
 
   create_table "repos", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin" do |t|
