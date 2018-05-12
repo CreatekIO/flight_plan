@@ -9,4 +9,9 @@ class Api::BaseController < ActionController::Base
       key == ENV.fetch('USER_API_KEY') && secret == ENV.fetch('USER_API_SECRET')
     end
   end
+
+  def request_http_token_authentication(realm = 'Application', message = nil)
+    self.headers['WWW-Authenticate'] = %(Token realm="#{realm.gsub(/"/, '')}")
+    render json: { error: 'HTTP Token: Access denied.' }, status: :unauthorized
+  end
 end
