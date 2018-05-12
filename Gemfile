@@ -35,6 +35,7 @@ group :development, :test do
   gem 'capybara'
   gem 'capybara-screenshot'
   gem 'database_cleaner'
+  gem 'dotenv-rails'
   gem 'factory_girl'
   gem 'rspec-rails'
   gem 'selenium-webdriver'
