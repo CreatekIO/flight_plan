@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe 'BoardRickets API', type: :request do
+RSpec.describe 'BoardTickets', type: :request do
   include_context 'api'
   let(:path) { "/api/boards/#{board.id}/board_tickets" }
   let(:board) { create(:board) }
