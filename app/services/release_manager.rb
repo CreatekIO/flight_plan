@@ -16,7 +16,6 @@ class ReleaseManager
     return unless unmerged_tickets.any?
     create_release_branch
     if create_pull_request
-      create_release_model
       announce_pr_opened if send_to_slack?
     end
   end
@@ -34,25 +33,6 @@ class ReleaseManager
   private
 
   attr_reader :board, :repo, :release_branch_name, :merge_conflicts, :remote_pr
-
-  def create_release_model
-    release = Release.new(
-      repo: repo,
-      board: board,
-      title: release_pr_name,
-      source_branch: release_branch_name,
-      target_branch: 'master',
-      remote_title: remote_pr[:title],
-      remote_id: remote_pr[:id],
-      remote_number: remote_pr[:number],
-      remote_url: remote_pr[:html_url],
-      remote_state: remote_pr[:state]
-    )
-    unmerged_tickets.each do |ticket|
-      release.board_tickets << board.board_tickets.find_by(ticket: ticket)
-    end
-    release.save
-  end
 
   def release_pr_name
     if merge_conflicts.any?
