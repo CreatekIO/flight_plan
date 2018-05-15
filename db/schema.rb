@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180216172616) do
+ActiveRecord::Schema.define(version: 20180515164649) do
 
   create_table "board_repos", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin" do |t|
     t.bigint "board_id"
@@ -52,33 +52,6 @@ ActiveRecord::Schema.define(version: 20180216172616) do
     t.index ["ticket_id"], name: "index_comments_on_ticket_id"
   end
 
-  create_table "release_board_tickets", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin" do |t|
-    t.bigint "release_id"
-    t.bigint "board_ticket_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["board_ticket_id"], name: "index_release_board_tickets_on_board_ticket_id"
-    t.index ["release_id"], name: "index_release_board_tickets_on_release_id"
-  end
-
-  create_table "releases", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin" do |t|
-    t.bigint "board_id"
-    t.bigint "repo_id"
-    t.string "title"
-    t.string "source_branch"
-    t.string "target_branch"
-    t.string "remote_title"
-    t.integer "remote_id"
-    t.integer "remote_number"
-    t.string "remote_url"
-    t.string "remote_state"
-    t.datetime "remote_merged_at"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["board_id"], name: "index_releases_on_board_id"
-    t.index ["repo_id"], name: "index_releases_on_repo_id"
-  end
-
   create_table "pull_request_connections", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin" do |t|
     t.bigint "ticket_id"
     t.bigint "pull_request_id"
@@ -101,6 +74,38 @@ ActiveRecord::Schema.define(version: 20180216172616) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["repo_id"], name: "index_pull_requests_on_repo_id"
+  end
+
+  create_table "releases", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin" do |t|
+    t.bigint "board_id"
+    t.string "title"
+    t.string "branch_name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["board_id"], name: "index_releases_on_board_id"
+  end
+
+  create_table "repo_release_board_tickets", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin" do |t|
+    t.bigint "repo_release_id"
+    t.bigint "board_ticket_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["board_ticket_id"], name: "index_repo_release_board_tickets_on_board_ticket_id"
+    t.index ["repo_release_id"], name: "index_repo_release_board_tickets_on_repo_release_id"
+  end
+
+  create_table "repo_releases", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin" do |t|
+    t.bigint "repo_id"
+    t.bigint "release_id"
+    t.integer "remote_id"
+    t.integer "remote_number"
+    t.string "remote_url"
+    t.string "remote_state"
+    t.datetime "remote_merged_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["release_id"], name: "index_repo_releases_on_release_id"
+    t.index ["repo_id"], name: "index_repo_releases_on_repo_id"
   end
 
   create_table "repos", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin" do |t|
@@ -170,6 +175,8 @@ ActiveRecord::Schema.define(version: 20180216172616) do
   add_foreign_key "pull_request_connections", "pull_requests"
   add_foreign_key "pull_request_connections", "tickets"
   add_foreign_key "pull_requests", "repos"
+  add_foreign_key "repo_releases", "releases"
+  add_foreign_key "repo_releases", "repos"
   add_foreign_key "tickets", "repos"
   add_foreign_key "timesheets", "swimlanes", column: "after_swimlane_id"
   add_foreign_key "timesheets", "swimlanes", column: "before_swimlane_id"
