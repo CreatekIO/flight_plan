@@ -30,6 +30,10 @@ class ReleaseManager
     end
   end
 
+  def unmerged_tickets
+    @unmerged_tickets ||= tickets.reject { |t| t.merged_to?('master') }
+  end
+
   private
 
   attr_reader :board, :repo, :release_branch_name, :merge_conflicts, :remote_pr
@@ -53,10 +57,6 @@ class ReleaseManager
       else
         []
       end
-  end
-
-  def unmerged_tickets
-    @unmerged_tickets ||= tickets.reject { |t| t.merged_to?('master') }
   end
 
   def create_release_branch
@@ -190,6 +190,6 @@ class ReleaseManager
   end
 
   def log(message)
-    puts message
+    Rails.logger.info message
   end
 end
