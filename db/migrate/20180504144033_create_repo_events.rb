@@ -2,6 +2,7 @@ class CreateRepoEvents < ActiveRecord::Migration[5.1]
   def change
     create_table :repo_events do |t|
       t.string :type, null: false
+      t.string :remote_id
       t.references :repo, foreign_key: true
       t.references :remote_user, type: :string, foreign_key: false
       t.string :remote_username

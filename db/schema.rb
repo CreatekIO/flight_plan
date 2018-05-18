@@ -82,6 +82,7 @@ ActiveRecord::Schema.define(version: 20180511135740) do
 
   create_table "repo_events", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin" do |t|
     t.string "type", null: false
+    t.string "remote_id"
     t.bigint "repo_id"
     t.string "remote_user_id"
     t.string "remote_username"
