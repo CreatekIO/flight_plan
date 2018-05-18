@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180216172616) do
+ActiveRecord::Schema.define(version: 20180511135740) do
 
   create_table "board_repos", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin" do |t|
     t.bigint "board_id"
@@ -73,7 +73,35 @@ ActiveRecord::Schema.define(version: 20180216172616) do
     t.bigint "repo_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "merge_status"
+    t.boolean "merged", default: false
+    t.index ["merge_status"], name: "index_pull_requests_on_merge_status"
+    t.index ["merged"], name: "index_pull_requests_on_merged"
     t.index ["repo_id"], name: "index_pull_requests_on_repo_id"
+  end
+
+  create_table "repo_events", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin" do |t|
+    t.string "type", null: false
+    t.string "remote_id"
+    t.bigint "repo_id"
+    t.string "remote_user_id"
+    t.string "remote_username"
+    t.string "record_type"
+    t.bigint "record_id"
+    t.string "action"
+    t.string "state"
+    t.string "branch"
+    t.string "sha"
+    t.string "url"
+    t.string "context"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["action"], name: "index_repo_events_on_action"
+    t.index ["id", "type"], name: "index_repo_events_on_id_and_type"
+    t.index ["record_type", "record_id"], name: "index_repo_events_on_record_type_and_record_id"
+    t.index ["remote_user_id"], name: "index_repo_events_on_remote_user_id"
+    t.index ["repo_id"], name: "index_repo_events_on_repo_id"
+    t.index ["state"], name: "index_repo_events_on_state"
   end
 
   create_table "repos", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin" do |t|
@@ -143,6 +171,7 @@ ActiveRecord::Schema.define(version: 20180216172616) do
   add_foreign_key "pull_request_connections", "pull_requests"
   add_foreign_key "pull_request_connections", "tickets"
   add_foreign_key "pull_requests", "repos"
+  add_foreign_key "repo_events", "repos"
   add_foreign_key "tickets", "repos"
   add_foreign_key "timesheets", "swimlanes", column: "after_swimlane_id"
   add_foreign_key "timesheets", "swimlanes", column: "before_swimlane_id"
