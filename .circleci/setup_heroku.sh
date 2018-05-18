@@ -1,4 +1,6 @@
 #!/bin/bash
+set -ex
+
 apk --update add openssl # required for wget
 wget https://cli-assets.heroku.com/branches/stable/heroku-linux-amd64.tar.gz
 mkdir -p /usr/local/lib /usr/local/bin
