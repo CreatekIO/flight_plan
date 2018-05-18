@@ -13,6 +13,7 @@ class RepoEvent::Status < RepoEvent
         url: payload[:target_url],
         service: payload[:context]
       )
+      yield(event) if block_given?
     end
   end
 end

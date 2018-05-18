@@ -8,6 +8,7 @@ class RepoEvent::PullRequestReview < RepoEvent
         sha: payload.dig(:pull_request, :head, :sha),
         url: payload.dig(:review, :html_url)
       )
+      yield(event) if block_given?
     end
   end
 end
