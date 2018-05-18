@@ -1,7 +1,7 @@
 class RepoEvent < ApplicationRecord
   belongs_to :repo
-  belongs_to :user, primary_key: :uid, foreign_key: :remote_user_id
-  belongs_to :record, polymorphic: true
+  belongs_to :user, primary_key: :uid, foreign_key: :remote_user_id, optional: true
+  belongs_to :record, polymorphic: true, optional: true
 
   def self.import(payload, repo)
     create(
