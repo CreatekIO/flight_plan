@@ -3,33 +3,24 @@ require 'rails_helper'
 RSpec.describe 'Releases', type: :request do
   include_context 'api'
   let(:path) { "/api/boards/#{board.id}/releases" }
-  let(:board) { create(:board, repos: [ repo ]) }
+  let(:board) { create(:board, repos: [repo]) }
   let(:repo) { create(:repo) }
   let(:ticket) { create(:ticket, repo: repo) }
   let(:swimlane) { create(:swimlane, board: board) }
   let!(:board_ticket) { create(:board_ticket, board: board, ticket: ticket, swimlane: swimlane) }
 
   let(:application_json) { { 'Content-Type' => 'application/json' } }
-  let(:feature_branch_name) { "origin/feature/##{ticket.remote_number}-some-text" }
+  let(:feature_branch_name) { "origin/feature/##{remote_no}-some-text" }
   let(:release_branch_name) { 'release/20180518-101500' }
+  let(:remote_no) { ticket.remote_number }
   let(:remote_branch_names) {
     [
       { name: 'origin/master' },
       { name: feature_branch_name }
     ]
   }
-  let(:release_params) {
-    {
-      release: {
-        title: 'new release'
-      }
-    }
-  }
-  let(:remote_commits) {
-    {
-      total_commits: 1
-    }
-  }
+  let(:release_params) { { release: { title: 'new release' } } }
+  let(:remote_commits) { { total_commits: 1 } }
   let(:remote_master) { { object: { sha: master_sha } } }
   let(:create_branch_params) {
     {
@@ -37,7 +28,7 @@ RSpec.describe 'Releases', type: :request do
       sha: master_sha
     }
   }
-  let(:master_sha) { 'cafe8878' }
+  let(:master_sha) { 'cafe8080' }
   let(:merge_feature_branch_params) {
     {
       base: release_branch_name,
@@ -50,15 +41,12 @@ RSpec.describe 'Releases', type: :request do
       base: 'master',
       head: release_branch_name,
       title: release_branch_name,
-      body: "**Issues**\nConnects #1 - Issue No. 1"
+      body: "**Issues**\nConnects ##{remote_no} - Issue No. #{remote_no}"
     }
   }
   let(:pull_request_response) {
-    {
-      html_url: 'https://fake.example.com/pull/1'
-    }
+    { html_url: 'https://fake.example.com/pull/1' }
   }
-
 
   before do
     board.update(deploy_swimlane: swimlane)
@@ -66,7 +54,6 @@ RSpec.describe 'Releases', type: :request do
 
   describe 'POST' do
     it 'creates a release' do
-
       stub_gh_remote_branches
       stub_gh_diff_feature_branch_to_master
       stub_gh_get_master_sha
@@ -75,6 +62,7 @@ RSpec.describe 'Releases', type: :request do
       stub_gh_create_pull_request
       stub_slack_message
 
+      # fix date/time to ensure release branch name matches
       Timecop.freeze(Time.local(2018, 5, 18, 10, 15, 0)) do
         post path, params: release_params, headers: api_headers
       end
@@ -96,7 +84,7 @@ RSpec.describe 'Releases', type: :request do
   def stub_gh_diff_feature_branch_to_master
     stub_request(
       :get,
-      "https://api.github.com/repos/user/repo_name/compare/master...origin/feature/%23#{ticket.remote_number}-some-text"
+      "https://api.github.com/repos/user/repo_name/compare/master...origin/feature/%23#{remote_no}-some-text"
     ).to_return(
       status: :ok,
       body: remote_commits.to_json,
@@ -141,7 +129,7 @@ RSpec.describe 'Releases', type: :request do
   def stub_gh_create_pull_request
     stub_request(
       :post,
-      "https://api.github.com/repos/user/repo_name/pulls"
+      'https://api.github.com/repos/user/repo_name/pulls'
     ).with(
       body: pull_request_params
     ).to_return(
@@ -151,7 +139,6 @@ RSpec.describe 'Releases', type: :request do
   end
 
   def stub_slack_message
-    stub_request(:post, "https://slack.com/api/chat.postMessage")
+    stub_request(:post, 'https://slack.com/api/chat.postMessage')
   end
-
 end
