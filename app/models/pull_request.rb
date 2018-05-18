@@ -8,6 +8,7 @@ class PullRequest < ApplicationRecord
   belongs_to :repo
   has_many :pull_request_connections, autosave: true
   has_many :tickets, through: :pull_request_connections
+  has_many :repo_events, as: :record
 
   before_save :update_pull_request_connections
 
