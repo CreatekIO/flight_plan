@@ -4,6 +4,7 @@ class Api::ReleasesController < Api::BaseController
 
   def create
     @release = @board.releases.create!(release_params)
+    @release.create_github_release
     render :show, status: :created
   end
 

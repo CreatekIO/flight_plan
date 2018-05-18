@@ -4,13 +4,9 @@ class Release < ApplicationRecord
   has_many :repo_releases, dependent: :destroy
   has_many :board_tickets, through: :release_board_tickets
 
-  after_create :create_repo_releases
-
-  private
-
-  def create_repo_releases
+  def create_github_release
     board.repos.each do |repo|
-      repo_releases.create(repo: repo)
+      repo_releases.create!(repo: repo).create_github_release
     end
   end
 end
