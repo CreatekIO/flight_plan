@@ -6,6 +6,7 @@ class RepoEvent::Status < RepoEvent
   def self.import(payload, _repo)
     super do |event|
       event.assign_attributes(
+        remote_id: payload[:id],
         action: DEFAULT_ACTION,
         state: payload[:state],
         branch: payload.dig(:branches, 0, :name),

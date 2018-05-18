@@ -2,6 +2,7 @@ class RepoEvent::PullRequestReview < RepoEvent
   def self.import(payload, repo)
     super do |event|
       event.assign_attributes(
+        remote_id: payload.dig(:review, :id),
         record: repo.pull_request_models.find_by(
           remote_number: payload.dig(:pull_request, :number)
         ),
