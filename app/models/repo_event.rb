@@ -10,6 +10,7 @@ class RepoEvent < ApplicationRecord
       remote_username: payload.dig(:sender, :login)
     ) do |event|
       yield(event) if block_given?
+      event
     end
   end
 end
