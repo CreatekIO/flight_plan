@@ -58,6 +58,16 @@ RSpec.describe PullRequest do
     end
   end
 
+  describe '#merge_status=' do
+    it 'transforms values from GitHub\'s API to our values' do
+      aggregate_failures do
+        expect(described_class.new(merge_status: nil).merge_status).to eq('merge_status_unknown')
+        expect(described_class.new(merge_status: false).merge_status).to eq('merge_conflicts')
+        expect(described_class.new(merge_status: true).merge_status).to eq('merge_ok')
+      end
+    end
+  end
+
   describe '#update_pull_request_connections' do
     let(:repo) { create(:repo) }
     let(:branch_ticket) { create(:ticket, repo: repo) }

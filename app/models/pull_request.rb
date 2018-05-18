@@ -1,7 +1,14 @@
 class PullRequest < ApplicationRecord
+  enum merge_status: {
+    merge_status_unknown: 'unknown',
+    merge_conflicts: 'merge_conflicts',
+    merge_ok: 'ok'
+  }
+
   belongs_to :repo
   has_many :pull_request_connections, autosave: true
   has_many :tickets, through: :pull_request_connections
+  has_many :repo_events, as: :record
 
   before_save :update_pull_request_connections
 
@@ -15,6 +22,8 @@ class PullRequest < ApplicationRecord
       remote_head_branch: remote_pr[:head][:ref],
       remote_head_sha: remote_pr[:head][:sha],
       remote_base_branch: remote_pr[:base][:ref],
+      merge_status: remote_pr[:mergeable],
+      merged: remote_pr[:merged]
     )
     pull_request
   end
@@ -25,6 +34,27 @@ class PullRequest < ApplicationRecord
       pull_request.repo = Repo.find_by!(remote_url: remote_repo[:full_name])
     end
     pull_request
+  end
+
+  # See: https://developer.github.com/v3/pulls/#response-1
+  GITHUB_MERGE_STATUSES = {
+    nil => 'unknown',
+    false => 'merge_conflicts',
+    true => 'ok'
+  }.freeze
+
+  def merge_status=(value)
+    super(GITHUB_MERGE_STATUSES.fetch(value, value))
+  end
+
+  def unmerged?
+    !merged?
+  end
+
+  URL_TEMPLATE = 'https://github.com/%{repo}/pull/%{number}'.freeze
+
+  def html_url
+    format(URL_TEMPLATE, repo: repo.remote_url, number: remote_number)
   end
 
   private
