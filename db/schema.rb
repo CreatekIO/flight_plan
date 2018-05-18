@@ -97,6 +97,7 @@ ActiveRecord::Schema.define(version: 20180515164649) do
   create_table "repo_releases", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin" do |t|
     t.bigint "repo_id"
     t.bigint "release_id"
+    t.string "status"
     t.integer "remote_id"
     t.integer "remote_number"
     t.string "remote_url"

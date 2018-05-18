@@ -68,6 +68,12 @@ RSpec.describe 'Releases', type: :request do
       end
 
       expect(response).to have_http_status(:created)
+      expect(
+        json['release']['repo_releases'].first['board_tickets'].first
+      ).to include(
+        'id' => board_ticket.id,
+        'ticket_id' => board_ticket.ticket_id
+      )
     end
   end
 

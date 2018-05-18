@@ -14,5 +14,8 @@ class RepoRelease < ApplicationRecord
     self.status = 'void'
     manager = ReleaseManager.new(board, repo)
     manager.create_release
+    manager.unmerged_tickets.each do |ticket|
+      board_tickets << board.board_tickets.find_by(ticket: ticket)
+    end
   end
 end
