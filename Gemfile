@@ -32,14 +32,16 @@ gem 'slack-ruby-client'
 
 group :development, :test do
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
-  gem 'capybara'
+  gem 'capybara', '~> 2.15.1'
   gem 'capybara-screenshot'
   gem 'database_cleaner'
+  gem 'dotenv-rails'
   gem 'factory_girl'
-  gem 'rspec-rails'
+  gem 'rspec-rails', '3.7.0'
   gem 'selenium-webdriver'
   gem 'shoulda-matchers'
   gem 'spring-commands-rspec'
+  gem 'timecop'
   gem 'webmock'
 end
 

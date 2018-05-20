@@ -30,9 +30,13 @@ class ReleaseManager
     end
   end
 
+  def unmerged_tickets
+    @unmerged_tickets ||= tickets.reject { |t| t.merged_to?('master') }
+  end
+
   private
 
-  attr_reader :board, :repo, :release_branch_name, :merge_conflicts, :release_pr
+  attr_reader :board, :repo, :release_branch_name, :merge_conflicts, :remote_pr
 
   def release_pr_name
     if merge_conflicts.any?
@@ -55,10 +59,6 @@ class ReleaseManager
       end
   end
 
-  def unmerged_tickets
-    @unmerged_tickets ||= tickets.reject { |t| t.merged_to?('master') }
-  end
-
   def create_release_branch
     initialize_release_branch
     merge_work_branches
@@ -67,7 +67,7 @@ class ReleaseManager
 
   def create_pull_request
     log 'Creating pull request...'
-    @release_pr = repo.create_pull_request(
+    @remote_pr = repo.create_pull_request(
       'master',
       release_branch_name,
       release_pr_name,
@@ -159,7 +159,7 @@ class ReleaseManager
     attachments = [
       {
         title: "#{repo.name} : #{release_pr_name}",
-        title_link: release_pr[:html_url],
+        title_link: remote_pr[:html_url],
         text: tickets.join("\n"),
         color: 'good'
       }
@@ -192,6 +192,6 @@ class ReleaseManager
   end
 
   def log(message)
-    puts message
+    Rails.logger.info message
   end
 end
