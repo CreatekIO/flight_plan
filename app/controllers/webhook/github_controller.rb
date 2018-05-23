@@ -39,11 +39,11 @@ class Webhook::GithubController < Webhook::BaseController
   end
 
   def github_status(payload)
-    RepoEvent::Status.import(payload)
+    RepoEvent::Status.import(payload, repo)
   end
 
   def github_pull_request_review(payload)
-    RepoEvent::PullRequestReview.import(payload)
+    RepoEvent::PullRequestReview.import(payload, repo)
   end
 
   def not_found
