@@ -87,6 +87,33 @@ RSpec.describe 'Releases', type: :request do
         'ticket_id' => board_ticket_1.ticket_id
       )
     end
+
+    context 'when a single repo_id is provided' do
+      let(:release_params) {
+        {
+          release: {
+            title: 'new release',
+            repo_ids: [ repo_1.id ]
+          }
+        }
+      }
+      it 'only creates a release for that repo' do
+        stub_gh_remote_branches
+        stub_gh_diff_feature_branch_to_master("feature/%23#{remote_no_1}-some-text")
+        stub_gh_get_master_sha
+        stub_gh_create_release_branch
+        stub_gh_merge_feature_branch(feature_branch_name_1)
+        stub_gh_create_pull_request(pull_request_1_params)
+        stub_slack_message
+
+        Timecop.freeze(time_of_release) do
+          post path, params: release_params, headers: api_headers
+        end
+
+        expect(response).to have_http_status(:created)
+        expect(json['release']['repo_releases'].length).to eq(1)
+      end
+    end
   end
 
   def stub_gh_remote_branches

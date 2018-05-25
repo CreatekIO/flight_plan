@@ -4,7 +4,7 @@ class Api::ReleasesController < Api::BaseController
 
   def create
     @release = @board.releases.create!(release_params)
-    @release.create_github_release
+    @release.create_github_release(create_repo_ids)
     render :show, status: :created
   end
 
@@ -12,6 +12,10 @@ class Api::ReleasesController < Api::BaseController
 
   def release_params
     params.require(:release).permit(:title)
+  end
+
+  def create_repo_ids
+    params[:release].fetch(:repo_ids, @board.repo_ids)
   end
 end
 
