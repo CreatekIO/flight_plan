@@ -21,3 +21,6 @@
 /public/packs-test
 /node_modules
 .env
+
+# FlightPlan
+.flight_plan_cli/user.yml
