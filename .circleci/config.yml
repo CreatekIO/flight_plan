@@ -56,6 +56,6 @@ jobs:
             if [ "${CIRCLE_BRANCH}" == "master" ]; then
                 sh .circleci/setup_heroku.sh
 
-                git push git@heroku.com:flight-plan-createk.git HEAD:refs/heads/master
+                git push --force git@heroku.com:flight-plan-createk.git HEAD:refs/heads/master
             fi
 
