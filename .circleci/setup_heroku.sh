@@ -1,8 +1,9 @@
 #!/bin/bash
 set -ex
 
-apk --update add openssl # required for wget
-apk --update add openssh # required for ssh-keyscan
+apk update
+apk add openssl # required for wget
+apk add openssh # required for ssh-keyscan
 
 ssh-keyscan -H heroku.com >> ~/.ssh/known_hosts
 
