@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180515164649) do
+ActiveRecord::Schema.define(version: 20180525133012) do
 
   create_table "board_repos", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin" do |t|
     t.bigint "board_id"
@@ -50,6 +50,30 @@ ActiveRecord::Schema.define(version: 20180515164649) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["ticket_id"], name: "index_comments_on_ticket_id"
+  end
+
+  create_table "commit_statuses", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin" do |t|
+    t.integer "remote_id"
+    t.bigint "repo_id"
+    t.string "state"
+    t.string "sha"
+    t.text "description"
+    t.string "context"
+    t.string "url"
+    t.string "avatar_url"
+    t.integer "author_remote_id"
+    t.string "author_username"
+    t.integer "committer_remote_id"
+    t.string "committer_username"
+    t.datetime "remote_created_at"
+    t.text "payload"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["author_remote_id"], name: "index_commit_statuses_on_author_remote_id"
+    t.index ["committer_remote_id"], name: "index_commit_statuses_on_committer_remote_id"
+    t.index ["repo_id"], name: "index_commit_statuses_on_repo_id"
+    t.index ["sha"], name: "index_commit_statuses_on_sha"
+    t.index ["state"], name: "index_commit_statuses_on_state"
   end
 
   create_table "pull_request_connections", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin" do |t|
@@ -201,6 +225,7 @@ ActiveRecord::Schema.define(version: 20180515164649) do
     t.datetime "remember_created_at"
   end
 
+  add_foreign_key "commit_statuses", "repos"
   add_foreign_key "pull_request_connections", "pull_requests"
   add_foreign_key "pull_request_connections", "tickets"
   add_foreign_key "pull_requests", "repos"
