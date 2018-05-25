@@ -48,6 +48,8 @@ GEM
     bootstrap-sass (3.3.7)
       autoprefixer-rails (>= 5.2.1)
       sass (>= 3.3.4)
+    bugsnag (6.7.3)
+      concurrent-ruby (~> 1.0)
     builder (3.2.3)
     business_time (0.9.3)
       activesupport (>= 3.2.0)
@@ -298,6 +300,7 @@ PLATFORMS
 
 DEPENDENCIES
   bootstrap-sass
+  bugsnag
   business_time
   byebug
   cancancan (~> 2.0.0)

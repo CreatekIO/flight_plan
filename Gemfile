@@ -18,6 +18,7 @@ gem 'jbuilder', '~> 2.5'
 gem 'turbolinks', '~> 5'
 
 gem 'bootstrap-sass'
+gem 'bugsnag'
 gem 'business_time'
 gem 'cancancan', '~> 2.0.0'
 gem 'clockwork'
