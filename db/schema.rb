@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180515164649) do
+ActiveRecord::Schema.define(version: 20180525150523) do
 
   create_table "board_repos", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin" do |t|
     t.bigint "board_id"
@@ -59,6 +59,27 @@ ActiveRecord::Schema.define(version: 20180515164649) do
     t.datetime "updated_at", null: false
     t.index ["pull_request_id"], name: "index_pull_request_connections_on_pull_request_id"
     t.index ["ticket_id"], name: "index_pull_request_connections_on_ticket_id"
+  end
+
+  create_table "pull_request_reviews", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin" do |t|
+    t.integer "remote_id"
+    t.bigint "repo_id"
+    t.integer "remote_pull_request_id"
+    t.string "state"
+    t.string "sha"
+    t.text "body"
+    t.string "url"
+    t.integer "reviewer_remote_id"
+    t.string "reviewer_username"
+    t.datetime "remote_created_at"
+    t.text "payload"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["remote_pull_request_id"], name: "index_pull_request_reviews_on_remote_pull_request_id"
+    t.index ["repo_id"], name: "index_pull_request_reviews_on_repo_id"
+    t.index ["reviewer_remote_id"], name: "index_pull_request_reviews_on_reviewer_remote_id"
+    t.index ["sha"], name: "index_pull_request_reviews_on_sha"
+    t.index ["state"], name: "index_pull_request_reviews_on_state"
   end
 
   create_table "pull_requests", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin" do |t|
@@ -203,6 +224,7 @@ ActiveRecord::Schema.define(version: 20180515164649) do
 
   add_foreign_key "pull_request_connections", "pull_requests"
   add_foreign_key "pull_request_connections", "tickets"
+  add_foreign_key "pull_request_reviews", "repos"
   add_foreign_key "pull_requests", "repos"
   add_foreign_key "repo_events", "repos"
   add_foreign_key "repo_releases", "releases"
