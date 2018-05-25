@@ -43,20 +43,19 @@ jobs:
             DISABLE_SPRING: 1
           command: >
             circleci tests glob "spec/**/*_spec.rb" | circleci tests split | \
-              xargs bin/rspec 
+              xargs bin/rspec
       - store_artifacts:
           path: tmp/capybara
           destination: capybara
       - add_ssh_keys:
-          fingerprints: 
+          fingerprints:
             - 'ab:68:2e:b6:40:01:25:79:e0:70:ba:95:ef:f7:98:85'
       - run:
           name: deploy to heroku
           command: |
             if [ "${CIRCLE_BRANCH}" == "master" ]; then
                 sh .circleci/setup_heroku.sh
-                git push git@heroku.com:flight-plan-createk.git HEAD:refs/heads/master
-                heroku run rake db:migrate --app flight-plan-createk
-                heroku restart --app flight-plan-createk
+
+                git push --force git@heroku.com:flight-plan-createk.git HEAD:refs/heads/master
             fi
 
