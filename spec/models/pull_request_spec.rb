@@ -5,6 +5,7 @@ RSpec.describe PullRequest do
     it { is_expected.to belong_to(:repo) }
     it { is_expected.to have_many(:pull_request_connections) }
     it { is_expected.to have_many(:tickets).through(:pull_request_connections) }
+    it { is_expected.to have_many(:reviews).with_primary_key(:remote_id) }
   end
 
   describe '.import' do
