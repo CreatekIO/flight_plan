@@ -14,4 +14,8 @@ class Api::BaseController < ActionController::Base
     self.headers['WWW-Authenticate'] = %(Token realm="#{realm.gsub(/"/, '')}")
     render json: { error: 'HTTP Token: Access denied.' }, status: :unauthorized
   end
+
+  def render_error(messages, status: :unprocessable_entity)
+    render json: { errors: Array(messages) }, status: status
+  end
 end
