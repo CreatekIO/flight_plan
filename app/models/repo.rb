@@ -6,6 +6,7 @@ class Repo < ApplicationRecord
   has_many :tickets, dependent: :destroy
   has_many :releases, dependent: :destroy
   has_many :pull_request_models, class_name: 'PullRequest'
+  has_many :pull_request_reviews
 
   def regex_branches(regex)
     branch_names.grep(regex)
