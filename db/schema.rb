@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180608135300) do
+ActiveRecord::Schema.define(version: 20180608145040) do
 
   create_table "board_repos", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin" do |t|
     t.bigint "board_id"
@@ -39,6 +39,18 @@ ActiveRecord::Schema.define(version: 20180608135300) do
     t.integer "deploy_swimlane_id"
     t.boolean "auto_deploy", default: false, null: false
     t.string "additional_branches_regex"
+  end
+
+  create_table "branches", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin" do |t|
+    t.bigint "repo_id"
+    t.string "name"
+    t.bigint "ticket_id"
+    t.string "base_ref"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["base_ref"], name: "index_branches_on_base_ref"
+    t.index ["repo_id"], name: "index_branches_on_repo_id"
+    t.index ["ticket_id"], name: "index_branches_on_ticket_id"
   end
 
   create_table "comments", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin" do |t|
@@ -246,6 +258,7 @@ ActiveRecord::Schema.define(version: 20180608135300) do
     t.datetime "remember_created_at"
   end
 
+  add_foreign_key "branches", "repos"
   add_foreign_key "commit_statuses", "repos"
   add_foreign_key "pull_request_connections", "pull_requests"
   add_foreign_key "pull_request_connections", "tickets"
