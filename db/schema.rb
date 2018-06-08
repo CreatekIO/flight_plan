@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180525150523) do
+ActiveRecord::Schema.define(version: 20180608135300) do
 
   create_table "board_repos", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin" do |t|
     t.bigint "board_id"
@@ -53,7 +53,7 @@ ActiveRecord::Schema.define(version: 20180525150523) do
   end
 
   create_table "commit_statuses", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin" do |t|
-    t.integer "remote_id"
+    t.bigint "remote_id"
     t.bigint "repo_id"
     t.string "state"
     t.string "sha"
@@ -136,7 +136,6 @@ ActiveRecord::Schema.define(version: 20180525150523) do
 
   create_table "repo_events", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin" do |t|
     t.string "type", null: false
-    t.string "remote_id"
     t.bigint "repo_id"
     t.string "remote_user_id"
     t.string "remote_username"
@@ -150,6 +149,7 @@ ActiveRecord::Schema.define(version: 20180525150523) do
     t.string "context"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "remote_id"
     t.index ["action"], name: "index_repo_events_on_action"
     t.index ["id", "type"], name: "index_repo_events_on_id_and_type"
     t.index ["record_type", "record_id"], name: "index_repo_events_on_record_type_and_record_id"
