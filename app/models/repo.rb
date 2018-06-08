@@ -7,6 +7,14 @@ class Repo < ApplicationRecord
   has_many :releases, dependent: :destroy
   has_many :pull_request_models, class_name: 'PullRequest'
 
+  def to_builder
+    Jbuilder.new do |repo|
+      repo.id id
+      repo.name name
+      repo.remote_url remote_url
+    end
+  end
+
   def regex_branches(regex)
     branch_names.grep(regex)
   end

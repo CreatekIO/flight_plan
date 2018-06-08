@@ -1,6 +1,7 @@
 class Api::ReleasesController < Api::BaseController
-
   load_and_authorize_resource :board
+
+  before_action :check_deploy_swimlane, only: :create
 
   def create
     @release = @board.releases.create!(release_params)
@@ -13,5 +14,10 @@ class Api::ReleasesController < Api::BaseController
   def release_params
     params.require(:release).permit(:title)
   end
-end
 
+  def check_deploy_swimlane
+    if @board.deploy_swimlane.blank?
+      render_error('A deploy swimlane has not been configured for this board')
+    end
+  end
+end
