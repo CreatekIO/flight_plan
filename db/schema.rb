@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180608145040) do
+ActiveRecord::Schema.define(version: 20180608151941) do
 
   create_table "board_repos", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin" do |t|
     t.bigint "board_id"
@@ -39,6 +39,31 @@ ActiveRecord::Schema.define(version: 20180608145040) do
     t.integer "deploy_swimlane_id"
     t.boolean "auto_deploy", default: false, null: false
     t.string "additional_branches_regex"
+  end
+
+  create_table "branch_heads", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin" do |t|
+    t.bigint "repo_id"
+    t.bigint "branch_id"
+    t.string "branch_name"
+    t.string "head_sha"
+    t.string "previous_head_sha"
+    t.integer "commits_in_push"
+    t.boolean "force_push", default: false
+    t.datetime "commit_timestamp"
+    t.string "author_username"
+    t.string "committer_username"
+    t.integer "pusher_remote_id"
+    t.string "pusher_username"
+    t.text "payload"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["author_username"], name: "index_branch_heads_on_author_username"
+    t.index ["branch_id"], name: "index_branch_heads_on_branch_id"
+    t.index ["branch_name"], name: "index_branch_heads_on_branch_name"
+    t.index ["committer_username"], name: "index_branch_heads_on_committer_username"
+    t.index ["pusher_remote_id"], name: "index_branch_heads_on_pusher_remote_id"
+    t.index ["repo_id", "head_sha"], name: "index_branch_heads_on_repo_id_and_head_sha", unique: true
+    t.index ["repo_id"], name: "index_branch_heads_on_repo_id"
   end
 
   create_table "branches", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin" do |t|
@@ -258,6 +283,7 @@ ActiveRecord::Schema.define(version: 20180608145040) do
     t.datetime "remember_created_at"
   end
 
+  add_foreign_key "branch_heads", "repos"
   add_foreign_key "branches", "repos"
   add_foreign_key "commit_statuses", "repos"
   add_foreign_key "pull_request_connections", "pull_requests"
