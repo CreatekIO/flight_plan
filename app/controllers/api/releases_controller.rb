@@ -16,9 +16,8 @@ class Api::ReleasesController < Api::BaseController
   end
 
   def check_deploy_swimlane
-    return if @board.deploy_swimlane.present?
-
-    render_error('A deploy swimlane has not been configured for this board')
+    if @board.deploy_swimlane.blank?
+      render_error('A deploy swimlane has not been configured for this board')
+    end
   end
 end
-
