@@ -42,9 +42,7 @@ ActiveRecord::Schema.define(version: 20180608151941) do
   end
 
   create_table "branch_heads", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin" do |t|
-    t.bigint "repo_id"
     t.bigint "branch_id"
-    t.string "branch_name"
     t.string "head_sha"
     t.string "previous_head_sha"
     t.integer "commits_in_push"
@@ -59,11 +57,8 @@ ActiveRecord::Schema.define(version: 20180608151941) do
     t.datetime "updated_at", null: false
     t.index ["author_username"], name: "index_branch_heads_on_author_username"
     t.index ["branch_id"], name: "index_branch_heads_on_branch_id"
-    t.index ["branch_name"], name: "index_branch_heads_on_branch_name"
     t.index ["committer_username"], name: "index_branch_heads_on_committer_username"
     t.index ["pusher_remote_id"], name: "index_branch_heads_on_pusher_remote_id"
-    t.index ["repo_id", "head_sha"], name: "index_branch_heads_on_repo_id_and_head_sha", unique: true
-    t.index ["repo_id"], name: "index_branch_heads_on_repo_id"
   end
 
   create_table "branches", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin" do |t|
@@ -71,8 +66,10 @@ ActiveRecord::Schema.define(version: 20180608151941) do
     t.string "name"
     t.bigint "ticket_id"
     t.string "base_ref"
+    t.bigint "latest_head_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["latest_head_id"], name: "index_branches_on_latest_head_id"
     t.index ["repo_id", "base_ref"], name: "index_branches_on_repo_id_and_base_ref"
     t.index ["repo_id", "name"], name: "index_branches_on_repo_id_and_name"
     t.index ["repo_id"], name: "index_branches_on_repo_id"
@@ -284,7 +281,6 @@ ActiveRecord::Schema.define(version: 20180608151941) do
     t.datetime "remember_created_at"
   end
 
-  add_foreign_key "branch_heads", "repos"
   add_foreign_key "branches", "repos"
   add_foreign_key "commit_statuses", "repos"
   add_foreign_key "pull_request_connections", "pull_requests"

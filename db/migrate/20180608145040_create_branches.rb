@@ -5,6 +5,7 @@ class CreateBranches < ActiveRecord::Migration[5.1]
       t.string :name
       t.references :ticket, foreign_key: false
       t.string :base_ref
+      t.references :latest_head, foreign_key: false
 
       t.timestamps
     end
