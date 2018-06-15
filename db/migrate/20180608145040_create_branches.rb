@@ -8,6 +8,7 @@ class CreateBranches < ActiveRecord::Migration[5.1]
 
       t.timestamps
     end
-    add_index :branches, :base_ref
+    add_index :branches, %i[repo_id name]
+    add_index :branches, %i[repo_id base_ref]
   end
 end

@@ -73,7 +73,8 @@ ActiveRecord::Schema.define(version: 20180608151941) do
     t.string "base_ref"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["base_ref"], name: "index_branches_on_base_ref"
+    t.index ["repo_id", "base_ref"], name: "index_branches_on_repo_id_and_base_ref"
+    t.index ["repo_id", "name"], name: "index_branches_on_repo_id_and_name"
     t.index ["repo_id"], name: "index_branches_on_repo_id"
     t.index ["ticket_id"], name: "index_branches_on_ticket_id"
   end
