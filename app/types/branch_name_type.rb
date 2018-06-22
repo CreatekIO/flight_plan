@@ -5,6 +5,10 @@ class BranchNameType < ActiveRecord::Type::String
     name.remove(BRANCH_REF_PREFIX)
   end
 
+  def self.valid_ref?(ref)
+    ref.to_s =~ BRANCH_REF_PREFIX
+  end
+
   def cast(value)
     return super if value.nil?
 
