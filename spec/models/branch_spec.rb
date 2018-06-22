@@ -47,7 +47,7 @@ RSpec.describe Branch, type: :model do
       it 'imports HEAD with correct attributes' do
         expect(branch.reload.latest_head.attributes).to include(
           'head_sha' => payload[:after],
-          'previous_head_sha' => payload[:before],
+          'previous_head_sha' => nil,
           'commits_in_push' => 1,
           'force_push' => false,
           'commit_timestamp' => Time.parse(payload[:head_commit][:timestamp]),
