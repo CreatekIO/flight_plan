@@ -22,14 +22,7 @@ class Webhook::GithubController < Webhook::BaseController
   end
 
   def github_push(payload)
-    issue_number = IssueNumberExtractor.from_branch(payload[:ref])
-
-    if issue_number
-      ticket = repo.tickets.find_by!(remote_number: issue_number)
-      ticket.update_attributes(merged: false)
-    elsif payload[:ref] == 'refs/heads/master'
-      repo.update_merged_tickets
-    end
+    PushImporter.import(payload, repo)
   end
 
   def github_pull_request(payload)
