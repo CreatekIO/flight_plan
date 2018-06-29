@@ -1,16 +1,8 @@
 class PushImporter
   MASTER_REF = 'refs/heads/master'.freeze
 
-  def self.valid_ref?(payload)
-    BranchNameType.valid_ref?(payload[:ref])
-  end
-
   def self.import(payload, repo)
-    if valid_ref(payload)
-      new(payload, repo).import
-    else
-      Rails.logger.info("Not importing ref: #{payload[:ref].inspect}")
-    end
+    new(payload, repo).import
   end
 
   def initialize(payload, repo)
@@ -19,6 +11,11 @@ class PushImporter
   end
 
   def import
+    unless BranchNameType.valid_ref?(payload[:ref])
+      Rails.logger.info("Not importing ref: #{payload[:ref].inspect}")
+      return
+    end
+
     repo.transaction do
       branch = Branch.import(payload, repo)
       return if branch.blank?

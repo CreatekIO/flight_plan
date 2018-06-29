@@ -12,5 +12,5 @@ module WebhookHelpers
 end
 
 RSpec.configure do |config|
-  config.include WebhookHelpers, type: :model
+  config.include WebhookHelpers
 end
