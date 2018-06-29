@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :comment do
     remote_id 1
     remote_author 'jsmith'

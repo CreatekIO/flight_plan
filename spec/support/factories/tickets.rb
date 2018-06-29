@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :ticket, aliases: [:issue] do
     state 'Lobby'
     # Generates odd numbers
