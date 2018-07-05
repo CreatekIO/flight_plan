@@ -17,7 +17,7 @@ class Webhook::GithubController < Webhook::BaseController
       comment = Comment.find_by_remote(payload[:comment])
       comment.destroy if comment.persisted?
     else
-      Comment.import(payload[:comment], payload[:issue], payload[:repo])
+      Comment.import(payload[:comment], payload[:issue], payload[:repository])
     end
   end
 
