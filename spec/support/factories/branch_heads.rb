@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :branch_head do
     head_sha { SecureRandom.hex(20) }
     previous_head_sha { SecureRandom.hex(20) }
