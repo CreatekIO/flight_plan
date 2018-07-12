@@ -38,7 +38,7 @@ group :development, :test do
   gem 'capybara-screenshot'
   gem 'database_cleaner'
   gem 'dotenv-rails'
-  gem 'factory_girl'
+  gem 'factory_bot'
   gem 'rspec-rails', '3.7.0'
   gem 'selenium-webdriver'
   gem 'shoulda-matchers'
