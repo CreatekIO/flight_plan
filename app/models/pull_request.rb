@@ -6,6 +6,9 @@ class PullRequest < ApplicationRecord
   }
 
   belongs_to :repo
+  belongs_to :creator, -> { where(provider: 'github') },
+    optional: true, class_name: 'User',
+    foreign_key: :creator_remote_id, primary_key: :uid
   has_many :pull_request_connections, autosave: true
   has_many :tickets, through: :pull_request_connections
   has_many :reviews, class_name: 'PullRequestReview', foreign_key: :remote_pull_request_id, primary_key: :remote_id
