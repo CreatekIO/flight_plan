@@ -5,7 +5,7 @@ FactoryBot.define do
     remote_title { "Pull Request No. #{remote_number}" }
     remote_state 'open'
     remote_head_branch { "feature/#{remote_number}-test" }
-    remote_head_sha { SecureRandom.hex(20) }
+    remote_head_sha { generate(:sha) }
     remote_base_branch 'develop'
   end
 end

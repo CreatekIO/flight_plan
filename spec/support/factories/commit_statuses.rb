@@ -2,7 +2,7 @@ FactoryBot.define do
   factory :commit_status do
     sequence(:remote_id, 5_000_000_00)
     state 'pending'
-    sha { SecureRandom.hex(20) }
+    sha { generate(:sha) }
     description 'Your tests are running'
     context 'ci/service'
     url { "https://ci.service.test/#{remote_id}" }

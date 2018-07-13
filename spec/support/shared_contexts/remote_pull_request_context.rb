@@ -11,11 +11,11 @@ RSpec.shared_context 'remote pull request' do
       state: 'open',
       head: {
         ref: 'feature/#3-issue',
-        sha: SecureRandom.hex(20)
+        sha: generate(:sha)
       },
       base: {
         ref: 'master',
-        sha: SecureRandom.hex(20)
+        sha: generate(:sha)
       },
       user: {
         id: 1234567,

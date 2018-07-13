@@ -94,7 +94,7 @@ RSpec.describe TicketActions::PullRequestStatuses, type: :ticket_action do
         create_status(:success)
 
         # Mimic push to PR branch
-        new_sha = SecureRandom.hex(20)
+        new_sha = generate(:sha)
         pull_request.remote_head_sha = new_sha
 
         create_status(:failure, sha: new_sha)

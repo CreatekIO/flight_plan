@@ -6,6 +6,8 @@ FactoryBot.define do
     start.step(Float::INFINITY, step).lazy
   end
 
+  sequence(:sha) { SecureRandom.hex(20) }
+
   sequence(:user_id, 10_000)
 
   # Generates odd numbers
