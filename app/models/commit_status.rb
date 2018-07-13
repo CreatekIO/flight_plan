@@ -1,6 +1,14 @@
 class CommitStatus < ApplicationRecord
   belongs_to :repo
 
+  # See https://developer.github.com/v3/repos/statuses/#create-a-status
+  enum state: {
+    pending: 'pending',
+    success: 'success',
+    failure: 'failure',
+    error: 'error'
+  }
+
   def self.import(payload, repo)
     create(
       remote_id: payload[:id],
@@ -20,5 +28,9 @@ class CommitStatus < ApplicationRecord
       # For debugging purposes whilst developing
       payload: payload
     )
+  end
+
+  def unsuccessful?
+    failure? || error?
   end
 end
