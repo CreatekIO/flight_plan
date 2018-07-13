@@ -16,6 +16,10 @@ RSpec.shared_context 'remote pull request' do
       base: {
         ref: 'master',
         sha: SecureRandom.hex(20)
+      },
+      user: {
+        id: 1234567,
+        login: 'baxterthehacker'
       }
     }
   }

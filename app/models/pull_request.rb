@@ -26,7 +26,9 @@ class PullRequest < ApplicationRecord
       remote_head_sha: remote_pr[:head][:sha],
       remote_base_branch: remote_pr[:base][:ref],
       merge_status: remote_pr[:mergeable],
-      merged: remote_pr[:merged]
+      merged: remote_pr[:merged],
+      creator_remote_id: remote_pr[:user][:id],
+      creator_username: remote_pr[:user][:login],
     )
     pull_request
   end
