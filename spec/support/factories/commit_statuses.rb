@@ -6,7 +6,7 @@ FactoryBot.define do
     description 'Your tests are running'
     context 'ci/service'
     url { "https://ci.service.test/#{remote_id}" }
-    sequence(:author_remote_id, 10_000)
+    author_remote_id { generate(:user_id) }
     author_username 'baxterthehacker'
     committer_remote_id { author_remote_id }
     committer_username { author_username }

@@ -6,7 +6,7 @@ FactoryBot.define do
     commit_timestamp { Time.now }
     author_username 'baxterthehacker'
     committer_username { author_username }
-    sequence(:pusher_remote_id, 10_000)
+    pusher_remote_id { generate(:user_id) }
     pusher_username { author_username }
 
     trait :with_head do
