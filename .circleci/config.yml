@@ -43,7 +43,7 @@ jobs:
             DISABLE_SPRING: 1
           command: >
             circleci tests glob "spec/**/*_spec.rb" | circleci tests split | \
-              xargs bin/rspec
+              tee /dev/stderr | xargs bin/rspec
       - store_artifacts:
           path: tmp/capybara
           destination: capybara
