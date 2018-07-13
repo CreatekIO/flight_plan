@@ -1,15 +1,7 @@
 require 'rails_helper'
 
-RSpec.describe TicketActions::PullRequestStatuses do
+RSpec.describe TicketActions::PullRequestStatuses, type: :ticket_action do
   subject { described_class.new(pull_request) }
-
-  def be_a_negative_action(*args)
-    eq(TicketActions::NegativeAction.new(*args))
-  end
-
-  def be_a_neutral_action(*args)
-    eq(TicketActions::NeutralAction.new(*args))
-  end
 
   describe '#next_action' do
     let(:repo) { create(:repo) }

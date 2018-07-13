@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe TicketActions::Mergeability do
+RSpec.describe TicketActions::Mergeability, type: :ticket_action do
   subject { described_class.new(pull_request) }
 
   describe '#next_action' do
@@ -14,9 +14,7 @@ RSpec.describe TicketActions::Mergeability do
       let(:merge_status) { true }
 
       it 'tells user to merge PR' do
-        expect(subject.next_action).to eq(
-          TicketActions::PositiveAction.new('Merge it!', urls: "#{pull_request.html_url}#partial-pull-merging")
-        )
+        expect(subject.next_action).to be_a_positive_action('Merge it!', urls: "#{pull_request.html_url}#partial-pull-merging")
       end
     end
 
@@ -24,9 +22,7 @@ RSpec.describe TicketActions::Mergeability do
       let(:merge_status) { false }
 
       it 'tells user to fix merge conflicts' do
-        expect(subject.next_action).to eq(
-          TicketActions::NegativeAction.new('Fix merge conflicts', urls: pull_request.html_url)
-        )
+        expect(subject.next_action).to be_a_negative_action('Fix merge conflicts', urls: pull_request.html_url)
       end
     end
 
@@ -34,9 +30,7 @@ RSpec.describe TicketActions::Mergeability do
       let(:merge_status) { nil }
 
       it 'tells user to wait' do
-        expect(subject.next_action).to eq(
-          TicketActions::NeutralAction.new('Wait for merge check', urls: pull_request.html_url)
-        )
+        expect(subject.next_action).to be_a_neutral_action('Wait for merge check', urls: pull_request.html_url)
       end
     end
   end
