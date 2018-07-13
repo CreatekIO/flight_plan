@@ -55,9 +55,9 @@ ActiveRecord::Schema.define(version: 20180706134018) do
     t.text "payload"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["author_username"], name: "index_branch_heads_on_author_username"
+    t.index ["author_username"], name: "index_branch_heads_on_author_username", length: { author_username: 191 }
     t.index ["branch_id"], name: "index_branch_heads_on_branch_id"
-    t.index ["committer_username"], name: "index_branch_heads_on_committer_username"
+    t.index ["committer_username"], name: "index_branch_heads_on_committer_username", length: { committer_username: 191 }
     t.index ["pusher_remote_id"], name: "index_branch_heads_on_pusher_remote_id"
   end
 
@@ -70,8 +70,8 @@ ActiveRecord::Schema.define(version: 20180706134018) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["latest_head_id"], name: "index_branches_on_latest_head_id"
-    t.index ["repo_id", "base_ref"], name: "index_branches_on_repo_id_and_base_ref"
-    t.index ["repo_id", "name"], name: "index_branches_on_repo_id_and_name"
+    t.index ["repo_id", "base_ref"], name: "index_branches_on_repo_id_and_base_ref", length: { base_ref: 191 }
+    t.index ["repo_id", "name"], name: "index_branches_on_repo_id_and_name", length: { name: 191 }
     t.index ["repo_id"], name: "index_branches_on_repo_id"
     t.index ["ticket_id"], name: "index_branches_on_ticket_id"
   end
@@ -107,8 +107,8 @@ ActiveRecord::Schema.define(version: 20180706134018) do
     t.index ["author_remote_id"], name: "index_commit_statuses_on_author_remote_id"
     t.index ["committer_remote_id"], name: "index_commit_statuses_on_committer_remote_id"
     t.index ["repo_id"], name: "index_commit_statuses_on_repo_id"
-    t.index ["sha"], name: "index_commit_statuses_on_sha"
-    t.index ["state"], name: "index_commit_statuses_on_state"
+    t.index ["sha"], name: "index_commit_statuses_on_sha", length: { sha: 191 }
+    t.index ["state"], name: "index_commit_statuses_on_state", length: { state: 191 }
   end
 
   create_table "pull_request_connections", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin" do |t|
@@ -137,8 +137,8 @@ ActiveRecord::Schema.define(version: 20180706134018) do
     t.index ["remote_pull_request_id"], name: "index_pull_request_reviews_on_remote_pull_request_id"
     t.index ["repo_id"], name: "index_pull_request_reviews_on_repo_id"
     t.index ["reviewer_remote_id"], name: "index_pull_request_reviews_on_reviewer_remote_id"
-    t.index ["sha"], name: "index_pull_request_reviews_on_sha"
-    t.index ["state"], name: "index_pull_request_reviews_on_state"
+    t.index ["sha"], name: "index_pull_request_reviews_on_sha", length: { sha: 191 }
+    t.index ["state"], name: "index_pull_request_reviews_on_state", length: { state: 191 }
   end
 
   create_table "pull_requests", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin" do |t|
@@ -155,7 +155,7 @@ ActiveRecord::Schema.define(version: 20180706134018) do
     t.datetime "updated_at", null: false
     t.string "merge_status"
     t.boolean "merged", default: false
-    t.index ["merge_status"], name: "index_pull_requests_on_merge_status"
+    t.index ["merge_status"], name: "index_pull_requests_on_merge_status", length: { merge_status: 191 }
     t.index ["merged"], name: "index_pull_requests_on_merged"
     t.index ["repo_id"], name: "index_pull_requests_on_repo_id"
   end
