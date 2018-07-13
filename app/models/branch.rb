@@ -13,10 +13,7 @@ class Branch < ApplicationRecord
     return existing_branch.try(:destroy) if payload[:deleted]
 
     transaction do
-      branch = existing_branch || repo.branches.build(name: payload[:ref])
-
-      branch.base_ref = payload[:base_ref]
-      branch.save!
+      branch = existing_branch || repo.branches.create!(name: payload[:ref], base_ref: payload[:base_ref])
 
       new_head = branch.heads.find_or_initialize_by(head_sha: payload[:after])
 

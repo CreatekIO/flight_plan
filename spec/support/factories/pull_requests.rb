@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :pull_request do
     # Generates even numbers
     sequence(:remote_number, 2.step(Float::INFINITY, 2).lazy)
