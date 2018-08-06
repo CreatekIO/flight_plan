@@ -5,6 +5,8 @@ class PullRequest < ApplicationRecord
     merge_ok: 'ok'
   }
 
+  enum remote_state: { open: 'open', closed: 'closed' }
+
   belongs_to :repo
   belongs_to :creator, -> { where(provider: 'github') },
     optional: true, class_name: 'User',
@@ -60,6 +62,20 @@ class PullRequest < ApplicationRecord
 
   def html_url
     format(URL_TEMPLATE, repo: repo.remote_url, number: remote_number)
+  end
+
+  def latest_commit_statuses
+    repo
+      .commit_statuses
+      .where(sha: remote_head_sha)
+      .group_by(&:context)
+      .map {|_, records| records.max_by(&:remote_created_at) }
+  end
+
+  def latest_reviews
+    reviews
+      .group_by(&:reviewer_remote_id)
+      .map {|_, user_reviews| user_reviews.max_by(&:remote_created_at) }
   end
 
   private

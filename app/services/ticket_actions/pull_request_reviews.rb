@@ -15,16 +15,13 @@ class TicketActions::PullRequestReviews < TicketActions::Base
   private
 
   def reviews
-    @reviews ||= pull_request.reviews.reject do |review|
+    @reviews ||= pull_request.latest_reviews.reject do |review|
       review.reviewer_remote_id == pull_request.creator_remote_id && review.approved?
     end
   end
 
   def pending_reviews
-    @pending_reviews ||= reviews
-      .group_by(&:reviewer_remote_id)
-      .map {|_, user_reviews| user_reviews.max_by(&:remote_created_at) }
-      .select(&:changes_requested?)
+    @pending_reviews ||= reviews.select(&:changes_requested?)
   end
 
   # Assumes users always review latest commit

@@ -20,13 +20,6 @@ class TicketActions::PullRequestStatuses < TicketActions::Base
   end
 
   def statuses
-    @statuses ||=
-      begin
-        pull_request.repo
-          .commit_statuses
-          .where(sha: pull_request.remote_head_sha)
-          .group_by(&:context)
-          .map {|_, records| records.max_by(&:remote_created_at) }
-      end
+    @commit_statuses ||= pull_request.latest_commit_statuses
   end
 end

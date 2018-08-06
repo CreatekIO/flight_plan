@@ -1,0 +1,41 @@
+.avatar {
+  height: 32px;
+  margin-right: 10px;
+  border-radius: 4px;
+}
+
+.avatar-list {
+  li {
+    margin-bottom: 5px;
+
+    a:hover {
+      text-decoration: none;
+    }
+  }
+}
+
+.pull-request-dashboard {
+  margin-top: 15px;
+  font-size: 16px;
+
+  tbody th {
+    background-color: #f6f6f6;
+  }
+
+  td ul,
+  td dl {
+    margin-bottom: 0;
+  }
+
+  @media (min-width: 768px) {
+    .dl-horizontal dt {
+      width: 70px;
+      font-weight: normal;
+    }
+
+    .dl-horizontal dd {
+      margin-left: 80px;
+      font-weight: 700;
+    }
+  }
+}
