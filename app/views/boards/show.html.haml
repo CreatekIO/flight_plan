@@ -6,7 +6,7 @@
 
     %ul.dropdown-menu{ aria: { labelledby: 'boards_menu' } }
       - @boards.each do |board|
-        - next if board.id == @board.id 
+        - next if board.id == @board.id
         %li
           = link_to board.name, board_path(board)
   .clearfix
@@ -17,7 +17,7 @@
     .swimlane
       .header= swimlane.name
       .body
-        - swimlane.board_tickets.includes(ticket: :pull_requests).each do |board_ticket|
+        - swimlane.board_tickets.includes(ticket: { pull_requests: :reviews }).each do |board_ticket|
           - ticket = board_ticket.ticket
           .panel.panel-default
             .panel-heading
@@ -28,17 +28,14 @@
                   %span.repo-name
                     = ticket.repo.name
 
-              = link_to(ticket.remote_title, '', data: { url: board_board_ticket_path(@board, board_ticket), target: '#applicationModal', hook: '_showTicketAjax', toggle: 'modal' })
             .panel-body
+              = link_to(ticket.remote_title, '', class: 'issue-title', data: { url: board_board_ticket_path(@board, board_ticket), target: '#applicationModal', hook: '_showTicketAjax', toggle: 'modal' })
               - if swimlane.display_duration?
-                %p
-                  Current state:
-                  = board_ticket.current_state_duration
-              %ul.list-unstyled
-                - ticket.pull_requests.each do |pull_request|
-                  %li= pull_request.slice(:remote_number, :remote_state).values.join(' - ')
-            .panel-footer
-              - if swimlane.transitions.any?
+                .swimlane-duration
+                  Current state: #{board_ticket.current_state_duration}
+
+            - if swimlane.transitions.any?
+              .panel-footer
                 .btn-group
                   =link_to(swimlane.transitions[0].name, board_board_ticket_path(@board, board_ticket, board_ticket: { swimlane_id: swimlane.transitions[0].id }), data: { method: 'patch' }, class: 'btn btn-sm btn-info ')
                   - if swimlane.transitions.count > 1

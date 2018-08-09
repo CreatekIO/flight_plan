@@ -32,14 +32,18 @@
   }
 
   .remote-details {
-    height: 30px;
-
     .issue-number {
       padding-right: 4px;
     }
+  }
 
-    .repo-name {
-    }
+  .issue-title {
+    display: block;
+  }
+
+  .swimlane-duration {
+    margin-top: 5px;
+    font-size: 12px;
   }
 }
 
