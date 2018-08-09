@@ -24,6 +24,28 @@ class TicketActions
 
     delegate :type, to: :class
 
+    URL = Struct.new(:url, :title) do
+      delegate :to_s, :to_str, to: :url
+
+      def self.from(*value)
+        return new(*value) if value.size == 2
+        value = value.first
+
+        case value
+        when self
+          value
+        when String
+          new(value)
+        when Array
+          new(*value)
+        when Hash
+          new(*value.symbolize_keys.values_at(:url, :title))
+        else
+          new(value.to_s)
+        end
+      end
+    end
+
     def self.type
       @type ||= name.demodulize.remove('Action').underscore.to_sym
     end
@@ -42,7 +64,7 @@ class TicketActions
     end
 
     def urls=(value)
-      @urls = Array.wrap(value)
+      @urls = Array.wrap(value).map {|obj| URL.from(obj) }
     end
 
     def url

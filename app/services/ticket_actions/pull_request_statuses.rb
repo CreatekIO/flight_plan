@@ -2,10 +2,10 @@ class TicketActions::PullRequestStatuses < TicketActions::Base
   def next_action
     if failed_statuses.any?
       # owner
-      negative 'Fix issues', urls: failed_statuses.map(&:url)
+      negative 'Fix issues', urls: to_urls(failed_statuses)
     elsif pending_statuses.any?
       # owner
-      neutral 'Wait for checks', urls: pending_statuses.map(&:url)
+      neutral 'Wait for checks', urls: to_urls(pending_statuses)
     end
   end
 
@@ -21,5 +21,11 @@ class TicketActions::PullRequestStatuses < TicketActions::Base
 
   def statuses
     @commit_statuses ||= pull_request.latest_commit_statuses
+  end
+
+  def to_urls(records)
+    records.map do |record|
+      { title: record.description, url: record.url }
+    end
   end
 end
