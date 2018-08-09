@@ -5,7 +5,11 @@ class PullRequest < ApplicationRecord
     merge_ok: 'ok'
   }
 
-  enum remote_state: { open: 'open', closed: 'closed' }
+  # Silence warning about overriding `open` method
+  # (which is inherited from Kernel)
+  logger.silence do
+    enum remote_state: { open: 'open', closed: 'closed' }
+  end
 
   belongs_to :repo
   belongs_to :creator, -> { where(provider: 'github') },
