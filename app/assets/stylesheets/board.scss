@@ -50,3 +50,14 @@
 #applicationModal .modal-content img {
   max-width: 520px;
 }
+
+// From: https://github.com/primer/octicons/blob/master/lib/octicons_node/index.scss
+.octicon {
+  display: inline-block;
+  vertical-align: text-top;
+  fill: currentColor;
+
+  &.is-merged {
+    color: #6f42c1;
+  }
+}

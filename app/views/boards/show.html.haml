@@ -34,6 +34,18 @@
                 .swimlane-duration
                   Current state: #{board_ticket.current_state_duration}
 
+            - if ticket.pull_requests.any?
+              %ul.list-group
+                - ticket.pull_requests.each do |pull_request|
+                  %li.list-group-item.clearfix
+                    %span.pull-left
+                      - if pull_request.merged?
+                        = octicon 'git-merge', class: 'is-merged'
+                      - else
+                        = octicon 'git-pull-request', class: (pull_request.open? ? 'text-success' : 'text-danger')
+                      = link_to pull_request.remote_number, pull_request.html_url, title: pull_request.remote_title, target: :_blank
+                    = next_action_button(pull_request, class: 'btn-xs pull-right')
+
             - if swimlane.transitions.any?
               .panel-footer
                 .btn-group
