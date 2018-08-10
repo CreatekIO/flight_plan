@@ -1,15 +1,4 @@
-.board-header
-  .dropdown.pull-right
-    %button.btn.btn-warning.dropdown-toggle#boards_menu{ data: { toggle: 'dropdown' } }
-      = @board.name
-      %span.caret
-
-    %ul.dropdown-menu{ aria: { labelledby: 'boards_menu' } }
-      - @boards.each do |board|
-        - next if board.id == @board.id 
-        %li
-          = link_to board.name, board_path(board)
-  .clearfix
+= render "shared/board_header"
 
 - show_repo_name = @board.repos.count > 1
 .board
