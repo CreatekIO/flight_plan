@@ -5,9 +5,17 @@ class TicketActions
     PullRequestReviews
   ].freeze
 
-  def self.for(pull_request, actions: ALL_ACTIONS, user: nil)
+  DEFAULT_CONFIG = {
+    'PullRequestStatuses' => {
+      ignored_contexts: %w[codeclimate]
+    }
+  }.freeze
+
+  def self.for(pull_request, actions: ALL_ACTIONS)
     actions.each_with_object(SortedSet.new) do |klass, collection|
-      check = const_get(klass).new(pull_request)
+      check_class = const_get(klass)
+      config = DEFAULT_CONFIG.fetch(klass, {})
+      check = check_class.new(pull_request, config)
       action = check.next_action
       next if action.blank?
 
