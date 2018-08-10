@@ -1,11 +1,11 @@
 class TicketActions::PullRequestStatuses < TicketActions::Base
-  def next_action
+  next_actions do |c|
     if failed_statuses.any?
       # owner
-      negative 'Fix issues', urls: to_urls(failed_statuses)
+      c.negative 'Fix issues', urls: to_urls(failed_statuses), user_ids: owner_id
     elsif pending_statuses.any?
-      # owner
-      neutral 'Wait for checks', urls: to_urls(pending_statuses)
+      # everyone
+      c.neutral 'Wait for checks', urls: to_urls(pending_statuses)
     end
   end
 

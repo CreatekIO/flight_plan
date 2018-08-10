@@ -1,14 +1,24 @@
 class TicketActions::PullRequestReviews < TicketActions::Base
-  def next_action
+  next_actions do |c|
     if reviews.none?
-      # everyone
-      positive 'Add a review', urls: "#{pull_request.html_url}/files"
-    elsif superceded_reviews.any?
-      # reviewers
-      warning 'Re-review updates', urls: pull_request.html_url
-    elsif pending_reviews.any?
-      # owner
-      warning 'Address changes', urls: pull_request.html_url
+      # everyone but owner
+      c.positive('Add a review', urls: "#{html_url}/files", user_ids: team_ids, priority: 10)
+      c.neutral('Wait for a review', urls: html_url, user_ids: owner_id)
+    else
+      if superceded_reviews.any?
+        # reviewers
+        c.warning(
+          'Re-review updates',
+          urls: html_url,
+          user_ids: still_pending_reviews.map(&:reviewer_remote_id),
+          priority: 10
+        )
+      end
+
+      if still_pending_reviews.any?
+        # owner
+        c.warning('Address changes', urls: html_url, user_ids: owner_id)
+      end
     end
   end
 
@@ -21,13 +31,21 @@ class TicketActions::PullRequestReviews < TicketActions::Base
   end
 
   def pending_reviews
-    @pending_reviews ||= reviews.select(&:changes_requested?)
+    @pending_reviews ||= reviews.select(&:changes_requested?).group_by do |review|
+      superceded?(review) ? :superceded : :still_pending
+    end
+  end
+
+  def still_pending_reviews
+    @still_pending_reviews ||= pending_reviews.fetch(:still_pending, [])
+  end
+
+  def superceded_reviews
+    @superceded_reviews ||= pending_reviews.fetch(:superceded, [])
   end
 
   # Assumes users always review latest commit
-  def superceded_reviews
-    @superceded_reviews ||= pending_reviews.select do |review|
-      pull_request.remote_head_sha != review.sha
-    end
+  def superceded?(review)
+    pull_request.remote_head_sha != review.sha
   end
 end

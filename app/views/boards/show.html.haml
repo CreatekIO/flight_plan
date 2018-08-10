@@ -45,7 +45,7 @@
                         = octicon 'git-pull-request', class: (pull_request.open? ? 'text-success' : 'text-danger')
                       = link_to pull_request.remote_number, pull_request.html_url, title: pull_request.remote_title, target: :_blank
                     %span.pull-right
-                      = next_action_button(pull_request, class: 'btn-xs')
+                      = next_action_button(pull_request, user: current_user, class: 'btn-xs')
 
             - if swimlane.transitions.any?
               .panel-footer

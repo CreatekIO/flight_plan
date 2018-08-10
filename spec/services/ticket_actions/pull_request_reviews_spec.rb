@@ -62,7 +62,7 @@ RSpec.describe TicketActions::PullRequestReviews, type: :ticket_action do
         let(:reviewer_count) { 1 }
 
         it 'tells user to address changes' do
-          expect(subject.next_action).to be_a_warning_action('Address changes', urls: pr_url)
+          expect(subject.next_action).to be_a_warning_action('Address changes', urls: pr_url, user_ids: creator.uid)
         end
 
         context 'followed by a push on the PR branch' do
@@ -85,7 +85,7 @@ RSpec.describe TicketActions::PullRequestReviews, type: :ticket_action do
               end
 
               it 'tells user to address changes' do
-                expect(subject.next_action).to be_a_warning_action('Address changes', urls: pr_url)
+                expect(subject.next_action).to be_a_warning_action('Address changes', urls: pr_url, user_ids: creator.uid)
               end
             end
 
@@ -101,12 +101,18 @@ RSpec.describe TicketActions::PullRequestReviews, type: :ticket_action do
           end
 
           context 'and another reviewer requests changes on latest commit' do
+            let(:another_reviewer) { build_stubbed(:user) }
+
             before do
-              add_review(:changes_requested, reviewer: build_stubbed(:user))
+              add_review(:changes_requested, reviewer: another_reviewer)
             end
 
             it 'tells user to re-review PR' do
-              expect(subject.next_action).to be_a_warning_action('Re-review updates', urls: pr_url)
+              expect(subject.next_action).to be_a_warning_action(
+                'Re-review updates',
+                urls: pr_url,
+                user_ids: another_reviewer.uid
+              )
             end
           end
         end
@@ -116,7 +122,7 @@ RSpec.describe TicketActions::PullRequestReviews, type: :ticket_action do
         let(:reviewer_count) { 2 }
 
         it 'tells user to address changes' do
-          expect(subject.next_action).to be_a_warning_action('Address changes', urls: pr_url)
+          expect(subject.next_action).to be_a_warning_action('Address changes', urls: pr_url, user_ids: creator.uid)
         end
       end
     end
@@ -136,7 +142,7 @@ RSpec.describe TicketActions::PullRequestReviews, type: :ticket_action do
         end
 
         it 'tells user to address changes' do
-          expect(subject.next_action).to be_a_warning_action('Address changes', urls: pr_url)
+          expect(subject.next_action).to be_a_warning_action('Address changes', urls: pr_url, user_ids: creator.uid)
         end
       end
     end
@@ -168,7 +174,7 @@ RSpec.describe TicketActions::PullRequestReviews, type: :ticket_action do
         let(:review_state) { :changes_requested }
 
         it 'tells user to address changes' do
-          expect(subject.next_action).to be_a_warning_action('Address changes', urls: pr_url)
+          expect(subject.next_action).to be_a_warning_action('Address changes', urls: pr_url, user_ids: creator.uid)
         end
       end
     end

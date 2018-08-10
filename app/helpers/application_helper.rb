@@ -1,6 +1,6 @@
 module ApplicationHelper
-  def next_action_button(pull_request, options = {})
-    next_action = TicketActions.for(pull_request).first
+  def next_action_button(pull_request, user: nil, **options)
+    next_action = TicketActions.next_action_for(pull_request, user: user)
     return '' if next_action.blank?
 
     btn_type =
