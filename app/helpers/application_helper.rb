@@ -34,4 +34,12 @@ module ApplicationHelper
       link_to next_action.text, next_action.url.to_s, options
     end
   end
+
+  def pull_request_icon(pull_request)
+    if pull_request.merged?
+      octicon 'git-merge', class: 'is-merged'
+    else
+      octicon 'git-pull-request', class: (pull_request.open? ? 'text-success' : 'text-danger')
+    end
+  end
 end

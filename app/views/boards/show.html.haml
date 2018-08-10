@@ -28,10 +28,7 @@
                 - ticket.pull_requests.each do |pull_request|
                   %li.list-group-item.clearfix
                     %span.pull-left
-                      - if pull_request.merged?
-                        = octicon 'git-merge', class: 'is-merged'
-                      - else
-                        = octicon 'git-pull-request', class: (pull_request.open? ? 'text-success' : 'text-danger')
+                      = pull_request_icon pull_request
                       = link_to pull_request.remote_number, pull_request.html_url, title: pull_request.remote_title, target: :_blank
                     %span.pull-right
                       = next_action_button(pull_request, user: current_user, class: 'btn-xs')
