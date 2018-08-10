@@ -40,6 +40,12 @@ class Ticket < ApplicationRecord
     repo.branch_names.grep(/##{remote_number}[^0-9]/)
   end
 
+  URL_TEMPLATE = 'https://github.com/%{repo}/issues/%{number}'.freeze
+
+  def html_url
+    format(URL_TEMPLATE, repo: repo.remote_url, number: remote_number)
+  end
+
   def update_board_tickets_from_remote(remote_issue)
     repo.boards.each do |board|
       bt = board_tickets.find_or_initialize_by(board: board)

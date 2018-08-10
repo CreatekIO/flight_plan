@@ -23,7 +23,7 @@
             .panel-heading
               .remote-details
                 %span.issue-number
-                  = link_to ticket.remote_number, "http://github.com/#{ticket.repo.remote_url}/issues/#{ticket.remote_number}", target: '_blank'
+                  = link_to ticket.remote_number, ticket.html_url, target: '_blank'
                 - if show_repo_name
                   %span.repo-name
                     = ticket.repo.name
