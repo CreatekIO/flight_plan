@@ -1,11 +1,12 @@
 class TicketActions::Base
-  def initialize(pull_request)
+  def initialize(pull_request, **config)
     @pull_request = pull_request
+    @config = config
   end
 
   private
 
-  attr_reader :pull_request
+  attr_reader :pull_request, :config
 
   def next_action
     raise NotImplementedError

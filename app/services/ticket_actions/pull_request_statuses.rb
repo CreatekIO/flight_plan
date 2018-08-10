@@ -20,7 +20,11 @@ class TicketActions::PullRequestStatuses < TicketActions::Base
   end
 
   def statuses
-    @commit_statuses ||= pull_request.latest_commit_statuses
+    @statuses ||= pull_request.latest_commit_statuses.reject {|status| ignore?(status) }
+  end
+
+  def ignore?(status)
+    config.fetch(:ignored_contexts, []).include?(status.context)
   end
 
   def to_urls(records)
