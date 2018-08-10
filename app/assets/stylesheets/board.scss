@@ -1,5 +1,9 @@
 .board-header {
   padding: 4px;
+
+  .dropdown + .btn {
+    margin-right: 6px;
+  }
 }
 
 .board {
