@@ -27,14 +27,18 @@ class TicketActions::Action
     end
   end
 
+  DEFAULT_PRIORITIES = {
+    negative: 100
+  }.freeze
+
   def self.type
     @type ||= name.demodulize.remove('Action').underscore.to_sym
   end
 
-  def initialize(text, urls:, priority: 0, user_ids: [])
+  def initialize(text, urls:, priority: nil, user_ids: [])
     @text = text
     self.urls = urls
-    @priority = priority
+    @priority = priority.presence || DEFAULT_PRIORITIES.fetch(type, 0)
     self.user_ids = user_ids
   end
 
