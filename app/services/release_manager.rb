@@ -9,9 +9,7 @@ class ReleaseManager
   end
 
   def open_pr?
-    repo.pull_requests.any? do |pr|
-      pr[:base][:ref] == 'master' && pr[:head][:ref].starts_with?('release/')
-    end
+    repo.pull_requests.any? { |pr| release_pr?(pr) }
   end
 
   def create_release
@@ -23,7 +21,7 @@ class ReleaseManager
 
   def merge_prs(branch = 'master')
     repo.pull_requests.each do |pr|
-      next unless pr[:base][:ref] == branch
+      next unless release_pr?(pr, base: branch)
       next if pr[:title].include?('CONFLICTS')
       log "Merging PR ##{pr[:number]} - #{pr[:title]}"
 
@@ -39,6 +37,10 @@ class ReleaseManager
   private
 
   attr_reader :board, :repo, :release_branch_name, :merge_conflicts, :remote_pr
+
+  def release_pr?(remote_pr, base: 'master')
+    remote_pr[:base][:ref] == base && remote_pr[:head][:ref].starts_with?('release/')
+  end
 
   def release_pr_name
     if merge_conflicts.any?

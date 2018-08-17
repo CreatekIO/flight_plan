@@ -3,6 +3,16 @@ require 'rails_helper'
 RSpec.describe ReleaseManager, type: :service do
   subject { described_class.new(board, repo) }
 
+  let(:slack_notifier) { double('SlackNotifier', notify: true) }
+
+  before do
+    allow(SlackNotifier).to receive(:new).and_return(slack_notifier)
+  end
+
+  def have_sent_message(title, attachments = a_hash_including(:attachments))
+    have_received(:notify).with(title, attachments)
+  end
+
   describe '#open_pr?' do
     let(:repo) { create(:repo) }
     let(:board) { create(:board, repos: [repo]) }
@@ -70,10 +80,6 @@ RSpec.describe ReleaseManager, type: :service do
       "feature/##{ticket.remote_number}-#{ticket.remote_title.parameterize}"
     end
 
-    def have_sent_message(title, attachments = a_hash_including(:attachments))
-      have_received(:notify).with(title, attachments)
-    end
-
     before do
       board.update_attributes!(deploy_swimlane: deploying, additional_branches_regex: '^configuration_changes$')
 
@@ -103,11 +109,7 @@ RSpec.describe ReleaseManager, type: :service do
       end
 
       stub_gh_get('git/refs/heads/master') { { object: { sha: master_sha } } }
-
-      allow(SlackNotifier).to receive(:new).and_return(slack_notifier)
     end
-
-    let(:slack_notifier) { double('SlackNotifier', notify: true) }
 
     let!(:branch_request) do
       stub_gh_post('git/refs', ref: "refs/heads/#{release_branch_name}", sha: master_sha)
@@ -251,6 +253,123 @@ RSpec.describe ReleaseManager, type: :service do
           expect(pr_request).not_to have_been_requested
 
           expect(slack_notifier).to have_received(:notify).with(/pull request failed/i, a_hash_including(:attachments))
+        end
+      end
+    end
+  end
+
+  describe '#merge_prs' do
+    let(:repo) { create(:repo) }
+    let(:board) { create(:board, repos: [repo]) }
+    let(:remote_url) { repo.remote_url }
+
+    before do
+      stub_gh_get('pulls') { body }
+    end
+
+    let!(:merge_request) do
+      stub_gh_put('pulls/{number}/merge')
+    end
+
+    context 'when there are no PRs open to master' do
+      let(:body) { [] }
+
+      it 'does not merge anything' do
+        subject.merge_prs
+
+        aggregate_failures do
+          expect(merge_request).not_to have_been_requested
+          expect(slack_notifier).not_to have_received(:notify)
+        end
+      end
+    end
+
+    context 'when there is an open non-release PR to master' do
+      let(:body) do
+        [
+          number: 1,
+          title: 'Hotfix',
+          base: { ref: 'master' },
+          head: { ref: 'hotfix/fix-bugs' }
+        ]
+      end
+
+      it 'does not merge anything' do
+        subject.merge_prs
+
+        aggregate_failures do
+          expect(merge_request).not_to have_been_requested
+          expect(slack_notifier).not_to have_received(:notify)
+        end
+      end
+    end
+
+    context 'when there is an open release PR to master' do
+      let(:body) do
+        [
+          number: 1,
+          title: 'Release',
+          base: { ref: 'master' },
+          head: { ref: 'release/20180102-103000' }
+        ]
+      end
+
+      it 'merges release PR' do
+        subject.merge_prs
+
+        aggregate_failures do
+          expect(WebMock).to have_requested(:put, expand_gh_url('pulls/1/merge'))
+          expect(slack_notifier).to have_sent_message(/pull request merged/i)
+        end
+      end
+    end
+
+    context 'when there is an open release PR with conflicts' do
+      let(:body) do
+        [
+          number: 1,
+          title: 'Release (CONFLICTS)',
+          base: { ref: 'master' },
+          head: { ref: 'release/20180102-103000' }
+        ]
+      end
+
+      it 'does not merge anything' do
+        subject.merge_prs
+
+        aggregate_failures do
+          expect(merge_request).not_to have_been_requested
+          expect(slack_notifier).not_to have_received(:notify)
+        end
+      end
+    end
+
+    context 'when there is an open release PR and another PR' do
+      let(:body) do
+        [
+          {
+            number: 1,
+            title: 'Hotfix',
+            base: { ref: 'master' },
+            head: { ref: 'hotfix/fix-bugs' }
+          },
+          {
+            number: 2,
+            title: 'Release',
+            base: { ref: 'master' },
+            head: { ref: 'release/20180102-103000' }
+          }
+        ]
+      end
+
+      it 'just merges release PR' do
+        subject.merge_prs
+
+        aggregate_failures do
+          expect(WebMock).not_to have_requested(:put, expand_gh_url('pulls/1/merge'))
+          expect(WebMock).to have_requested(:put, expand_gh_url('pulls/2/merge'))
+
+          expect(slack_notifier).to have_sent_message(/pull request merged/i).once
         end
       end
     end
