@@ -1,4 +1,6 @@
 class ReleaseManager
+  class AllBranchesConflict < StandardError; end
+
   def initialize(board, repo)
     @board = board
     @repo = repo
@@ -66,6 +68,8 @@ class ReleaseManager
   end
 
   def create_pull_request
+    raise AllBranchesConflict, 'All branches in release had merge conflicts' if all_branches_conflict?
+
     log 'Creating pull request...'
     @remote_pr = repo.create_pull_request(
       'master',
@@ -75,7 +79,7 @@ class ReleaseManager
     )
     log 'done'
     true
-  rescue Octokit::UnprocessableEntity => error
+  rescue Octokit::Error, AllBranchesConflict => error
     log 'Could not create pull request, deleting branch'
     announce_pr_failed(error)
     repo.delete_branch(release_branch_name)
@@ -109,11 +113,15 @@ class ReleaseManager
   end
 
   def branches_to_merge
-    unmerged_tickets.flat_map(&:branch_names) + extra_branches
+    @branches_to_merge ||= unmerged_tickets.flat_map(&:branch_names) + extra_branches
   end
 
   def master
     @master ||= repo.refs('heads/master')
+  end
+
+  def all_branches_conflict?
+    branches_to_merge.size == merge_conflicts.size
   end
 
   def pr_body

@@ -205,6 +205,31 @@ RSpec.describe ReleaseManager, type: :service do
       end
     end
 
+    context 'problem creating release PR' do
+      before do
+        unmerged_tickets.map do |ticket|
+          stub_post('merges', hash_including(base: release_branch_name, head: branch_name(ticket)))
+        end
+        stub_post('merges', hash_including(base: release_branch_name, head: 'configuration_changes'))
+
+        stub_post('pulls', hash_including(base: 'master', head: release_branch_name), status: 503)
+      end
+
+      let!(:branch_deletion_request) do
+        stub_delete("git/refs/heads/#{release_branch_name}")
+      end
+
+      it 'rolls back release' do
+        subject.create_release
+
+        aggregate_failures do
+          expect(branch_deletion_request).to have_been_requested
+
+          expect(slack_notifier).to have_received(:notify).with(/pull request failed/i, a_hash_including(:attachments))
+        end
+      end
+    end
+
     context 'all branches conflict' do
       before do
         unmerged_tickets.map do |ticket|
@@ -218,7 +243,9 @@ RSpec.describe ReleaseManager, type: :service do
           'merges', hash_including(base: release_branch_name, head: 'configuration_changes'),
           status: 409
         ) { { message: 'Merge Conflict' } }
+      end
 
+      let!(:pr_request) do
         stub_post('pulls', hash_including(base: 'master', head: release_branch_name), status: 422) do
           { message: "No commits between master and #{release_branch_name}" }
         end
@@ -228,11 +255,12 @@ RSpec.describe ReleaseManager, type: :service do
         stub_delete("git/refs/heads/#{release_branch_name}")
       end
 
-      it 'rolls back release' do
+      it 'rolls back release without trying to create PR' do
         subject.create_release
 
         aggregate_failures do
           expect(branch_deletion_request).to have_been_requested
+          expect(pr_request).not_to have_been_requested
 
           expect(slack_notifier).to have_received(:notify).with(/pull request failed/i, a_hash_including(:attachments))
         end
