@@ -10,7 +10,7 @@ class ReleaseManager
 
   def open_pr?
     repo.pull_requests.any? do |pr|
-      pr[:base][:ref] == 'master'
+      pr[:base][:ref] == 'master' && pr[:head][:ref].starts_with?('release/')
     end
   end
 

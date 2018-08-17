@@ -6,11 +6,10 @@ RSpec.describe ReleaseManager, type: :service do
   describe '#open_pr?' do
     let(:repo) { create(:repo) }
     let(:board) { create(:board, repos: [repo]) }
+    let(:remote_url) { repo.remote_url }
 
     before do
-      stub_request(
-        :get, 'https://api.github.com/repos/user/repo_name/pulls?per_page=100'
-      ).to_return(status: 200, body: body, headers: {})
+      stub_gh_get('pulls') { body }
     end
 
     context 'when there are no PRs open to master' do
@@ -21,12 +20,24 @@ RSpec.describe ReleaseManager, type: :service do
       end
     end
 
-    context 'when there is an open PR to master' do
+    context 'when there is an open non-release PR to master' do
       let(:body) do
         [
-          base: {
-            ref: 'master'
-          }
+          base: { ref: 'master' },
+          head: { ref: 'hotfix/fix-bugs' }
+        ]
+      end
+
+      it 'returns false' do
+        expect(subject.open_pr?).to be(false)
+      end
+    end
+
+    context 'when there is an open release PR to master' do
+      let(:body) do
+        [
+          base: { ref: 'master' },
+          head: { ref: 'release/20180102-103000' }
         ]
       end
 
