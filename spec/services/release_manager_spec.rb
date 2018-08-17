@@ -59,29 +59,6 @@ RSpec.describe ReleaseManager, type: :service do
       "feature/##{ticket.remote_number}-#{ticket.remote_title.parameterize}"
     end
 
-    def stub_get(path, status: 200)
-      response = block_given? ? yield.to_json : ''
-
-      stub_request(:get, "https://api.github.com/repos/#{remote_url}/#{path}")
-        .with(query: hash_including({}))
-        .and_return(status: status, headers: { 'Content-Type' => 'application/json' }, body: response)
-    end
-
-    def stub_post(path, body, status: 201)
-      response = block_given? ? yield.to_json : ''
-
-      stub_request(:post, "https://api.github.com/repos/#{remote_url}/#{path}")
-        .with(body: body)
-        .and_return(status: status, headers: { 'Content-Type' => 'application/json' }, body: response)
-    end
-
-    def stub_delete(path, status: 204)
-      response = block_given? ? yield.to_json : ''
-
-      stub_request(:delete, "https://api.github.com/repos/#{remote_url}/#{path}")
-        .and_return(status: status, headers: { 'Content-Type' => 'application/json' }, body: response)
-    end
-
     def have_sent_message(title, attachments = a_hash_including(:attachments))
       have_received(:notify).with(title, attachments)
     end
@@ -95,7 +72,7 @@ RSpec.describe ReleaseManager, type: :service do
 
       board.board_tickets.create!(swimlane: dev, ticket: non_deploying_ticket)
 
-      stub_get('branches') do
+      stub_gh_get('branches') do
         [
           { name: 'master' },
           { name: 'configuration_changes' },
@@ -105,16 +82,16 @@ RSpec.describe ReleaseManager, type: :service do
       end
 
       unmerged_tickets.each do |ticket|
-        stub_get("compare/master...#{URI.escape branch_name(ticket)}") do
+        stub_gh_get("compare/master...#{URI.escape branch_name(ticket)}") do
           { total_commits: 2 }
         end
       end
 
-      stub_get("compare/master...#{URI.escape branch_name(non_deploying_ticket)}") do
+      stub_gh_get("compare/master...#{URI.escape branch_name(non_deploying_ticket)}") do
         { total_commits: 2 }
       end
 
-      stub_get('git/refs/heads/master') { { object: { sha: master_sha } } }
+      stub_gh_get('git/refs/heads/master') { { object: { sha: master_sha } } }
 
       allow(SlackNotifier).to receive(:new).and_return(slack_notifier)
     end
@@ -122,7 +99,7 @@ RSpec.describe ReleaseManager, type: :service do
     let(:slack_notifier) { double('SlackNotifier', notify: true) }
 
     let!(:branch_request) do
-      stub_post('git/refs', ref: "refs/heads/#{release_branch_name}", sha: master_sha)
+      stub_gh_post('git/refs', ref: "refs/heads/#{release_branch_name}", sha: master_sha)
     end
 
     around do |example|
@@ -133,16 +110,16 @@ RSpec.describe ReleaseManager, type: :service do
     context 'with no conflicts' do
       let!(:ticket_merge_requests) do
         unmerged_tickets.map do |ticket|
-          stub_post('merges', hash_including(base: release_branch_name, head: branch_name(ticket)))
+          stub_gh_post('merges', hash_including(base: release_branch_name, head: branch_name(ticket)))
         end
       end
 
       let!(:additional_branch_merge_request) do
-        stub_post('merges', hash_including(base: release_branch_name, head: 'configuration_changes'))
+        stub_gh_post('merges', hash_including(base: release_branch_name, head: 'configuration_changes'))
       end
 
       let!(:pr_request) do
-        stub_post('pulls', hash_including(base: 'master', head: release_branch_name)) do
+        stub_gh_post('pulls', hash_including(base: 'master', head: release_branch_name)) do
           { html_url: "https://github.com/#{remote_url}/pulls/1" }
         end
       end
@@ -163,18 +140,18 @@ RSpec.describe ReleaseManager, type: :service do
 
     context 'with a conflict' do
       let!(:successful_merge_request) do
-        stub_post('merges', hash_including(base: release_branch_name, head: branch_name(unmerged_ticket_1)))
+        stub_gh_post('merges', hash_including(base: release_branch_name, head: branch_name(unmerged_ticket_1)))
       end
 
       let!(:unsuccessful_merge_request) do
-        stub_post(
+        stub_gh_post(
           'merges', hash_including(base: release_branch_name, head: branch_name(unmerged_ticket_2)),
           status: 409
         ) { { message: 'Merge Conflict' } }
       end
 
       let!(:additional_branch_merge_request) do
-        stub_post('merges', hash_including(base: release_branch_name, head: 'configuration_changes'))
+        stub_gh_post('merges', hash_including(base: release_branch_name, head: 'configuration_changes'))
       end
 
       let!(:pr_request) do
@@ -185,7 +162,7 @@ RSpec.describe ReleaseManager, type: :service do
           body: /could not merge all branches/i
         )
 
-        stub_post('pulls', params) do
+        stub_gh_post('pulls', params) do
           { html_url: "https://github.com/#{remote_url}/pulls/1" }
         end
       end
@@ -208,15 +185,15 @@ RSpec.describe ReleaseManager, type: :service do
     context 'problem creating release PR' do
       before do
         unmerged_tickets.map do |ticket|
-          stub_post('merges', hash_including(base: release_branch_name, head: branch_name(ticket)))
+          stub_gh_post('merges', hash_including(base: release_branch_name, head: branch_name(ticket)))
         end
-        stub_post('merges', hash_including(base: release_branch_name, head: 'configuration_changes'))
+        stub_gh_post('merges', hash_including(base: release_branch_name, head: 'configuration_changes'))
 
-        stub_post('pulls', hash_including(base: 'master', head: release_branch_name), status: 503)
+        stub_gh_post('pulls', hash_including(base: 'master', head: release_branch_name), status: 503)
       end
 
       let!(:branch_deletion_request) do
-        stub_delete("git/refs/heads/#{release_branch_name}")
+        stub_gh_delete("git/refs/heads/#{release_branch_name}")
       end
 
       it 'rolls back release' do
@@ -233,26 +210,26 @@ RSpec.describe ReleaseManager, type: :service do
     context 'all branches conflict' do
       before do
         unmerged_tickets.map do |ticket|
-          stub_post(
+          stub_gh_post(
             'merges', hash_including(base: release_branch_name, head: branch_name(ticket)),
             status: 409
           ) { { message: 'Merge Conflict' } }
         end
 
-        stub_post(
+        stub_gh_post(
           'merges', hash_including(base: release_branch_name, head: 'configuration_changes'),
           status: 409
         ) { { message: 'Merge Conflict' } }
       end
 
       let!(:pr_request) do
-        stub_post('pulls', hash_including(base: 'master', head: release_branch_name), status: 422) do
+        stub_gh_post('pulls', hash_including(base: 'master', head: release_branch_name), status: 422) do
           { message: "No commits between master and #{release_branch_name}" }
         end
       end
 
       let!(:branch_deletion_request) do
-        stub_delete("git/refs/heads/#{release_branch_name}")
+        stub_gh_delete("git/refs/heads/#{release_branch_name}")
       end
 
       it 'rolls back release without trying to create PR' do
