@@ -75,6 +75,13 @@ RSpec.describe ReleaseManager, type: :service do
         .and_return(status: status, headers: { 'Content-Type' => 'application/json' }, body: response)
     end
 
+    def stub_delete(path, status: 204)
+      response = block_given? ? yield.to_json : ''
+
+      stub_request(:delete, "https://api.github.com/repos/#{remote_url}/#{path}")
+        .and_return(status: status, headers: { 'Content-Type' => 'application/json' }, body: response)
+    end
+
     def have_sent_message(title, attachments = a_hash_including(:attachments))
       have_received(:notify).with(title, attachments)
     end
@@ -194,6 +201,38 @@ RSpec.describe ReleaseManager, type: :service do
           expect(pr_request).to have_been_requested
 
           expect(slack_notifier).to have_sent_message(/pull request created/i)
+        end
+      end
+    end
+
+    context 'all branches conflict' do
+      before do
+        unmerged_tickets.map do |ticket|
+          stub_post(
+            'merges', hash_including(base: release_branch_name, head: branch_name(ticket)),
+            status: 409
+          ) { { message: 'Merge Conflict' } }
+        end
+
+        stub_post(
+          'merges', hash_including(base: release_branch_name, head: 'configuration_changes'),
+          status: 409
+        ) { { message: 'Merge Conflict' } }
+
+        stub_post('pulls', hash_including(base: 'master', head: release_branch_name), status: 422) do
+          { message: "No commits between master and #{release_branch_name}" }
+        end
+      end
+
+      let!(:branch_deletion_request) do
+        stub_delete("git/refs/heads/#{release_branch_name}")
+      end
+
+      it 'rolls back release' do
+        subject.create_release
+
+        aggregate_failures do
+          expect(branch_deletion_request).to have_been_requested
         end
       end
     end
