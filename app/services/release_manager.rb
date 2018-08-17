@@ -75,8 +75,9 @@ class ReleaseManager
     )
     log 'done'
     true
-  rescue Octokit::UnprocessableEntity
+  rescue Octokit::UnprocessableEntity => error
     log 'Could not create pull request, deleting branch'
+    announce_pr_failed(error)
     repo.delete_branch(release_branch_name)
     false
   end
@@ -183,6 +184,17 @@ class ReleaseManager
         title_link: pr[:html_url],
         text: pr[:body],
         color: 'good'
+      }
+    )
+  end
+
+  def announce_pr_failed(error)
+    slack_notifier.notify(
+      '*Pull Request Failed*',
+      attachments: {
+        title: "#{repo.name}: Failed to create release",
+        text: error.message,
+        color: 'danger'
       }
     )
   end

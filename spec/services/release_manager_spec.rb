@@ -233,6 +233,8 @@ RSpec.describe ReleaseManager, type: :service do
 
         aggregate_failures do
           expect(branch_deletion_request).to have_been_requested
+
+          expect(slack_notifier).to have_received(:notify).with(/pull request failed/i, a_hash_including(:attachments))
         end
       end
     end
