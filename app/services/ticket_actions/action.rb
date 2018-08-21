@@ -1,7 +1,7 @@
 class TicketActions::Action
   include Comparable
 
-  attr_reader :text, :urls, :priority, :user_ids
+  attr_reader :text, :urls, :user_ids
 
   delegate :type, to: :class
 
@@ -35,11 +35,13 @@ class TicketActions::Action
     @type ||= name.demodulize.remove('Action').underscore.to_sym
   end
 
-  def initialize(text, urls:, priority: nil, user_ids: [])
+  def initialize(text, **options)
     @text = text
-    self.urls = urls
-    @priority = priority.presence || DEFAULT_PRIORITIES.fetch(type, 0)
-    self.user_ids = user_ids
+    @user_ids = Set.new
+
+    options.each do |key, value|
+      send("#{key}=", value)
+    end
   end
 
   def <=>(other)
@@ -63,6 +65,14 @@ class TicketActions::Action
     @user_ids = Array.wrap(value).map(&:to_s).to_set
   end
 
+  def priority
+    @priority ||= DEFAULT_PRIORITIES.fetch(type, 0)
+  end
+
+  def for_other_user?
+    @for_other_user.present?
+  end
+
   def applies_to?(user_id)
     return true if user_ids.empty?
 
@@ -72,4 +82,8 @@ class TicketActions::Action
   def sort_key
     [-priority, TicketActions::ACTION_TYPES.index(type)]
   end
+
+  private
+
+  attr_writer :text, :priority, :for_other_user
 end

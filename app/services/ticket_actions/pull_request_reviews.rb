@@ -10,13 +10,13 @@ class TicketActions::PullRequestReviews < TicketActions::Base
         reviewer_ids = still_pending_reviews.map(&:reviewer_remote_id)
 
         c.warning('Re-review updates', urls: html_url, user_ids: reviewer_ids, priority: 10)
-        c.warning('Wait for reviewers', urls: html_url, user_ids: team_ids(except: reviewer_ids))
+        c.caution('Wait for reviewers', urls: html_url, user_ids: team_ids(except: reviewer_ids))
       end
 
       if still_pending_reviews.any?
         # owner
         c.warning('Address changes', urls: html_url, user_ids: owner_id)
-        c.warning('Wait for changes', urls: html_url, user_ids: team_ids)
+        c.caution('Wait for changes', urls: html_url, user_ids: team_ids)
       end
     end
   end

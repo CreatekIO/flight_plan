@@ -3,7 +3,7 @@ class TicketActions::PullRequestStatuses < TicketActions::Base
     if failed_statuses.any?
       # owner
       c.negative 'Fix issues', urls: to_urls(failed_statuses), user_ids: owner_id
-      c.warning 'Failed checks', urls: to_urls(failed_statuses), user_ids: team_ids
+      c.caution 'Failed checks', urls: to_urls(failed_statuses), user_ids: team_ids
     elsif pending_statuses.any?
       # everyone
       c.neutral 'Wait for checks', urls: to_urls(pending_statuses)
