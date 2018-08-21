@@ -17,6 +17,17 @@ class PullRequest < ApplicationRecord
     foreign_key: :creator_remote_id, primary_key: :uid
   has_many :pull_request_connections, autosave: true
   has_many :tickets, through: :pull_request_connections
+  has_many :head_commit_statuses, -> (model = nil) {
+    if model
+      where(repo_id: model.repo_id)
+    else # eager-loading/join
+      joins(
+        table.join(PullRequest.arel_table).on(
+          PullRequest.arel_table[:remote_head_sha].eq(table[:sha])
+        ).join_sources
+      ).where(PullRequest.arel_table[:repo_id].eq(table[:repo_id]))
+    end
+  }, class_name: 'CommitStatus', foreign_key: :sha, primary_key: :remote_head_sha
   has_many :reviews, class_name: 'PullRequestReview', foreign_key: :remote_pull_request_id, primary_key: :remote_id
 
   before_save :update_pull_request_connections
@@ -69,9 +80,7 @@ class PullRequest < ApplicationRecord
   end
 
   def latest_commit_statuses
-    repo
-      .commit_statuses
-      .where(sha: remote_head_sha)
+    head_commit_statuses
       .group_by(&:context)
       .map {|_, records| records.max_by(&:remote_created_at) }
   end
