@@ -4,6 +4,7 @@ class TicketActions::Mergeability < TicketActions::Base
     when 'merge_conflicts'
       # owner
       c.negative 'Fix merge conflicts', urls: html_url, user_ids: owner_id
+      c.warning 'Merge conflicts', urls: html_url, user_ids: team_ids
     when 'merge_ok'
       # all
       c.positive 'Merge it!', urls: "#{html_url}#partial-pull-merging"

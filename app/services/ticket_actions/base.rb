@@ -36,8 +36,8 @@ class TicketActions::Base
     pull_request.creator_remote_id
   end
 
-  def team_ids
+  def team_ids(except: [])
     # TODO: scope to board/repo
-    User.pluck(:uid) - [owner_id.to_s]
+    User.pluck(:uid) - [owner_id.to_s, *except]
   end
 end
