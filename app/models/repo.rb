@@ -71,6 +71,6 @@ class Repo < ApplicationRecord
   end
 
   def delete_branch(branch)
-    client.delete_branch(remote_url, release_branch_name)
+    client.delete_branch(remote_url, branch)
   end
 end

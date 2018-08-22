@@ -1,4 +1,6 @@
 class ReleaseManager
+  class AllBranchesConflict < StandardError; end
+
   def initialize(board, repo)
     @board = board
     @repo = repo
@@ -7,9 +9,7 @@ class ReleaseManager
   end
 
   def open_pr?
-    repo.pull_requests.any? do |pr|
-      pr[:base][:ref] == 'master'
-    end
+    repo.pull_requests.any? { |pr| release_pr?(pr) }
   end
 
   def create_release
@@ -21,7 +21,7 @@ class ReleaseManager
 
   def merge_prs(branch = 'master')
     repo.pull_requests.each do |pr|
-      next unless pr[:base][:ref] == branch
+      next unless release_pr?(pr, base: branch)
       next if pr[:title].include?('CONFLICTS')
       log "Merging PR ##{pr[:number]} - #{pr[:title]}"
 
@@ -37,6 +37,10 @@ class ReleaseManager
   private
 
   attr_reader :board, :repo, :release_branch_name, :merge_conflicts, :remote_pr
+
+  def release_pr?(remote_pr, base: 'master')
+    remote_pr[:base][:ref] == base && remote_pr[:head][:ref].starts_with?('release/')
+  end
 
   def release_pr_name
     if merge_conflicts.any?
@@ -66,6 +70,8 @@ class ReleaseManager
   end
 
   def create_pull_request
+    raise AllBranchesConflict, 'All branches in release had merge conflicts' if all_branches_conflict?
+
     log 'Creating pull request...'
     @remote_pr = repo.create_pull_request(
       'master',
@@ -75,8 +81,9 @@ class ReleaseManager
     )
     log 'done'
     true
-  rescue Octokit::UnprocessableEntity
+  rescue Octokit::Error, AllBranchesConflict => error
     log 'Could not create pull request, deleting branch'
+    announce_pr_failed(error)
     repo.delete_branch(release_branch_name)
     false
   end
@@ -108,11 +115,15 @@ class ReleaseManager
   end
 
   def branches_to_merge
-    unmerged_tickets.flat_map(&:branch_names) + extra_branches
+    @branches_to_merge ||= unmerged_tickets.flat_map(&:branch_names) + extra_branches
   end
 
   def master
     @master ||= repo.refs('heads/master')
+  end
+
+  def all_branches_conflict?
+    branches_to_merge.size == merge_conflicts.size
   end
 
   def pr_body
@@ -183,6 +194,17 @@ class ReleaseManager
         title_link: pr[:html_url],
         text: pr[:body],
         color: 'good'
+      }
+    )
+  end
+
+  def announce_pr_failed(error)
+    slack_notifier.notify(
+      '*Pull Request Failed*',
+      attachments: {
+        title: "#{repo.name}: Failed to create release",
+        text: error.message,
+        color: 'danger'
       }
     )
   end
