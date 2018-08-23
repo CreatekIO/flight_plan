@@ -1,3 +1,9 @@
-Metrics/LineLength:
-  Max: 120
+inherit_from:
+  - 'https://github.com/CreatekIO/guidelines/raw/master/rubocop.yml'
 
+AllCops:
+  # Current version on Heroku
+  TargetRubyVersion: '2.3.4'
+
+Style/FrozenStringLiteralComment:
+  Enabled: false

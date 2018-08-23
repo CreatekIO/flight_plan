@@ -24,3 +24,6 @@
 
 # FlightPlan
 .flight_plan_cli/user.yml
+
+# Rubocop remote URL cache
+.rubocop-*
