@@ -18,16 +18,12 @@ module ApplicationHelper
       options[:class] << 'dropdown-toggle'
       options.deep_merge!(data: { toggle: 'dropdown' })
 
+      button = button_tag(options) do
+        h(next_action.text) + '&nbsp;'.html_safe + content_tag(:span, '', class: 'caret')
+      end
+
       content_tag(:div, class: 'dropdown') do
-        button_tag(options) do
-          h(next_action.text) + '&nbsp;'.html_safe + content_tag(:span, '', class: 'caret')
-        end + content_tag(:ul, class: 'dropdown-menu dropdown-menu-right') do
-          safe_join(next_action.urls.map do |url|
-            content_tag(:li) do
-              link_to url.title.presence || next_action.text, url.url, target: :_blank
-            end
-          end)
-        end
+        button + url_dropdown_menu(next_action)
       end
     else
       options[:target] = :_blank
@@ -40,6 +36,20 @@ module ApplicationHelper
       octicon 'git-merge', class: 'is-merged'
     else
       octicon 'git-pull-request', class: (pull_request.open? ? 'text-success' : 'text-danger')
+    end
+  end
+
+  private
+
+  def url_dropdown_menu(action)
+    items = action.urls.map do |url|
+      content_tag(:li) do
+        link_to url.title.presence || action.text, url.url, target: :_blank
+      end
+    end
+
+    content_tag(:ul, class: 'dropdown-menu dropdown-menu-right') do
+      safe_join(items)
     end
   end
 end
