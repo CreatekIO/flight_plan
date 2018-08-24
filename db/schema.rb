@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180608151941) do
+ActiveRecord::Schema.define(version: 20180713151545) do
 
   create_table "board_repos", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin" do |t|
     t.bigint "board_id"
@@ -55,9 +55,9 @@ ActiveRecord::Schema.define(version: 20180608151941) do
     t.text "payload"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["author_username"], name: "index_branch_heads_on_author_username"
+    t.index ["author_username"], name: "index_branch_heads_on_author_username", length: { author_username: 191 }
     t.index ["branch_id"], name: "index_branch_heads_on_branch_id"
-    t.index ["committer_username"], name: "index_branch_heads_on_committer_username"
+    t.index ["committer_username"], name: "index_branch_heads_on_committer_username", length: { committer_username: 191 }
     t.index ["pusher_remote_id"], name: "index_branch_heads_on_pusher_remote_id"
   end
 
@@ -70,8 +70,8 @@ ActiveRecord::Schema.define(version: 20180608151941) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["latest_head_id"], name: "index_branches_on_latest_head_id"
-    t.index ["repo_id", "base_ref"], name: "index_branches_on_repo_id_and_base_ref"
-    t.index ["repo_id", "name"], name: "index_branches_on_repo_id_and_name"
+    t.index ["repo_id", "base_ref"], name: "index_branches_on_repo_id_and_base_ref", length: { base_ref: 191 }
+    t.index ["repo_id", "name"], name: "index_branches_on_repo_id_and_name", length: { name: 191 }
     t.index ["repo_id"], name: "index_branches_on_repo_id"
     t.index ["ticket_id"], name: "index_branches_on_ticket_id"
   end
@@ -107,8 +107,8 @@ ActiveRecord::Schema.define(version: 20180608151941) do
     t.index ["author_remote_id"], name: "index_commit_statuses_on_author_remote_id"
     t.index ["committer_remote_id"], name: "index_commit_statuses_on_committer_remote_id"
     t.index ["repo_id"], name: "index_commit_statuses_on_repo_id"
-    t.index ["sha"], name: "index_commit_statuses_on_sha"
-    t.index ["state"], name: "index_commit_statuses_on_state"
+    t.index ["sha"], name: "index_commit_statuses_on_sha", length: { sha: 191 }
+    t.index ["state"], name: "index_commit_statuses_on_state", length: { state: 191 }
   end
 
   create_table "pull_request_connections", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin" do |t|
@@ -137,8 +137,8 @@ ActiveRecord::Schema.define(version: 20180608151941) do
     t.index ["remote_pull_request_id"], name: "index_pull_request_reviews_on_remote_pull_request_id"
     t.index ["repo_id"], name: "index_pull_request_reviews_on_repo_id"
     t.index ["reviewer_remote_id"], name: "index_pull_request_reviews_on_reviewer_remote_id"
-    t.index ["sha"], name: "index_pull_request_reviews_on_sha"
-    t.index ["state"], name: "index_pull_request_reviews_on_state"
+    t.index ["sha"], name: "index_pull_request_reviews_on_sha", length: { sha: 191 }
+    t.index ["state"], name: "index_pull_request_reviews_on_state", length: { state: 191 }
   end
 
   create_table "pull_requests", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin" do |t|
@@ -155,7 +155,10 @@ ActiveRecord::Schema.define(version: 20180608151941) do
     t.datetime "updated_at", null: false
     t.string "merge_status"
     t.boolean "merged", default: false
-    t.index ["merge_status"], name: "index_pull_requests_on_merge_status"
+    t.bigint "creator_remote_id"
+    t.string "creator_username"
+    t.index ["creator_remote_id"], name: "index_pull_requests_on_creator_remote_id"
+    t.index ["merge_status"], name: "index_pull_requests_on_merge_status", length: { merge_status: 191 }
     t.index ["merged"], name: "index_pull_requests_on_merged"
     t.index ["repo_id"], name: "index_pull_requests_on_repo_id"
   end
@@ -167,30 +170,6 @@ ActiveRecord::Schema.define(version: 20180608151941) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["board_id"], name: "index_releases_on_board_id"
-  end
-
-  create_table "repo_events", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin" do |t|
-    t.string "type", null: false
-    t.bigint "repo_id"
-    t.string "remote_user_id"
-    t.string "remote_username"
-    t.string "record_type"
-    t.bigint "record_id"
-    t.string "action"
-    t.string "state"
-    t.string "branch"
-    t.string "sha"
-    t.string "url"
-    t.string "context"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.string "remote_id"
-    t.index ["action"], name: "index_repo_events_on_action"
-    t.index ["id", "type"], name: "index_repo_events_on_id_and_type"
-    t.index ["record_type", "record_id"], name: "index_repo_events_on_record_type_and_record_id"
-    t.index ["remote_user_id"], name: "index_repo_events_on_remote_user_id"
-    t.index ["repo_id"], name: "index_repo_events_on_repo_id"
-    t.index ["state"], name: "index_repo_events_on_state"
   end
 
   create_table "repo_release_board_tickets", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin" do |t|
@@ -287,7 +266,6 @@ ActiveRecord::Schema.define(version: 20180608151941) do
   add_foreign_key "pull_request_connections", "tickets"
   add_foreign_key "pull_request_reviews", "repos"
   add_foreign_key "pull_requests", "repos"
-  add_foreign_key "repo_events", "repos"
   add_foreign_key "repo_releases", "releases"
   add_foreign_key "repo_releases", "repos"
   add_foreign_key "tickets", "repos"

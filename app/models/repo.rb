@@ -6,8 +6,10 @@ class Repo < ApplicationRecord
   has_many :tickets, dependent: :destroy
   has_many :releases, dependent: :destroy
   has_many :pull_request_models, class_name: 'PullRequest'
+  has_many :open_pull_requests, -> { model.open }, class_name: 'PullRequest'
   has_many :pull_request_reviews
   has_many :branches
+  has_many :commit_statuses
 
   def to_builder
     Jbuilder.new do |repo|

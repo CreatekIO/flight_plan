@@ -3,6 +3,7 @@ class User < ApplicationRecord
          :rememberable, :authenticatable,
          :omniauthable, :omniauth_providers => [:github]
 
+  has_many :pull_requests, foreign_key: :creator_remote_id, primary_key: :uid
   has_many :pull_request_reviews, foreign_key: :reviewer_remote_id, primary_key: :uid
 
   def self.from_omniauth(auth)

@@ -9,10 +9,10 @@ RSpec.describe CommitStatus, type: :model do
     let(:payload) { webhook_payload(:status) }
     let(:repo) { create(:repo) }
 
-    subject(:repo_event) { described_class.import(payload, repo) }
+    subject(:commit_status) { described_class.import(payload, repo) }
 
     it 'imports status details correctly' do
-      expect(repo_event.reload.attributes).to include(
+      expect(commit_status.reload.attributes).to include(
         'remote_id' => payload[:id],
         'repo_id' => repo.id,
         'state' => payload[:state],

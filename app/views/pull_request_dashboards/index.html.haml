@@ -1,0 +1,54 @@
+= render 'shared/board_header', path: :pull_requests
+
+%table.table.table-bordered.pull-request-dashboard
+  %thead
+    %th Name
+    %th Checks
+    %th Reviews
+    %th Next action
+
+  %tbody
+    - @repos.each do |repo|
+      - next if repo.open_pull_requests.load.none?
+
+      %tr
+        %th(colspan="5")
+          %h3.h4
+            = repo.name
+            %span.badge= repo.open_pull_requests.size
+
+      - repo.open_pull_requests.each do |pr|
+        %tr
+          %td.clearfix
+            .pull-left= avatar_tag pr.creator_username
+
+            .pull-left
+              = link_to pr.remote_title, pr.html_url
+              %dl.dl-horizontal
+                %dt.text-muted Merging
+                %dd= pr.remote_head_branch
+                %dt.text-muted into
+                %dd= pr.remote_base_branch
+
+            .pull-right.text-muted
+              = short_time_distance pr.created_at
+
+          %td
+            %ul.list-unstyled
+              - pr.latest_commit_statuses.each do |commit_status|
+                %li
+                  = bs_label commit_status.state
+                  = link_to commit_status.description, commit_status.url
+
+          %td
+            - if pr.latest_reviews.any?
+              %ul.list-unstyled.avatar-list
+                - pr.latest_reviews.group_by(&:state).each do |state, reviews|
+                  %li
+                    = bs_label state
+                    - reviews.each do |review|
+                      = link_to avatar_tag(review.reviewer_username), review.url
+            - else
+              %em.text-muted No reviews added
+
+          %td= next_action_button pr, class: 'btn-block'

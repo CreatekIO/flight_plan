@@ -1,0 +1,17 @@
+.board-header.clearfix
+  .dropdown.pull-right
+    %button.btn.btn-warning.dropdown-toggle#boards_menu{ data: { toggle: 'dropdown' } }
+      = @board.name
+      %span.caret
+
+    %ul.dropdown-menu{ aria: { labelledby: 'boards_menu' } }
+      - @boards.each do |board|
+        - next if board.id == @board.id
+        %li
+          = link_to board.name, [board, *local_assigns[:path]]
+
+  - case controller_name
+  - when 'boards'
+    = link_to 'PR Dashboard', board_pull_requests_path(@board), class: 'btn btn-default pull-right'
+  - when 'pull_request_dashboards'
+    = link_to 'Back to board', board_path(@board), class: 'btn btn-default pull-right'

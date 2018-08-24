@@ -14,6 +14,7 @@ Rails.application.routes.draw do
 
   resources :boards do
     resources :board_tickets
+    get 'pull_requests' => 'pull_request_dashboards#index', as: :pull_requests
   end
 
   namespace :webhook do
