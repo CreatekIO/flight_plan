@@ -12,32 +12,30 @@
 .board
   - @board.swimlanes.ordered.each do |swimlane|
     .swimlane
-      .swimlane-header= swimlane.name
+      .ui.small.grey.center.aligned.header.swimlane-header
+        = swimlane.name
       .body
         - swimlane.board_tickets.includes(ticket: :pull_requests).each do |board_ticket|
           - ticket = board_ticket.ticket
           .ui.card
             .content
-              .header
-                = link_to "##{ticket.remote_number}", "http://github.com/#{ticket.repo.remote_url}/issues/#{ticket.remote_number}", target: '_blank', class: 'ui yellow circular label'
-
-                = link_to(ticket.remote_title, '', data: { url: board_board_ticket_path(@board, board_ticket), target: '#applicationModal', hook: '_showTicketAjax' }, class: 'issue-title')
+              = link_to "##{ticket.remote_number}", "http://github.com/#{ticket.repo.remote_url}/issues/#{ticket.remote_number}", target: '_blank', class: 'issue-number'
 
               - if show_repo_name
-                .meta
-                  %span.repo-name
-                    = ticket.repo.name
+                %span.meta.repo-name
+                  = ticket.repo.name
+
+            .content
+              = link_to(ticket.remote_title, '', data: { url: board_board_ticket_path(@board, board_ticket), target: '#applicationModal', hook: '_showTicketAjax' }, class: 'issue-title')
 
             - if swimlane.display_duration?
               .content
-                .description
-                  %p
-                    Current state:
-                    = board_ticket.current_state_duration
+                .meta Current state: #{board_ticket.current_state_duration}
 
-            %ul
-              - ticket.pull_requests.each do |pull_request|
-                %li= pull_request.slice(:remote_number, :remote_state).values.join(' - ')
+            - if ticket.pull_requests.any?
+              .ui.celled.list
+                - ticket.pull_requests.each do |pull_request|
+                  .item= pull_request.slice(:remote_number, :remote_state).values.join(' - ')
 
             - if swimlane.transitions.any?
               .extra.content

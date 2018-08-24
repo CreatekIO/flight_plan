@@ -16,15 +16,16 @@
     flex: 0 0 auto;
 
     .swimlane-header {
-      font-size: medium;
-      text-align: center;
       height: 33px;
+      border-bottom: 2px solid #e8eff9;
+      margin-top: 0.5em;
+      margin-bottom: 0;
     }
 
     .body {
       overflow-y: auto;
       height: calc(100vh - 90px);
-      padding: 0.1em;
+      padding: 0.5em 0.1em;
 
       .panel-heading {
         overflow: hidden;
@@ -32,14 +33,16 @@
     }
   }
 
-  .remote-details {
-    height: 30px;
+  .issue-number {
+    padding-right: 4px;
+  }
 
-    .issue-number {
-      padding-right: 4px;
-    }
+  .ui.list {
+    margin: 0;
 
-    .repo-name {
+    > .item {
+      padding-left: 1em;
+      padding-left: 1em;
     }
   }
 }
