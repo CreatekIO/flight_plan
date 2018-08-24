@@ -52,6 +52,18 @@
   }
 }
 
+.btn-caution {
+  @include button-variant($btn-warning-bg, $btn-warning-color, $btn-warning-border);
+
+  &:focus,
+  &:hover,
+  &:active,
+  &:active:focus,
+  .open > &.dropdown-toggle {
+    background-color: $btn-warning-color;
+  }
+}
+
 #applicationModal .modal-content img {
   max-width: 520px;
 }

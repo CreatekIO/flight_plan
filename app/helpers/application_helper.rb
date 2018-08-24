@@ -6,7 +6,7 @@ module ApplicationHelper
     btn_class =
       case next_action.type
       when :positive then 'btn-success'
-      when :warning, :caution then 'btn-warning btn-caution'
+      when :warning, :caution then 'btn-caution'
       when :negative then 'btn-danger'
       else 'btn-default'
       end
