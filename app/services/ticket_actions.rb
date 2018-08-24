@@ -54,7 +54,7 @@ class TicketActions
   end
 
   # In order of severity, worst to best
-  ACTION_TYPES = [:negative, :warning, :neutral, :positive].freeze
+  ACTION_TYPES = %i[negative warning caution neutral positive].freeze
 
 
   ACTION_TYPES.each do |type|

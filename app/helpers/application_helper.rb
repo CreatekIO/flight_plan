@@ -3,15 +3,15 @@ module ApplicationHelper
     next_action = TicketActions.next_action_for(pull_request, user: user)
     return '' if next_action.blank?
 
-    btn_type =
+    btn_class =
       case next_action.type
-      when :positive then 'success'
-      when :warning then 'warning'
-      when :negative then 'danger'
-      else 'default'
+      when :positive then 'btn-success'
+      when :warning, :caution then 'btn-warning btn-caution'
+      when :negative then 'btn-danger'
+      else 'btn-default'
       end
 
-    options[:class] = ["btn btn-#{btn_type}", *options[:class]]
+    options[:class] = ['btn', btn_class, *options[:class]]
 
     if next_action.urls.many?
       options[:type] = 'button'

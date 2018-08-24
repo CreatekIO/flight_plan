@@ -50,7 +50,7 @@ class TicketActions::Action
   end
 
   def for_other_user?
-    @for_other_user.present?
+    type == :caution
   end
 
   def applies_to?(user_id)
@@ -65,5 +65,5 @@ class TicketActions::Action
 
   private
 
-  attr_writer :text, :priority, :for_other_user
+  attr_writer :text, :priority
 end
