@@ -4,6 +4,18 @@ class Repo < ApplicationRecord
   has_many :board_repos, dependent: :destroy
   has_many :boards, through: :board_repos
   has_many :tickets, dependent: :destroy
+  has_many :releases, dependent: :destroy
+  has_many :pull_request_models, class_name: 'PullRequest'
+  has_many :pull_request_reviews
+  has_many :branches
+
+  def to_builder
+    Jbuilder.new do |repo|
+      repo.id id
+      repo.name name
+      repo.remote_url remote_url
+    end
+  end
 
   def regex_branches(regex)
     branch_names.grep(regex)
@@ -23,8 +35,8 @@ class Repo < ApplicationRecord
 
   def compare(target_branch, branch)
     client.compare(
-      remote_url, 
-      target_branch, 
+      remote_url,
+      target_branch,
       branch
     )
   end
@@ -59,7 +71,6 @@ class Repo < ApplicationRecord
   end
 
   def delete_branch(branch)
-    client.delete_branch(remote_url, release_branch_name)
+    client.delete_branch(remote_url, branch)
   end
-
 end

@@ -1,24 +1,15 @@
-# README
+# FlightPlan
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+Kanban Issue Manager with command-line integration.
 
-Things you may want to cover:
+## Setup
 
-* Ruby version
+The project has been configured to work with Docker do you'll need to have that installed
+and running. Then bring the project up with:
 
-* System dependencies
+```
+docker-compose up
+```
 
-* Configuration
 
-* Database creation
 
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...

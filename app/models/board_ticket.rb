@@ -3,8 +3,10 @@ class BoardTicket < ApplicationRecord
   belongs_to :ticket
   belongs_to :swimlane
   has_many :timesheets, dependent: :destroy
-  has_one :open_timesheet, -> { where(ended_at: nil) }, class_name: "Timesheet"
-   
+  has_many :release_board_tickets, dependent: :destroy
+  has_many :releases, through: :release_board_tickets
+  has_one :open_timesheet, -> { where(ended_at: nil) }, class_name: 'Timesheet'
+
   after_save :update_timesheet, if: :saved_change_to_swimlane_id?
   after_commit :update_github, on: :update, if: :saved_change_to_swimlane_id?
 
@@ -42,7 +44,7 @@ class BoardTicket < ApplicationRecord
     unless defined? @update_remote
       @update_remote = true
     end
-    @update_remote 
+    @update_remote
   end
 
   def format_duration(seconds)
@@ -77,7 +79,7 @@ class BoardTicket < ApplicationRecord
 
     # TODO: need to be able to recover if github does not respond,
     # possibly moving to a background job
-    
+
     if swimlane_id == closed_swimlane.id
       Octokit.close_issue(ticket.repo.remote_url, ticket.remote_number)
     elsif attribute_before_last_save(:swimlane_id) == closed_swimlane.id
@@ -85,15 +87,15 @@ class BoardTicket < ApplicationRecord
     end
 
     Octokit.replace_all_labels(
-      ticket.repo.remote_url, 
-      ticket.remote_number, 
+      ticket.repo.remote_url,
+      ticket.remote_number,
       new_github_labels
     )
   end
 
-  def new_github_labels 
+  def new_github_labels
     Octokit.labels_for_issue(
-      ticket.repo.remote_url, 
+      ticket.repo.remote_url,
       ticket.remote_number
     ).
     map(&:name).

@@ -7,19 +7,15 @@ module Clockwork
     puts "Running #{job}"
   end
 
-  every 1.day, 'Auto Deployment', at: ['10:15'] do
+  every 1.day, 'auto_deploy', at: '10:15', if: ->(time) { time.on_weekday? } do
     Board.where(auto_deploy: true).each do |board|
-      if board.deploy_swimlane.tickets.any?
-        DeployWorker.perform_async(board.id)
-      end
+      DeployWorker.perform_async(board.id) if board.deploy_swimlane.tickets.any?
     end
   end
 
-  every 1.day, 'Auto Merge', at: ['10:30'] do
+  every 1.day, 'auto_merge', at: '10:30', if: ->(time) { time.on_weekday? } do
     Board.where(auto_deploy: true).each do |board|
-      if board.deploy_swimlane.tickets.any?
-        MergeWorker.perform_async(board.id)
-      end
+      MergeWorker.perform_async(board.id) if board.deploy_swimlane.tickets.any?
     end
   end
 end

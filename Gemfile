@@ -9,6 +9,7 @@ gem 'rails', '~> 5.1.4'
 
 gem 'mysql2', '>= 0.3.18', '< 0.5'
 gem 'puma', '~> 3.7'
+gem 'sprockets',  '~> 3.7.2'
 gem 'sass-rails', '~> 5.0'
 gem 'uglifier', '>= 1.3.0'
 gem 'webpacker'
@@ -18,6 +19,7 @@ gem 'jbuilder', '~> 2.5'
 gem 'turbolinks', '~> 5'
 
 gem 'bootstrap-sass'
+gem 'bugsnag'
 gem 'business_time'
 gem 'cancancan', '~> 2.0.0'
 gem 'clockwork'
@@ -32,14 +34,16 @@ gem 'slack-ruby-client'
 
 group :development, :test do
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
-  gem 'capybara'
+  gem 'capybara', '~> 2.15.1'
   gem 'capybara-screenshot'
   gem 'database_cleaner'
-  gem 'factory_girl'
-  gem 'rspec-rails'
+  gem 'dotenv-rails'
+  gem 'factory_bot'
+  gem 'rspec-rails', '3.7.0'
   gem 'selenium-webdriver'
   gem 'shoulda-matchers'
   gem 'spring-commands-rspec'
+  gem 'timecop'
   gem 'webmock'
 end
 

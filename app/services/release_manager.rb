@@ -1,4 +1,6 @@
 class ReleaseManager
+  class AllBranchesConflict < StandardError; end
+
   def initialize(board, repo)
     @board = board
     @repo = repo
@@ -7,32 +9,38 @@ class ReleaseManager
   end
 
   def open_pr?
-    repo.pull_requests.any? do |pr|
-      pr[:base][:ref] == 'master'
-    end
+    repo.pull_requests.any? { |pr| release_pr?(pr) }
   end
 
   def create_release
     return unless unmerged_tickets.any?
     create_release_branch
-    if create_pull_request
-      announce_pr_opened if send_to_slack?
-    end
+
+    announce_pr_opened if create_pull_request
   end
 
   def merge_prs(branch = 'master')
     repo.pull_requests.each do |pr|
-      next unless pr[:base][:ref] == branch
+      next unless release_pr?(pr, base: branch)
       next if pr[:title].include?('CONFLICTS')
       log "Merging PR ##{pr[:number]} - #{pr[:title]}"
 
       repo.merge_pull_request(pr[:number])
+      announce_pr_merged(pr)
     end
+  end
+
+  def unmerged_tickets
+    @unmerged_tickets ||= tickets.reject { |t| t.merged_to?('master') }
   end
 
   private
 
-  attr_reader :board, :repo, :release_branch_name, :merge_conflicts, :release_pr
+  attr_reader :board, :repo, :release_branch_name, :merge_conflicts, :remote_pr
+
+  def release_pr?(remote_pr, base: 'master')
+    remote_pr[:base][:ref] == base && remote_pr[:head][:ref].starts_with?('release/')
+  end
 
   def release_pr_name
     if merge_conflicts.any?
@@ -55,10 +63,6 @@ class ReleaseManager
       end
   end
 
-  def unmerged_tickets
-    @unmerged_tickets ||= tickets.reject { |t| t.merged_to?('master') }
-  end
-
   def create_release_branch
     initialize_release_branch
     merge_work_branches
@@ -66,8 +70,10 @@ class ReleaseManager
   end
 
   def create_pull_request
+    raise AllBranchesConflict, 'All branches in release had merge conflicts' if all_branches_conflict?
+
     log 'Creating pull request...'
-    @release_pr = repo.create_pull_request(
+    @remote_pr = repo.create_pull_request(
       'master',
       release_branch_name,
       release_pr_name,
@@ -75,8 +81,9 @@ class ReleaseManager
     )
     log 'done'
     true
-  rescue Octokit::UnprocessableEntity
+  rescue Octokit::Error, AllBranchesConflict => error
     log 'Could not create pull request, deleting branch'
+    announce_pr_failed(error)
     repo.delete_branch(release_branch_name)
     false
   end
@@ -108,11 +115,15 @@ class ReleaseManager
   end
 
   def branches_to_merge
-    unmerged_tickets.flat_map(&:branch_names) + extra_branches
+    @branches_to_merge ||= unmerged_tickets.flat_map(&:branch_names) + extra_branches
   end
 
   def master
     @master ||= repo.refs('heads/master')
+  end
+
+  def all_branches_conflict?
+    branches_to_merge.size == merge_conflicts.size
   end
 
   def pr_body
@@ -151,10 +162,6 @@ class ReleaseManager
     ]
   end
 
-  def send_to_slack?
-    ENV['SLACK_API_TOKEN'].present?
-  end
-
   def announce_pr_opened
     tickets = unmerged_tickets.collect do |ticket|
       "• #{ticket.remote_number} : #{ticket.remote_title}"
@@ -162,34 +169,51 @@ class ReleaseManager
 
     attachments = [
       {
-        fallback: "#{repo.name} : #{release_pr_name}",
         title: "#{repo.name} : #{release_pr_name}",
-        title_link: release_pr[:html_url],
+        title_link: remote_pr[:html_url],
         text: tickets.join("\n"),
         color: 'good'
       }
     ]
 
-    unless merge_conflicts.any?
+    if merge_conflicts.any?
       attachments << {
         title: 'This PR has conflicts and can not be merged automatically.',
         color: 'warning'
       }
     end
 
-    slack_client.chat_postMessage(
-      channel: ENV['SLACK_CHANNEL'],
-      text: '*Pull Request Created*',
-      attachments: attachments,
-      as_user: true
+    slack_notifier.notify('*Pull Request Created*', attachments: attachments)
+  end
+
+  def announce_pr_merged(pr)
+    slack_notifier.notify(
+      '*Pull Request Merged*',
+      attachments: {
+        title: "#{repo.name}: Merged PR ##{pr[:number]} #{pr[:title]}",
+        title_link: pr[:html_url],
+        text: pr[:body],
+        color: 'good'
+      }
     )
   end
 
-  def slack_client
-    Slack::Web::Client.new
+  def announce_pr_failed(error)
+    slack_notifier.notify(
+      '*Pull Request Failed*',
+      attachments: {
+        title: "#{repo.name}: Failed to create release",
+        text: error.message,
+        color: 'danger'
+      }
+    )
+  end
+
+  def slack_notifier
+    @slack_notifier ||= SlackNotifier.new
   end
 
   def log(message)
-    puts message
+    Rails.logger.info message
   end
 end

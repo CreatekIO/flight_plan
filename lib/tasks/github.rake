@@ -96,6 +96,11 @@ namespace :github do
         end
       end
 
+      Octokit.pull_requests(repo.remote_url, state: "all").each do |remote_pr|
+        puts "  pull request #{remote_pr.number}"
+        PullRequest.import(remote_pr, remote_repo)
+      end
+
       repo.update_merged_tickets
     end
   end

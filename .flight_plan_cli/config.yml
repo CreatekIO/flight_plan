@@ -1,0 +1,12 @@
+api_url: 'http://flightplan.createk.io/api'
+board_id: 1
+repo_id: 4
+ls:
+  default_swimlane_ids:
+    - 31 # Planning - DONE
+    - 41 # Development
+    - 51 # Code Review
+    - 61 # Code Review - DONE
+    - 71 # Acceptance
+    - 81 # Acceptance - DONE
+    - 91 # Deploying

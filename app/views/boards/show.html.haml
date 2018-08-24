@@ -5,7 +5,7 @@
 
     .menu
       - @boards.each do |board|
-        - next if board.id == @board.id 
+        - next if board.id == @board.id
         = link_to board.name, board_path(board), class: 'item'
 
 - show_repo_name = @board.repos.count > 1
@@ -14,7 +14,7 @@
     .swimlane
       .swimlane-header= swimlane.name
       .body
-        - swimlane.board_tickets.each do |board_ticket|
+        - swimlane.board_tickets.includes(ticket: :pull_requests).each do |board_ticket|
           - ticket = board_ticket.ticket
           .ui.card
             .content
@@ -27,12 +27,18 @@
                 .meta
                   %span.repo-name
                     = ticket.repo.name
+
             - if swimlane.display_duration?
               .content
                 .description
                   %p
                     Current state:
                     = board_ticket.current_state_duration
+
+            %ul
+              - ticket.pull_requests.each do |pull_request|
+                %li= pull_request.slice(:remote_number, :remote_state).values.join(' - ')
+
             - if swimlane.transitions.any?
               .extra.content
                 .ui.right.floated.primary.buttons
