@@ -1,5 +1,5 @@
 class PullRequestReview < ApplicationRecord
-  enum state: {
+  permissive_enum state: {
     approved: 'approved',
     changes_requested: 'changes_requested',
     commented: 'commented',
