@@ -4,7 +4,7 @@ class Ticket < ApplicationRecord
   has_many :comments, dependent: :destroy
   has_many :board_tickets, dependent: :destroy
   has_many :pull_request_connections
-  has_many :pull_requests, through: :pull_request_connections
+  has_many :pull_requests, -> { order(created_at: :desc) }, through: :pull_request_connections
 
   scope :merged, -> { where(merged: true) }
   scope :unmerged, -> { where(merged: false) }
@@ -38,6 +38,12 @@ class Ticket < ApplicationRecord
 
   def branch_names
     repo.branch_names.grep(/##{remote_number}[^0-9]/)
+  end
+
+  URL_TEMPLATE = 'https://github.com/%{repo}/issues/%{number}'.freeze
+
+  def html_url
+    format(URL_TEMPLATE, repo: repo.remote_url, number: remote_number)
   end
 
   def update_board_tickets_from_remote(remote_issue)

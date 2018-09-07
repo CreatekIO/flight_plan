@@ -1,0 +1,19 @@
+.pull-request-dashboard {
+  font-size: 16px;
+
+  tbody td[colspan] {
+    background-color: #f6f6f6;
+  }
+
+  .ui.list {
+    margin-bottom: 0;
+  }
+
+  .pr-age {
+    float: right;
+  }
+
+  .text-muted {
+    color: rgba(0, 0, 0, 0.4);
+  }
+}

@@ -2,15 +2,20 @@ FPLAN.boards = {
     show: function() {
         var parent = this;
 
+        $('.open-pull-requests').popup({
+            inline: true,
+            on: 'click'
+        });
+
         $(document).on('click', '.issue-title', function(event) {
             event.preventDefault();
             var target = $(event.target);
             parent._showTicketAjax(target);
-        }); 
+        });
     },
 
     _parseMarkdown: function(text) {
-        var converter = new showdown.Converter() 
+        var converter = new showdown.Converter()
         converter.setOption('tasklists', true);
         converter.setOption('simpleLineBreaks', true);
         return converter.makeHtml(text);
@@ -52,7 +57,7 @@ FPLAN.boards = {
                     + '</div>'
                 + '</div>'
                 + '<div class="extra text">'
-                    + FPLAN.boards._parseMarkdown(comment.body) 
+                    + FPLAN.boards._parseMarkdown(comment.body)
                 + '</div>'
             + '</div>'
         + '</div>';

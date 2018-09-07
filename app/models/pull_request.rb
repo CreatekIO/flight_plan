@@ -5,11 +5,30 @@ class PullRequest < ApplicationRecord
     merge_ok: 'ok'
   }
 
+  # Silence warning about overriding `open` method
+  # (which is inherited from Kernel)
+  logger.silence do
+    enum remote_state: { open: 'open', closed: 'closed' }
+  end
+
   belongs_to :repo
+  belongs_to :creator, -> { where(provider: 'github') },
+    optional: true, class_name: 'User',
+    foreign_key: :creator_remote_id, primary_key: :uid
   has_many :pull_request_connections, autosave: true
   has_many :tickets, through: :pull_request_connections
+  has_many :head_commit_statuses, -> (model = nil) {
+    if model
+      where(repo_id: model.repo_id)
+    else # eager-loading/join
+      joins(
+        table.join(PullRequest.arel_table).on(
+          PullRequest.arel_table[:remote_head_sha].eq(table[:sha])
+        ).join_sources
+      ).where(PullRequest.arel_table[:repo_id].eq(table[:repo_id]))
+    end
+  }, class_name: 'CommitStatus', foreign_key: :sha, primary_key: :remote_head_sha
   has_many :reviews, class_name: 'PullRequestReview', foreign_key: :remote_pull_request_id, primary_key: :remote_id
-  has_many :repo_events, as: :record
 
   before_save :update_pull_request_connections
 
@@ -24,7 +43,9 @@ class PullRequest < ApplicationRecord
       remote_head_sha: remote_pr[:head][:sha],
       remote_base_branch: remote_pr[:base][:ref],
       merge_status: remote_pr[:mergeable],
-      merged: remote_pr[:merged]
+      merged: remote_pr[:merged],
+      creator_remote_id: remote_pr[:user][:id],
+      creator_username: remote_pr[:user][:login],
     )
     pull_request
   end
@@ -56,6 +77,18 @@ class PullRequest < ApplicationRecord
 
   def html_url
     format(URL_TEMPLATE, repo: repo.remote_url, number: remote_number)
+  end
+
+  def latest_commit_statuses
+    head_commit_statuses
+      .group_by(&:context)
+      .map {|_, records| records.max_by(&:remote_created_at) }
+  end
+
+  def latest_reviews
+    reviews
+      .group_by(&:reviewer_remote_id)
+      .map {|_, user_reviews| user_reviews.max_by(&:remote_created_at) }
   end
 
   private

@@ -1,4 +1,10 @@
 class PullRequestReview < ApplicationRecord
+  enum state: {
+    approved: 'approved',
+    changes_requested: 'changes_requested',
+    commented: 'commented'
+  }
+
   belongs_to :repo
   belongs_to :pull_request, optional: true,
     foreign_key: :remote_pull_request_id, primary_key: :remote_id
@@ -13,7 +19,7 @@ class PullRequestReview < ApplicationRecord
     repo.pull_request_reviews.find_or_initialize_by(remote_id: remote_id).tap do |review|
       review.update_attributes(
         remote_pull_request_id: payload.dig(:pull_request, :id),
-        state: payload.dig(:review, :state).try(:downcase),
+        state: payload.dig(:review, :state),
         sha: payload.dig(:pull_request, :head, :sha),
         body: payload.dig(:review, :body),
         url: payload.dig(:review, :html_url),
@@ -24,5 +30,11 @@ class PullRequestReview < ApplicationRecord
         payload: payload
       )
     end
+  end
+
+  def state=(value)
+    value = value.downcase if value.respond_to?(:downcase)
+
+    super(value)
   end
 end

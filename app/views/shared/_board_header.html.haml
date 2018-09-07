@@ -1,0 +1,38 @@
+.ui.menu
+  .ui.dropdown.item
+    = @board.name
+    %i.dropdown.icon
+
+    .menu
+      - @boards.each do |board|
+        - next if board.id == @board.id
+        = link_to board.name, [board, *local_assigns[:path]], class: 'item'
+
+  .right.menu
+    - case controller_name
+    - when 'boards'
+      = link_to 'PR Dashboard', board_pull_requests_path(@board), class: 'item'
+
+      .item.open-pull-requests
+        Open Pull Requests
+        %span.ui.circular.label= @board.open_pull_requests.size
+        %i.dropdown.icon
+
+      .ui.flowing.popup
+        - @board.open_pull_requests.group_by(&:repo).each do |repo, pull_requests|
+          %h4.header
+            = repo.name
+            .ui.circular.label= pull_requests.size
+          .ui.list
+            - pull_requests.each do |pull_request|
+              .item
+                .right.floated.content
+                  %span.action-btn= next_action_button(pull_request, user: current_user, class: 'compact mini')
+
+                .content
+                  = link_to pull_request.html_url, target: :_blank do
+                    = "##{pull_request.remote_number}"
+                    %span.text-muted= pull_request.remote_title.truncate(60)
+
+    - when 'pull_request_dashboards'
+      = link_to 'Back to board', board_path(@board), class: 'item'

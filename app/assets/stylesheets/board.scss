@@ -1,7 +1,3 @@
-.board-header {
-  padding: 4px;
-}
-
 .board {
   border-top: 1px solid #e8eff9;
 
@@ -37,16 +33,79 @@
     padding-right: 4px;
   }
 
-  .ui.list {
+  .ticket-pull-requests {
     margin: 0;
 
-    > .item {
-      padding-left: 1em;
+    .left.floated.content {
+      margin: 3px 0;
+    }
+
+    &.ui.list > .item {
       padding-left: 1em;
     }
+  }
+
+  .issue-title {
+    display: block;
+    word-wrap: break-word;
+  }
+
+  .swimlane-duration {
+    margin-top: 5px;
+    font-size: 12px;
   }
 }
 
 #applicationModal .modal-content img {
   max-width: 520px;
+}
+
+.open-pull-requests {
+  & + .popup {
+    width: 600px;
+
+    .text-muted {
+      margin-left: 2px;
+      color: rgba(0, 0, 0, 0.4);
+    }
+  }
+}
+
+.next-action-btn {
+  &.dropdown .menu {
+    left: auto;
+    right: 0;
+
+    > .item {
+      font-size: inherit;
+    }
+  }
+
+  &.mini.compact {
+    padding-left: 0.8em;
+    padding-right: 0.8em;
+
+    .dropdown.icon {
+      margin-left: 0.5em;
+    }
+  }
+}
+
+// From: https://github.com/primer/octicons/blob/master/lib/octicons_node/index.scss
+.octicon {
+  display: inline-block;
+  vertical-align: text-top;
+  fill: currentColor;
+
+  &.is-open {
+    color: #6cc644;
+  }
+
+  &.is-closed {
+    color: #bd2c00;
+  }
+
+  &.is-merged {
+    color: #6e5494;
+  }
 }

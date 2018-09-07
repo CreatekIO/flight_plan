@@ -1,7 +1,7 @@
 FactoryBot.define do
   factory :user do
-    name 'Mr User'
-    uid '12345'
+    sequence(:name) {|n| "user_#{n}" }
+    uid { generate(:user_id) }
     provider 'github'
   end
 end
