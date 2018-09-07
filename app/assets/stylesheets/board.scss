@@ -1,7 +1,8 @@
 .board-header {
   padding: 4px;
 
-  .dropdown + .btn {
+  .dropdown + .btn,
+  .btn + .dropdown {
     margin-right: 6px;
   }
 }
@@ -36,17 +37,64 @@
   }
 
   .remote-details {
-    height: 30px;
-
     .issue-number {
       padding-right: 4px;
     }
+  }
 
-    .repo-name {
-    }
+  .issue-title {
+    display: block;
+  }
+
+  .swimlane-duration {
+    margin-top: 5px;
+    font-size: 12px;
+  }
+}
+
+.btn-caution {
+  @include button-variant($btn-warning-bg, $btn-warning-color, $btn-warning-border);
+
+  &:focus,
+  &:hover,
+  &:active,
+  &:active:focus,
+  .open > &.dropdown-toggle {
+    background-color: $btn-warning-color;
   }
 }
 
 #applicationModal .modal-content img {
   max-width: 520px;
+}
+
+.open-pull-requests {
+  .dropdown-menu {
+    width: 600px;
+  }
+
+  li {
+    position: relative;
+  }
+
+  .text-primary {
+    margin-right: 2px;
+  }
+
+  .action-btn {
+    position: absolute;
+    top: 2px;
+    right: 20px;
+  }
+}
+
+// From: https://github.com/primer/octicons/blob/master/lib/octicons_node/index.scss
+.octicon {
+  display: inline-block;
+  vertical-align: text-top;
+  fill: currentColor;
+
+  &.is-merged {
+    color: #6f42c1;
+  }
 }

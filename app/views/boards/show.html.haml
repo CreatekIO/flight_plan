@@ -6,28 +6,35 @@
     .swimlane
       .header= swimlane.name
       .body
-        - swimlane.board_tickets.includes(ticket: :pull_requests).each do |board_ticket|
+        - swimlane.board_tickets.includes(ticket: { pull_requests: :reviews }).each do |board_ticket|
           - ticket = board_ticket.ticket
           .panel.panel-default
             .panel-heading
               .remote-details
                 %span.issue-number
-                  = link_to ticket.remote_number, "http://github.com/#{ticket.repo.remote_url}/issues/#{ticket.remote_number}", target: '_blank'
+                  = link_to ticket.remote_number, ticket.html_url, target: '_blank'
                 - if show_repo_name
                   %span.repo-name
                     = ticket.repo.name
 
-              = link_to(ticket.remote_title, '', data: { url: board_board_ticket_path(@board, board_ticket), target: '#applicationModal', hook: '_showTicketAjax', toggle: 'modal' })
             .panel-body
+              = link_to(ticket.remote_title, '', class: 'issue-title', data: { url: board_board_ticket_path(@board, board_ticket), target: '#applicationModal', hook: '_showTicketAjax', toggle: 'modal' })
               - if swimlane.display_duration?
-                %p
-                  Current state:
-                  = board_ticket.current_state_duration
-              %ul.list-unstyled
+                .swimlane-duration
+                  Current state: #{board_ticket.current_state_duration}
+
+            - if ticket.pull_requests.any?
+              %ul.list-group
                 - ticket.pull_requests.each do |pull_request|
-                  %li= pull_request.slice(:remote_number, :remote_state).values.join(' - ')
-            .panel-footer
-              - if swimlane.transitions.any?
+                  %li.list-group-item.clearfix
+                    %span.pull-left
+                      = pull_request_icon pull_request
+                      = link_to pull_request.remote_number, pull_request.html_url, title: pull_request.remote_title, target: :_blank
+                    %span.pull-right
+                      = next_action_button(pull_request, user: current_user, class: 'btn-xs')
+
+            - if swimlane.transitions.any?
+              .panel-footer
                 .btn-group
                   =link_to(swimlane.transitions[0].name, board_board_ticket_path(@board, board_ticket, board_ticket: { swimlane_id: swimlane.transitions[0].id }), data: { method: 'patch' }, class: 'btn btn-sm btn-info ')
                   - if swimlane.transitions.count > 1

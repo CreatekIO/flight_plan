@@ -6,15 +6,28 @@ RSpec.describe TicketActions::PullRequestStatuses, type: :ticket_action do
   describe '#next_action' do
     let(:repo) { create(:repo) }
     let(:pull_request) { build_stubbed(:pull_request, repo: repo) }
-    let(:service_url) { "https://ci.service.test/#{pull_request.remote_number}" }
+    let(:status_context) { 'service' }
+    let(:service_url) do
+      { url: url(status_context), title: description(status_context) }
+    end
 
-    def create_status(state, datetime = Time.now, **attrs)
+    def url(name)
+      "https://ci.#{name}.test/#{pull_request.remote_number}"
+    end
+
+    def description(name)
+      "From #{name}"
+    end
+
+    def create_status(state, datetime = Time.now, context: status_context, **attrs)
       create(
         :commit_status,
+        context: context,
         state: state,
         sha: pull_request.remote_head_sha,
         repo: repo,
-        url: service_url,
+        url: url(context),
+        description: description(context),
         created_at: datetime,
         remote_created_at: datetime,
         **attrs
@@ -106,13 +119,18 @@ RSpec.describe TicketActions::PullRequestStatuses, type: :ticket_action do
     end
 
     context 'with statuses from different services' do
-      let(:service_1_url) { service_url.sub('service', 'service_1') }
-      let(:service_2_url) { service_url.sub('service', 'service_2') }
+      let(:service_1_url) do
+        { url: url('service_1'), title: description('service_1') }
+      end
+
+      let(:service_2_url) do
+        { url: url('service_2'), title: description('service_2') }
+      end
 
       context 'both pending' do
         before do
-          create_status(:pending, context: 'service_1', url: service_1_url)
-          create_status(:pending, context: 'service_2', url: service_2_url)
+          create_status(:pending, context: 'service_1')
+          create_status(:pending, context: 'service_2')
         end
 
         it 'tell user to wait for both services' do
@@ -122,8 +140,8 @@ RSpec.describe TicketActions::PullRequestStatuses, type: :ticket_action do
 
       context 'both unsuccessful' do
         before do
-          create_status(:failure, context: 'service_1', url: service_1_url)
-          create_status(:error, context: 'service_2', url: service_2_url)
+          create_status(:failure, context: 'service_1')
+          create_status(:error, context: 'service_2')
         end
 
         it 'tell user to fix both issues' do
@@ -133,8 +151,8 @@ RSpec.describe TicketActions::PullRequestStatuses, type: :ticket_action do
 
       context 'one failing, one successful' do
         before do
-          create_status(:success, context: 'service_1', url: service_1_url)
-          create_status(:failure, context: 'service_2', url: service_2_url)
+          create_status(:success, context: 'service_1')
+          create_status(:failure, context: 'service_2')
         end
 
         it 'tell user to fix failing issue' do
@@ -144,8 +162,8 @@ RSpec.describe TicketActions::PullRequestStatuses, type: :ticket_action do
 
       context 'one failing, one pending' do
         before do
-          create_status(:pending, context: 'service_1', url: service_1_url)
-          create_status(:failure, context: 'service_2', url: service_2_url)
+          create_status(:pending, context: 'service_1')
+          create_status(:failure, context: 'service_2')
         end
 
         it 'tell user to fix failing issue' do

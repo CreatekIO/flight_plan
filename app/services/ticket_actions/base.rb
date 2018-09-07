@@ -1,21 +1,43 @@
 class TicketActions::Base
-  def initialize(pull_request)
+  delegate :html_url, to: :pull_request
+
+  def self.next_actions(&block)
+    define_method(:collect_next_actions, &block)
+    private :collect_next_actions
+  end
+
+  def initialize(pull_request, **config)
     @pull_request = pull_request
+    @config = config
+  end
+
+  def applies?
+    pull_request.open?
+  end
+
+  def next_actions(collection = TicketActions::ActionCollection.new)
+    collect_next_actions(collection)
+    collection
+  end
+
+  def next_action
+    next_actions.first
   end
 
   private
 
-  attr_reader :pull_request
+  attr_reader :pull_request, :config
 
-  def next_action
+  def collect_next_actions
     raise NotImplementedError
   end
 
-  TicketActions::ACTION_TYPES.each do |type|
-    class_eval <<-RUBY, __FILE__, __LINE__ + 1
-      def #{type}(text, urls:)
-        TicketActions::#{type.to_s.classify}Action.new(text, urls: urls)
-      end
-    RUBY
+  def owner_id
+    pull_request.creator_remote_id
+  end
+
+  def team_ids(except: [])
+    # TODO: scope to board/repo
+    User.pluck(:uid) - [owner_id.to_s, *except]
   end
 end
