@@ -2,7 +2,8 @@ class PullRequestReview < ApplicationRecord
   enum state: {
     approved: 'approved',
     changes_requested: 'changes_requested',
-    commented: 'commented'
+    commented: 'commented',
+    dismissed: 'dismissed'
   }
 
   belongs_to :repo
