@@ -15,10 +15,12 @@ FPLAN.boards = {
     },
 
     _parseMarkdown: function(text) {
-        var converter = new showdown.Converter()
-        converter.setOption('tasklists', true);
-        converter.setOption('simpleLineBreaks', true);
-        return converter.makeHtml(text);
+        if (!this.markdownConverter) {
+            this.markdownConverter = new showdown.Converter()
+            this.markdownConverter.setFlavor('github')
+            this.markdownConverter.setOption('openLinksInNewWindow', true);
+        }
+        return this.markdownConverter.makeHtml(text)
     },
 
     _showTicketAjax: function(link) {

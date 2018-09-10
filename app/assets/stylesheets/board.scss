@@ -109,3 +109,22 @@
     color: #6e5494;
   }
 }
+
+.gh-markdown {
+  pre {
+    background-color: #F9FAFB;
+    padding: 1em;
+    overflow-x: auto;
+  }
+
+  code:not([class]) {
+    padding: 0.2em 0.4em;
+    font-size: 95%;
+    background-color: #F9FAFB;
+    border-radius: 3px;
+  }
+
+  p > img {
+    max-width: 100%;
+  }
+}
