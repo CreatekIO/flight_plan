@@ -1,14 +1,14 @@
 .board {
-  border-top: 1px solid #e8eff9;
-
+  margin-top: -1em;
   display: flex;
   flex-wrap: nowrap;
   overflow-x: auto;
 
   .swimlane {
     width: 250px;
-    padding: 6px;
+    padding: 6px 0;
     border-left: 3px solid #e8eff9;
+    background-color: #F9FAFB;
     flex: 0 0 auto;
 
     .swimlane-header {
@@ -18,10 +18,16 @@
       margin-bottom: 0;
     }
 
-    .body {
+    > .body {
       overflow-y: auto;
-      height: calc(100vh - 90px);
-      padding: 0.5em 0.1em;
+      height: calc(100vh - 115px);
+      padding: 0.5em 6px;
+      position: relative;
+
+      // TODO: remove if/when we move to Less-based styling
+      &::-webkit-scrollbar {
+        display: none;
+      }
 
       .panel-heading {
         overflow: hidden;
