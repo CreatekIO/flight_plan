@@ -26,37 +26,72 @@ FPLAN.boards = {
             url: link.data('url')
         }).then(function(data) {
             var modal = $('#applicationModal');
-            var modalBody = modal.children('.content').empty()
+            var modalBody = modal.children('.content').empty();
+            var feed = $('<div class="ui feed"/>');
 
-            modal.find('.header').html(data.ticket.title);
-            modalBody.html(FPLAN.boards._headerHtml(data));
+            modal.find('.header').html(FPLAN.boards._headerHtml(data))
+
+            feed.append(FPLAN.boards._bodyHtml(data));
 
             $.each(data.ticket.comments, function(index, comment) {
-                modalBody.append(FPLAN.boards._commentHtml(comment));
+                feed.append(FPLAN.boards._commentHtml(comment));
             })
 
-            modalBody.append('<div class="ui feed">');
+            modalBody.append(feed)
+
             $.each(data.state_durations, function(index, state_duration) {
                 modalBody.append(FPLAN.boards._durationHtml(state_duration));
             })
-            modalBody.append('</div>');
+
+            modalBody.scrollTop(0)
             modal.modal('show');
         })
     },
 
     _headerHtml: function(data) {
-        return FPLAN.boards._parseMarkdown(data.ticket.body);
+        return '<a href="' + data.ticket.html_url + '" target="_blank">'
+                + '#' + data.ticket.number
+            + '&nbsp;&nbsp;</a>'
+            + data.ticket.title;
+    },
+
+    _bodyHtml: function(data) {
+        return '<div class="event">'
+            + '<div class="label">'
+            + '</div>'
+            + '<div class="content">'
+                + '<div class="summary">'
+                    + '<a class="user">'
+                        + 'unknown author'
+                    + '</a>'
+                    + ' opened issue '
+                    + '<div class="date">'
+                        + data.ticket.timestamp + ' ago'
+                    + '</div>'
+                + '</div>'
+                + '<div class="extra text gh-markdown">'
+                    + FPLAN.boards._parseMarkdown(data.ticket.body)
+                + '</div>'
+            + '</div>'
+        + '</div>';
     },
 
     _commentHtml: function(comment) {
-        return '<div class="event">'
+        return '<div class="ui divider"></div><div class="event">'
+            + '<div class="label">'
+                + '<img src="https://github.com/' + comment.author + '.png">'
+            + '</div>'
             + '<div class="content">'
                 + '<div class="summary">'
-                    + '<div class="user">'
+                + '<a href="https://github.com/' + comment.author + '" class="user">'
                         + comment.author
+                    + '</a>'
+                    + ' commented '
+                    + '<div class="date">'
+                        + comment.timestamp + ' ago'
                     + '</div>'
                 + '</div>'
-                + '<div class="extra text">'
+                + '<div class="extra text gh-markdown">'
                     + FPLAN.boards._parseMarkdown(comment.body)
                 + '</div>'
             + '</div>'
@@ -64,11 +99,11 @@ FPLAN.boards = {
     },
 
     _durationHtml: function(state_duration) {
-        return '<span class="label label-success">'
+        return '<div class="ui green label">'
             + state_duration.name
-            + ': '
-            + state_duration.duration
-            + '</span>';
+                + '<div class="detail">'
+                    + state_duration.duration
+                + '</div>'
+            + '</div>';
     }
-
 }
