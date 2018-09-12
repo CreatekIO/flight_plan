@@ -1,12 +1,17 @@
+.ui.menu.board-header {
+  margin-bottom: 0;
+  box-shadow: none;
+  -webkit-box-shadow: none;
+}
+
 .board {
-  margin-top: -1em;
   display: flex;
   flex-wrap: nowrap;
   overflow-x: auto;
 
   .swimlane {
     width: 250px;
-    padding: 6px 0;
+    padding-top: 6px;
     border-left: 3px solid #e8eff9;
     background-color: #F9FAFB;
     flex: 0 0 auto;
@@ -20,8 +25,8 @@
 
     > .body {
       overflow-y: auto;
-      height: calc(100vh - 115px);
-      padding: 0.5em 6px;
+      height: calc(100vh - 109px);
+      padding: 0.5em 0.8em;
       position: relative;
 
       // TODO: remove if/when we move to Less-based styling
