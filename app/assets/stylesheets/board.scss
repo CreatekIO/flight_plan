@@ -71,6 +71,30 @@
   max-width: 520px;
 }
 
+.ticket-modal {
+  .ticket-sidebar {
+    position: sticky;
+    position: -webkit-sticky;
+    top: 2.1rem;
+
+    > .menu {
+      width: 100%;
+    }
+  }
+
+  .durations .label {
+    margin: 0;
+
+    & + .label {
+      margin-top: 0.5em;
+    }
+
+    .detail {
+      float: right;
+    }
+  }
+}
+
 .open-pull-requests {
   & + .popup {
     width: 600px;

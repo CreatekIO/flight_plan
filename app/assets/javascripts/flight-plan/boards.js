@@ -29,7 +29,26 @@ FPLAN.boards = {
         }).then(function(data) {
             var modal = $('#applicationModal');
             var modalBody = modal.children('.content').empty();
-            var feed = $('<div class="ui feed"/>');
+
+            var wrapperHtml = $('<div class="ui divided grid ticket-modal">'
+                    + '<div class="twelve wide column">'
+                        + '<div class="ui feed"></div>'
+                    + '</div>'
+                    + '<div class="four wide column">'
+                        + '<div class="ticket-sidebar">'
+                            + '<div class="ui vertical text menu">'
+                                + '<div class="item">'
+                                    + '<div class="header">Durations</div>'
+                                    + '<div class="durations"></div>'
+                                + '</div>'
+                            + '</div>'
+                        + '</div>'
+                    + '</div>'
+                + '</div>');
+
+            var feed = wrapperHtml.find('.ui.feed')
+            var sidebar = wrapperHtml.find('.ticket-sidebar')
+            var durations = sidebar.find('.durations')
 
             modal.find('.header').html(FPLAN.boards._headerHtml(data))
 
@@ -39,11 +58,11 @@ FPLAN.boards = {
                 feed.append(FPLAN.boards._commentHtml(comment));
             })
 
-            modalBody.append(feed)
-
             $.each(data.state_durations, function(index, state_duration) {
-                modalBody.append(FPLAN.boards._durationHtml(state_duration));
+                durations.append(FPLAN.boards._durationHtml(state_duration))
             })
+
+            modalBody.append(wrapperHtml)
 
             modalBody.scrollTop(0)
             modal.modal('show');
@@ -101,7 +120,7 @@ FPLAN.boards = {
     },
 
     _durationHtml: function(state_duration) {
-        return '<div class="ui green label">'
+        return '<div class="ui green fluid label">'
             + state_duration.name
                 + '<div class="detail">'
                     + state_duration.duration
