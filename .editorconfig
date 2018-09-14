@@ -17,7 +17,7 @@ max_line_length = 90
 
 spaces_around_operators = true
 
-[*.js]
+[*.{js,jsx}]
 indent_size = 4
 
 spaces_around_brackets = inside
