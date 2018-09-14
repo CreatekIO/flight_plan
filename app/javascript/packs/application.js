@@ -6,11 +6,16 @@
 //
 // To reference this file, add <%= javascript_pack_tag 'application' %> to the appropriate
 // layout file, like app/views/layouts/application.html.erb
-import React from 'react'
-import ReactDOM from 'react-dom'
+import React from "react";
+import ReactDOM from "react-dom";
 
-import Application from '../components/Application'
+import Application from "../components/Application";
 
-ReactDOM.render(<Application />, document.querySelector('#react_board'))
+document.addEventListener("DOMContentLoaded", () => {
+    const swimlanes = JSON.parse(document.getElementById("react-data").textContent);
 
-
+    ReactDOM.render(
+        <Application swimlanes={swimlanes} />,
+        document.querySelector("#react_board")
+    );
+});

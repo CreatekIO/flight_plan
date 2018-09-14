@@ -6,6 +6,7 @@ class ReactBoardsController < AuthenticatedController
     @hide_container = true
     # todo: this needs to come from the logged in user
     @boards = Board.all
+    @board = Board.find(params[:id])
   end
 
   def index
