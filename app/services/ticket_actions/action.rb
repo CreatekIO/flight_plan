@@ -63,6 +63,14 @@ class TicketActions::Action
     [-priority, TicketActions::ACTION_TYPES.index(type)]
   end
 
+  def as_json(options = nil)
+    {
+      type: type,
+      text: text,
+      urls: urls.as_json
+    }.as_json(options)
+  end
+
   private
 
   attr_writer :text, :priority
