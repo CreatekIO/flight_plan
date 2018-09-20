@@ -1,6 +1,6 @@
 # API key is set via `BUGSNAG_API_KEY` env variable
 Bugsnag.configure do |config|
-  config.auto_capture_sessions = true
+  config.auto_capture_sessions = Rails.env.production?
 
   # Requires `dyno-metadata` Heroku Labs Feature
   # See:
