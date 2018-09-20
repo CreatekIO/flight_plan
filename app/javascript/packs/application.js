@@ -24,6 +24,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
 if (module.hot) {
     module.hot.accept("../components/Application", () => {
+        const board = document.querySelector(".board");
+        const scrollLeft = (board && board.scrollLeft) || 0;
+
         rootRender(Application);
+
+        document.querySelector(".board").scrollLeft = scrollLeft;
     });
 }
