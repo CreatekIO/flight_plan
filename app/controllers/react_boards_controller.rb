@@ -7,6 +7,17 @@ class ReactBoardsController < AuthenticatedController
     # todo: this needs to come from the logged in user
     @boards = Board.all
     @board = Board.find(params[:id])
+
+    respond_to do |format|
+      format.html
+      format.json do
+        @swimlanes = @board.swimlanes.ordered.includes(
+          board_tickets: {
+            ticket: %i[repo pull_requests]
+          }
+        )
+      end
+    end
   end
 
   def index

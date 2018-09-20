@@ -1,7 +1,7 @@
 import React from "react";
 
 // import Header from './Header'
-import Swimlane from "./Swimlane";
+import Board from "./Board";
 
 const Application = props => {
     // const board = { name: 'Other Board', other_name: 'Other 12' }
@@ -9,9 +9,7 @@ const Application = props => {
 
     return (
         // <Header board={board}/>
-        <div className="board">
-            {swimlanes.map(swimlane => <Swimlane {...swimlane} key={swimlane.id} />)}
-        </div>
+        <Board />
     );
 };
 

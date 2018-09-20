@@ -1,24 +1,13 @@
 #react_board
+
+:ruby
+  config = {
+    api: {
+      boardURL: react_board_path(@board, format: :json)
+    }
+  }
+
+:javascript
+  window.flightPlanConfig = #{raw config.to_json};
+
 = javascript_pack_tag 'application'
-
-%script#react-data
-  :ruby
-    json = @board.swimlanes.ordered.includes(board_tickets: { ticket: [:repo, :pull_requests] }).map do |swimlane|
-      swimlane.as_json.merge(
-        board_tickets: swimlane.board_tickets.map do |board_ticket|
-          board_ticket.as_json.merge(
-            current_state_duration: '1d',
-            ticket: board_ticket.ticket.as_json(methods: :html_url).merge(
-              repo: board_ticket.ticket.repo.as_json
-            ),
-            pull_requests: board_ticket.ticket.pull_requests.map do |pull_request|
-              pull_request.as_json(methods: :html_url).merge(
-                next_action: TicketActions.next_action_for(pull_request, user: current_user).as_json
-              )
-            end
-          )
-        end
-      )
-    end
-
-  = raw JSON.pretty_generate(json)
