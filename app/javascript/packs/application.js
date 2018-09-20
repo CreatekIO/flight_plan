@@ -11,11 +11,19 @@ import ReactDOM from "react-dom";
 
 import Application from "../components/Application";
 
-document.addEventListener("DOMContentLoaded", () => {
-    const swimlanes = JSON.parse(document.getElementById("react-data").textContent);
-
+const rootRender = Component => {
     ReactDOM.render(
-        <Application swimlanes={swimlanes} />,
+        <Component />,
         document.querySelector("#react_board")
     );
+};
+
+document.addEventListener("DOMContentLoaded", () => {
+    rootRender(Application);
 });
+
+if (module.hot) {
+    module.hot.accept("../components/Application", () => {
+        rootRender(Application);
+    });
+}
