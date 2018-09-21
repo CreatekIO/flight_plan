@@ -6,6 +6,7 @@ json.array! @swimlanes do |swimlane|
 
     json.id board_ticket.id
     json.current_state_duration '1d' # board_ticket.current_state_duration
+    json.url board_board_ticket_path(@board, board_ticket)
 
     json.ticket do
       json.extract! ticket, :id, :remote_number, :remote_title, :html_url
