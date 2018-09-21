@@ -54,4 +54,14 @@ Rails.application.configure do
   # config.file_watcher = ActiveSupport::EventedFileUpdateChecker
   #
   config.web_console.whitelisted_ips = '0.0.0.0/0'
+
+  config.after_initialize do
+    disabled = [0, '', nil]
+
+    ActiveRecordQueryTrace.enabled = disabled.exclude?(ENV['ACTIVE_RECORD_QUERY_TRACE'])
+
+    Bullet.enable = disabled.exclude?(ENV['BULLET'])
+    Bullet.rails_logger = true
+    Bullet.add_footer = true
+  end
 end
