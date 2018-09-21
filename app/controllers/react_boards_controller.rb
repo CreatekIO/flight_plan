@@ -14,7 +14,10 @@ class ReactBoardsController < AuthenticatedController
         @swimlanes = @board.swimlanes.ordered.includes(
           :transitions,
           board_tickets: {
-            ticket: %i[repo pull_requests]
+            ticket: [
+              :repo,
+              pull_requests: %i[repo]
+            ]
           }
         )
       end
