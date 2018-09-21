@@ -12,6 +12,7 @@ class ReactBoardsController < AuthenticatedController
       format.html
       format.json do
         @swimlanes = @board.swimlanes.ordered.includes(
+          :transitions,
           board_tickets: {
             ticket: %i[repo pull_requests]
           }

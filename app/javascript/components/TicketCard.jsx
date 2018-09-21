@@ -1,13 +1,15 @@
 import React from "react";
 
 import PullRequestList from "./PullRequestList";
+import SwimlaneTransitionButton from "./SwimlaneTransitionButton";
 
 export default function TicketCard(props) {
     const {
         ticket: { remote_number, remote_title, html_url, repo },
         display_duration,
         current_state_duration,
-        pull_requests
+        pull_requests,
+        transitions
     } = props;
 
     return (
@@ -26,7 +28,12 @@ export default function TicketCard(props) {
                     <div className="meta">Current state: {current_state_duration}</div>
                 </div>
             )}
-            <PullRequestList pullRequests={pull_requests} />
+            {!!pull_requests.length && <PullRequestList pullRequests={pull_requests} />}
+            {!!transitions.length && (
+                <div className="extra content">
+                    <SwimlaneTransitionButton transitions={transitions} />
+                </div>
+            )}
         </div>
     );
 }
