@@ -1,5 +1,6 @@
 json.array! @swimlanes do |swimlane|
-  json.extract! swimlane, :id, :name, :display_duration
+  json.extract! swimlane, :id, :name
+  json.display_duration swimlane.display_duration?
 
   json.board_tickets swimlane.board_tickets do |board_ticket|
     ticket = board_ticket.ticket
