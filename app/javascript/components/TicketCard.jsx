@@ -8,7 +8,7 @@ export default function TicketCard(props) {
     const {
         ticket: { remote_number, remote_title, html_url, repo },
         display_duration,
-        current_state_duration,
+        time_since_last_transition,
         url,
         pull_requests,
         transitions
@@ -33,7 +33,9 @@ export default function TicketCard(props) {
             </div>
             {display_duration && (
                 <div className="content">
-                    <div className="meta">Current state: {current_state_duration}</div>
+                    <div className="meta">
+                        Since last move: {time_since_last_transition}
+                    </div>
                 </div>
             )}
             {!!pull_requests.length && <PullRequestList pullRequests={pull_requests} />}

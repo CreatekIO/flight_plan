@@ -5,7 +5,7 @@ json.array! @swimlanes do |swimlane|
     ticket = board_ticket.ticket
 
     json.id board_ticket.id
-    json.current_state_duration '1d' # board_ticket.current_state_duration
+    json.time_since_last_transition board_ticket.time_since_last_transition if swimlane.display_duration?
     json.url board_board_ticket_path(@board, board_ticket)
 
     json.ticket do

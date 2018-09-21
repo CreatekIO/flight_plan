@@ -25,6 +25,10 @@ class BoardTicket < ApplicationRecord
     format_duration(state_durations[swimlane.name])
   end
 
+  def time_since_last_transition
+    format_duration(open_timesheet.started_at.business_time_until(Time.now))
+  end
+
   def displayable_durations(board)
     durations = state_durations
 
