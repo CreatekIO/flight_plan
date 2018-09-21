@@ -1,53 +1,6 @@
 import React from "react";
-import Octicon, { GitMerge, GitPullRequest } from "@githubprimer/octicons-react";
 
-import NextActionButton from "./NextActionButton";
-
-const PullRequestIcon = ({ merged, state }) => {
-    if (merged) {
-        return <Octicon icon={GitMerge} className="octicon is-merged" />;
-    } else {
-        return <Octicon icon={GitPullRequest} className={`octicon is-${state}`} />;
-    }
-};
-
-const PullRequestLine = props => {
-    const {
-        remote_state,
-        merged,
-        html_url,
-        remote_title,
-        remote_number,
-        next_action
-    } = props;
-
-    return (
-        <div className="item">
-            <div className="left floated content">
-                <PullRequestIcon merged={merged} state={remote_state} />
-                &nbsp;
-                <a href={html_url} title={remote_title} target="_blank">
-                    {remote_number}
-                </a>
-            </div>
-            {next_action && (
-                <div className="right floated content">
-                    <NextActionButton {...next_action} className="compact mini" />
-                </div>
-            )}
-        </div>
-    );
-};
-
-const PullRequestList = ({ pullRequests }) => {
-    return (
-        <div className="ui celled list ticket-pull-requests">
-            {pullRequests.map(pullRequest => (
-                <PullRequestLine {...pullRequest} key={pullRequest.id} />
-            ))}
-        </div>
-    );
-};
+import PullRequestList from "./PullRequestList";
 
 export default function TicketCard(props) {
     const {
