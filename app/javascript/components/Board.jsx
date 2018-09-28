@@ -11,6 +11,8 @@ export default class Board extends Component {
                 isLoading: false,
                 swimlanes: swimlanes
             });
+
+            $(document).trigger("board:load", { swimlanes });
         });
     }
 

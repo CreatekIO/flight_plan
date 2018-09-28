@@ -2,7 +2,7 @@ FPLAN.boards = {
     show: function() {
         var parent = this;
 
-        $('.open-pull-requests').popup({
+        $('.open-pull-requests-item').popup({
             inline: true,
             on: 'click'
         });

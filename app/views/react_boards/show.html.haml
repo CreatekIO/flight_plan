@@ -4,7 +4,14 @@
   config = {
     api: {
       boardURL: react_board_path(@board, format: :json)
-    }
+    },
+    boards: @boards.map do |board|
+      board.slice(:id, :name).merge(
+        url: react_board_path(board),
+        dashboardURL: board_pull_requests_path(board),
+        current: @board == board
+      )
+    end
   }
 
 :javascript
