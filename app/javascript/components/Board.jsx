@@ -6,14 +6,16 @@ export default class Board extends Component {
     state = { isLoading: true, swimlanes: [] };
 
     componentDidMount() {
-        $.getJSON(flightPlanConfig.api.boardURL).then(swimlanes => {
-            this.setState({
-                isLoading: false,
-                swimlanes: swimlanes
-            });
+        fetch(flightPlanConfig.api.boardURL)
+            .then(response => response.json())
+            .then(swimlanes => {
+                this.setState({
+                    isLoading: false,
+                    swimlanes: swimlanes
+                });
 
-            $(document).trigger("board:load", { swimlanes });
-        });
+                $(document).trigger("board:load", { swimlanes });
+            });
     }
 
     renderOverlay() {
