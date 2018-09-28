@@ -3,6 +3,16 @@ module ApplicationHelper
     @hide_container
   end
 
+  def polyfill_url
+    query_string = {
+      features: 'fetch|gated'
+    }
+
+    minify = Rails.env.production? ? '.min' : ''
+
+    "https://cdn.polyfill.io/v2/polyfill#{minify}.js?#{query_string.to_query}"
+  end
+
   def next_action_button(pull_request, user: nil, **options)
     next_action = TicketActions.next_action_for(pull_request, user: user)
     return '' if next_action.blank?

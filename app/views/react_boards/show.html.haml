@@ -17,4 +17,5 @@
 :javascript
   window.flightPlanConfig = #{raw config.to_json};
 
+= javascript_include_tag polyfill_url
 = javascript_pack_tag 'application'
