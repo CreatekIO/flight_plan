@@ -53,12 +53,14 @@ export default class TicketModal extends Component {
     state = { isLoading: true, boardTicket: { ticket: {}, state_durations: [] } };
 
     handleOpen = () => {
-        $.getJSON(this.props.boardTicketURL).then(boardTicket => {
-            this.setState({
-                isLoading: false,
-                boardTicket: boardTicket
+        fetch(this.props.boardTicketURL)
+            .then(response => response.json())
+            .then(boardTicket => {
+                this.setState({
+                    isLoading: false,
+                    boardTicket: boardTicket
+                });
             });
-        });
     };
 
     renderFeed() {
