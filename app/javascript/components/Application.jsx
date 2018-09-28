@@ -1,16 +1,13 @@
-import React from "react";
+import React, { Fragment } from "react";
 
-// import Header from './Header'
 import Board from "./Board";
+import Header from "./Header";
 
-const Application = props => {
-    // const board = { name: 'Other Board', other_name: 'Other 12' }
-    const { swimlanes } = props;
-
-    return (
-        // <Header board={board}/>
+const Application = props => (
+    <Fragment>
+        <Header boards={flightPlanConfig.boards} />
         <Board />
-    );
-};
+    </Fragment>
+);
 
 export default Application;

@@ -13,12 +13,12 @@
     - when 'boards'
       = link_to 'PR Dashboard', board_pull_requests_path(@board), class: 'item'
 
-      .item.open-pull-requests
+      .link.item.open-pull-requests-item
         Open Pull Requests
         %span.ui.circular.label= @board.open_pull_requests.size
         %i.dropdown.icon
 
-      .ui.flowing.popup
+      .ui.flowing.popup.open-pull-requests
         - @board.open_pull_requests.group_by(&:repo).each do |repo, pull_requests|
           %h4.header
             = repo.name

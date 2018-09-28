@@ -96,13 +96,11 @@
 }
 
 .open-pull-requests {
-  & + .popup {
-    width: 600px;
+  width: 600px;
 
-    .text-muted {
-      margin-left: 2px;
-      color: rgba(0, 0, 0, 0.4);
-    }
+  .text-muted {
+    margin-left: 2px;
+    color: rgba(0, 0, 0, 0.4);
   }
 }
 
