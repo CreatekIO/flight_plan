@@ -9,9 +9,6 @@
     "react-dom": "^15.6.1",
     "showdown": "^1.7.6"
   },
-  "engines": {
-    "yarn": "1.2.1"
-  },
   "devDependencies": {
     "webpack-dev-server": "^2.7.1"
   }
