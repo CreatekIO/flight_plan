@@ -1,5 +1,5 @@
 class PullRequest < ApplicationRecord
-  enum merge_status: {
+  permissive_enum merge_status: {
     merge_status_unknown: 'unknown',
     merge_conflicts: 'merge_conflicts',
     merge_ok: 'ok'
@@ -8,7 +8,7 @@ class PullRequest < ApplicationRecord
   # Silence warning about overriding `open` method
   # (which is inherited from Kernel)
   logger.silence do
-    enum remote_state: { open: 'open', closed: 'closed' }
+    permissive_enum remote_state: { open: 'open', closed: 'closed' }
   end
 
   belongs_to :repo
