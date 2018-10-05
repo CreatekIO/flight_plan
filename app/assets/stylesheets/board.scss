@@ -54,6 +54,10 @@
     &.ui.list > .item {
       padding-left: 1em;
     }
+
+    > .item:last-child {
+      border-bottom-color: transparent !important;
+    }
   }
 
   .issue-title {

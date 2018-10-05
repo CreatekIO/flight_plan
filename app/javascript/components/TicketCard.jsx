@@ -3,7 +3,6 @@ import { connect } from "react-redux";
 import { denormalize } from "normalizr";
 
 import PullRequestList from "./PullRequestList";
-import SwimlaneTransitionButton from "./SwimlaneTransitionButton";
 import TicketModal from "./TicketModal";
 import { boardTicket as boardTicketSchema } from "../schema";
 
@@ -12,8 +11,7 @@ const TicketCard = ({
     display_duration,
     time_since_last_transition,
     url,
-    pull_requests,
-    transitions
+    pull_requests
 }) => (
     <div className="ui card">
         <div className="content">
@@ -37,11 +35,6 @@ const TicketCard = ({
             </div>
         )}
         {!!pull_requests.length && <PullRequestList pullRequests={pull_requests} />}
-        {!!transitions.length && (
-            <div className="extra content">
-                <SwimlaneTransitionButton transitions={transitions} />
-            </div>
-        )}
     </div>
 );
 

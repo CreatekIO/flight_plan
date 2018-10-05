@@ -30,10 +30,5 @@ json.swimlanes @swimlanes do |swimlane|
       )
       json.repo pull_request.repo_id
     end
-
-    json.transitions swimlane.transitions do |transition|
-      json.extract!(transition, :id, :name)
-      json.url board_board_ticket_path(@board, board_ticket, board_ticket: { swimlane_id: transition.id })
-    end
   end
 end
