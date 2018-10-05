@@ -78,6 +78,22 @@ RSpec.describe PushImporter do
 
             expect(ticket.reload).not_to be_merged
           end
+
+          context 'but push deletes branch' do
+            let(:payload) { webhook_payload(:branch_deleted_push).merge!(ref: ref) }
+
+            before do
+              allow(Branch).to receive(:import).with(payload, repo) do
+                branch.destroy
+              end
+            end
+
+            it 'doesn\'t raise an error' do
+              expect {
+                subject.import
+              }.to_not raise_error
+            end
+          end
         end
       end
     end
