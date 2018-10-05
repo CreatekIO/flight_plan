@@ -31,13 +31,18 @@ default: &default
 
 development:
   <<: *default
-  compile: false
+  compile: true
 
   dev_server:
-    host: 0.0.0.0
-    port: 3035
-    hmr: false
+    host: webpack.dev.createk.io
+    port: 80
+    public: http://webpack:80
+    hmr: true
     https: false
+    inline: true
+    overlay: true
+    disable_host_check: true
+    use_local_ip: false
 
 test:
   <<: *default

@@ -1,4 +1,6 @@
-class BoardsController < AuthenticatedController
+class ReactBoardsController < AuthenticatedController
+
+  skip_load_and_authorize_resource
 
   def show
     @hide_container = true

@@ -1,24 +1,25 @@
 module PullRequestDashboardHelper
-  def bs_label(text)
+  def status_label(text, options = {})
     text = text.downcase
 
     type =
       case text
-      when 'approved', 'success' then 'success'
-      when 'changes_requested' then 'warning'
-      when 'failure', 'error' then 'danger'
-      else 'default'
+      when 'approved', 'success' then 'green'
+      when 'changes_requested' then 'yellow'
+      when 'failure', 'error' then 'red'
       end
 
-    content_tag :span, text.humanize.downcase, class: "label label-#{type}"
+    options[:class] = ['ui', *type, 'label', *options[:class]]
+
+    content_tag :div, text.humanize.downcase, options
   end
 
-  GITHUB_AVATAR_URL = "https://github.com/%{username}.png".freeze
+  GITHUB_AVATAR_URL = 'https://github.com/%{username}.png'.freeze
 
   def avatar_tag(username, **options)
     return '' if username.blank?
 
-    options[:class] = ['avatar', *options[:class]]
+    options[:class] = ['ui avatar image', *options[:class]]
     avatar_url = format(GITHUB_AVATAR_URL, username: username)
 
     image_tag avatar_url, alt: username, **options

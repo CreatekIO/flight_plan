@@ -1,34 +1,38 @@
-.board-header.clearfix
-  .dropdown.pull-right
-    %button.btn.btn-warning.dropdown-toggle#boards_menu{ data: { toggle: 'dropdown' } }
-      = @board.name
-      %span.caret
+.ui.menu.board-header
+  .ui.dropdown.item
+    = @board.name
+    %i.dropdown.icon
 
-    %ul.dropdown-menu{ aria: { labelledby: 'boards_menu' } }
+    .menu
       - @boards.each do |board|
         - next if board.id == @board.id
-        %li
-          = link_to board.name, [board, *local_assigns[:path]]
+        = link_to board.name, [board, *local_assigns[:path]], class: 'item'
 
-  - case controller_name
-  - when 'boards'
-    = link_to 'PR Dashboard', board_pull_requests_path(@board), class: 'btn btn-default pull-right'
-    .dropdown.pull-right.open-pull-requests
-      %button.btn.btn-default.dropdown-toggle{ data: { toggle: 'dropdown' } }
+  .right.menu
+    - case controller_name
+    - when 'boards'
+      = link_to 'PR Dashboard', board_pull_requests_path(@board), class: 'item'
+
+      .item.open-pull-requests
         Open Pull Requests
-        %span.caret
+        %span.ui.circular.label= @board.open_pull_requests.size
+        %i.dropdown.icon
 
-      %ul.dropdown-menu
+      .ui.flowing.popup
         - @board.open_pull_requests.group_by(&:repo).each do |repo, pull_requests|
-          %li.dropdown-header
+          %h4.header
             = repo.name
-            %span.badge= pull_requests.size
-          - pull_requests.each do |pull_request|
-            %li
-              = link_to pull_request.html_url, target: :_blank do
-                %span.text-primary ##{pull_request.remote_number}
-                = pull_request.remote_title.truncate(60)
-              %span.action-btn= next_action_button(pull_request, user: current_user, class: 'btn-xs')
+            .ui.circular.label= pull_requests.size
+          .ui.list
+            - pull_requests.each do |pull_request|
+              .item
+                .right.floated.content
+                  %span.action-btn= next_action_button(pull_request, user: current_user, class: 'compact mini')
 
-  - when 'pull_request_dashboards'
-    = link_to 'Back to board', board_path(@board), class: 'btn btn-default pull-right'
+                .content
+                  = link_to pull_request.html_url, target: :_blank do
+                    = "##{pull_request.remote_number}"
+                    %span.text-muted= pull_request.remote_title.truncate(60)
+
+    - when 'pull_request_dashboards'
+      = link_to 'Back to board', board_path(@board), class: 'item'

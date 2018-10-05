@@ -3,6 +3,7 @@ class PullRequestDashboardsController < AuthenticatedController
   skip_load_and_authorize_resource
 
   def index
+    @hide_container = true
     @boards = Board.all
     @repos = @board.repos.includes(open_pull_requests: :reviews)
   end

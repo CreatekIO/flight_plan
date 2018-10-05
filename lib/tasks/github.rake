@@ -83,7 +83,17 @@ namespace :github do
       Octokit.issues(repo.remote_url).each do |remote_issue|
         next if remote_issue.pull_request.present?
         puts "  issue #{remote_issue.number}"
-        Ticket.import(remote_issue, remote_repo)
+        ticket = Ticket.import(remote_issue, remote_repo)
+
+        Octokit.issue_comments(repo.remote_url, ticket.remote_number).each do |issue_comment|
+          comment = Comment.find_or_initialize_by(remote_id: issue_comment.id)
+          comment.update_attributes(
+            ticket_id: ticket.id,
+            remote_body: issue_comment.body,
+            remote_author_id: issue_comment.user.id,
+            remote_author: issue_comment.user.login
+          )
+        end
       end
 
       Octokit.pull_requests(repo.remote_url, state: "all").each do |remote_pr|

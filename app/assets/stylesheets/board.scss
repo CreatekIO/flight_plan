@@ -1,34 +1,38 @@
-.board-header {
-  padding: 4px;
-
-  .dropdown + .btn,
-  .btn + .dropdown {
-    margin-right: 6px;
-  }
+.ui.menu.board-header {
+  margin-bottom: 0;
+  box-shadow: none;
+  -webkit-box-shadow: none;
 }
 
 .board {
-  border-top: 1px solid #e8eff9;
-
   display: flex;
   flex-wrap: nowrap;
   overflow-x: auto;
 
   .swimlane {
     width: 250px;
-    padding: 6px;
+    padding-top: 6px;
     border-left: 3px solid #e8eff9;
+    background-color: #F9FAFB;
     flex: 0 0 auto;
 
-    .header {
-      font-size: medium;
-      text-align: center;
+    .swimlane-header {
       height: 33px;
+      border-bottom: 2px solid #e8eff9;
+      margin-top: 0.5em;
+      margin-bottom: 0;
     }
 
-    .body {
+    > .body {
       overflow-y: auto;
-      height: calc(100vh - 90px);
+      height: calc(100vh - 109px);
+      padding: 0.5em 0.8em;
+      position: relative;
+
+      // TODO: remove if/when we move to Less-based styling
+      &::-webkit-scrollbar {
+        display: none;
+      }
 
       .panel-heading {
         overflow: hidden;
@@ -36,14 +40,25 @@
     }
   }
 
-  .remote-details {
-    .issue-number {
-      padding-right: 4px;
+  .issue-number {
+    padding-right: 4px;
+  }
+
+  .ticket-pull-requests {
+    margin: 0;
+
+    .left.floated.content {
+      margin: 3px 0;
+    }
+
+    &.ui.list > .item {
+      padding-left: 1em;
     }
   }
 
   .issue-title {
     display: block;
+    word-wrap: break-word;
   }
 
   .swimlane-duration {
@@ -52,39 +67,62 @@
   }
 }
 
-.btn-caution {
-  @include button-variant($btn-warning-bg, $btn-warning-color, $btn-warning-border);
-
-  &:focus,
-  &:hover,
-  &:active,
-  &:active:focus,
-  .open > &.dropdown-toggle {
-    background-color: $btn-warning-color;
-  }
-}
-
 #applicationModal .modal-content img {
   max-width: 520px;
 }
 
+.ticket-modal {
+  .ticket-sidebar {
+    position: sticky;
+    position: -webkit-sticky;
+    top: 2.1rem;
+
+    > .menu {
+      width: 100%;
+    }
+  }
+
+  .durations .label {
+    margin: 0;
+
+    & + .label {
+      margin-top: 0.5em;
+    }
+
+    .detail {
+      float: right;
+    }
+  }
+}
+
 .open-pull-requests {
-  .dropdown-menu {
+  & + .popup {
     width: 600px;
+
+    .text-muted {
+      margin-left: 2px;
+      color: rgba(0, 0, 0, 0.4);
+    }
+  }
+}
+
+.next-action-btn {
+  &.dropdown .menu {
+    left: auto;
+    right: 0;
+
+    > .item {
+      font-size: inherit;
+    }
   }
 
-  li {
-    position: relative;
-  }
+  &.mini.compact {
+    padding-left: 0.8em;
+    padding-right: 0.8em;
 
-  .text-primary {
-    margin-right: 2px;
-  }
-
-  .action-btn {
-    position: absolute;
-    top: 2px;
-    right: 20px;
+    .dropdown.icon {
+      margin-left: 0.5em;
+    }
   }
 }
 
@@ -94,7 +132,34 @@
   vertical-align: text-top;
   fill: currentColor;
 
+  &.is-open {
+    color: #6cc644;
+  }
+
+  &.is-closed {
+    color: #bd2c00;
+  }
+
   &.is-merged {
-    color: #6f42c1;
+    color: #6e5494;
+  }
+}
+
+.gh-markdown {
+  pre {
+    background-color: #F9FAFB;
+    padding: 1em;
+    overflow-x: auto;
+  }
+
+  code:not([class]) {
+    padding: 0.2em 0.4em;
+    font-size: 95%;
+    background-color: #F9FAFB;
+    border-radius: 3px;
+  }
+
+  p > img {
+    max-width: 100%;
   }
 }

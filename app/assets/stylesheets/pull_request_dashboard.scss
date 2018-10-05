@@ -1,40 +1,19 @@
-.avatar {
-  height: 32px;
-  margin-right: 10px;
-  border-radius: 4px;
-}
-
-.avatar-list {
-  li {
-    margin-bottom: 5px;
-
-    a:hover {
-      text-decoration: none;
-    }
-  }
-}
-
 .pull-request-dashboard {
   font-size: 16px;
 
-  tbody th {
+  tbody td[colspan] {
     background-color: #f6f6f6;
   }
 
-  td ul,
-  td dl {
+  .ui.list {
     margin-bottom: 0;
   }
 
-  @media (min-width: 768px) {
-    .dl-horizontal dt {
-      width: 70px;
-      font-weight: normal;
-    }
+  .pr-age {
+    float: right;
+  }
 
-    .dl-horizontal dd {
-      margin-left: 80px;
-      font-weight: 700;
-    }
+  .text-muted {
+    color: rgba(0, 0, 0, 0.4);
   }
 }
