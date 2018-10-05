@@ -6,7 +6,7 @@ ENV BUILD_PACKAGES='build-base git mysql-dev nodejs nodejs-npm tzdata inotify-to
 
 RUN \
   apk add --update --upgrade $BUILD_PACKAGES && \
-  npm install --global yarn && \
+  npm install --global yarn@1.5.1 && \
   find / -type f -iname \*.apk-new -delete && \
   rm -rf /var/cache/apk/* && \
   rm -rf /usr/lib/lib/ruby/gems/*/cache/*

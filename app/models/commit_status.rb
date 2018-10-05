@@ -2,7 +2,7 @@ class CommitStatus < ApplicationRecord
   belongs_to :repo
 
   # See https://developer.github.com/v3/repos/statuses/#create-a-status
-  enum state: {
+  permissive_enum state: {
     pending: 'pending',
     success: 'success',
     failure: 'failure',
