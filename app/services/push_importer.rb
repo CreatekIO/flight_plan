@@ -18,7 +18,7 @@ class PushImporter
 
     repo.transaction do
       branch = Branch.import(payload, repo)
-      return if branch.blank?
+      return if branch.blank? || branch.destroyed?
 
       if master_branch?
         repo.update_merged_tickets
