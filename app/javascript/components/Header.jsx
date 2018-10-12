@@ -59,7 +59,9 @@ const OpenPullRequests = ({ openPRsCount, pullRequests }) => {
 
     return (
         <Popup trigger={item} on="click" flowing className="open-pull-requests">
-            {pullRequests.map(repo => <RepoPullRequests repo={repo} key={repo.id} />)}
+            {pullRequests.map(repo => (
+                <RepoPullRequests repo={repo} key={repo.id} />
+            ))}
         </Popup>
     );
 };
