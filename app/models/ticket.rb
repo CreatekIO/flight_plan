@@ -9,6 +9,8 @@ class Ticket < ApplicationRecord
   scope :merged, -> { where(merged: true) }
   scope :unmerged, -> { where(merged: false) }
 
+  after_save :touch_board_tickets
+
   def self.import(remote_issue, remote_repo)
     ticket = find_by_remote(remote_issue, remote_repo)
     ticket.update_attributes(
@@ -84,4 +86,7 @@ class Ticket < ApplicationRecord
     end
   end
 
+  def touch_board_tickets
+    board_tickets.reload.each(&:touch)
+  end
 end

@@ -1,7 +1,7 @@
 class BoardTicket < ApplicationRecord
-  belongs_to :board
-  belongs_to :ticket
-  belongs_to :swimlane
+  belongs_to :board, touch: true
+  belongs_to :ticket, touch: true
+  belongs_to :swimlane, touch: true
   has_many :timesheets, dependent: :destroy
   has_many :release_board_tickets, dependent: :destroy
   has_many :releases, through: :release_board_tickets

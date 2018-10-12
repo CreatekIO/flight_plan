@@ -1,5 +1,5 @@
 class Comment < ApplicationRecord
-  belongs_to :ticket
+  belongs_to :ticket, touch: true
 
   def self.import(remote_comment, remote_issue, remote_repo)
     comment = find_by_remote(remote_comment)

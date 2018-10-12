@@ -11,7 +11,7 @@ class PullRequest < ApplicationRecord
     enum remote_state: { open: 'open', closed: 'closed' }
   end
 
-  belongs_to :repo
+  belongs_to :repo, touch: true
   belongs_to :creator, -> { where(provider: 'github') },
     optional: true, class_name: 'User',
     foreign_key: :creator_remote_id, primary_key: :uid

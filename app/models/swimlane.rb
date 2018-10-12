@@ -1,5 +1,5 @@
 class Swimlane < ApplicationRecord
-  belongs_to :board
+  belongs_to :board, touch: true
 
   has_many :board_tickets, dependent: :destroy
   has_many :tickets, through: :board_tickets

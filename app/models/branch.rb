@@ -1,6 +1,6 @@
 class Branch < ApplicationRecord
-  belongs_to :repo
-  belongs_to :ticket, optional: true
+  belongs_to :repo, touch: true
+  belongs_to :ticket, optional: true, touch: true
   has_many :heads, class_name: 'BranchHead', dependent: :destroy
   belongs_to :latest_head, class_name: 'BranchHead', optional: true
 

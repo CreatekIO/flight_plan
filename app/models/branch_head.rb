@@ -1,5 +1,5 @@
 class BranchHead < ApplicationRecord
-  belongs_to :branch
+  belongs_to :branch, touch: true
 
   NULL_SHA = '0000000000000000000000000000000000000000'.freeze
 

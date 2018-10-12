@@ -1,4 +1,4 @@
 class BoardRepo < ApplicationRecord
-  belongs_to :repo
-  belongs_to :board
+  belongs_to :repo, touch: true
+  belongs_to :board, touch: true
 end
