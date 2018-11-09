@@ -48,6 +48,29 @@ const entities = (state = initialEntitiesState, { type, payload }) => {
             return updateEntities(entities, state);
         case "NEXT_ACTIONS_LOADED":
             return updateEntities(normalize(payload, [repoSchema]).entities, state);
+        case "TICKET_MOVED":
+            const { sourceId, sourceIndex, destinationId, destinationIndex } = payload;
+            const movedCard = state.swimlanes[sourceId].board_tickets[sourceIndex];
+
+            const transforms = [
+                {
+                    // Remove card from source swimlane...
+                    [sourceId]: {
+                        board_tickets: { $splice: [[sourceIndex, 1]] }
+                    }
+                },
+                {
+                    // ...and place it in destination swimlane
+                    [destinationId]: {
+                        board_tickets: { $splice: [[destinationIndex, 0, movedCard]] }
+                    }
+                }
+            ];
+
+            return transforms.reduce(
+                (state, transform) => update(state, { swimlanes: transform }),
+                state
+            );
         default:
             return state;
     }

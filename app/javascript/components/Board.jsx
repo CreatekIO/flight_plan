@@ -1,10 +1,11 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { DragDropContext } from "react-beautiful-dnd";
+import update from "immutability-helper";
 
 import Swimlane from "./Swimlane";
 
-import { loadBoard, loadNextActions } from "../action_creators";
+import { loadBoard, loadNextActions, ticketDragged } from "../action_creators";
 
 class Board extends Component {
     state = { isLoading: true };
@@ -14,8 +15,10 @@ class Board extends Component {
         this.props.loadNextActions();
     }
 
-    onDragEnd = (result, provided) => {
-        console.log(result, provided);
+    onDragEnd = event => {
+        if (!event.destination) return;
+
+        this.props.ticketDragged(event);
     };
 
     renderOverlay() {
@@ -54,5 +57,5 @@ const mapStateToProps = ({ entities, current }) => {
 
 export default connect(
     mapStateToProps,
-    { loadBoard, loadNextActions }
+    { loadBoard, loadNextActions, ticketDragged }
 )(Board);
