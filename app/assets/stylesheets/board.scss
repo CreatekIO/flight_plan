@@ -1,6 +1,5 @@
 body[data-controller="boards"] {
-  // leave room for the header menu
-  margin-top: 51px;
+  overflow-x: initial;
 }
 
 .ui.menu.board-header {
@@ -12,9 +11,10 @@ body[data-controller="boards"] {
 .board {
   display: flex;
   flex-wrap: nowrap;
-  overflow-x: auto;
 
   .swimlane {
+    // leave room for the header menu
+    margin-top: 51px;
     width: 250px;
     padding-top: 6px;
     border-left: 3px solid #e8eff9;
@@ -30,7 +30,7 @@ body[data-controller="boards"] {
 
     > .body {
       overflow-y: auto;
-      height: calc(100vh - 109px);
+      height: calc(100vh - 98px);
       padding: 0.5em 0.8em;
       position: relative;
 
