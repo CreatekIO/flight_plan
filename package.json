@@ -2,12 +2,14 @@
   "name": "flight_plan",
   "private": true,
   "dependencies": {
+    "@githubprimer/octicons-react": "^8.1.0",
     "@rails/webpacker": "^3.0.2",
     "babel-preset-react": "^6.24.1",
-    "prop-types": "^15.5.10",
-    "react": "^15.6.1",
-    "react-dom": "^15.6.1",
+    "prop-types": "^15.6.2",
+    "react": "^16.5.1",
+    "react-dom": "^16.5.1",
     "semantic-ui-css": "^2.2.14",
+    "semantic-ui-react": "^0.82.5",
     "showdown": "^1.7.6"
   },
   "devDependencies": {

@@ -36,6 +36,8 @@ gem 'sidekiq'
 gem 'slack-ruby-client'
 
 group :development, :test do
+  gem 'active_record_query_trace'
+  gem 'bullet'
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
   gem 'capybara', '~> 2.15.1'
   gem 'capybara-screenshot'

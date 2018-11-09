@@ -37,7 +37,11 @@ class TicketActions::Base
   end
 
   def team_ids(except: [])
+    base_team_ids.without(*except)
+  end
+
+  def base_team_ids
     # TODO: scope to board/repo
-    User.pluck(:uid) - [owner_id.to_s, *except]
+    @base_team_ids ||= User.pluck(:uid).without(owner_id.to_s)
   end
 end
