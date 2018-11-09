@@ -13,12 +13,14 @@ body[data-controller="boards"] {
   flex-wrap: nowrap;
 
   .swimlane {
+    $background: #f9fafb;
+
     // leave room for the header menu
     margin-top: 51px;
     width: 250px;
     padding-top: 6px;
     border-left: 3px solid #e8eff9;
-    background-color: #F9FAFB;
+    background-color: $background;
     flex: 0 0 auto;
 
     .swimlane-header {
@@ -33,6 +35,10 @@ body[data-controller="boards"] {
       height: calc(100vh - 98px);
       padding: 0.5em 0.8em;
       position: relative;
+
+      &.is-dragging-over {
+        background-color: darken($background, 2%);
+      }
 
       // TODO: remove if/when we move to Less-based styling
       &::-webkit-scrollbar {

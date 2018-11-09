@@ -27,7 +27,9 @@ const Swimlane = ({ id, name, board_tickets, display_duration }) => (
                 <div
                     ref={provided.innerRef}
                     {...provided.droppableProps}
-                    className="body"
+                    className={`body ${
+                        snapshot.isDraggingOver ? "is-dragging-over" : ""
+                    }`}
                 >
                     <TicketList
                         display_duration={display_duration}
