@@ -1,4 +1,6 @@
-json.array! @swimlanes do |swimlane|
+json.extract! @board, :id, :name
+
+json.swimlanes @swimlanes do |swimlane|
   json.extract! swimlane, :id, :name
   json.display_duration swimlane.display_duration?
 
