@@ -31,8 +31,8 @@ class Board extends Component {
     render() {
         return (
             <div className="board">
-                {this.state.swimlanes.map(swimlane => (
-                    <Swimlane {...swimlane} key={swimlane.id} />
+                {this.props.swimlanes.map(swimlaneId => (
+                    <Swimlane key={swimlaneId} id={swimlaneId} />
                 ))}
                 {this.state.isLoading && this.renderOverlay()}
             </div>
