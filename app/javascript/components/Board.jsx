@@ -1,20 +1,22 @@
 import React, { Component } from "react";
+import { connect } from "react-redux";
 
 import Swimlane from "./Swimlane";
 
-export default class Board extends Component {
-    state = { isLoading: true, swimlanes: [] };
+import { boardLoaded } from "../action_creators";
+
+class Board extends Component {
+    state = { isLoading: true };
 
     componentDidMount() {
         fetch(flightPlanConfig.api.boardURL)
             .then(response => response.json())
-            .then(swimlanes => {
+            .then(board => {
                 this.setState({
-                    isLoading: false,
-                    swimlanes: swimlanes
+                    isLoading: false
                 });
 
-                $(document).trigger("board:load", { swimlanes });
+                this.props.boardLoaded(board);
             });
     }
 
@@ -37,3 +39,17 @@ export default class Board extends Component {
         );
     }
 }
+
+const mapStateToProps = ({ entities, current }) => {
+    let swimlanes = [];
+
+    if (current.board) {
+        swimlanes = entities.boards[current.board].swimlanes;
+    }
+
+    return {
+        swimlanes
+    };
+};
+
+export default connect(mapStateToProps, { boardLoaded })(Board);
