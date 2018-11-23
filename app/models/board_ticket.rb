@@ -1,4 +1,6 @@
 class BoardTicket < ApplicationRecord
+  include RankedModel
+
   belongs_to :board
   belongs_to :ticket
   belongs_to :swimlane
@@ -12,6 +14,8 @@ class BoardTicket < ApplicationRecord
 
   scope :for_board, ->(board_id) { where(board_id: board_id) }
   scope :for_repo, ->(repo_id) { where(tickets: { repo_id: repo_id }) }
+
+  ranks :swimlane_sequence, with_same: :swimlane_id
 
   attr_writer :update_remote
 
