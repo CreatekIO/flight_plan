@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180713151545) do
+ActiveRecord::Schema.define(version: 20181123143659) do
 
   create_table "board_repos", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin" do |t|
     t.bigint "board_id"
@@ -27,7 +27,9 @@ ActiveRecord::Schema.define(version: 20180713151545) do
     t.bigint "swimlane_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "swimlane_sequence"
     t.index ["board_id"], name: "index_board_tickets_on_board_id"
+    t.index ["swimlane_id", "swimlane_sequence"], name: "index_board_tickets_on_swimlane_id_and_swimlane_sequence", unique: true
     t.index ["swimlane_id"], name: "index_board_tickets_on_swimlane_id"
     t.index ["ticket_id"], name: "index_board_tickets_on_ticket_id"
   end
