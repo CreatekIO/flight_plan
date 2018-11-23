@@ -3,21 +3,15 @@ import { connect } from "react-redux";
 
 import Swimlane from "./Swimlane";
 
-import { boardLoaded } from "../action_creators";
+import { loadBoard } from "../action_creators";
 
 class Board extends Component {
     state = { isLoading: true };
 
     componentDidMount() {
-        fetch(flightPlanConfig.api.boardURL)
-            .then(response => response.json())
-            .then(board => {
-                this.setState({
-                    isLoading: false
-                });
-
-                this.props.boardLoaded(board);
-            });
+        this.props.loadBoard(flightPlanConfig.api.boardURL).then(board => {
+            this.setState({ isLoading: false });
+        });
     }
 
     renderOverlay() {
@@ -52,4 +46,4 @@ const mapStateToProps = ({ entities, current }) => {
     };
 };
 
-export default connect(mapStateToProps, { boardLoaded })(Board);
+export default connect(mapStateToProps, { loadBoard })(Board);
