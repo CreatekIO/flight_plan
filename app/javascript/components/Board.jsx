@@ -9,9 +9,7 @@ class Board extends Component {
     state = { isLoading: true };
 
     componentDidMount() {
-        this.props.loadBoard(flightPlanConfig.api.boardURL).then(board => {
-            this.setState({ isLoading: false });
-        });
+        this.props.loadBoard().then(() => this.setState({ isLoading: false }));
     }
 
     renderOverlay() {
