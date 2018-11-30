@@ -1,48 +1,21 @@
-= render "shared/board_header"
+#react_board
 
-- show_repo_name = @board.repos.count > 1
-.board
-  - @board.swimlanes.ordered.each do |swimlane|
-    .swimlane
-      .ui.small.grey.center.aligned.header.swimlane-header
-        = swimlane.name
-      .body
-        - swimlane.board_tickets.includes(ticket: { pull_requests: :reviews }).each do |board_ticket|
-          - ticket = board_ticket.ticket
-          .ui.card
-            .content
-              = link_to "##{ticket.remote_number}", "http://github.com/#{ticket.repo.remote_url}/issues/#{ticket.remote_number}", target: '_blank', class: 'issue-number'
+:ruby
+  config = {
+    api: {
+      boardURL: board_path(@board, format: :json)
+    },
+    boards: @boards.map do |board|
+      board.slice(:id, :name).merge(
+        url: board_path(board),
+        dashboardURL: board_pull_requests_path(board),
+        current: @board == board
+      )
+    end
+  }
 
-              - if show_repo_name
-                %span.meta.repo-name
-                  = ticket.repo.name
+:javascript
+  window.flightPlanConfig = #{raw config.to_json};
 
-            .content
-              = link_to(ticket.remote_title, '', data: { url: board_board_ticket_path(@board, board_ticket), target: '#applicationModal', hook: '_showTicketAjax' }, class: 'issue-title')
-
-            - if swimlane.display_duration?
-              .content
-                .meta Current state: #{board_ticket.current_state_duration}
-
-            - if ticket.pull_requests.any?
-              .ui.celled.list.ticket-pull-requests
-                - ticket.pull_requests.each do |pull_request|
-                  .item
-                    .left.floated.content
-                      = pull_request_icon pull_request
-                      = link_to pull_request.remote_number, pull_request.html_url, title: pull_request.remote_title, target: :_blank
-                    .right.floated.content
-                      = next_action_button(pull_request, user: current_user, class: 'compact mini')
-
-            - if swimlane.transitions.any?
-              .extra.content
-                .ui.right.floated.primary.compact.small.buttons
-                  = link_to(swimlane.transitions[0].name, board_board_ticket_path(@board, board_ticket, board_ticket: { swimlane_id: swimlane.transitions[0].id }), data: { method: 'patch' }, class: 'ui button')
-                  - if swimlane.transitions.count > 1
-                    .ui.floating.dropdown.icon.button
-                      %i.dropdown.icon
-                      .left.menu
-                        - swimlane.transitions.drop(1).each do |transition|
-                          = link_to(transition.name, board_board_ticket_path(@board, board_ticket, board_ticket: { swimlane_id: transition.id }), class: 'item', data: { method: 'patch' })
-
-
+= javascript_include_tag polyfill_url
+= javascript_pack_tag 'application'

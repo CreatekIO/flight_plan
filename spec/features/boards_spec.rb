@@ -1,7 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe 'boards' do
-
+RSpec.describe 'boards', skip: 'needs JS features tests set-up' do
   let(:board) { create(:board) }
   let!(:swimlanes) { create_list(:swimlane, 3, board: board) }
   let(:user) { create(:user) }

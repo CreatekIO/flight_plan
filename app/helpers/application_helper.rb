@@ -44,14 +44,6 @@ module ApplicationHelper
     end
   end
 
-  def pull_request_icon(pull_request)
-    if pull_request.merged?
-      octicon 'git-merge', class: 'is-merged'
-    else
-      octicon 'git-pull-request', class: (pull_request.open? ? 'is-open' : 'is-closed')
-    end
-  end
-
   private
 
   def url_dropdown_menu(action)

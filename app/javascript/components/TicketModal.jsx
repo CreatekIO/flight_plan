@@ -1,5 +1,6 @@
 import React, { Component, Fragment } from "react";
 import { Modal } from "semantic-ui-react";
+import showdown from "showdown";
 
 const markdownConverter = new showdown.Converter();
 markdownConverter.setFlavor("github");

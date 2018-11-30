@@ -1,5 +1,4 @@
 Rails.application.routes.draw do
-
   authenticated :user do
     root to: 'boards#index', as: :authenticated_root
   end
@@ -17,8 +16,6 @@ Rails.application.routes.draw do
     get 'pull_requests' => 'pull_request_dashboards#index', as: :pull_requests
   end
 
-  resources :react_boards
-
   namespace :webhook do
     resource :github, only: :create, defaults: { formats: :json }, controller: 'github'
   end
@@ -29,5 +26,4 @@ Rails.application.routes.draw do
       resources :releases, only: :create
     end
   end
-
 end
