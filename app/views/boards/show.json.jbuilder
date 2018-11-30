@@ -14,7 +14,7 @@ json.swimlanes @swimlanes do |swimlane|
     json.ticket do
       json.extract! ticket, :id, :remote_number, :remote_title, :html_url
       json.repo do
-        json.extract! ticket.repo, :name
+        json.extract! ticket.repo, :id, :name
       end
     end
 
@@ -27,9 +27,6 @@ json.swimlanes @swimlanes do |swimlane|
         :remote_state,
         :merged,
         :html_url
-      )
-      json.next_action(
-        TicketActions.next_action_for(pull_request, user: current_user)
       )
     end
 

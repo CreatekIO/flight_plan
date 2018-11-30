@@ -1,10 +1,11 @@
 import { normalize, schema } from "normalizr";
 
-export const repo = new schema.Entity("repos", undefined, { idAttribute: "name" });
-
-export const ticket = new schema.Entity("tickets", { repo });
 
 export const pullRequest = new schema.Entity("pullRequests");
+
+export const repo = new schema.Entity("repos", { pull_requests: [pullRequest] });
+
+export const ticket = new schema.Entity("tickets", { repo });
 
 export const boardTicket = new schema.Entity("boardTickets", {
     ticket,

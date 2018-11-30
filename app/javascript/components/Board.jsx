@@ -3,13 +3,14 @@ import { connect } from "react-redux";
 
 import Swimlane from "./Swimlane";
 
-import { loadBoard } from "../action_creators";
+import { loadBoard, loadNextActions } from "../action_creators";
 
 class Board extends Component {
     state = { isLoading: true };
 
     componentDidMount() {
         this.props.loadBoard().then(() => this.setState({ isLoading: false }));
+        this.props.loadNextActions();
     }
 
     renderOverlay() {
@@ -44,4 +45,4 @@ const mapStateToProps = ({ entities, current }) => {
     };
 };
 
-export default connect(mapStateToProps, { loadBoard })(Board);
+export default connect(mapStateToProps, { loadBoard, loadNextActions })(Board);

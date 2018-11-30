@@ -21,3 +21,4 @@ const post = createApiFunction("POST");
 const put = createApiFunction("PUT");
 
 export const getBoard = () => get(flightPlanConfig.api.boardURL);
+export const getBoardNextActions = () => get(flightPlanConfig.api.nextActionsURL);
