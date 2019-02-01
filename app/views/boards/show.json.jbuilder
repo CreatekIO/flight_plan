@@ -28,6 +28,7 @@ json.swimlanes @swimlanes do |swimlane|
         :merged,
         :html_url
       )
+      json.repo pull_request.repo_id
     end
 
     json.transitions swimlane.transitions do |transition|
