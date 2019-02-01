@@ -22,6 +22,6 @@ const Swimlane = ({ name, board_tickets, display_duration }) => {
     );
 };
 
-const mapStateToProps = ({ entities }, ownProps) => entities.swimlanes[ownProps.id];
+const mapStateToProps = (_, { id }) => ({ entities }) => entities.swimlanes[id];
 
 export default connect(mapStateToProps)(Swimlane);

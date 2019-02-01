@@ -45,8 +45,8 @@ const TicketCard = ({
     </div>
 );
 
-const mapStateToProps = ({ entities }, ownProps) => {
-    const boardTicket = entities.boardTickets[ownProps.id];
+const mapStateToProps = (_, { id }) => ({ entities }) => {
+    const boardTicket = entities.boardTickets[id];
 
     return denormalize(boardTicket, boardTicketSchema, entities);
 };
