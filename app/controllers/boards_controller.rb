@@ -24,6 +24,6 @@ class BoardsController < AuthenticatedController
   end
 
   def index
-    redirect_to @boards.first
+    redirect_to Board.first
   end
 end
