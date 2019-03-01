@@ -5,6 +5,7 @@ import { connect } from "react-redux";
 import NextActionButton from "./NextActionButton";
 import Avatar from "./Avatar";
 import { getOpenPRs } from "../reducers/selectors";
+import AddNewIssueModal from "./AddNewIssueModal";
 
 const truncate = (text, length) => {
     if (text.length <= length) return text;
@@ -93,6 +94,7 @@ const Header = ({ boards, isWaiting, openPRsCount, pullRequests }) => {
             </Dropdown>
 
             <div className="right menu">
+                <AddNewIssueModal />
                 <Dropdown
                     trigger={<Avatar username={flightPlanConfig.currentUser.username} />}
                     className="item user-menu"
