@@ -2,6 +2,7 @@ import React, { Component, Fragment } from "react";
 import { Dropdown, Popup } from "semantic-ui-react";
 
 import NextActionButton from "./NextActionButton";
+import AddNewIssueModal from './AddNewIssueModal';
 
 const truncate = (text, length) => {
     if (text.length <= length) return text;
@@ -136,6 +137,8 @@ export default class Header extends Component {
                 </Dropdown>
 
                 <div className="right menu">
+                    <AddNewIssueModal />
+
                     <a className="item" href={currentBoard.dashboardURL}>
                         PR Dashboard
                     </a>
