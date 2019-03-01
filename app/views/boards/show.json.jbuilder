@@ -9,7 +9,7 @@ json.swimlanes @swimlanes do |swimlane|
 
     json.id board_ticket.id
     json.time_since_last_transition board_ticket.time_since_last_transition if swimlane.display_duration?
-    json.url board_board_ticket_path(@board, board_ticket)
+    json.url board_ticket_path(@board, board_ticket)
 
     json.ticket do
       json.extract! ticket, :id, :remote_number, :remote_title, :html_url
