@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Button, Header, Image, Modal, Form } from 'semantic-ui-react';
 
-const IssueModal = () => (
+const AddNewIssueModal = () => (
     <Modal
         id={'add-new-issue-modal'}
         trigger={<a className="item">Add an issue</a>}>
@@ -25,12 +25,7 @@ class AddNewIssueForm extends Component {
     };
 
     handleSubmit = () => {
-        const { title, description } = this.state;
-
-        this.setState({
-            submittedTitle: title,
-            submittedDescription: description
-        });
+        //submit params to controller
     };
 
     render() {
@@ -54,4 +49,4 @@ class AddNewIssueForm extends Component {
     }
 }
 
-export default IssueModal;
+export default AddNewIssueModal;
