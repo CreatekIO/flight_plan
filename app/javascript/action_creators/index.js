@@ -1,4 +1,4 @@
-import { getBoard, getBoardNextActions } from "../api";
+import { getBoard, getBoardNextActions, getSwimlaneTickets } from "../api";
 
 const extractId = identifier => identifier.split("-")[1];
 
@@ -7,6 +7,14 @@ export const loadBoard = () => dispatch =>
 
 export const loadNextActions = () => dispatch =>
     getBoardNextActions().then(repos => dispatch(nextActionsLoaded(repos)));
+
+export const loadSwimlaneTickets = (swimlaneId, url) => dispatch => {
+    dispatch(swimlaneTicketsLoading(swimlaneId));
+
+    return getSwimlaneTickets(url).then(swimlane =>
+        dispatch(swimlaneTicketsLoaded(swimlane))
+    );
+};
 
 export const ticketDragged = ({ source, destination }) => ({
     type: "TICKET_MOVED",
@@ -26,4 +34,14 @@ export const boardLoaded = board => ({
 export const nextActionsLoaded = repos => ({
     type: "NEXT_ACTIONS_LOADED",
     payload: repos
+});
+
+export const swimlaneTicketsLoading = swimlaneId => ({
+    type: "SWIMLANE_TICKETS_LOADING",
+    payload: { swimlaneId }
+});
+
+export const swimlaneTicketsLoaded = swimlane => ({
+    type: "SWIMLANE_TICKETS_LOADED",
+    payload: swimlane
 });

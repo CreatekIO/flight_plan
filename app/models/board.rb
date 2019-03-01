@@ -1,4 +1,6 @@
 class Board < ApplicationRecord
+  BOARD_TICKET_PRELOAD_LIMIT = 10
+
   has_many :board_repos, dependent: :destroy
   has_many :repos, through: :board_repos
   has_many :open_pull_requests, through: :repos
@@ -17,13 +19,17 @@ class Board < ApplicationRecord
   end
 
   def preloaded_board_tickets(page: 1)
-    board_tickets.by_swimlane(per: 10, page: page).preload(
+    board_tickets.by_swimlane(per: BOARD_TICKET_PRELOAD_LIMIT, page: page).preload(
       :open_timesheet,
       ticket: [
         :repo,
         pull_requests: %i[repo]
       ]
     )
+  end
+
+  def all_board_tickets_loaded?(collection)
+    collection.length < BOARD_TICKET_PRELOAD_LIMIT
   end
 
   def to_builder

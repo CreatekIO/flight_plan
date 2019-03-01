@@ -17,6 +17,10 @@ Rails.application.routes.draw do
     resources :next_actions, only: :index
   end
 
+  resources :swimlanes, only: [] do
+    resources :tickets, controller: :board_tickets, only: :index
+  end
+
   namespace :webhook do
     resource :github, only: :create, defaults: { formats: :json }, controller: 'github'
   end

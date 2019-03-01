@@ -1,7 +1,15 @@
 class BoardTicketsController < AuthenticatedController
-  load_and_authorize_resource :board
+  load_and_authorize_resource :board, only: %i[show update]
+  load_and_authorize_resource :swimlane, only: :index
+
+  def index
+    @board = @swimlane.board
+    @board_tickets = @swimlane.preloaded_board_tickets(page: current_page)
+    respond_to :json
+  end
 
   def show
+    respond_to :json
   end
 
   def update

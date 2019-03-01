@@ -2,7 +2,11 @@ import { combineReducers } from "redux";
 import { normalize } from "normalizr";
 import update from "immutability-helper";
 
-import { board as boardSchema, repo as repoSchema } from "../schema";
+import {
+    board as boardSchema,
+    repo as repoSchema,
+    boardTicket as boardTicketSchema
+} from "../schema";
 
 const updateEntities = (updates, entities) => {
     for (const type in updates) {
@@ -71,6 +75,31 @@ const entities = (state = initialEntitiesState, { type, payload }) => {
                 (state, transform) => update(state, { swimlanes: transform }),
                 state
             );
+        case "SWIMLANE_TICKETS_LOADING":
+            const { swimlaneId } = payload;
+
+            return update(state, {
+                swimlanes: { [swimlaneId]: { loading_board_tickets: { $set: true } } }
+            });
+        case "SWIMLANE_TICKETS_LOADED": {
+            const { board_tickets, ...swimlane } = payload;
+
+            const { entities, result: boardTicketIds } = normalize(board_tickets, [
+                boardTicketSchema
+            ]);
+
+            const newEntities = updateEntities(entities, state);
+
+            return update(newEntities, {
+                swimlanes: {
+                    [swimlane.id]: {
+                        $merge: swimlane,
+                        board_tickets: { $push: boardTicketIds },
+                        loading_board_tickets: { $set: false }
+                    }
+                }
+            });
+        }
         default:
             return state;
     }

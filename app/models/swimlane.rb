@@ -12,6 +12,10 @@ class Swimlane < ApplicationRecord
     where('LOWER(name) = ?', label.gsub(/^status: /, '')).first!
   end
 
+  def preloaded_board_tickets(page: 1)
+    board.preloaded_board_tickets(page: page).where(swimlane: self)
+  end
+
   def to_builder
     Jbuilder.new do |swimlane|
       swimlane.id id
