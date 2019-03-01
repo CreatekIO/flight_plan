@@ -1,10 +1,10 @@
 json.extract! @board, :id, :name
 
-json.swimlanes @swimlanes do |swimlane|
+json.swimlanes @board.preloaded_board_tickets.chunk(&:swimlane).each do |(swimlane, board_tickets)|
   json.extract! swimlane, :id, :name
   json.display_duration swimlane.display_duration?
 
-  json.board_tickets swimlane.board_tickets do |board_ticket|
+  json.board_tickets board_tickets do |board_ticket|
     ticket = board_ticket.ticket
 
     json.id board_ticket.id

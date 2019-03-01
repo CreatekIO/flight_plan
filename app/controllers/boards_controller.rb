@@ -7,20 +7,7 @@ class BoardsController < AuthenticatedController
     @boards = Board.all
     @board = Board.find(params[:id])
 
-    respond_to do |format|
-      format.html
-      format.json do
-        @swimlanes = @board.swimlanes.ordered.includes(
-          board_tickets: [
-            :open_timesheet,
-            ticket: [
-              :repo,
-              pull_requests: %i[repo]
-            ]
-          ]
-        )
-      end
-    end
+    respond_to :html, :json
   end
 
   def index
