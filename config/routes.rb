@@ -12,7 +12,7 @@ Rails.application.routes.draw do
   end
 
   resources :boards do
-    resources :board_tickets, as: :tickets, only: %i[show update]
+    resources :board_tickets, as: :tickets, only: :show
     get 'pull_requests' => 'pull_request_dashboards#index', as: :pull_requests
     resources :next_actions, only: :index
   end

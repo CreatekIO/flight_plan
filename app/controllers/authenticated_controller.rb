@@ -1,6 +1,5 @@
 class AuthenticatedController < ApplicationController
   before_action :authenticate_user!
-  load_and_authorize_resource
 
   helper_method :current_page, :next_page
 
