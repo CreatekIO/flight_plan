@@ -16,7 +16,7 @@ const TicketCard = ({
     url,
     pull_requests
 }) => (
-    <Draggable draggableId={`ticket-card-${id}`} index={index}>
+    <Draggable draggableId={`TicketCard#board-ticket-${id}`} index={index}>
         {(provided, snapshot) => (
             <div ref={provided.innerRef} {...provided.draggableProps} className="ui card">
                 <div {...provided.dragHandleProps} className="content">

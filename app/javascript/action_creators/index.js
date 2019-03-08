@@ -1,6 +1,6 @@
 import { getBoard, getBoardNextActions, getSwimlaneTickets } from "../api";
 
-const extractId = identifier => identifier.split("-")[1];
+const extractId = identifier => identifier.split("-").reverse()[0];
 
 export const loadBoard = () => dispatch =>
     getBoard().then(board => dispatch(boardLoaded(board)));

@@ -33,7 +33,7 @@ const Swimlane = ({
 }) => (
     <div className="swimlane">
         <div className="ui small grey center aligned header swimlane-header">{name}</div>
-        <Droppable droppableId={`swimlane-${id}`}>
+        <Droppable droppableId={`Swimlane#swimlane-${id}`}>
             {(provided, snapshot) => (
                 <div
                     ref={provided.innerRef}
