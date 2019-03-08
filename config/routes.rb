@@ -22,7 +22,7 @@ Rails.application.routes.draw do
 
   namespace :api do
     resources :boards, only: :show do
-      resources :board_tickets, only: :index
+      resources :board_tickets, only: %i[index create]
       resources :releases, only: :create
     end
   end
