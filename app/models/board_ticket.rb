@@ -17,6 +17,9 @@ class BoardTicket < ApplicationRecord
 
   ranks :swimlane_sequence, with_same: :swimlane_id
 
+  alias_method :swimlane_position, :swimlane_sequence_position
+  alias_method :swimlane_position=, :swimlane_sequence_position=
+
   attr_writer :update_remote
 
   def state_durations

@@ -100,6 +100,8 @@ const entities = (state = initialEntitiesState, { type, payload }) => {
                 }
             });
         }
+        case "BOARD_TICKET_LOADED":
+            return updateEntities(normalize(payload, boardTicketSchema).entities, state);
         default:
             return state;
     }
