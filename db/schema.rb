@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190322155743) do
+ActiveRecord::Schema.define(version: 20190322163016) do
 
   create_table "board_repos", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin" do |t|
     t.bigint "board_id"
@@ -114,6 +114,17 @@ ActiveRecord::Schema.define(version: 20190322155743) do
   end
 
   create_table "data_migrations", primary_key: "version", id: :string, collation: "utf8_bin", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin" do |t|
+  end
+
+  create_table "labels", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin" do |t|
+    t.string "name"
+    t.integer "remote_id"
+    t.string "colour", limit: 6
+    t.bigint "repo_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["remote_id"], name: "index_labels_on_remote_id"
+    t.index ["repo_id"], name: "index_labels_on_repo_id"
   end
 
   create_table "pull_request_connections", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin" do |t|
@@ -271,6 +282,7 @@ ActiveRecord::Schema.define(version: 20190322155743) do
 
   add_foreign_key "branches", "repos"
   add_foreign_key "commit_statuses", "repos"
+  add_foreign_key "labels", "repos"
   add_foreign_key "pull_request_connections", "pull_requests"
   add_foreign_key "pull_request_connections", "tickets"
   add_foreign_key "pull_request_reviews", "repos"
