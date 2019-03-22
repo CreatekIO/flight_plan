@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181123143659) do
+ActiveRecord::Schema.define(version: 20190322155743) do
 
   create_table "board_repos", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin" do |t|
     t.bigint "board_id"
@@ -29,7 +29,7 @@ ActiveRecord::Schema.define(version: 20181123143659) do
     t.datetime "updated_at", null: false
     t.integer "swimlane_sequence"
     t.index ["board_id"], name: "index_board_tickets_on_board_id"
-    t.index ["swimlane_id", "swimlane_sequence"], name: "index_board_tickets_on_swimlane_id_and_swimlane_sequence"
+    t.index ["swimlane_id", "swimlane_sequence"], name: "index_board_tickets_on_swimlane_id_and_swimlane_sequence", unique: true
     t.index ["swimlane_id"], name: "index_board_tickets_on_swimlane_id"
     t.index ["ticket_id"], name: "index_board_tickets_on_ticket_id"
   end
@@ -238,6 +238,10 @@ ActiveRecord::Schema.define(version: 20181123143659) do
     t.datetime "updated_at", null: false
     t.bigint "repo_id"
     t.boolean "merged", default: false
+    t.integer "creator_remote_id"
+    t.string "creator_username"
+    t.index ["creator_remote_id"], name: "index_tickets_on_creator_remote_id"
+    t.index ["creator_username"], name: "index_tickets_on_creator_username"
     t.index ["repo_id"], name: "index_tickets_on_repo_id"
   end
 

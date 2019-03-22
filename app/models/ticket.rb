@@ -16,6 +16,8 @@ class Ticket < ApplicationRecord
       remote_title: remote_issue[:title],
       remote_body: remote_issue[:body],
       remote_state: remote_issue[:state],
+      creator_remote_id: remote_issue.dig(:user, :id),
+      creator_username: remote_issue.dig(:user, :login)
     )
 
     ticket.update_board_tickets_from_remote(remote_issue)
