@@ -113,6 +113,9 @@ ActiveRecord::Schema.define(version: 20181123143659) do
     t.index ["state"], name: "index_commit_statuses_on_state", length: { state: 191 }
   end
 
+  create_table "data_migrations", primary_key: "version", id: :string, collation: "utf8_bin", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin" do |t|
+  end
+
   create_table "pull_request_connections", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin" do |t|
     t.bigint "ticket_id"
     t.bigint "pull_request_id"
