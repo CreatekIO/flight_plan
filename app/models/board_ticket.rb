@@ -53,7 +53,7 @@ class BoardTicket < ApplicationRecord
 
   def update_remote?
     unless defined? @update_remote
-      @update_remote = true
+      @update_remote = ENV['DO_NOT_SYNC_TO_GITHUB'].blank?
     end
     @update_remote
   end

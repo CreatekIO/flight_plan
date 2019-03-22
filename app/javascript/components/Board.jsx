@@ -11,7 +11,7 @@ class Board extends Component {
     state = { isLoading: true };
 
     componentDidMount() {
-        this.props.loadBoard().then(() => this.setState({ isLoading: false }));
+        this.props.loadBoard().finally(() => this.setState({ isLoading: false }));
         this.props.loadNextActions();
     }
 

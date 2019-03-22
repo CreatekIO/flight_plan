@@ -29,7 +29,7 @@ ActiveRecord::Schema.define(version: 20181123143659) do
     t.datetime "updated_at", null: false
     t.integer "swimlane_sequence"
     t.index ["board_id"], name: "index_board_tickets_on_board_id"
-    t.index ["swimlane_id", "swimlane_sequence"], name: "index_board_tickets_on_swimlane_id_and_swimlane_sequence", unique: true
+    t.index ["swimlane_id", "swimlane_sequence"], name: "index_board_tickets_on_swimlane_id_and_swimlane_sequence"
     t.index ["swimlane_id"], name: "index_board_tickets_on_swimlane_id"
     t.index ["ticket_id"], name: "index_board_tickets_on_ticket_id"
   end
@@ -111,6 +111,9 @@ ActiveRecord::Schema.define(version: 20181123143659) do
     t.index ["repo_id"], name: "index_commit_statuses_on_repo_id"
     t.index ["sha"], name: "index_commit_statuses_on_sha", length: { sha: 191 }
     t.index ["state"], name: "index_commit_statuses_on_state", length: { state: 191 }
+  end
+
+  create_table "data_migrations", primary_key: "version", id: :string, collation: "utf8_bin", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin" do |t|
   end
 
   create_table "pull_request_connections", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin" do |t|
