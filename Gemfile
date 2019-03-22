@@ -33,7 +33,7 @@ gem 'jquery-rails'
 gem 'octicons_helper'
 gem 'octokit'
 gem 'omniauth-github'
-gem 'ranked-model'
+gem 'ranked-model', '~> 0.4'
 gem 'sidekiq'
 gem 'slack-ruby-client'
 
