@@ -1,39 +1,12 @@
 json.extract! @board, :id, :name
 
-json.swimlanes @swimlanes do |swimlane|
+json.swimlanes @board.preloaded_board_tickets.chunk(&:swimlane).each do |(swimlane, board_tickets)|
   json.extract! swimlane, :id, :name
   json.display_duration swimlane.display_duration?
+  json.next_board_tickets_url swimlane_tickets_path(swimlane, page: next_page)
+  json.all_board_tickets_loaded @board.all_board_tickets_loaded?(board_tickets)
 
-  json.board_tickets swimlane.board_tickets do |board_ticket|
-    ticket = board_ticket.ticket
-
-    json.id board_ticket.id
-    json.time_since_last_transition board_ticket.time_since_last_transition if swimlane.display_duration?
-    json.url board_board_ticket_path(@board, board_ticket)
-
-    json.ticket do
-      json.extract! ticket, :id, :remote_number, :remote_title, :html_url
-      json.repo do
-        json.extract! ticket.repo, :id, :name
-      end
-    end
-
-    json.pull_requests ticket.pull_requests do |pull_request|
-      json.extract!(
-        pull_request,
-        :id,
-        :remote_number,
-        :remote_title,
-        :remote_state,
-        :merged,
-        :html_url
-      )
-      json.repo pull_request.repo_id
-    end
-
-    json.transitions swimlane.transitions do |transition|
-      json.extract!(transition, :id, :name)
-      json.url board_board_ticket_path(@board, board_ticket, board_ticket: { swimlane_id: transition.id })
-    end
-  end
+  json.board_tickets(
+    board_tickets, partial: 'board_tickets/board_ticket', as: :board_ticket, locals: { swimlane: swimlane }
+  )
 end

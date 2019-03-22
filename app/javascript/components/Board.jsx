@@ -1,9 +1,11 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
+import { DragDropContext } from "react-beautiful-dnd";
+import update from "immutability-helper";
 
 import Swimlane from "./Swimlane";
 
-import { loadBoard, loadNextActions } from "../action_creators";
+import { loadBoard, loadNextActions, ticketDragged } from "../action_creators";
 
 class Board extends Component {
     state = { isLoading: true };
@@ -12,6 +14,12 @@ class Board extends Component {
         this.props.loadBoard().then(() => this.setState({ isLoading: false }));
         this.props.loadNextActions();
     }
+
+    onDragEnd = event => {
+        if (!event.destination) return;
+
+        this.props.ticketDragged(event);
+    };
 
     renderOverlay() {
         return (
@@ -23,12 +31,14 @@ class Board extends Component {
 
     render() {
         return (
-            <div className="board">
-                {this.props.swimlanes.map(swimlaneId => (
-                    <Swimlane key={swimlaneId} id={swimlaneId} />
-                ))}
-                {this.state.isLoading && this.renderOverlay()}
-            </div>
+            <DragDropContext onDragEnd={this.onDragEnd}>
+                <div className="board">
+                    {this.props.swimlanes.map(swimlaneId => (
+                        <Swimlane key={swimlaneId} id={swimlaneId} />
+                    ))}
+                    {this.state.isLoading && this.renderOverlay()}
+                </div>
+            </DragDropContext>
         );
     }
 }
@@ -45,4 +55,7 @@ const mapStateToProps = ({ entities, current }) => {
     };
 };
 
-export default connect(mapStateToProps, { loadBoard, loadNextActions })(Board);
+export default connect(
+    mapStateToProps,
+    { loadBoard, loadNextActions, ticketDragged }
+)(Board);

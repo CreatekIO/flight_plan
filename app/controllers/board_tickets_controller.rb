@@ -1,17 +1,16 @@
 class BoardTicketsController < AuthenticatedController
-  load_and_authorize_resource :board
+  load_and_authorize_resource :swimlane, only: :index
+
+  load_and_authorize_resource :board, only: :show
+  load_and_authorize_resource through: :board, only: :show
+
+  def index
+    @board = @swimlane.board
+    @board_tickets = @swimlane.preloaded_board_tickets(page: current_page)
+    respond_to :json
+  end
 
   def show
-  end
-
-  def update
-    @board_ticket.update(board_ticket_params)
-    redirect_to board_path(@board)
-  end
-
-  private
-
-  def board_ticket_params
-    params.require(:board_ticket).permit(:swimlane_id)
+    respond_to :json
   end
 end

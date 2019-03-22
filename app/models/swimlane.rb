@@ -1,7 +1,7 @@
 class Swimlane < ApplicationRecord
   belongs_to :board
 
-  has_many :board_tickets, dependent: :destroy
+  has_many :board_tickets, -> { rank(:swimlane_sequence) }, dependent: :destroy
   has_many :tickets, through: :board_tickets
   has_many :swimlane_transitions, -> { order(:position) }, dependent: :destroy
   has_many :transitions, through: :swimlane_transitions
@@ -10,6 +10,10 @@ class Swimlane < ApplicationRecord
 
   def self.find_by_label!(label)
     where('LOWER(name) = ?', label.gsub(/^status: /, '')).first!
+  end
+
+  def preloaded_board_tickets(page: 1)
+    board.preloaded_board_tickets(page: page).where(swimlane: self)
   end
 
   def to_builder
