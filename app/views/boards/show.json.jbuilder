@@ -1,4 +1,6 @@
-json.array! @swimlanes do |swimlane|
+json.extract! @board, :id, :name
+
+json.swimlanes @swimlanes do |swimlane|
   json.extract! swimlane, :id, :name
   json.display_duration swimlane.display_duration?
 
@@ -12,7 +14,7 @@ json.array! @swimlanes do |swimlane|
     json.ticket do
       json.extract! ticket, :id, :remote_number, :remote_title, :html_url
       json.repo do
-        json.extract! ticket.repo, :name
+        json.extract! ticket.repo, :id, :name
       end
     end
 
@@ -26,9 +28,7 @@ json.array! @swimlanes do |swimlane|
         :merged,
         :html_url
       )
-      json.next_action(
-        TicketActions.next_action_for(pull_request, user: current_user)
-      )
+      json.repo pull_request.repo_id
     end
 
     json.transitions swimlane.transitions do |transition|

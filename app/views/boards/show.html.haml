@@ -3,7 +3,8 @@
 :ruby
   config = {
     api: {
-      boardURL: board_path(@board, format: :json)
+      boardURL: board_path(@board, format: :json),
+      nextActionsURL: board_next_actions_path(@board, format: :json)
     },
     boards: @boards.map do |board|
       board.slice(:id, :name).merge(

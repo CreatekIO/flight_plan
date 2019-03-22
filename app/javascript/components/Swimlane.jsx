@@ -1,24 +1,27 @@
 import React from "react";
+import { connect } from "react-redux";
 
 import TicketCard from "./TicketCard";
 
-export default function Swimlane(props) {
-    const { name, board_tickets, display_duration } = props;
-
+const Swimlane = ({ name, board_tickets, display_duration }) => {
     return (
         <div className="swimlane">
             <div className="ui small grey center aligned header swimlane-header">
                 {name}
             </div>
             <div className="body">
-                {board_tickets.map(board_ticket => (
+                {board_tickets.map(boardTicketId => (
                     <TicketCard
-                        {...board_ticket}
                         display_duration={display_duration}
-                        key={board_ticket.id}
+                        key={boardTicketId}
+                        id={boardTicketId}
                     />
                 ))}
             </div>
         </div>
     );
-}
+};
+
+const mapStateToProps = (_, { id }) => ({ entities }) => entities.swimlanes[id];
+
+export default connect(mapStateToProps)(Swimlane);

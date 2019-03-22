@@ -1,21 +1,16 @@
 import React, { Component } from "react";
+import { connect } from "react-redux";
 
 import Swimlane from "./Swimlane";
 
-export default class Board extends Component {
-    state = { isLoading: true, swimlanes: [] };
+import { loadBoard, loadNextActions } from "../action_creators";
+
+class Board extends Component {
+    state = { isLoading: true };
 
     componentDidMount() {
-        fetch(flightPlanConfig.api.boardURL)
-            .then(response => response.json())
-            .then(swimlanes => {
-                this.setState({
-                    isLoading: false,
-                    swimlanes: swimlanes
-                });
-
-                $(document).trigger("board:load", { swimlanes });
-            });
+        this.props.loadBoard().then(() => this.setState({ isLoading: false }));
+        this.props.loadNextActions();
     }
 
     renderOverlay() {
@@ -29,11 +24,25 @@ export default class Board extends Component {
     render() {
         return (
             <div className="board">
-                {this.state.swimlanes.map(swimlane => (
-                    <Swimlane {...swimlane} key={swimlane.id} />
+                {this.props.swimlanes.map(swimlaneId => (
+                    <Swimlane key={swimlaneId} id={swimlaneId} />
                 ))}
                 {this.state.isLoading && this.renderOverlay()}
             </div>
         );
     }
 }
+
+const mapStateToProps = ({ entities, current }) => {
+    let swimlanes = [];
+
+    if (current.board) {
+        swimlanes = entities.boards[current.board].swimlanes;
+    }
+
+    return {
+        swimlanes
+    };
+};
+
+export default connect(mapStateToProps, { loadBoard, loadNextActions })(Board);

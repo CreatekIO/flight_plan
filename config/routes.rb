@@ -5,7 +5,7 @@ Rails.application.routes.draw do
 
   root to: 'pages#index'
 
-  devise_for :users, :controllers => { :omniauth_callbacks => "users/omniauth_callbacks" }
+  devise_for :users, controllers: { omniauth_callbacks: 'users/omniauth_callbacks' }
 
   devise_scope :user do
     delete 'sign_out', to: 'devise/sessions#destroy', as: :destroy_user_session
@@ -14,6 +14,7 @@ Rails.application.routes.draw do
   resources :boards do
     resources :board_tickets
     get 'pull_requests' => 'pull_request_dashboards#index', as: :pull_requests
+    resources :next_actions, only: :index
   end
 
   namespace :webhook do
