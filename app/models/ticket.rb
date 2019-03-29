@@ -7,6 +7,7 @@ class Ticket < ApplicationRecord
   has_many :pull_requests, -> { order(created_at: :desc) }, through: :pull_request_connections
   has_many :labellings, dependent: :destroy
   has_many :labels, through: :labellings
+  belongs_to :milestone, optional: true
 
   scope :merged, -> { where(merged: true) }
   scope :unmerged, -> { where(merged: false) }
@@ -19,7 +20,8 @@ class Ticket < ApplicationRecord
       remote_body: remote_issue[:body],
       remote_state: remote_issue[:state],
       creator_remote_id: remote_issue.dig(:user, :id),
-      creator_username: remote_issue.dig(:user, :login)
+      creator_username: remote_issue.dig(:user, :login),
+      milestone: Milestone.import(remote_issue[:milestone], ticket.repo)
     )
 
     ticket.update_board_tickets_from_remote(remote_issue)

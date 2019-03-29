@@ -45,6 +45,44 @@ RSpec.describe Ticket do
           expect(@ticket.labels.map(&:remote_id)).to eq(remote_issue[:labels].map { |label| label[:id] })
         end
       end
+
+      context 'when milestone doesn\'t exist' do
+        it 'creates milestone' do
+          expect {
+            @ticket = subject
+          }.to change { repo.milestones.count }.by(1)
+
+          expect(@ticket.milestone.remote_id).to be_present.and eq(remote_issue[:milestone][:id])
+        end
+      end
+
+      context 'when milestone does exist' do
+        before do
+          Milestone.import(remote_issue[:milestone], repo)
+        end
+
+        it 'links ticket to milestone but doesn\'t create milestone' do
+          expect {
+            @ticket = subject
+          }.not_to change(Milestone, :count)
+
+          expect(@ticket.milestone.remote_id).to be_present.and eq(remote_issue[:milestone][:id])
+        end
+      end
+
+      context 'when no milestone assigned' do
+        before do
+          remote_issue[:milestone] = nil
+        end
+
+        it 'imports ticket' do
+          expect {
+            @ticket = subject
+          }.to change { repo.tickets.count }.by(1)
+
+          expect(@ticket.milestone).to be_nil
+        end
+      end
     end
 
     context 'when the ticket exists' do

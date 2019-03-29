@@ -15,7 +15,14 @@ RSpec.shared_context 'remote issue' do
           name: 'status: dev',
           color: 'ff0000'
         }
-      ]
+      ],
+      milestone: {
+        id: issue_id * 200,
+        title: 'Q2 targets',
+        description: 'Things to hit in Q2',
+        state: 'open',
+        due_on: 2.months.from_now.utc.iso8601
+      }
     }
   }
 

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190329150322) do
+ActiveRecord::Schema.define(version: 20190329150951) do
 
   create_table "board_repos", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin" do |t|
     t.bigint "board_id"
@@ -274,8 +274,10 @@ ActiveRecord::Schema.define(version: 20190329150322) do
     t.boolean "merged", default: false
     t.integer "creator_remote_id"
     t.string "creator_username"
+    t.bigint "milestone_id"
     t.index ["creator_remote_id"], name: "index_tickets_on_creator_remote_id"
     t.index ["creator_username"], name: "index_tickets_on_creator_username"
+    t.index ["milestone_id"], name: "index_tickets_on_milestone_id"
     t.index ["repo_id"], name: "index_tickets_on_repo_id"
   end
 
@@ -315,6 +317,7 @@ ActiveRecord::Schema.define(version: 20190329150322) do
   add_foreign_key "pull_requests", "repos"
   add_foreign_key "repo_releases", "releases"
   add_foreign_key "repo_releases", "repos"
+  add_foreign_key "tickets", "milestones"
   add_foreign_key "tickets", "repos"
   add_foreign_key "timesheets", "swimlanes", column: "after_swimlane_id"
   add_foreign_key "timesheets", "swimlanes", column: "before_swimlane_id"
