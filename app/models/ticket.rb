@@ -5,6 +5,8 @@ class Ticket < ApplicationRecord
   has_many :board_tickets, dependent: :destroy
   has_many :pull_request_connections
   has_many :pull_requests, -> { order(created_at: :desc) }, through: :pull_request_connections
+  has_many :labellings, dependent: :destroy
+  has_many :labels, through: :labellings
 
   scope :merged, -> { where(merged: true) }
   scope :unmerged, -> { where(merged: false) }
@@ -21,6 +23,7 @@ class Ticket < ApplicationRecord
     )
 
     ticket.update_board_tickets_from_remote(remote_issue)
+    ticket.update_labels_from_remote(remote_issue)
     ticket
   end
 
@@ -55,6 +58,16 @@ class Ticket < ApplicationRecord
       bt.swimlane = swimlane_from_remote(remote_issue, board)
       bt.save
     end
+  end
+
+  def update_labels_from_remote(remote_issue)
+    new_labellings = remote_issue[:labels].map do |remote_label|
+      label = Label.import(remote_label, repo)
+      labellings.find_or_initialize_by(label: label)
+    end
+
+    # Rails will delete removed labellings for us
+    update_attributes(labellings: new_labellings)
   end
 
   def to_builder

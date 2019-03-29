@@ -3,7 +3,7 @@ RSpec.shared_context 'remote issue' do
   let(:issue_id) { 888 }
   let(:issue_no) { 2 }
   let(:remote_issue) {
-    { 
+    {
       id: issue_id,
       number: issue_no,
       title: 'issue title',
@@ -11,7 +11,9 @@ RSpec.shared_context 'remote issue' do
       state: 'open',
       labels: [
         {
-          name: 'status: dev'
+          id: issue_id * 100,
+          name: 'status: dev',
+          color: 'ff0000'
         }
       ]
     }

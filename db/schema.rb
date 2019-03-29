@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190322163016) do
+ActiveRecord::Schema.define(version: 20190322164522) do
 
   create_table "board_repos", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin" do |t|
     t.bigint "board_id"
@@ -114,6 +114,15 @@ ActiveRecord::Schema.define(version: 20190322163016) do
   end
 
   create_table "data_migrations", primary_key: "version", id: :string, collation: "utf8_bin", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin" do |t|
+  end
+
+  create_table "labellings", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin" do |t|
+    t.bigint "label_id"
+    t.bigint "ticket_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["label_id"], name: "index_labellings_on_label_id"
+    t.index ["ticket_id"], name: "index_labellings_on_ticket_id"
   end
 
   create_table "labels", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin" do |t|
@@ -282,6 +291,8 @@ ActiveRecord::Schema.define(version: 20190322163016) do
 
   add_foreign_key "branches", "repos"
   add_foreign_key "commit_statuses", "repos"
+  add_foreign_key "labellings", "labels"
+  add_foreign_key "labellings", "tickets"
   add_foreign_key "labels", "repos"
   add_foreign_key "pull_request_connections", "pull_requests"
   add_foreign_key "pull_request_connections", "tickets"

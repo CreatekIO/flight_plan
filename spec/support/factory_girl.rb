@@ -7,6 +7,7 @@ FactoryBot.define do
   end
 
   sequence(:sha) { SecureRandom.hex(20) }
+  sequence(:hex_colour) { format('%06x', (rand * 0xffffff)) }
 
   sequence(:user_id, 10_000)
 
