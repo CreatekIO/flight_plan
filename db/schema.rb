@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190322164522) do
+ActiveRecord::Schema.define(version: 20190329150322) do
 
   create_table "board_repos", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin" do |t|
     t.bigint "board_id"
@@ -134,6 +134,20 @@ ActiveRecord::Schema.define(version: 20190322164522) do
     t.datetime "updated_at", null: false
     t.index ["remote_id"], name: "index_labels_on_remote_id"
     t.index ["repo_id"], name: "index_labels_on_repo_id"
+  end
+
+  create_table "milestones", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin" do |t|
+    t.bigint "remote_id"
+    t.bigint "remote_number"
+    t.string "title"
+    t.string "state"
+    t.text "description"
+    t.datetime "due_on"
+    t.bigint "repo_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["remote_id"], name: "index_milestones_on_remote_id"
+    t.index ["repo_id"], name: "index_milestones_on_repo_id"
   end
 
   create_table "pull_request_connections", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin" do |t|
@@ -294,6 +308,7 @@ ActiveRecord::Schema.define(version: 20190322164522) do
   add_foreign_key "labellings", "labels"
   add_foreign_key "labellings", "tickets"
   add_foreign_key "labels", "repos"
+  add_foreign_key "milestones", "repos"
   add_foreign_key "pull_request_connections", "pull_requests"
   add_foreign_key "pull_request_connections", "tickets"
   add_foreign_key "pull_request_reviews", "repos"
