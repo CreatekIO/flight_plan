@@ -5,6 +5,7 @@
     "@githubprimer/octicons-react": "^8.1.0",
     "@rails/webpacker": "^3.0.2",
     "babel-preset-react": "^6.24.1",
+    "font-color-contrast": "^1.0.3",
     "immutability-helper": "^2.8.1",
     "normalizr": "^3.3.0",
     "prop-types": "^15.6.2",

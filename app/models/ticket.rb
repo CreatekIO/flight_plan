@@ -7,6 +7,9 @@ class Ticket < ApplicationRecord
   has_many :pull_requests, -> { order(created_at: :desc) }, through: :pull_request_connections
   has_many :labellings, dependent: :destroy
   has_many :labels, through: :labellings
+  has_many :display_labels, -> {
+    where.not(arel_table[:name].matches('status: %'))
+  }, through: :labellings, source: :label
   belongs_to :milestone, optional: true
 
   scope :merged, -> { where(merged: true) }

@@ -41,7 +41,9 @@ const initialEntitiesState = {
     swimlanes: {},
     boardTickets: {},
     tickets: {},
-    pullRequests: {}
+    pullRequests: {},
+    labels: {},
+    milestones: {}
 };
 
 const entities = (state = initialEntitiesState, { type, payload }) => {

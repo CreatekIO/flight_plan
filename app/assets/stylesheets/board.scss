@@ -87,6 +87,33 @@ body[data-controller="boards"] {
   }
 }
 
+.issue-title + .labels-wrapper {
+  margin-top: 5px;
+}
+
+.ui.label {
+  $margin: 0.14285714em;
+
+  &.gh-label,
+  &.milestone-label {
+    margin: $margin $margin $margin 0;
+
+    &:last-child {
+      margin-right: 0;
+    }
+  }
+
+  margin-top: 2px;
+  margin-bottom: 2px;
+  &.milestone-label {
+    // padding from SUI's "small" size, minus size of border
+    padding: (6.4163px - 1) (9.163px - 1);
+    border: 1px solid #d4d4d5;
+    background-color: #fff;
+    color: #000;
+  }
+}
+
 #applicationModal .modal-content img {
   max-width: 520px;
 }

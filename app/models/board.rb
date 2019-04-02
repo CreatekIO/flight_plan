@@ -23,6 +23,8 @@ class Board < ApplicationRecord
       :open_timesheet,
       ticket: [
         :repo,
+        :display_labels,
+        :milestone,
         pull_requests: %i[repo]
       ]
     )

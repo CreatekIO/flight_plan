@@ -5,6 +5,7 @@ import { Draggable } from "react-beautiful-dnd";
 
 import PullRequestList from "./PullRequestList";
 import TicketModal from "./TicketModal";
+import LabelList from "./LabelList";
 import { boardTicket as boardTicketSchema } from "../schema";
 
 const TicketCard = ({
@@ -14,7 +15,9 @@ const TicketCard = ({
     display_duration,
     time_since_last_transition,
     url,
-    pull_requests
+    pull_requests,
+    labels,
+    milestone
 }) => (
     <Draggable draggableId={`TicketCard#board-ticket-${id}`} index={index}>
         {(provided, snapshot) => (
@@ -33,6 +36,9 @@ const TicketCard = ({
                         ticketURL={html_url}
                         boardTicketURL={url}
                     />
+                    {(labels.length || milestone) && (
+                        <LabelList labels={labels} milestone={milestone} />
+                    )}
                 </div>
                 {display_duration && (
                     <div className="content">
