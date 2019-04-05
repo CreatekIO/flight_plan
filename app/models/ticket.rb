@@ -62,7 +62,7 @@ class Ticket < ApplicationRecord
   def update_board_tickets_from_remote(remote_issue)
     repo.boards.each do |board|
       bt = board_tickets.find_or_initialize_by(board: board)
-      bt.update_remote = false
+      bt.update_remote = false # don't sync changes to GitHub
       bt.swimlane = swimlane_from_remote(remote_issue, board)
       bt.save
     end
@@ -117,5 +117,4 @@ class Ticket < ApplicationRecord
       end
     end
   end
-
 end
