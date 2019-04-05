@@ -3,10 +3,8 @@ json.state_durations @board_ticket.displayable_durations(@board)
 
 json.ticket do
   ticket = @board_ticket.ticket
-  json.id ticket.id
-  json.number ticket.remote_number
-  json.html_url ticket.html_url
-  json.title ticket.remote_title
+  json.extract! ticket, :id, :remote_number, :remote_title, :html_url
+  json.creator ticket.creator_username || 'ghost'
   json.body ticket.remote_body
   json.timestamp time_ago_in_words(ticket.created_at)
 

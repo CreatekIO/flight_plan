@@ -65,12 +65,12 @@ export default class TicketModal extends Component {
     };
 
     renderFeed() {
-        const { body, timestamp, comments } = this.state.boardTicket.ticket;
+        const { body, timestamp, creator, comments } = this.state.boardTicket.ticket;
 
         return (
             <div className="ui feed">
                 <TicketEvent
-                    author="ghost"
+                    author={creator}
                     body={body}
                     timestamp={timestamp}
                     action="opened issue"
@@ -97,7 +97,10 @@ export default class TicketModal extends Component {
             title: initialTitle
         } = this.props;
 
-        const { boardTicket, boardTicket: { ticket, state_durations } } = this.state;
+        const {
+            boardTicket,
+            boardTicket: { ticket, state_durations }
+        } = this.state;
 
         return (
             <Modal
@@ -108,10 +111,10 @@ export default class TicketModal extends Component {
             >
                 <Modal.Header>
                     <a href={ticket.html_url || ticketURL} target="_blank">
-                        #{ticket.number || initialNumber}
+                        #{ticket.remote_number || initialNumber}
                     </a>
                     &nbsp;&nbsp;
-                    {ticket.title || initialTitle}
+                    {ticket.remote_title || initialTitle}
                 </Modal.Header>
                 <Modal.Content scrolling>
                     <div className="ui divided grid ticket-modal">
