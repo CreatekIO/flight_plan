@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190329150951) do
+ActiveRecord::Schema.define(version: 20190405115534) do
 
   create_table "board_repos", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin" do |t|
     t.bigint "board_id"
@@ -261,6 +261,16 @@ ActiveRecord::Schema.define(version: 20190329150951) do
     t.index ["board_id"], name: "index_swimlanes_on_board_id"
   end
 
+  create_table "ticket_assignments", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin" do |t|
+    t.bigint "ticket_id"
+    t.bigint "assignee_remote_id"
+    t.string "assignee_username"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["assignee_remote_id"], name: "index_ticket_assignments_on_assignee_remote_id"
+    t.index ["ticket_id"], name: "index_ticket_assignments_on_ticket_id"
+  end
+
   create_table "tickets", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin" do |t|
     t.string "remote_id"
     t.string "remote_number"
@@ -317,6 +327,7 @@ ActiveRecord::Schema.define(version: 20190329150951) do
   add_foreign_key "pull_requests", "repos"
   add_foreign_key "repo_releases", "releases"
   add_foreign_key "repo_releases", "repos"
+  add_foreign_key "ticket_assignments", "tickets"
   add_foreign_key "tickets", "milestones"
   add_foreign_key "tickets", "repos"
   add_foreign_key "timesheets", "swimlanes", column: "after_swimlane_id"

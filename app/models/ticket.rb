@@ -1,5 +1,6 @@
 class Ticket < ApplicationRecord
   belongs_to :repo
+  belongs_to :milestone, optional: true
 
   has_many :comments, dependent: :destroy
   has_many :board_tickets, dependent: :destroy
@@ -10,7 +11,8 @@ class Ticket < ApplicationRecord
   has_many :display_labels, -> {
     where.not(arel_table[:name].matches('status: %'))
   }, through: :labellings, source: :label
-  belongs_to :milestone, optional: true
+  has_many :assignments, class_name: 'TicketAssignment'
+  has_many :assignees, through: :assignments
 
   scope :merged, -> { where(merged: true) }
   scope :unmerged, -> { where(merged: false) }
