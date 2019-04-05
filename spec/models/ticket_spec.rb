@@ -19,7 +19,12 @@ RSpec.describe Ticket do
           @ticket = subject
         }.to change { repo.tickets.count }.by(1)
 
-        expect(@ticket.remote_title).to eq('issue title')
+        aggregate_failures do
+          expect(@ticket.remote_title).to eq('issue title')
+          expect(@ticket.assignments.pluck(:assignee_remote_id, :assignee_username)).to match_array(
+            [assignee.values_at(:uid, :name)]
+          )
+        end
       end
 
       context 'when label doesn\'t exist' do
@@ -95,6 +100,31 @@ RSpec.describe Ticket do
 
         expect(@imported_ticket).to eq(ticket)
         expect(ticket.reload.remote_title).to eq(remote_issue[:title])
+      end
+
+      context 'when ticket has been reassigned' do
+        let!(:ticket_assignments) do
+          create_list(:ticket_assignment, 1, ticket: ticket)
+        end
+
+        it 'updates the ticket assignments' do
+          prior_assignments = ticket_assignments
+          @imported_ticket = subject
+
+          prior_assignments.map! do |assignment|
+            begin
+              assignment.reload
+            rescue ActiveRecord::RecordNotFound
+              :destroyed
+            end
+          end
+
+          expect(prior_assignments).to all eq(:destroyed)
+          expect(@imported_ticket).to eq(ticket)
+          expect(@imported_ticket.assignments.pluck(:assignee_remote_id, :assignee_username)).to match_array(
+            [assignee.values_at(:uid, :name)]
+          )
+        end
       end
 
       context 'when ticket has relabelled' do

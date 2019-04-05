@@ -11,7 +11,7 @@ class Ticket < ApplicationRecord
   has_many :display_labels, -> {
     where.not(arel_table[:name].matches('status: %'))
   }, through: :labellings, source: :label
-  has_many :assignments, class_name: 'TicketAssignment'
+  has_many :assignments, class_name: 'TicketAssignment', dependent: :destroy
   has_many :assignees, through: :assignments
 
   scope :merged, -> { where(merged: true) }
@@ -31,6 +31,7 @@ class Ticket < ApplicationRecord
 
     ticket.update_board_tickets_from_remote(remote_issue)
     ticket.update_labels_from_remote(remote_issue)
+    ticket.update_assignments_from_remote(remote_issue)
     ticket
   end
 
@@ -75,6 +76,17 @@ class Ticket < ApplicationRecord
 
     # Rails will delete removed labellings for us
     update_attributes(labellings: new_labellings)
+  end
+
+  def update_assignments_from_remote(remote_issue)
+    new_assignments = remote_issue[:assignees].map do |remote_user|
+      assignments.find_or_initialize_by(assignee_remote_id: remote_user[:id]).tap do |assignment|
+        assignment.assignee_username = remote_user[:login]
+      end
+    end
+
+    # Rails will delete removed assignments for us
+    update_attributes(assignments: new_assignments)
   end
 
   def to_builder
