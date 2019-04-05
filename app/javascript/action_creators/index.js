@@ -2,7 +2,8 @@ import {
     getBoard,
     getBoardNextActions,
     getSwimlaneTickets,
-    createTicketMove
+    createTicketMove,
+    getBoardTicket
 } from "../api";
 
 const extractId = identifier => identifier.split("-").reverse()[0];
@@ -23,6 +24,14 @@ export const loadSwimlaneTickets = (swimlaneId, url) => dispatch => {
 
     return getSwimlaneTickets(url).then(swimlane =>
         dispatch(swimlaneTicketsLoaded(swimlane))
+    );
+};
+
+export const loadFullTicket = (id, url) => dispatch => {
+    dispatch(fullTicketLoading(id));
+
+    return getBoardTicket(url).then(boardTicket =>
+        dispatch(fullTicketLoaded(boardTicket))
     );
 };
 
@@ -79,5 +88,15 @@ export const swimlaneTicketsLoaded = swimlane => ({
 
 export const boardTicketLoaded = boardTicket => ({
     type: "BOARD_TICKET_LOADED",
+    payload: boardTicket
+});
+
+export const fullTicketLoading = boardTicketId => ({
+    type: "FULL_TICKET_LOADING",
+    payload: { boardTicketId }
+});
+
+export const fullTicketLoaded = boardTicket => ({
+    type: "FULL_TICKET_LOADED",
     payload: boardTicket
 });

@@ -60,22 +60,6 @@ body[data-controller="boards"] {
     padding-right: 4px;
   }
 
-  .ticket-pull-requests {
-    margin: 0;
-
-    .left.floated.content {
-      margin: 3px 0;
-    }
-
-    &.ui.list > .item {
-      padding-left: 1em;
-    }
-
-    > .item:last-child {
-      border-bottom-color: transparent !important;
-    }
-  }
-
   .issue-title {
     display: block;
     word-wrap: break-word;
@@ -84,6 +68,32 @@ body[data-controller="boards"] {
   .swimlane-duration {
     margin-top: 5px;
     font-size: 12px;
+  }
+}
+
+.ticket-pull-requests {
+  margin: 0;
+
+  .left.floated.content {
+    margin: 3px 0;
+  }
+
+  &.ui.list > .item {
+    padding-left: 1em;
+  }
+
+  > .item:last-child {
+    border-bottom-color: transparent !important;
+  }
+
+  &.ui.divided.list > .item {
+    border-top: 1px solid rgba(34, 36, 38, 0.15);
+    margin-top: 0;
+    margin-bottom: 0;
+
+    &:first-child {
+      border-top: none;
+    }
   }
 }
 
@@ -122,7 +132,7 @@ body[data-controller="boards"] {
   .ticket-sidebar {
     position: sticky;
     position: -webkit-sticky;
-    top: 2.1rem;
+    top: 0;
 
     > .menu {
       width: 100%;
@@ -187,6 +197,19 @@ body[data-controller="boards"] {
 
   &.is-merged {
     color: #6e5494;
+  }
+}
+
+.ticket-state {
+  text-transform: uppercase;
+  font-size: 1.4rem;
+
+  &.is-open {
+    color: #6cc644;
+  }
+
+  &.is-closed {
+    color: #bd2c00;
   }
 }
 

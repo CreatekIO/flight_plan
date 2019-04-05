@@ -6,6 +6,8 @@ export const milestone = new schema.Entity("milestones");
 
 export const label = new schema.Entity("labels");
 
+export const comment = new schema.Entity("comments");
+
 export const repo = new schema.Entity("repos", { pull_requests: [pullRequest] });
 
 export const ticket = new schema.Entity("tickets", { repo });
@@ -14,7 +16,8 @@ export const boardTicket = new schema.Entity("boardTickets", {
     ticket,
     milestone,
     labels: [label],
-    pull_requests: [pullRequest]
+    pull_requests: [pullRequest],
+    comments: [comment]
 });
 
 export const swimlane = new schema.Entity("swimlanes", { board_tickets: [boardTicket] });

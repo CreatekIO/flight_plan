@@ -1,6 +1,14 @@
 import React, { Component, Fragment } from "react";
+import { connect } from "react-redux";
+import { denormalize } from "normalizr";
 import { Modal } from "semantic-ui-react";
 import showdown from "showdown";
+
+import LabelList from "./LabelList";
+import PullRequestList from "./PullRequestList";
+
+import { boardTicket as boardTicketSchema } from "../schema";
+import { loadFullTicket } from "../action_creators";
 
 const markdownConverter = new showdown.Converter();
 markdownConverter.setFlavor("github");
@@ -36,111 +44,178 @@ const TicketEvent = ({ author, body, timestamp, action, divider }) => (
     </Fragment>
 );
 
-const DurationList = ({ state_durations }) => (
-    <div className="item">
-        <div className="header">Durations</div>
-        <div className="durations">
-            {state_durations.map(({ id, name, duration }) => (
-                <div className="ui green fluid label" key={id}>
-                    {name}
-                    <div className="detail">{duration}</div>
-                </div>
+const Feed = ({ ticket, comments }) => {
+    const { body, timestamp, creator } = ticket;
+
+    return (
+        <div className="ui feed">
+            <TicketEvent
+                author={creator}
+                body={body}
+                timestamp={timestamp}
+                action="opened issue"
+            />
+            {comments.map(({ id, author, body, timestamp }) => (
+                <TicketEvent
+                    key={id}
+                    author={author}
+                    body={body}
+                    timestamp={timestamp}
+                    action="commented"
+                    divider
+                />
             ))}
+        </div>
+    );
+};
+
+const Sidebar = ({ state_durations, ticket, labels, milestone, pull_requests }) => (
+    <div className="ticket-sidebar">
+        <div className="ui vertical text menu">
+            <div className="item">
+                <div className="header">Repo</div>
+                <div>{ticket.repo.name}</div>
+            </div>
+
+            <div className="item">
+                <div className="header">State</div>
+                <div className={`ticket-state is-${ticket.state}`}>{ticket.state}</div>
+            </div>
+
+            <div className="item">
+                <div className="header">Labels</div>
+                <LabelList labels={labels} noLabels={<em>No labels</em>} />
+            </div>
+
+            <div className="item">
+                <div className="header">Milestone</div>
+                <LabelList milestone={milestone} noMilestone={<em>No milestone</em>} />
+            </div>
+
+            {!!state_durations.length && (
+                <div className="item">
+                    <div className="header">Durations</div>
+                    <div className="durations">
+                        {state_durations.map(({ id, name, duration }) => (
+                            <div className="ui green fluid label" key={id}>
+                                {name}
+                                <div className="detail">{duration}</div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )}
+
+            <div className="item">
+                <div className="header">Pull requests</div>
+                {pull_requests.length ? (
+                    <PullRequestList pullRequests={pull_requests} listStyle="divided" />
+                ) : (
+                    <em>No pull requests</em>
+                )}
+            </div>
         </div>
     </div>
 );
 
-export default class TicketModal extends Component {
-    state = { isLoading: true, boardTicket: { ticket: {}, state_durations: [] } };
-
-    handleOpen = () => {
-        fetch(this.props.boardTicketURL)
-            .then(response => response.json())
-            .then(boardTicket => {
-                this.setState({
-                    isLoading: false,
-                    boardTicket: boardTicket
-                });
-            });
-    };
-
-    renderFeed() {
-        const { body, timestamp, creator, comments } = this.state.boardTicket.ticket;
-
-        return (
-            <div className="ui feed">
-                <TicketEvent
-                    author={creator}
-                    body={body}
-                    timestamp={timestamp}
-                    action="opened issue"
-                />
-                {comments.map(({ id, author, body, timestamp }) => (
-                    <TicketEvent
-                        key={id}
-                        author={author}
-                        body={body}
-                        timestamp={timestamp}
-                        action="commented"
-                        divider
-                    />
-                ))}
+const ModalInner = ({
+    state_durations,
+    ticket,
+    comments,
+    labels,
+    milestone,
+    pull_requests
+}) => {
+    return (
+        <React.Fragment>
+            <div className="twelve wide column">
+                <Feed ticket={ticket} comments={comments} />
             </div>
-        );
-    }
+            <div className="four wide column">
+                <Sidebar
+                    state_durations={state_durations}
+                    ticket={ticket}
+                    labels={labels}
+                    milestone={milestone}
+                    pull_requests={pull_requests}
+                />
+            </div>
+        </React.Fragment>
+    );
+};
 
-    render() {
-        const {
-            trigger,
-            ticketURL,
-            number: initialNumber,
-            title: initialTitle
-        } = this.props;
+const Loading = () => (
+    <React.Fragment>
+        <div className="twelve wide column">
+            <div className="ui basic segment">
+                <div className="ui active inverted dimmer">
+                    <div className="ui text loader">Loading</div>
+                </div>
+            </div>
+        </div>
+        <div className="four wide column" />
+    </React.Fragment>
+);
 
-        const {
-            boardTicket,
-            boardTicket: { ticket, state_durations }
-        } = this.state;
+const choices = {
+    undefined: Loading,
+    loading: Loading,
+    loaded: ModalInner
+};
 
-        return (
-            <Modal
-                trigger={trigger}
-                className="longer scrolling"
-                closeIcon
-                onOpen={this.handleOpen}
-            >
-                <Modal.Header>
-                    <a href={ticket.html_url || ticketURL} target="_blank">
-                        #{ticket.remote_number || initialNumber}
-                    </a>
-                    &nbsp;&nbsp;
-                    {ticket.remote_title || initialTitle}
-                </Modal.Header>
-                <Modal.Content scrolling>
-                    <div className="ui divided grid ticket-modal">
-                        <div className="twelve wide column">
-                            {this.state.isLoading ? (
-                                <div className="ui basic segment">
-                                    <div className="ui active inverted dimmer">
-                                        <div className="ui text loader">Loading</div>
-                                    </div>
-                                </div>
-                            ) : (
-                                this.renderFeed()
-                            )}
-                        </div>
-                        <div className="four wide column">
-                            <div className="ticket-sidebar">
-                                <div className="ui vertical text menu">
-                                    {!!state_durations.length && (
-                                        <DurationList state_durations={state_durations} />
-                                    )}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </Modal.Content>
-            </Modal>
-        );
-    }
-}
+const TicketModal = ({
+    trigger,
+    loadFullTicket,
+    id,
+    url,
+    state_durations,
+    ticket,
+    comments,
+    pull_requests,
+    labels,
+    milestone,
+    loading_state
+}) => {
+    const { remote_number, remote_title, html_url, repo } = ticket;
+    const Inner = choices[`${loading_state}`];
+
+    return (
+        <Modal
+            trigger={trigger}
+            className="longer scrolling"
+            closeIcon
+            onOpen={() => loadFullTicket(id, url)}
+        >
+            <Modal.Header>
+                <a href={html_url} target="_blank">
+                    #{remote_number}
+                </a>
+                &nbsp;&nbsp;
+                {remote_title}
+            </Modal.Header>
+            <Modal.Content scrolling>
+                <div className="ui divided grid ticket-modal">
+                    <Inner
+                        state_durations={state_durations || []}
+                        ticket={ticket}
+                        comments={comments}
+                        pull_requests={pull_requests}
+                        labels={labels}
+                        milestone={milestone}
+                    />
+                </div>
+            </Modal.Content>
+        </Modal>
+    );
+};
+
+const mapStateToProps = (_, { id }) => ({ entities }) => {
+    const boardTicket = entities.boardTickets[id];
+
+    return denormalize(boardTicket, boardTicketSchema, entities);
+};
+
+export default connect(
+    mapStateToProps,
+    { loadFullTicket }
+)(TicketModal);

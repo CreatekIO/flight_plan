@@ -24,6 +24,7 @@ const formatURL = (url, params) => url.replace(/:([^\/]+)/i, (_, key) => params[
 export const getBoard = () => get(flightPlanConfig.api.boardURL);
 export const getBoardNextActions = () => get(flightPlanConfig.api.nextActionsURL);
 export const getSwimlaneTickets = url => get(url);
+export const getBoardTicket = url => get(url);
 
 export const createTicketMove = (boardTicketId, swimlaneId, indexInSwimlane) =>
     post(formatURL(flightPlanConfig.api.createTicketMoveURL, { boardTicketId }), {

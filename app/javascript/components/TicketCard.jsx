@@ -31,10 +31,7 @@ const TicketCard = ({
                 <div className="content">
                     <TicketModal
                         trigger={<a className="issue-title">{remote_title}</a>}
-                        number={remote_number}
-                        title={remote_title}
-                        ticketURL={html_url}
-                        boardTicketURL={url}
+                        id={id}
                     />
                     {(labels.length || milestone) && (
                         <LabelList labels={labels} milestone={milestone} />
@@ -48,7 +45,7 @@ const TicketCard = ({
                     </div>
                 )}
                 {!!pull_requests.length && (
-                    <PullRequestList pullRequests={pull_requests} />
+                    <PullRequestList pullRequests={pull_requests} listStyle="celled" />
                 )}
             </div>
         )}
