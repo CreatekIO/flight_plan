@@ -1,6 +1,16 @@
 class BoardTicket < ApplicationRecord
   include RankedModel
 
+  PRELOADS = [
+    :open_timesheet,
+    ticket: [
+      :repo,
+      :display_labels,
+      :milestone,
+      pull_requests: %i[repo]
+    ]
+  ].freeze
+
   belongs_to :board
   belongs_to :ticket
   belongs_to :swimlane
@@ -12,8 +22,9 @@ class BoardTicket < ApplicationRecord
   after_save :update_timesheet, if: :saved_change_to_swimlane_id?
   after_commit :update_github, on: :update, if: :saved_change_to_swimlane_id?
 
-  scope :for_board, ->(board_id) { where(board_id: board_id) }
-  scope :for_repo, ->(repo_id) { where(tickets: { repo_id: repo_id }) }
+  scope :for_board, -> (board_id) { where(board_id: board_id) }
+  scope :for_repo, -> (repo_id) { where(tickets: { repo_id: repo_id }) }
+  scope :preloaded, -> { preload(PRELOADS) }
 
   ranks :swimlane_sequence, with_same: :swimlane_id
 

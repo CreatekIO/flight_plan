@@ -44,6 +44,13 @@ module ApplicationHelper
     end
   end
 
+  def next_swimlane_tickets_path(board_tickets)
+    last = board_tickets.last
+    return if last.blank?
+
+    swimlane_tickets_path(last.swimlane_id, after: last.swimlane_sequence)
+  end
+
   private
 
   def url_dropdown_menu(action)
