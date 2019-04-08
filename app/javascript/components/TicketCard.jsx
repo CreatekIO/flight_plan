@@ -44,17 +44,24 @@ const TicketCard = ({
 }) => (
     <Draggable draggableId={`TicketCard#board-ticket-${id}`} index={index}>
         {(provided, snapshot) => (
-            <div ref={provided.innerRef} {...provided.draggableProps} className="ui card">
-                <div {...provided.dragHandleProps} className="content">
+            <div
+                ref={provided.innerRef}
+                {...provided.draggableProps}
+                className="ui card ticket-card"
+            >
+                <div
+                    {...provided.dragHandleProps}
+                    className="content ticket-card--header"
+                >
                     <a className="issue-number" href={html_url} target="_blank">
-                        #{remote_number}
+                        {remote_number}
                     </a>
                     <span className="meta repo-name">{repo.name}</span>
                     <span className="right floated">
                         <AssigneeStack assignees={assignees} />
                     </span>
                 </div>
-                <div className="content">
+                <div className="content ticket-card--title">
                     <TicketModal
                         trigger={<a className="issue-title">{remote_title}</a>}
                         id={id}
