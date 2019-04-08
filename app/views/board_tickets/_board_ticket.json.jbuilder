@@ -36,3 +36,8 @@ if milestone.present?
     json.repo milestone.repo_id
   end
 end
+
+json.assignees ticket.assignments do |assignment|
+  json.remote_id assignment.assignee_remote_id
+  json.username assignment.assignee_username
+end

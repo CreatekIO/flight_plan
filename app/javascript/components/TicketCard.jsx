@@ -6,7 +6,29 @@ import { Draggable } from "react-beautiful-dnd";
 import PullRequestList from "./PullRequestList";
 import TicketModal from "./TicketModal";
 import LabelList from "./LabelList";
+import Avatar from "./Avatar";
 import { boardTicket as boardTicketSchema } from "../schema";
+
+const assigneeStackClass = {
+    0: "none",
+    1: "one",
+    2: "two",
+    3: "three"
+};
+
+const AssigneeStack = ({ assignees }) => (
+    <span
+        className={`assignee-stack has-${assigneeStackClass[assignees.length] || "many"}`}
+    >
+        {assignees.slice(0, 3).map(({ username }) => (
+            <Avatar username={username} size="mini" key={username} />
+        ))}
+        {assignees.length > 3 && (
+            /* We hide the third avatar in this case */
+            <span className="meta">+{assignees.length - 2}</span>
+        )}
+    </span>
+);
 
 const TicketCard = ({
     id,
@@ -17,7 +39,8 @@ const TicketCard = ({
     url,
     pull_requests,
     labels,
-    milestone
+    milestone,
+    assignees
 }) => (
     <Draggable draggableId={`TicketCard#board-ticket-${id}`} index={index}>
         {(provided, snapshot) => (
@@ -27,6 +50,9 @@ const TicketCard = ({
                         #{remote_number}
                     </a>
                     <span className="meta repo-name">{repo.name}</span>
+                    <span className="right floated">
+                        <AssigneeStack assignees={assignees} />
+                    </span>
                 </div>
                 <div className="content">
                     <TicketModal

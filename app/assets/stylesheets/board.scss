@@ -71,8 +71,41 @@ body[data-controller="boards"] {
   }
 }
 
+.assignee-stack {
+  $shift: -1.25em;
+
+  img.avatar:last-child {
+    margin-right: 0;
+  }
+
+  &.has-three img.avatar {
+    &:nth-child(1) {
+      right: $shift * 2;
+      z-index: 2;
+    }
+
+    &:nth-child(2) {
+      right: $shift;
+      z-index: 1;
+    }
+  }
+
+  &.has-many img.avatar {
+    &:nth-child(1) {
+      right: $shift;
+      z-index: 1;
+    }
+
+    &:nth-child(3) {
+      display: none;
+    }
+  }
+}
+
 .ticket-pull-requests {
-  margin: 0;
+  &.ui.celled.list {
+    margin: 0;
+  }
 
   .left.floated.content {
     margin: 3px 0;
