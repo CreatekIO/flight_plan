@@ -6,6 +6,7 @@ import showdown from "showdown";
 
 import LabelList from "./LabelList";
 import PullRequestList from "./PullRequestList";
+import Avatar from "./Avatar";
 
 import { boardTicket as boardTicketSchema } from "../schema";
 import { loadFullTicket } from "../action_creators";
@@ -21,7 +22,7 @@ const TicketEvent = ({ author, body, timestamp, action, divider }) => (
         {divider && <div className="ui divider" />}
         <div className="event">
             <div className="label">
-                <img src={`https://github.com/${author}.png`} />
+                <Avatar username={author} />
             </div>
             <div className="content">
                 <div className="summary">
@@ -69,7 +70,14 @@ const Feed = ({ ticket, comments }) => {
     );
 };
 
-const Sidebar = ({ state_durations, ticket, labels, milestone, pull_requests }) => (
+const Sidebar = ({
+    state_durations,
+    ticket,
+    labels,
+    milestone,
+    pull_requests,
+    assignees
+}) => (
     <div className="ticket-sidebar">
         <div className="ui vertical text menu">
             <div className="item">
@@ -80,6 +88,30 @@ const Sidebar = ({ state_durations, ticket, labels, milestone, pull_requests }) 
             <div className="item">
                 <div className="header">State</div>
                 <div className={`ticket-state is-${ticket.state}`}>{ticket.state}</div>
+            </div>
+
+            <div className="item">
+                <div className="header">Assignees</div>
+                {assignees.length ? (
+                    <div className="ui small list assignee-list">
+                        {assignees.map(({ username }) => (
+                            <div className="item">
+                                <Avatar username={username} />
+                                <div className="middle aligned content">
+                                    <a
+                                        href={`https://github.com/${username}`}
+                                        target="_blank"
+                                        className="header"
+                                    >
+                                        {username}
+                                    </a>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                ) : (
+                    <em>No assignees</em>
+                )}
             </div>
 
             <div className="item">
@@ -124,7 +156,8 @@ const ModalInner = ({
     comments,
     labels,
     milestone,
-    pull_requests
+    pull_requests,
+    assignees
 }) => {
     return (
         <React.Fragment>
@@ -138,6 +171,7 @@ const ModalInner = ({
                     labels={labels}
                     milestone={milestone}
                     pull_requests={pull_requests}
+                    assignees={assignees}
                 />
             </div>
         </React.Fragment>
@@ -174,6 +208,7 @@ const TicketModal = ({
     pull_requests,
     labels,
     milestone,
+    assignees,
     loading_state
 }) => {
     const { remote_number, remote_title, html_url, repo } = ticket;
@@ -202,6 +237,7 @@ const TicketModal = ({
                         pull_requests={pull_requests}
                         labels={labels}
                         milestone={milestone}
+                        assignees={assignees}
                     />
                 </div>
             </Modal.Content>

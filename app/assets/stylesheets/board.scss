@@ -102,6 +102,18 @@ body[data-controller="boards"] {
   }
 }
 
+.ui.list.assignee-list > .item.item { // more specificity
+  padding: 0;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.ui.image.gh-avatar {
+  background-color: rgba(34, 36, 38, 0.1);
+}
+
 .ticket-pull-requests {
   &.ui.celled.list {
     margin: 0;
