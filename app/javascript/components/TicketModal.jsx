@@ -19,8 +19,7 @@ const parseMarkdown = text => ({ __html: markdownConverter.makeHtml(text) });
 
 const TicketEvent = ({ author, body, timestamp, action, divider }) => (
     <Fragment>
-        {divider && <div className="ui divider" />}
-        <div className="event">
+        <div className="event ticket-modal--event">
             <div className="label">
                 <Avatar username={author} />
             </div>
@@ -52,7 +51,7 @@ const Feed = ({ ticket, comments }) => {
         <div className="ui feed">
             <TicketEvent
                 author={creator}
-                body={body}
+                body={body || "*No description*"}
                 timestamp={timestamp}
                 action="opened issue"
             />
@@ -63,7 +62,6 @@ const Feed = ({ ticket, comments }) => {
                     body={body}
                     timestamp={timestamp}
                     action="commented"
-                    divider
                 />
             ))}
         </div>
@@ -229,7 +227,7 @@ const TicketModal = ({
                 {remote_title}
             </Modal.Header>
             <Modal.Content scrolling>
-                <div className="ui divided grid ticket-modal">
+                <div className="ui grid ticket-modal">
                     <Inner
                         state_durations={state_durations || []}
                         ticket={ticket}

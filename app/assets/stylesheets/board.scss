@@ -197,6 +197,35 @@ body[data-controller="boards"] {
   }
 }
 
+.ui.feed > .ticket-modal--event {
+  > .content {
+    padding: 9px;
+
+    &.content {
+      margin-top: -3px;
+      margin-bottom: 14px;
+    }
+
+    > .summary {
+      background: #f6f6f6;
+      margin: -9px;
+      padding: 9px;
+      border: 1px solid #ddd;
+      margin-bottom: 9px;
+      border-top-left-radius: 4px;
+      border-top-right-radius: 4px;
+    }
+
+    .extra.text {
+      max-width: none;
+      padding: 14px 16px;
+      margin: -9px;
+      border: 1px solid #ddd;
+      border-top: none;
+    }
+  }
+}
+
 .open-pull-requests {
   width: 600px;
 
@@ -274,5 +303,9 @@ body[data-controller="boards"] {
 
   p > img {
     max-width: 100%;
+  }
+
+  hr {
+    border: 0.5px solid #ddd;
   }
 }
