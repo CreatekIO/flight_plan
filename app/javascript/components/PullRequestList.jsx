@@ -1,4 +1,5 @@
 import React from "react";
+import classNames from "classnames";
 
 import NextActionButton from "./NextActionButton";
 import PullRequestIcon from "./PullRequestIcon";
@@ -29,7 +30,13 @@ const PullRequestLine = ({
 
 export default function PullRequestList({ pullRequests, listStyle }) {
     return (
-        <div className={`ui ${listStyle} list ticket-pull-requests`}>
+        <div
+            className={classNames(
+                "ui",
+                { [listStyle]: listStyle },
+                "list ticket-pull-requests"
+            )}
+        >
             {pullRequests.map(pullRequest => (
                 <PullRequestLine {...pullRequest} key={pullRequest.id} />
             ))}

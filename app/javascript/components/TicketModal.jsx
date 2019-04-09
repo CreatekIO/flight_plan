@@ -8,7 +8,10 @@ import LabelList from "./LabelList";
 import PullRequestList from "./PullRequestList";
 import Avatar from "./Avatar";
 
-import { boardTicket as boardTicketSchema } from "../schema";
+import {
+    boardTicket as boardTicketSchema,
+    pullRequestWithRepo as pullRequestWithRepoSchema
+} from "../schema";
 import { loadFullTicket } from "../action_creators";
 
 const markdownConverter = new showdown.Converter();
@@ -67,6 +70,42 @@ const Feed = ({ ticket, comments }) => {
         </div>
     );
 };
+
+const UnconnectedGroupedPullRequestList = ({ pullRequests }) => {
+    const grouped = {};
+
+    pullRequests.forEach(pullRequest => {
+        grouped[pullRequest.repo.id] = grouped[pullRequest.repo.id] || [];
+        grouped[pullRequest.repo.id].push(pullRequest);
+    });
+
+    if (Object.keys(grouped).length === 1) {
+        return (
+            <PullRequestList pullRequests={Object.values(grouped)[0]} listStyle={null} />
+        );
+    }
+
+    return (
+        <React.Fragment>
+            {Object.values(grouped).map(prs => (
+                <React.Fragment key={prs[0].repo.id}>
+                    <a className="repo-header">{prs[0].repo.name}</a>
+                    <PullRequestList pullRequests={prs} listStyle={null} />
+                </React.Fragment>
+            ))}
+        </React.Fragment>
+    );
+};
+
+const prMapStateToProps = ({ entities }, { pullRequests }) => ({
+    pullRequests: pullRequests.map(pullRequest =>
+        denormalize(pullRequest, pullRequestWithRepoSchema, entities)
+    )
+});
+
+const GroupedPullRequestList = connect(prMapStateToProps)(
+    UnconnectedGroupedPullRequestList
+);
 
 const Sidebar = ({
     state_durations,
@@ -140,10 +179,10 @@ const Sidebar = ({
                 </div>
             )}
 
-            <div className="item">
+            <div className="item ticket-modal--pull-requests">
                 <div className="header">Pull requests</div>
                 {pull_requests.length ? (
-                    <PullRequestList pullRequests={pull_requests} listStyle="divided" />
+                    <GroupedPullRequestList pullRequests={pull_requests} />
                 ) : (
                     <em>No pull requests</em>
                 )}

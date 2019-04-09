@@ -2,6 +2,11 @@ import { normalize, schema } from "normalizr";
 
 export const pullRequest = new schema.Entity("pullRequests");
 
+// Separate schema to avoid circular references
+export const pullRequestWithRepo = new schema.Entity("pullRequests", {
+    repo: new schema.Entity("repos")
+});
+
 export const milestone = new schema.Entity("milestones");
 
 export const label = new schema.Entity("labels");

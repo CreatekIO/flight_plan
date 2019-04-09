@@ -226,6 +226,31 @@ body[data-controller="boards"] {
   }
 }
 
+.ticket-modal--pull-requests {
+  text-align: center;
+
+  > .header {
+    text-align: left;
+  }
+
+  .repo-header {
+    color: #666;
+    font-size: 80%;
+    background-color: white;
+    padding-right: 3px;
+    padding-left: 2px;
+    font-weight: unset;
+    margin: 0;
+
+    & + .ticket-pull-requests {
+      box-shadow: 0 -1px 0 #ddd;
+      padding-top: 8px;
+      margin-top: -6px;
+      margin-bottom: 0;
+    }
+  }
+}
+
 .ui.feed > .ticket-modal--event {
   > .content {
     padding: 9px;
