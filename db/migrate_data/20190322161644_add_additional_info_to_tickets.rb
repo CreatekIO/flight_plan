@@ -26,6 +26,12 @@ class AddAdditionalInfoToTickets < ActiveRecord::Migration["4.2"]
 
         import_issues(remote_repo, state: 'open')
         import_issues(remote_repo, state: 'closed', sort: 'updated', direction: 'desc', per_page: 50)
+
+        octokit.issues_comments(repo_full_name, sort: 'updated', direction: 'desc').each do |remote_comment|
+          say_with_time "Updating comment #{remote_comment[:html_url]}" do
+            Comment.import(remote_comment.to_hash, repo)
+          end
+        end
       end
     end
   end

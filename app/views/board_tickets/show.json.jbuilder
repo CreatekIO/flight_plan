@@ -9,7 +9,7 @@ json.ticket do
   json.state ticket.remote_state
   json.creator ticket.creator_username || 'ghost'
   json.body ticket.remote_body
-  json.timestamp time_ago_in_words(ticket.created_at)
+  json.timestamp time_ago_in_words(ticket.remote_created_at || ticket.created_at)
 
   json.repo do
     json.extract! ticket.repo, :id, :name
@@ -45,5 +45,5 @@ json.comments(ticket.comments) do |comment|
   json.id comment.id
   json.body comment.remote_body
   json.author comment.remote_author
-  json.timestamp time_ago_in_words(comment.created_at)
+  json.timestamp time_ago_in_words(comment.remote_created_at || comment.created_at)
 end

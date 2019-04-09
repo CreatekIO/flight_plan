@@ -24,6 +24,8 @@ class Ticket < ApplicationRecord
       remote_title: remote_issue[:title],
       remote_body: remote_issue[:body],
       remote_state: remote_issue[:state],
+      remote_created_at: remote_issue[:created_at],
+      remote_updated_at: remote_issue[:updated_at],
       creator_remote_id: remote_issue.dig(:user, :id),
       creator_username: remote_issue.dig(:user, :login),
       milestone: Milestone.import(remote_issue[:milestone], ticket.repo)
@@ -41,6 +43,17 @@ class Ticket < ApplicationRecord
       ticket.repo = Repo.find_by!(remote_url: remote_repo[:full_name])
     end
     ticket
+  end
+
+  def self.find_by_html_url(html_url)
+    org, repo_name, _, issue_number = URI.parse(html_url).path.split('/')
+
+    joins(:repo).find_by(
+      repos: { remote_url: "#{org}/#{repo_name}" },
+      tickets: { remote_number: issue_number }
+    )
+  rescue URI::Error
+    nil
   end
 
   def merged_to?(target_branch)
