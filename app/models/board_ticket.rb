@@ -35,7 +35,7 @@ class BoardTicket < ApplicationRecord
   attr_writer :update_remote
 
   def state_durations
-    timesheets.each_with_object(Hash.new 0) do |timesheet, durations|
+    timesheets.includes(:swimlane).each_with_object(Hash.new(0)) do |timesheet, durations|
       durations[timesheet.swimlane.name] += timesheet.started_at.business_time_until(timesheet.ended_at || Time.now)
     end
   end
