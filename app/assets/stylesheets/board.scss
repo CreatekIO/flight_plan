@@ -90,13 +90,17 @@ body[data-controller="boards"] {
 }
 
 .assignee-stack {
-  $shift: -1.25em;
+  $shift: -1.15em;
 
   img.avatar:last-child {
     margin-right: 0;
   }
 
   &.has-three img.avatar {
+    &:nth-child(-n+2) {
+      box-shadow: 1px 0px 0 1px #fff;
+    }
+
     &:nth-child(1) {
       right: $shift * 2;
       z-index: 2;
@@ -110,6 +114,7 @@ body[data-controller="boards"] {
 
   &.has-many img.avatar {
     &:nth-child(1) {
+      box-shadow: 1px 0px 0 1px #fff;
       right: $shift;
       z-index: 1;
     }
