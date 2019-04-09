@@ -154,8 +154,7 @@ body[data-controller="boards"] {
     border-bottom-color: transparent !important;
   }
 
-  &.ui.divided.list > .item {
-    border-top: 1px solid rgba(34, 36, 38, 0.15);
+  &.ui.list.list:not(.celled) > .item { // more specificity
     margin-top: 0;
     margin-bottom: 0;
 
@@ -197,10 +196,17 @@ body[data-controller="boards"] {
 }
 
 .ticket-modal {
+  &.ui.modal > .scrolling.content {
+    max-height: none;
+    position: absolute;
+    top: 4.4rem;
+    bottom: 0;
+  }
+
   .ticket-sidebar {
     position: sticky;
     position: -webkit-sticky;
-    top: 0;
+    top: 10px;
 
     > .menu {
       width: 100%;
@@ -313,6 +319,11 @@ body[data-controller="boards"] {
 }
 
 .gh-markdown {
+  > * {
+    max-width: 544px;
+    word-break: break-word;
+  }
+
   pre {
     background-color: #F9FAFB;
     padding: 1em;
@@ -332,5 +343,6 @@ body[data-controller="boards"] {
 
   hr {
     border: 0.5px solid #ddd;
+    margin-bottom: 1em;
   }
 }

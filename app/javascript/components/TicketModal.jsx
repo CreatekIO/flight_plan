@@ -93,7 +93,7 @@ const Sidebar = ({
                 {assignees.length ? (
                     <div className="ui small list assignee-list">
                         {assignees.map(({ username }) => (
-                            <div className="item">
+                            <div className="item" key={username}>
                                 <Avatar username={username} />
                                 <div className="middle aligned content">
                                     <a
@@ -114,12 +114,16 @@ const Sidebar = ({
 
             <div className="item">
                 <div className="header">Labels</div>
-                <LabelList labels={labels} noLabels={<em>No labels</em>} />
+                <LabelList labels={labels} noLabels={<em>No labels</em>} fullWidth />
             </div>
 
             <div className="item">
                 <div className="header">Milestone</div>
-                <LabelList milestone={milestone} noMilestone={<em>No milestone</em>} />
+                <LabelList
+                    milestone={milestone}
+                    noMilestone={<em>No milestone</em>}
+                    fullWidth
+                />
             </div>
 
             {!!state_durations.length && (
@@ -215,7 +219,7 @@ const TicketModal = ({
     return (
         <Modal
             trigger={trigger}
-            className="longer scrolling"
+            className="longer scrolling ticket-modal"
             closeIcon
             onOpen={() => loadFullTicket(id, url)}
         >
@@ -227,7 +231,7 @@ const TicketModal = ({
                 {remote_title}
             </Modal.Header>
             <Modal.Content scrolling>
-                <div className="ui grid ticket-modal">
+                <div className="ui grid">
                     <Inner
                         state_durations={state_durations || []}
                         ticket={ticket}
