@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 import { denormalize } from "normalizr";
 import { Modal } from "semantic-ui-react";
 import showdown from "showdown";
+import classNames from "classnames";
 
 import LabelList from "./LabelList";
 import PullRequestList from "./PullRequestList";
@@ -179,7 +180,11 @@ const Sidebar = ({
                 </div>
             )}
 
-            <div className="item ticket-modal--pull-requests">
+            <div
+                className={classNames("item", {
+                    "ticket-modal--pull-requests": !!pull_requests.length
+                })}
+            >
                 <div className="header">Pull requests</div>
                 {pull_requests.length ? (
                     <GroupedPullRequestList pullRequests={pull_requests} />
