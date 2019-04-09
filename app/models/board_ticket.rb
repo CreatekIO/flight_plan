@@ -7,6 +7,7 @@ class BoardTicket < ApplicationRecord
       :repo,
       :display_labels,
       :milestone,
+      :assignments,
       pull_requests: %i[repo]
     ]
   ].freeze
