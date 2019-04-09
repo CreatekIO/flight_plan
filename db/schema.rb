@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190405115534) do
+ActiveRecord::Schema.define(version: 20190409114643) do
 
   create_table "board_repos", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin" do |t|
     t.bigint "board_id"
@@ -86,6 +86,8 @@ ActiveRecord::Schema.define(version: 20190405115534) do
     t.string "remote_author"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "remote_created_at"
+    t.datetime "remote_updated_at"
     t.index ["ticket_id"], name: "index_comments_on_ticket_id"
   end
 
@@ -285,6 +287,8 @@ ActiveRecord::Schema.define(version: 20190405115534) do
     t.integer "creator_remote_id"
     t.string "creator_username"
     t.bigint "milestone_id"
+    t.datetime "remote_created_at"
+    t.datetime "remote_updated_at"
     t.index ["creator_remote_id"], name: "index_tickets_on_creator_remote_id"
     t.index ["creator_username"], name: "index_tickets_on_creator_username"
     t.index ["milestone_id"], name: "index_tickets_on_milestone_id"
