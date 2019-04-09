@@ -2,14 +2,16 @@ class Ticket < ApplicationRecord
   belongs_to :repo
   belongs_to :milestone, optional: true
 
-  has_many :comments, dependent: :destroy
+  has_many :comments, -> {
+    order('COALESCE(`comments`.`remote_created_at`, `comments`.`created_at`) ASC')
+  }, dependent: :destroy
   has_many :board_tickets, dependent: :destroy
   has_many :pull_request_connections
   has_many :pull_requests, -> { order(created_at: :desc) }, through: :pull_request_connections
   has_many :labellings, dependent: :destroy
-  has_many :labels, through: :labellings
+  has_many :labels, -> { order(:name) }, through: :labellings
   has_many :display_labels, -> {
-    where.not(arel_table[:name].matches('status: %'))
+    where.not(arel_table[:name].matches('status: %')).order(:name)
   }, through: :labellings, source: :label
   has_many :assignments, class_name: 'TicketAssignment', dependent: :destroy
   has_many :assignees, through: :assignments
