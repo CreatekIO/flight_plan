@@ -1,10 +1,20 @@
 class Ticket < ApplicationRecord
   belongs_to :repo
+  belongs_to :milestone, optional: true
 
-  has_many :comments, dependent: :destroy
+  has_many :comments, -> {
+    order('COALESCE(`comments`.`remote_created_at`, `comments`.`created_at`) ASC')
+  }, dependent: :destroy
   has_many :board_tickets, dependent: :destroy
   has_many :pull_request_connections
   has_many :pull_requests, -> { order(created_at: :desc) }, through: :pull_request_connections
+  has_many :labellings, dependent: :destroy
+  has_many :labels, -> { order(:name) }, through: :labellings
+  has_many :display_labels, -> {
+    where.not(arel_table[:name].matches('status: %')).order(:name)
+  }, through: :labellings, source: :label
+  has_many :assignments, class_name: 'TicketAssignment', dependent: :destroy
+  has_many :assignees, through: :assignments
 
   scope :merged, -> { where(merged: true) }
   scope :unmerged, -> { where(merged: false) }
@@ -16,9 +26,16 @@ class Ticket < ApplicationRecord
       remote_title: remote_issue[:title],
       remote_body: remote_issue[:body],
       remote_state: remote_issue[:state],
+      remote_created_at: remote_issue[:created_at],
+      remote_updated_at: remote_issue[:updated_at],
+      creator_remote_id: remote_issue.dig(:user, :id),
+      creator_username: remote_issue.dig(:user, :login),
+      milestone: Milestone.import(remote_issue[:milestone], ticket.repo)
     )
 
     ticket.update_board_tickets_from_remote(remote_issue)
+    ticket.update_labels_from_remote(remote_issue)
+    ticket.update_assignments_from_remote(remote_issue)
     ticket
   end
 
@@ -28,6 +45,17 @@ class Ticket < ApplicationRecord
       ticket.repo = Repo.find_by!(remote_url: remote_repo[:full_name])
     end
     ticket
+  end
+
+  def self.find_by_html_url(html_url)
+    org, repo_name, _, issue_number = URI.parse(html_url).path.split('/')
+
+    joins(:repo).find_by(
+      repos: { remote_url: "#{org}/#{repo_name}" },
+      tickets: { remote_number: issue_number }
+    )
+  rescue URI::Error
+    nil
   end
 
   def merged_to?(target_branch)
@@ -49,10 +77,31 @@ class Ticket < ApplicationRecord
   def update_board_tickets_from_remote(remote_issue)
     repo.boards.each do |board|
       bt = board_tickets.find_or_initialize_by(board: board)
-      bt.update_remote = false
+      bt.update_remote = false # don't sync changes to GitHub
       bt.swimlane = swimlane_from_remote(remote_issue, board)
       bt.save
     end
+  end
+
+  def update_labels_from_remote(remote_issue)
+    new_labellings = remote_issue[:labels].map do |remote_label|
+      label = Label.import(remote_label, repo)
+      labellings.find_or_initialize_by(label: label)
+    end
+
+    # Rails will delete removed labellings for us
+    update_attributes(labellings: new_labellings)
+  end
+
+  def update_assignments_from_remote(remote_issue)
+    new_assignments = remote_issue[:assignees].map do |remote_user|
+      assignments.find_or_initialize_by(assignee_remote_id: remote_user[:id]).tap do |assignment|
+        assignment.assignee_username = remote_user[:login]
+      end
+    end
+
+    # Rails will delete removed assignments for us
+    update_attributes(assignments: new_assignments)
   end
 
   def to_builder
@@ -83,5 +132,4 @@ class Ticket < ApplicationRecord
       end
     end
   end
-
 end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181123143659) do
+ActiveRecord::Schema.define(version: 20190409114643) do
 
   create_table "board_repos", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin" do |t|
     t.bigint "board_id"
@@ -29,7 +29,7 @@ ActiveRecord::Schema.define(version: 20181123143659) do
     t.datetime "updated_at", null: false
     t.integer "swimlane_sequence"
     t.index ["board_id"], name: "index_board_tickets_on_board_id"
-    t.index ["swimlane_id", "swimlane_sequence"], name: "index_board_tickets_on_swimlane_id_and_swimlane_sequence"
+    t.index ["swimlane_id", "swimlane_sequence"], name: "index_board_tickets_on_swimlane_id_and_swimlane_sequence", unique: true
     t.index ["swimlane_id"], name: "index_board_tickets_on_swimlane_id"
     t.index ["ticket_id"], name: "index_board_tickets_on_ticket_id"
   end
@@ -86,6 +86,8 @@ ActiveRecord::Schema.define(version: 20181123143659) do
     t.string "remote_author"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "remote_created_at"
+    t.datetime "remote_updated_at"
     t.index ["ticket_id"], name: "index_comments_on_ticket_id"
   end
 
@@ -114,6 +116,40 @@ ActiveRecord::Schema.define(version: 20181123143659) do
   end
 
   create_table "data_migrations", primary_key: "version", id: :string, collation: "utf8_bin", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin" do |t|
+  end
+
+  create_table "labellings", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin" do |t|
+    t.bigint "label_id"
+    t.bigint "ticket_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["label_id"], name: "index_labellings_on_label_id"
+    t.index ["ticket_id"], name: "index_labellings_on_ticket_id"
+  end
+
+  create_table "labels", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin" do |t|
+    t.string "name"
+    t.integer "remote_id"
+    t.string "colour", limit: 6
+    t.bigint "repo_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["remote_id"], name: "index_labels_on_remote_id"
+    t.index ["repo_id"], name: "index_labels_on_repo_id"
+  end
+
+  create_table "milestones", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin" do |t|
+    t.bigint "remote_id"
+    t.bigint "remote_number"
+    t.string "title"
+    t.string "state"
+    t.text "description"
+    t.datetime "due_on"
+    t.bigint "repo_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["remote_id"], name: "index_milestones_on_remote_id"
+    t.index ["repo_id"], name: "index_milestones_on_repo_id"
   end
 
   create_table "pull_request_connections", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin" do |t|
@@ -227,6 +263,16 @@ ActiveRecord::Schema.define(version: 20181123143659) do
     t.index ["board_id"], name: "index_swimlanes_on_board_id"
   end
 
+  create_table "ticket_assignments", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin" do |t|
+    t.bigint "ticket_id"
+    t.bigint "assignee_remote_id"
+    t.string "assignee_username"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["assignee_remote_id"], name: "index_ticket_assignments_on_assignee_remote_id"
+    t.index ["ticket_id"], name: "index_ticket_assignments_on_ticket_id"
+  end
+
   create_table "tickets", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin" do |t|
     t.string "remote_id"
     t.string "remote_number"
@@ -238,6 +284,14 @@ ActiveRecord::Schema.define(version: 20181123143659) do
     t.datetime "updated_at", null: false
     t.bigint "repo_id"
     t.boolean "merged", default: false
+    t.integer "creator_remote_id"
+    t.string "creator_username"
+    t.bigint "milestone_id"
+    t.datetime "remote_created_at"
+    t.datetime "remote_updated_at"
+    t.index ["creator_remote_id"], name: "index_tickets_on_creator_remote_id"
+    t.index ["creator_username"], name: "index_tickets_on_creator_username"
+    t.index ["milestone_id"], name: "index_tickets_on_milestone_id"
     t.index ["repo_id"], name: "index_tickets_on_repo_id"
   end
 
@@ -267,12 +321,18 @@ ActiveRecord::Schema.define(version: 20181123143659) do
 
   add_foreign_key "branches", "repos"
   add_foreign_key "commit_statuses", "repos"
+  add_foreign_key "labellings", "labels"
+  add_foreign_key "labellings", "tickets"
+  add_foreign_key "labels", "repos"
+  add_foreign_key "milestones", "repos"
   add_foreign_key "pull_request_connections", "pull_requests"
   add_foreign_key "pull_request_connections", "tickets"
   add_foreign_key "pull_request_reviews", "repos"
   add_foreign_key "pull_requests", "repos"
   add_foreign_key "repo_releases", "releases"
   add_foreign_key "repo_releases", "repos"
+  add_foreign_key "ticket_assignments", "tickets"
+  add_foreign_key "tickets", "milestones"
   add_foreign_key "tickets", "repos"
   add_foreign_key "timesheets", "swimlanes", column: "after_swimlane_id"
   add_foreign_key "timesheets", "swimlanes", column: "before_swimlane_id"

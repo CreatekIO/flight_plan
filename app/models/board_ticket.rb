@@ -1,6 +1,17 @@
 class BoardTicket < ApplicationRecord
   include RankedModel
 
+  PRELOADS = [
+    :open_timesheet,
+    ticket: [
+      :repo,
+      :display_labels,
+      :milestone,
+      :assignments,
+      pull_requests: %i[repo]
+    ]
+  ].freeze
+
   belongs_to :board
   belongs_to :ticket
   belongs_to :swimlane
@@ -14,7 +25,7 @@ class BoardTicket < ApplicationRecord
 
   scope :for_board, -> (board_id) { where(board_id: board_id) }
   scope :for_repo, -> (repo_id) { where(tickets: { repo_id: repo_id }) }
-  scope :preloaded, -> { preload(:open_timesheet, ticket: [:repo, pull_requests: %i[repo]]) }
+  scope :preloaded, -> { preload(PRELOADS) }
 
   ranks :swimlane_sequence, with_same: :swimlane_id
 
@@ -24,7 +35,7 @@ class BoardTicket < ApplicationRecord
   attr_writer :update_remote
 
   def state_durations
-    timesheets.each_with_object(Hash.new 0) do |timesheet, durations|
+    timesheets.includes(:swimlane).each_with_object(Hash.new(0)) do |timesheet, durations|
       durations[timesheet.swimlane.name] += timesheet.started_at.business_time_until(timesheet.ended_at || Time.now)
     end
   end

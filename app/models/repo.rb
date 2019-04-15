@@ -10,6 +10,8 @@ class Repo < ApplicationRecord
   has_many :pull_request_reviews
   has_many :branches
   has_many :commit_statuses
+  has_many :labels
+  has_many :milestones
 
   def to_builder
     Jbuilder.new do |repo|

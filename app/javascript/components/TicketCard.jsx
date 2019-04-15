@@ -5,7 +5,30 @@ import { Draggable } from "react-beautiful-dnd";
 
 import PullRequestList from "./PullRequestList";
 import TicketModal from "./TicketModal";
+import LabelList from "./LabelList";
+import Avatar from "./Avatar";
 import { boardTicket as boardTicketSchema } from "../schema";
+
+const assigneeStackClass = {
+    0: "none",
+    1: "one",
+    2: "two",
+    3: "three"
+};
+
+const AssigneeStack = ({ assignees }) => (
+    <span
+        className={`assignee-stack has-${assigneeStackClass[assignees.length] || "many"}`}
+    >
+        {assignees.slice(0, 3).map(({ username }) => (
+            <Avatar username={username} size="mini" key={username} />
+        ))}
+        {assignees.length > 3 && (
+            /* We hide the third avatar in this case */
+            <span className="meta">+{assignees.length - 2}</span>
+        )}
+    </span>
+);
 
 const TicketCard = ({
     id,
@@ -14,25 +37,38 @@ const TicketCard = ({
     display_duration,
     time_since_last_transition,
     url,
-    pull_requests
+    pull_requests,
+    labels,
+    milestone,
+    assignees
 }) => (
     <Draggable draggableId={`TicketCard#board-ticket-${id}`} index={index}>
         {(provided, snapshot) => (
-            <div ref={provided.innerRef} {...provided.draggableProps} className="ui card">
-                <div {...provided.dragHandleProps} className="content">
+            <div
+                ref={provided.innerRef}
+                {...provided.draggableProps}
+                className="ui card ticket-card"
+            >
+                <div
+                    {...provided.dragHandleProps}
+                    className="content ticket-card--header"
+                >
                     <a className="issue-number" href={html_url} target="_blank">
-                        #{remote_number}
+                        {remote_number}
                     </a>
                     <span className="meta repo-name">{repo.name}</span>
+                    <span className="right floated">
+                        <AssigneeStack assignees={assignees} />
+                    </span>
                 </div>
-                <div className="content">
+                <div className="content ticket-card--title">
                     <TicketModal
                         trigger={<a className="issue-title">{remote_title}</a>}
-                        number={remote_number}
-                        title={remote_title}
-                        ticketURL={html_url}
-                        boardTicketURL={url}
+                        id={id}
                     />
+                    {(labels.length || milestone) && (
+                        <LabelList labels={labels} milestone={milestone} />
+                    )}
                 </div>
                 {display_duration && (
                     <div className="content">
@@ -42,7 +78,7 @@ const TicketCard = ({
                     </div>
                 )}
                 {!!pull_requests.length && (
-                    <PullRequestList pullRequests={pull_requests} />
+                    <PullRequestList pullRequests={pull_requests} listStyle="celled" />
                 )}
             </div>
         )}

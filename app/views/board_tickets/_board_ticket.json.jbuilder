@@ -1,4 +1,5 @@
 ticket = board_ticket.ticket
+milestone = ticket.milestone
 
 json.id board_ticket.id
 json.time_since_last_transition board_ticket.time_since_last_transition if swimlane.display_duration?
@@ -22,4 +23,21 @@ json.pull_requests ticket.pull_requests do |pull_request|
     :html_url
   )
   json.repo pull_request.repo_id
+end
+
+json.labels ticket.display_labels do |label|
+  json.extract! label, :id, :name, :colour
+  json.repo label.repo_id
+end
+
+if milestone.present?
+  json.milestone do
+    json.extract! milestone, :id, :title
+    json.repo milestone.repo_id
+  end
+end
+
+json.assignees ticket.assignments do |assignment|
+  json.remote_id assignment.assignee_remote_id
+  json.username assignment.assignee_username
 end
