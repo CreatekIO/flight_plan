@@ -21,4 +21,8 @@ module OctokitClient
   def octokit
     @octokit ||= Octokit::Client.new
   end
+
+  def octokit_token=(new_token)
+    octokit.access_token = new_token
+  end
 end

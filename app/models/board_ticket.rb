@@ -1,5 +1,6 @@
 class BoardTicket < ApplicationRecord
   include RankedModel
+  include OctokitClient
 
   PRELOADS = [
     :open_timesheet,
@@ -19,6 +20,7 @@ class BoardTicket < ApplicationRecord
   has_many :release_board_tickets, dependent: :destroy
   has_many :releases, through: :release_board_tickets
   has_one :open_timesheet, -> { where(ended_at: nil) }, class_name: 'Timesheet'
+  has_one :repo, through: :ticket
 
   after_save :update_timesheet, if: :saved_change_to_swimlane_id?
   after_commit :update_github, on: :update, if: :saved_change_to_swimlane_id?
@@ -33,6 +35,14 @@ class BoardTicket < ApplicationRecord
   alias_method :swimlane_position=, :swimlane_sequence_position=
 
   attr_writer :update_remote
+
+  delegate :remote_number, to: :ticket
+  delegate :remote_url, to: :repo
+
+  octokit_methods(
+    :close_issue, :reopen_issue, :replace_all_labels, :labels_for_issue,
+    prefix_with: %i[remote_url remote_number]
+  )
 
   def state_durations
     timesheets.includes(:swimlane).each_with_object(Hash.new(0)) do |timesheet, durations|
@@ -53,6 +63,7 @@ class BoardTicket < ApplicationRecord
 
     board.swimlanes.where(display_duration: true).map do |swimlane|
       next if durations[swimlane.name].zero?
+
       {
         id: swimlane.id,
         name: swimlane.name,
@@ -72,7 +83,7 @@ class BoardTicket < ApplicationRecord
 
   def format_duration(seconds)
     if seconds < 1.hour
-      "< 1h"
+      '< 1h'
     elsif seconds < 8.hours
       "#{(seconds / 1.hour).floor}h"
     else
@@ -104,30 +115,30 @@ class BoardTicket < ApplicationRecord
     # possibly moving to a background job
 
     if swimlane_id == closed_swimlane.id
-      Octokit.close_issue(ticket.repo.remote_url, ticket.remote_number)
+      close_issue
     elsif attribute_before_last_save(:swimlane_id) == closed_swimlane.id
-      Octokit.reopen_issue(ticket.repo.remote_url, ticket.remote_number)
+      reopen_issue
     end
 
-    Octokit.replace_all_labels(
-      ticket.repo.remote_url,
-      ticket.remote_number,
-      new_github_labels
-    )
+    replace_all_labels(new_github_labels)
   end
 
   def new_github_labels
-    Octokit.labels_for_issue(
-      ticket.repo.remote_url,
-      ticket.remote_number
-    ).
-    map(&:name).
-    reject { |label| label.start_with? 'status:' } +
-    [ "status: #{swimlane.name.downcase}" ]
+    non_status_labels = labels_for_issue
+      .map(&:name)
+      .reject { |label| label.start_with? 'status:' }
+
+    [
+      *non_status_labels,
+      *("status: #{swimlane.name.downcase}" unless [open_swimlane, closed_swimlane].include?(swimlane))
+    ]
   end
 
   def closed_swimlane
     board.closed_swimlane
   end
 
+  def open_swimlane
+    board.open_swimlane
+  end
 end
