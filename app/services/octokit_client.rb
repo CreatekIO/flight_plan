@@ -25,4 +25,20 @@ module OctokitClient
   def octokit_token=(new_token)
     octokit.access_token = new_token
   end
+
+  def retry_with_global_token_if_fails
+    retried = false
+
+    begin
+      yield
+    rescue Octokit::NotFound => error
+      raise if octokit.access_token == Octokit.access_token || retried
+
+      logger.warn "Got #{error.class}: #{error.message}...retrying with global API token"
+
+      self.octokit_token = Octokit.access_token
+      retried = true
+      retry
+    end
+  end
 end

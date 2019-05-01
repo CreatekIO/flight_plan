@@ -33,6 +33,15 @@ RSpec.describe TicketMovesController do
       )
     end
 
+    let!(:get_all_labels_call) do
+      stub_gh_get("issues/#{ticket.remote_number}/labels") do
+        [
+          { id: '111', name: 'type: bug', color: 'ff0000' },
+          { id: '112', name: "status: #{backlog.name}", color: '00ff00' }
+        ]
+      end
+    end
+
     let!(:replace_all_labels_call) do
       stub_gh_put("issues/#{ticket.remote_number}/labels")
     end
@@ -47,13 +56,6 @@ RSpec.describe TicketMovesController do
           swimlane: destination_swimlane,
           swimlane_position: :last
         )
-      end
-
-      stub_gh_get("issues/#{ticket.remote_number}/labels") do
-        [
-          { id: '111', name: 'type: bug', color: 'ff0000' },
-          { id: '112', name: "status: #{backlog.name}", color: '00ff00' }
-        ]
       end
     end
 
@@ -92,6 +94,46 @@ RSpec.describe TicketMovesController do
               headers: { 'Authorization' => "token #{user_token}" }
             )
           ).to have_been_requested
+        end
+      end
+
+      context 'when unable to perform API calls with given token' do
+        let!(:get_all_labels_call_invalid) do
+          stub_gh_get("issues/#{ticket.remote_number}/labels", status: 404) do
+            { message: 'Not Found' }
+          end.with(headers: { 'Authorization' => "token #{user_token}" })
+        end
+
+        let!(:replace_all_labels_call_invalid) do
+          stub_gh_put("issues/#{ticket.remote_number}/labels", status: 404)
+            .with(headers: { 'Authorization' => "token #{user_token}" })
+        end
+
+        let(:global_token) { 'github-api-global-token' }
+
+        before do
+          allow(Octokit).to receive(:access_token).and_return(global_token)
+        end
+
+        it 'retries API calls with global token' do
+          aggregate_failures do
+            expect {
+              subject
+            }.to change { board_ticket.reload.swimlane }.from(backlog).to(dev)
+              .and change { dev.reload.board_tickets[destination_position] }.to(board_ticket)
+
+            expect(response).to have_http_status(:created)
+
+            expect(get_all_labels_call_invalid).to have_been_requested
+            expect(replace_all_labels_call_invalid).not_to have_been_requested
+
+            expect(
+              replace_all_labels_call.with(
+                body: ['type: bug', "status: #{dev.name.downcase}"].to_json,
+                headers: { 'Authorization' => "token #{global_token}" }
+              )
+            ).to have_been_requested
+          end
         end
       end
     end

@@ -114,13 +114,15 @@ class BoardTicket < ApplicationRecord
     # TODO: need to be able to recover if github does not respond,
     # possibly moving to a background job
 
-    if swimlane_id == closed_swimlane.id
-      close_issue
-    elsif attribute_before_last_save(:swimlane_id) == closed_swimlane.id
-      reopen_issue
-    end
+    retry_with_global_token_if_fails do
+      if swimlane_id == closed_swimlane.id
+        close_issue
+      elsif attribute_before_last_save(:swimlane_id) == closed_swimlane.id
+        reopen_issue
+      end
 
-    replace_all_labels(new_github_labels)
+      replace_all_labels(new_github_labels)
+    end
   end
 
   def new_github_labels

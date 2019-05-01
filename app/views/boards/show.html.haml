@@ -2,7 +2,9 @@
 
 :ruby
   config = {
+  currentUser: { id: current_user.id, username: current_user.username },
     api: {
+      logoutURL: destroy_user_session_path,
       boardURL: board_path(@board, format: :json),
       nextActionsURL: board_next_actions_path(@board, format: :json),
       createTicketMoveURL: board_ticket_moves_path(@board, ':boardTicketId', format: :json)
