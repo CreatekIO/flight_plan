@@ -6,6 +6,12 @@ body[data-controller="boards"] {
   margin-bottom: 0;
   box-shadow: none;
   -webkit-box-shadow: none;
+
+  .user-menu .menu > .header {
+    font-size: inherit;
+    font-weight: inherit;
+    text-transform: none;
+  }
 }
 
 .board {
