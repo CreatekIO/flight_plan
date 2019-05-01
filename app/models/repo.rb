@@ -13,6 +13,12 @@ class Repo < ApplicationRecord
   has_many :labels
   has_many :milestones
 
+  octokit_methods(
+    :compare, :pull_requests, :merge_pull_request, :create_pull_request,
+    :create_ref, :merge, :refs, :delete_branch,
+    prefix_with: :remote_url
+  )
+
   def to_builder
     Jbuilder.new do |repo|
       repo.id id
@@ -34,47 +40,6 @@ class Repo < ApplicationRecord
   end
 
   def branch_names
-    @branch_names ||= client.branches(remote_url).collect { |b| b[:name] }
-  end
-
-  def compare(target_branch, branch)
-    client.compare(
-      remote_url,
-      target_branch,
-      branch
-    )
-  end
-
-  def pull_requests
-    client.pull_requests(remote_url)
-  end
-
-  def merge_pull_request(number, comment = '')
-    client.merge_pull_request(remote_url, number, comment)
-  end
-
-  def create_pull_request(target, source, title, body)
-    client.create_pull_request(remote_url, target, source, title, body)
-  end
-
-  def create_ref(ref, sha)
-    client.create_ref(remote_url, ref, sha)
-  end
-
-  def merge(target, source, commit_message: nil)
-    client.merge(
-      remote_url,
-      target,
-      source,
-      commit_message: commit_message
-    )
-  end
-
-  def refs(branch)
-    client.refs(remote_url, branch)
-  end
-
-  def delete_branch(branch)
-    client.delete_branch(remote_url, branch)
+    @branch_names ||= octokit.branches(remote_url).collect { |b| b[:name] }
   end
 end
