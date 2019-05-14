@@ -13,12 +13,7 @@ class Webhook::GithubController < Webhook::BaseController
   end
 
   def github_issue_comment(payload)
-    if payload[:action] == 'deleted'
-      comment = Comment.find_by_remote(payload[:comment])
-      comment.destroy if comment.persisted?
-    else
-      Comment.import(payload[:comment], repo, remote_issue: payload[:issue])
-    end
+    Comment.import(payload, repo)
   end
 
   def github_push(payload)
@@ -44,11 +39,9 @@ class Webhook::GithubController < Webhook::BaseController
   end
 
   def unhandled_event(error)
-    if error.message.include?('GithubWebhooksController')
-      head :ok
-    else
-      raise error
-    end
+    return head :ok if error.message.include?('GithubWebhooksController')
+
+    raise error
   end
 
   def webhook_secret(_payload)
