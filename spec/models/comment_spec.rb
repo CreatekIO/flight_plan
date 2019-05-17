@@ -8,7 +8,12 @@ RSpec.describe Comment do
   describe '.import' do
     include_context 'remote issue'
 
-    subject { described_class.import(remote_comment, repo, remote_issue: remote_issue) }
+    subject do
+      described_class.import(
+        { comment: remote_comment, issue: remote_issue, action: action },
+        repo
+      )
+    end
 
     let(:comment_id) { 123 }
     let(:remote_comment) {
@@ -24,6 +29,8 @@ RSpec.describe Comment do
     let!(:repo) { create(:repo, remote_url: remote_url) }
 
     context 'when the comment does not already exist' do
+      let(:action) { 'created' }
+
       it 'creates a new comment for the issue' do
         expect {
           subject
@@ -32,6 +39,7 @@ RSpec.describe Comment do
     end
 
     context 'when the comment already exists' do
+      let(:action) { 'edited' }
       let(:ticket) { create(:ticket, repo: repo) }
 
       it 'updates the comment' do
@@ -42,6 +50,18 @@ RSpec.describe Comment do
         }.not_to change { Comment.count }
 
         expect(comment.reload.remote_body).to eq('text')
+      end
+    end
+
+    context 'when the comment has been deleted' do
+      let(:action) { 'deleted' }
+      let(:ticket) { create(:ticket, repo: repo) }
+      let!(:comment) { create(:comment, ticket: ticket, remote_id: comment_id) }
+
+      it 'deletes the comment' do
+        expect {
+          subject
+        }.to change { Comment.where(remote_id: comment_id).count }.by(-1)
       end
     end
   end
