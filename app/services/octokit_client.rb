@@ -4,9 +4,12 @@ module OctokitClient
   module ClassMethods
     def octokit_methods(*names, prefix_with: nil)
       prefix_args = Array.wrap(prefix_with).map(&:to_s).join(', ')
+      @octokit_module ||= const_set(:OctokitClientMethods, Module.new).tap do |mod|
+        include mod
+      end
 
       names.each do |name|
-        class_eval <<-RUBY, __FILE__, __LINE__ + 1
+        @octokit_module.class_eval <<-RUBY, __FILE__, __LINE__ + 1
           def #{name}(*args)
             octokit.#{name}(
               #{prefix_args + ',' if prefix_args.present?}
