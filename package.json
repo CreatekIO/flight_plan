@@ -21,5 +21,9 @@
   },
   "devDependencies": {
     "webpack-dev-server": "^2.7.1"
+  },
+  "resolutions": {
+    "tar": "^4.4.2",
+    "jquery": "^3.4.0"
   }
 }
