@@ -5,6 +5,7 @@ RSpec.describe TicketRefresher do
     let(:repo) { create(:repo) }
     let(:remote_url) { repo.remote_url }
     let!(:ticket) { create(:ticket, repo: repo) }
+    let!(:pull_request) { create(:pull_request, repo: repo) }
 
     subject { described_class.new(ticket) }
 
@@ -38,10 +39,22 @@ RSpec.describe TicketRefresher do
       end
     end
 
+    around do |example|
+      Sidekiq::Testing.fake! do
+        example.run
+        Sidekiq::Worker.clear_all
+      end
+    end
+
     before do
       Comment.import(
         { comment: gh_comments_payload.last, issue: gh_ticket_payload },
         repo
+      )
+
+      PullRequestConnection.create!(
+        ticket: ticket,
+        pull_request: pull_request
       )
 
       allow(Ticket).to receive(:import).and_call_original
@@ -72,6 +85,14 @@ RSpec.describe TicketRefresher do
           )
         end
       end
+    end
+
+    it 'updates linked pull requests' do
+      subject.run
+
+      expect(
+        PullRequestRefreshWorker.jobs.map { |job| job['args'] }
+      ).to eq([[pull_request.id]])
     end
   end
 end

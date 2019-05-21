@@ -6,6 +6,7 @@ require 'spec_helper'
 require 'rspec/rails'
 require 'webmock/rspec'
 require 'capybara-screenshot/rspec'
+require 'sidekiq/testing'
 
 Dir[Rails.root.join('spec/support/*.rb')].each { |file| require file }
 Dir[Rails.root.join('spec/support/helpers/*.rb')].each { |file| require file }

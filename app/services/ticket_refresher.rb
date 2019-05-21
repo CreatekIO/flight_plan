@@ -13,6 +13,7 @@ class TicketRefresher
   def run
     update_ticket
     update_ticket_comments
+    update_linked_pull_requests
   end
 
   private
@@ -26,6 +27,12 @@ class TicketRefresher
   def update_ticket_comments
     issue_comments.each do |gh_comment|
       Comment.import({ comment: gh_comment.to_hash, issue: gh_ticket }, repo)
+    end
+  end
+
+  def update_linked_pull_requests
+    ticket.pull_request_ids.each do |id|
+      PullRequestRefreshWorker.perform_async(id)
     end
   end
 
