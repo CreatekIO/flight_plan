@@ -7,6 +7,20 @@ class Swimlane < ApplicationRecord
     def after(seq)
       where(arel_table[:swimlane_sequence].gt(seq))
     end
+
+    def rebalance!
+      # Extracted from ranked-model gem
+      ids = current_scope.pluck(:id)
+      gaps = ids.size + 1
+      range = (RankedModel::MAX_RANK_VALUE - RankedModel::MIN_RANK_VALUE).to_f
+      gap_size = (range / gaps).ceil
+
+      ids.each.with_index(1) do |id, position|
+        new_rank = (gap_size * position) + RankedModel::MIN_RANK_VALUE
+
+        BoardTicket.unscoped.where(id: id).update_all(swimlane_sequence: new_rank)
+      end
+    end
   end
   has_many(
     :first_board_tickets,
