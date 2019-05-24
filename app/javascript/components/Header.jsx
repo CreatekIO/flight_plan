@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 
 import NextActionButton from './NextActionButton';
 import Avatar from './Avatar';
+import AddNewIssueModal from './AddNewIssueModal';
 import { getOpenPRs } from '../reducers/selectors';
 
 const truncate = (text, length) => {
@@ -87,6 +88,7 @@ const Header = ({ boards, isWaiting, openPRsCount, pullRequests }) => {
             </Dropdown>
 
             <div className="right menu">
+                <AddNewIssueModal />
                 <Dropdown
                     trigger={
                         <Avatar

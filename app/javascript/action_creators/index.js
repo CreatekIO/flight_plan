@@ -3,14 +3,16 @@ import {
     getBoardNextActions,
     getSwimlaneTickets,
     createTicketMove,
-    getBoardTicket
-} from "../api";
+    getBoardTicket,
+    createTicket
+} from '../api';
 
-const extractId = identifier => identifier.split("-").reverse()[0];
+const extractId = identifier => identifier.split('-').reverse()[0];
 
 const checkForErrors = data =>
-    new Promise((resolve, reject) =>
-        data.error || data.errors ? reject(new Error()) : resolve(data)
+    new Promise(
+        (resolve, reject) =>
+            data.error || data.errors ? reject(new Error()) : resolve(data)
     );
 
 export const loadBoard = () => dispatch =>
@@ -35,7 +37,11 @@ export const loadFullTicket = (id, url) => dispatch => {
     );
 };
 
-export const ticketDragged = ({ source, destination, draggableId }) => dispatch => {
+export const ticketDragged = ({
+    source,
+    destination,
+    draggableId
+}) => dispatch => {
     const boardTicketId = extractId(draggableId);
 
     dispatch(ticketMoved({ source, destination }));
@@ -50,13 +56,17 @@ export const ticketDragged = ({ source, destination, draggableId }) => dispatch 
         .catch(() =>
             dispatch(
                 // Move TicketCard back to where it came from
-                ticketMoved({ source: destination, destination: source, boardTicketId })
+                ticketMoved({
+                    source: destination,
+                    destination: source,
+                    boardTicketId
+                })
             )
         );
 };
 
 export const ticketMoved = ({ source, destination, boardTicketId }) => ({
-    type: "TICKET_MOVED",
+    type: 'TICKET_MOVED',
     payload: {
         boardTicketId,
         sourceId: extractId(source.droppableId),
@@ -66,37 +76,41 @@ export const ticketMoved = ({ source, destination, boardTicketId }) => ({
     }
 });
 
+export const ticketCreated = ticketAttributes => {
+    createTicket(ticketAttributes);
+};
+
 export const boardLoaded = board => ({
-    type: "BOARD_LOAD",
+    type: 'BOARD_LOAD',
     payload: board
 });
 
 export const nextActionsLoaded = repos => ({
-    type: "NEXT_ACTIONS_LOADED",
+    type: 'NEXT_ACTIONS_LOADED',
     payload: repos
 });
 
 export const swimlaneTicketsLoading = swimlaneId => ({
-    type: "SWIMLANE_TICKETS_LOADING",
+    type: 'SWIMLANE_TICKETS_LOADING',
     payload: { swimlaneId }
 });
 
 export const swimlaneTicketsLoaded = swimlane => ({
-    type: "SWIMLANE_TICKETS_LOADED",
+    type: 'SWIMLANE_TICKETS_LOADED',
     payload: swimlane
 });
 
 export const boardTicketLoaded = boardTicket => ({
-    type: "BOARD_TICKET_LOADED",
+    type: 'BOARD_TICKET_LOADED',
     payload: boardTicket
 });
 
 export const fullTicketLoading = boardTicketId => ({
-    type: "FULL_TICKET_LOADING",
+    type: 'FULL_TICKET_LOADING',
     payload: { boardTicketId }
 });
 
 export const fullTicketLoaded = boardTicket => ({
-    type: "FULL_TICKET_LOADED",
+    type: 'FULL_TICKET_LOADED',
     payload: boardTicket
 });

@@ -1,23 +1,12 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { Button, Header, Image, Modal, Form } from 'semantic-ui-react';
-
-const AddNewIssueModal = () => (
-    <Modal
-        id={'add-new-issue-modal'}
-        trigger={<a className="item">Add an issue</a>}>
-        <Modal.Header>Add a new issue</Modal.Header>
-        <Modal.Content>
-            <AddNewIssueForm />
-        </Modal.Content>
-    </Modal>
-);
+import { ticketCreated } from '../action_creators';
 
 class AddNewIssueForm extends Component {
     state = {
         title: '',
-        description: '',
-        submittedTitle: '',
-        submittedDescription: ''
+        description: ''
     };
 
     handleChange = (e, { name, value }) => {
@@ -25,7 +14,7 @@ class AddNewIssueForm extends Component {
     };
 
     handleSubmit = () => {
-        //submit params to controller
+        ticketCreated(this.state);
     };
 
     render() {
@@ -48,5 +37,16 @@ class AddNewIssueForm extends Component {
         );
     }
 }
+
+const AddNewIssueModal = () => (
+    <Modal
+        id={'add-new-issue-modal'}
+        trigger={<a className="item">Add an issue</a>}>
+        <Modal.Header>Add a new issue</Modal.Header>
+        <Modal.Content>
+            <AddNewIssueForm />
+        </Modal.Content>
+    </Modal>
+);
 
 export default AddNewIssueModal;

@@ -7,7 +7,8 @@
       logoutURL: destroy_user_session_path,
       boardURL: board_path(@board, format: :json),
       nextActionsURL: board_next_actions_path(@board, format: :json),
-      createTicketMoveURL: board_ticket_moves_path(@board, ':boardTicketId', format: :json)
+      createTicketMoveURL: board_ticket_moves_path(@board, ':boardTicketId', format: :json),
+      createTicketURL: api_board_board_tickets_path(@board, format: :json)
     },
     boards: @boards.map do |board|
       board.slice(:id, :name).merge(
