@@ -1,15 +1,15 @@
-import React, { Component, Fragment } from "react";
-import { Dropdown, Popup } from "semantic-ui-react";
-import { connect } from "react-redux";
+import React, { Component, Fragment } from 'react';
+import { Dropdown, Popup } from 'semantic-ui-react';
+import { connect } from 'react-redux';
 
-import NextActionButton from "./NextActionButton";
-import Avatar from "./Avatar";
-import { getOpenPRs } from "../reducers/selectors";
+import NextActionButton from './NextActionButton';
+import Avatar from './Avatar';
+import { getOpenPRs } from '../reducers/selectors';
 
 const truncate = (text, length) => {
     if (text.length <= length) return text;
 
-    return text.substring(0, length - 3) + "...";
+    return text.substring(0, length - 3) + '...';
 };
 
 const RepoPullRequests = ({ repo }) => (
@@ -88,22 +88,26 @@ const Header = ({ boards, isWaiting, openPRsCount, pullRequests }) => {
 
             <div className="right menu">
                 <Dropdown
-                    trigger={<Avatar username={flightPlanConfig.currentUser.username} />}
+                    trigger={
+                        <Avatar
+                            username={flightPlanConfig.currentUser.username}
+                        />
+                    }
                     className="item user-menu"
                     pointing="top left"
-                    icon={null}
-                >
+                    icon={null}>
                     <Dropdown.Menu>
                         <Dropdown.Header>
-                            Signed in as{" "}
-                            <strong>@{flightPlanConfig.currentUser.username}</strong>
+                            Signed in as{' '}
+                            <strong>
+                                @{flightPlanConfig.currentUser.username}
+                            </strong>
                         </Dropdown.Header>
                         <Dropdown.Divider />
                         <Dropdown.Item
                             as="a"
                             href={flightPlanConfig.api.logoutURL}
-                            data-method="delete"
-                        >
+                            data-method="delete">
                             Sign out
                         </Dropdown.Item>
                     </Dropdown.Menu>
