@@ -4,8 +4,8 @@ import { connect } from "react-redux";
 
 import NextActionButton from "./NextActionButton";
 import Avatar from "./Avatar";
-import { getOpenPRs } from "../reducers/selectors";
 import AddNewIssueModal from "./AddNewIssueModal";
+import { getOpenPRs } from "../reducers/selectors";
 
 const truncate = (text, length) => {
     if (text.length <= length) return text;

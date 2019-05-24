@@ -3,7 +3,8 @@ import {
     getBoardNextActions,
     getSwimlaneTickets,
     createTicketMove,
-    getBoardTicket
+    getBoardTicket,
+    createTicket
 } from "../api";
 
 const extractId = identifier => identifier.split("-").reverse()[0];
@@ -100,6 +101,10 @@ export const expandSwimlane = swimlaneId => ({
     type: "EXPAND_SWIMLANE",
     payload: { swimlaneId }
 });
+
+export const ticketCreated = ticketAttributes => {
+    createTicket(ticketAttributes);
+};
 
 export const boardLoaded = board => ({
     type: "BOARD_LOAD",
