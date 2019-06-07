@@ -2,6 +2,7 @@
 
 :ruby
   config = {
+  currentBoardRepos: @board.board_repos.map {|board_repo| { id: board_repo.id, name: board_repo.name }},
   currentUser: { id: current_user.id, username: current_user.username },
     api: {
       logoutURL: destroy_user_session_path,
