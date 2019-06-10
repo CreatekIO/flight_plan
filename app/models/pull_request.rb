@@ -12,6 +12,7 @@ class PullRequest < ApplicationRecord
   end
 
   belongs_to :repo
+  has_many :boards, through: :repo
   belongs_to :creator, -> { where(provider: 'github') },
     optional: true, class_name: 'User',
     foreign_key: :creator_remote_id, primary_key: :uid
@@ -94,38 +95,41 @@ class PullRequest < ApplicationRecord
   private
 
   def update_pull_request_connections
-    @referenced_issue_numbers = nil # reset cache
+    new_connections = referenced_issues.map do |issue|
+      query = { repos: { remote_url: issue[:repo] }, tickets: { remote_number: issue[:number] } }
+      existing = pull_request_connections.joins(ticket: :repo).find_by(query)
+      next(existing) if existing.present?
 
-    to_keep, to_delete = pull_request_connections.includes(:ticket).partition do |conn|
-      referenced_issue_numbers.include?(conn.ticket.remote_number)
-    end
-
-    to_delete.map(&:destroy)
-
-    existing_issue_numbers = to_keep.map {|conn| conn.ticket.remote_number }
-
-    referenced_issue_numbers.each do |number|
-      next if existing_issue_numbers.include?(number)
-
-      matching_ticket = repo.tickets.find_by(remote_number: number)
+      matching_ticket = associated_tickets.find_by(query)
       next if matching_ticket.blank?
 
       pull_request_connections.build(ticket: matching_ticket)
     end
+
+    self.pull_request_connections = new_connections.compact
+  end
+
+  def referenced_issues
+    issues_referenced_in_body.tap do |issues|
+      return issues if number_from_branch_name.blank?
+
+      issues.add(repo: repo.remote_url, number: number_from_branch_name)
+    end
+  end
+
+  # This can't be an association because Rails doesn't let us use it
+  # for an unsaved record (it adds `1=0` to any query)
+  def associated_tickets
+    associated_repo_ids = boards.flat_map(&:repo_ids).uniq
+
+    Ticket.joins(:repo).where(repo_id: associated_repo_ids)
   end
 
   def number_from_branch_name
     IssueNumberExtractor.from_branch(remote_head_branch)
   end
 
-  def numbers_from_body
-    IssueNumberExtractor.connections(remote_body)
-  end
-
-  def referenced_issue_numbers
-    @referenced_issue_numbers ||= [
-      *number_from_branch_name,
-      *numbers_from_body
-    ].to_set
+  def issues_referenced_in_body
+    IssueNumberExtractor.connections(remote_body, current_repo: repo)
   end
 end
