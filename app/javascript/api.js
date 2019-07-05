@@ -37,6 +37,7 @@ export const createTicketMove = (boardTicketId, swimlaneId, indexInSwimlane) =>
 export const createTicket = ticketAttributes => {
     post(formatURL(flightPlanConfig.api.createTicketURL), {
         ticket: {
+            repo_id: ticketAttributes["repo_id"],
             title: ticketAttributes["title"],
             description: ticketAttributes["description"]
         }

@@ -10,18 +10,21 @@ class TicketCreationService
       ticket = repo.tickets.new(remote_title: @title, remote_body: @description)
       ticket.save!
       remote_ticket = create_remote_ticket
-      ticket.update(remote_id: remote_ticket[:remote_id])
+      ticket.update!(
+        remote_id: remote_ticket[:id],
+        remote_number: remote_ticket[:number],
+        remote_state: remote_ticket[:state]
+      )
       ticket
     end
-
   rescue ActiveRecord::RecordInvalid
     false
-  end 
+  end
 
   private
 
   def repo
-    Repo.find(@repo_id)
+    BoardRepo.find(@repo_id).repo
   end
 
   def create_remote_ticket
