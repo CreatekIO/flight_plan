@@ -1,4 +1,4 @@
-class Api::BoardTicketsController < Api::BaseController
+class Api::BoardTicketsController < AuthenticatedController
   before_action :find_board, only: :create
 
   load_and_authorize_resource
