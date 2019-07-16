@@ -10,6 +10,20 @@ RSpec.describe Swimlane, type: :model do
   end
 
   describe '.find_by_label!' do
-    pending
+    let(:board) { create(:board) }
+    let!(:swimlane) { create(:swimlane, board: board, name: 'Backlog') }
+
+    it 'finds matching swimlane, regardless of case' do
+      labels = [
+        swimlane.name,
+        swimlane.name.downcase,
+        swimlane.name.upcase,
+        "status: #{swimlane.name.downcase}"
+      ]
+
+      expect(
+        labels.map { |label| board.swimlanes.find_by_label!(label) }
+      ).to all eq(swimlane)
+    end
   end
 end

@@ -25,6 +25,17 @@ RSpec.describe IssueNumberExtractor do
   end
 
   describe '.connections' do
+    let(:repo) { double(:repo, remote_url: 'a-user/a-repo') }
+
+    let(:expected) do
+      nums = %w[1 10 21 32 43 54]
+
+      [
+        *nums.map { |n| { repo: repo.remote_url, number: n } },
+        *nums.map { |n| { repo: 'another/repo_name', number: n } }
+      ]
+    end
+
     it 'finds numbers prefixed with forms of "connect"' do
       text = <<-TEXT.strip_heredoc
         Connect #1
@@ -33,10 +44,17 @@ RSpec.describe IssueNumberExtractor do
         connects #32
         Connected #43
         connected #54
+
+        Connect another/repo_name#1
+        connect another/repo_name#10
+        Connects another/repo_name#21
+        connects another/repo_name#32
+        Connected another/repo_name#43
+        connected another/repo_name#54
       TEXT
 
-      expect(described_class.connections(text)).to match_array(
-        %w(1 10 21 32 43 54)
+      expect(described_class.connections(text, current_repo: repo)).to match_array(
+        expected
       )
     end
 
@@ -48,15 +66,22 @@ RSpec.describe IssueNumberExtractor do
         connects to #32
         Connected to #43
         connected to #54
+
+        Connect to another/repo_name#1
+        connect to another/repo_name#10
+        Connects to another/repo_name#21
+        connects to another/repo_name#32
+        Connected to another/repo_name#43
+        connected to another/repo_name#54
       TEXT
 
-      expect(described_class.connections(text)).to match_array(
-        %w(1 10 21 32 43 54)
+      expect(described_class.connections(text, current_repo: repo)).to match_array(
+        expected
       )
     end
 
     it 'handles nil' do
-      expect(described_class.connections(nil)).to eq []
+      expect(described_class.connections(nil, current_repo: repo).to_a).to eq []
     end
   end
 end
