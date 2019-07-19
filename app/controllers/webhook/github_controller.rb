@@ -8,7 +8,7 @@ class Webhook::GithubController < Webhook::BaseController
 
   def github_issues(payload)
     repo.with_lock do
-      Ticket.import(payload[:issue], payload[:repository])
+      Ticket.import(payload[:issue], payload[:repository], action: payload[:action])
     end
   end
 

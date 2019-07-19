@@ -19,8 +19,16 @@ class Ticket < ApplicationRecord
   scope :merged, -> { where(merged: true) }
   scope :unmerged, -> { where(merged: false) }
 
-  def self.import(remote_issue, remote_repo)
+  DELETED_ACTIONS = %w[deleted transferred].freeze
+
+  def self.import(remote_issue, remote_repo, action: nil)
     ticket = find_by_remote(remote_issue, remote_repo)
+
+    if DELETED_ACTIONS.include?(action)
+      ticket.destroy if ticket.persisted?
+      return ticket
+    end
+
     ticket.update_attributes(
       remote_number: remote_issue[:number],
       remote_title: remote_issue[:title],
