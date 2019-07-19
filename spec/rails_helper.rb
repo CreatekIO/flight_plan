@@ -1,3 +1,4 @@
+ENV['RACK_ENV'] ||= 'test'
 ENV['RAILS_ENV'] ||= 'test'
 require File.expand_path('../../config/environment', __FILE__)
 abort('The Rails environemtn is running in a production mode!') if Rails.env.production?
