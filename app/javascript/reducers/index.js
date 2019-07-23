@@ -56,6 +56,33 @@ const entitiesReducer = (state = initialEntitiesState, { type, payload }) => {
         }
         case "NEXT_ACTIONS_LOADED":
             return updateEntities(normalize(payload, [repoSchema]).entities, state);
+        case "TICKET_CREATED":
+            const ticketAttributes = {
+                id: payload.id,
+                url: payload.url,
+                ticket: payload.ticket,
+                swimlane: payload.swimlane,
+                pull_requests: payload.pull_requests,
+                labels: payload.labels,
+                assignees: payload.assignees
+            };
+            const newEntities = updateEntities(
+                normalize({ [ticketAttributes.id]: ticketAttributes }, [
+                    boardTicketSchema
+                ]).entities,
+                state
+            );
+            const swimlane = payload.swimlane;
+            const desiredIndex = newEntities.swimlanes[swimlane].board_tickets.length;
+            const transform = {
+                [swimlane]: {
+                    board_tickets: {
+                        $splice: [[desiredIndex, 0, ticketAttributes.id]]
+                    }
+                }
+            };
+            return update(newEntities, { swimlanes: transform });
+
         case "TICKET_MOVED": {
             const { sourceId, sourceIndex, destinationId, destinationIndex } = payload;
             const movedCard = state.swimlanes[sourceId].board_tickets[sourceIndex];
