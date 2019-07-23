@@ -1,11 +1,12 @@
 class TicketCreationService
-  def initialize(attributes)
+  def initialize(attributes, board)
     @description = attributes[:description]
     @title = attributes[:title]
     @repo_id = attributes[:repo_id]
+    @board = board
   end
 
-  def create_ticket
+  def create_ticket!
     Ticket.transaction do
       ticket = repo.tickets.new(remote_title: @title, remote_body: @description)
       ticket.save!
@@ -15,10 +16,8 @@ class TicketCreationService
         remote_number: remote_ticket[:number],
         remote_state: remote_ticket[:state]
       )
-      ticket
+      @board.board_tickets.create!(ticket: ticket, swimlane: @board.swimlanes.first)
     end
-  rescue ActiveRecord::RecordInvalid
-    false
   end
 
   private

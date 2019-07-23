@@ -11,8 +11,10 @@ class Api::BoardTicketsController < AuthenticatedController
   end
 
   def create
-    ticket = TicketCreationService.new(ticket_params).create_ticket
-    @board.board_tickets.create(ticket: ticket, swimlane: @board.swimlanes.first)
+    @board_ticket = TicketCreationService.new(ticket_params, @board).create_ticket!
+    render :create, status: :created
+  rescue ActiveRecord::RecordInvalid
+    head :unprocessable_entity
   end
 
   private
