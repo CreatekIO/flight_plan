@@ -1,12 +1,12 @@
-import { combineReducers } from "redux";
-import { normalize } from "normalizr";
-import update from "immutability-helper";
+import { combineReducers } from 'redux';
+import { normalize } from 'normalizr';
+import update from 'immutability-helper';
 
 import {
     board as boardSchema,
     repo as repoSchema,
     boardTicket as boardTicketSchema
-} from "../schema";
+} from '../schema';
 
 const updateEntities = (updates, entities) => {
     for (const type in updates) {
@@ -28,8 +28,8 @@ const updateEntities = (updates, entities) => {
 
 const current = (state = {}, { type, payload }) => {
     switch (type) {
-        case "BOARD_LOAD":
-            return { ...state, board: "" + payload.id };
+        case 'BOARD_LOAD':
+            return { ...state, board: '' + payload.id };
         default:
             return state;
     }
@@ -49,15 +49,52 @@ const initialEntitiesState = {
 
 const entitiesReducer = (state = initialEntitiesState, { type, payload }) => {
     switch (type) {
-        case "BOARD_LOAD":
+        case 'BOARD_LOAD':
             const { entities, result } = normalize(payload, boardSchema);
 
             return updateEntities(entities, state);
-        case "NEXT_ACTIONS_LOADED":
-            return updateEntities(normalize(payload, [repoSchema]).entities, state);
-        case "TICKET_MOVED":
-            const { sourceId, sourceIndex, destinationId, destinationIndex } = payload;
-            const movedCard = state.swimlanes[sourceId].board_tickets[sourceIndex];
+        case 'NEXT_ACTIONS_LOADED':
+            return updateEntities(
+                normalize(payload, [repoSchema]).entities,
+                state
+            );
+        case 'TICKET_CREATED':
+            const ticketAttributes = {
+                id: payload.id,
+                url: payload.url,
+                ticket: payload.ticket,
+                swimlane: payload.swimlane,
+                pull_requests: payload.pull_requests,
+                labels: payload.labels,
+                assignees: payload.assignees
+            };
+            const newEntities = updateEntities(
+                normalize({ [ticketAttributes.id]: ticketAttributes }, [
+                    boardTicketSchema
+                ]).entities,
+                state
+            );
+            const swimlane = payload.swimlane;
+            const desiredIndex =
+                newEntities.swimlanes[swimlane].board_tickets.length;
+            const transform = {
+                [swimlane]: {
+                    board_tickets: {
+                        $splice: [[desiredIndex, 0, ticketAttributes.id]]
+                    }
+                }
+            };
+            return update(newEntities, { swimlanes: transform });
+
+        case 'TICKET_MOVED':
+            const {
+                sourceId,
+                sourceIndex,
+                destinationId,
+                destinationIndex
+            } = payload;
+            const movedCard =
+                state.swimlanes[sourceId].board_tickets[sourceIndex];
 
             const transforms = [
                 {
@@ -69,7 +106,9 @@ const entitiesReducer = (state = initialEntitiesState, { type, payload }) => {
                 {
                     // ...and place it in destination swimlane
                     [destinationId]: {
-                        board_tickets: { $splice: [[destinationIndex, 0, movedCard]] }
+                        board_tickets: {
+                            $splice: [[destinationIndex, 0, movedCard]]
+                        }
                     }
                 }
             ];
@@ -78,18 +117,21 @@ const entitiesReducer = (state = initialEntitiesState, { type, payload }) => {
                 (state, transform) => update(state, { swimlanes: transform }),
                 state
             );
-        case "SWIMLANE_TICKETS_LOADING":
+        case 'SWIMLANE_TICKETS_LOADING':
             const { swimlaneId } = payload;
 
             return update(state, {
-                swimlanes: { [swimlaneId]: { loading_board_tickets: { $set: true } } }
+                swimlanes: {
+                    [swimlaneId]: { loading_board_tickets: { $set: true } }
+                }
             });
-        case "SWIMLANE_TICKETS_LOADED": {
+        case 'SWIMLANE_TICKETS_LOADED': {
             const { board_tickets, ...swimlane } = payload;
 
-            const { entities, result: boardTicketIds } = normalize(board_tickets, [
-                boardTicketSchema
-            ]);
+            const { entities, result: boardTicketIds } = normalize(
+                board_tickets,
+                [boardTicketSchema]
+            );
 
             const newEntities = updateEntities(entities, state);
 
@@ -103,15 +145,20 @@ const entitiesReducer = (state = initialEntitiesState, { type, payload }) => {
                 }
             });
         }
-        case "BOARD_TICKET_LOADED":
-            return updateEntities(normalize(payload, boardTicketSchema).entities, state);
-        case "FULL_TICKET_LOADING":
+        case 'BOARD_TICKET_LOADED':
+            return updateEntities(
+                normalize(payload, boardTicketSchema).entities,
+                state
+            );
+        case 'FULL_TICKET_LOADING':
             const { boardTicketId } = payload;
 
             return update(state, {
-                boardTickets: { [boardTicketId]: { loading_state: { $set: "loading" } } }
+                boardTickets: {
+                    [boardTicketId]: { loading_state: { $set: 'loading' } }
+                }
             });
-        case "FULL_TICKET_LOADED": {
+        case 'FULL_TICKET_LOADED': {
             const { entities, result: boardTicketId } = normalize(
                 payload,
                 boardTicketSchema
@@ -122,7 +169,7 @@ const entitiesReducer = (state = initialEntitiesState, { type, payload }) => {
             return update(newEntities, {
                 boardTickets: {
                     [boardTicketId]: {
-                        loading_state: { $set: "loaded" }
+                        loading_state: { $set: 'loaded' }
                     }
                 }
             });
@@ -139,7 +186,7 @@ const sliceReducer = combineReducers({
 
 const rootReducer = (state = {}, action) => {
     switch (action.type) {
-        case "RESET":
+        case 'RESET':
             return {};
         default:
             return sliceReducer(state, action);

@@ -65,6 +65,16 @@ export const ticketDragged = ({
         );
 };
 
+export const ticketCreated = ticketAttributes => dispatch => {
+    return createTicket(ticketAttributes).then(response =>
+        dispatch(ticketCreation(response))
+    );
+};
+
+export const ticketCreation = ticketAttributes => ({
+    type: 'TICKET_CREATED',
+    payload: ticketAttributes
+});
 export const ticketMoved = ({ source, destination, boardTicketId }) => ({
     type: 'TICKET_MOVED',
     payload: {
@@ -75,10 +85,6 @@ export const ticketMoved = ({ source, destination, boardTicketId }) => ({
         destinationIndex: destination.index
     }
 });
-
-export const ticketCreated = ticketAttributes => {
-    createTicket(ticketAttributes);
-};
 
 export const boardLoaded = board => ({
     type: 'BOARD_LOAD',

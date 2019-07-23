@@ -18,9 +18,13 @@ class AddNewIssueModal extends Component {
         this.setState({ showModal: false });
     };
 
+    handleOpen = () => {
+        this.setState({ showModal: true });
+    };
+
     handleSubmit = () => {
         this.setState({ showModal: false });
-        ticketCreated({
+        this.props.ticketCreated({
             title: this.state.title,
             description: this.state.description,
             repo_id: this.state.repo_id
@@ -39,6 +43,7 @@ class AddNewIssueModal extends Component {
         return (
             <Modal
                 onClose={this.handleClose}
+                onOpen={this.handleOpen}
                 open={this.state.showModal}
                 id={'add-new-issue-modal'}
                 trigger={<a className="item">Add an issue</a>}>
@@ -74,4 +79,4 @@ class AddNewIssueModal extends Component {
     }
 }
 
-export default AddNewIssueModal;
+export default connect(null, { ticketCreated })(AddNewIssueModal);
