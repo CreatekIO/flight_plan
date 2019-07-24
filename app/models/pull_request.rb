@@ -70,6 +70,10 @@ class PullRequest < ApplicationRecord
     super(GITHUB_MERGE_STATUSES.fetch(value, value))
   end
 
+  def merge_status_known?
+    !merge_status_unknown?
+  end
+
   def unmerged?
     !merged?
   end

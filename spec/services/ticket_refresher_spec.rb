@@ -90,9 +90,7 @@ RSpec.describe TicketRefresher do
     it 'updates linked pull requests' do
       subject.run
 
-      expect(
-        PullRequestRefreshWorker.jobs.map { |job| job['args'] }
-      ).to eq([[pull_request.id]])
+      expect(PullRequestRefreshWorker).to have_enqueued_sidekiq_job(pull_request.id)
     end
   end
 end
