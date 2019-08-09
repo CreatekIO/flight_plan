@@ -1,6 +1,7 @@
 import React, { PureComponent } from "react";
 import { connect } from "react-redux";
 import { Droppable } from "react-beautiful-dnd";
+import { Popup } from "semantic-ui-react";
 import classNames from "classnames";
 import Octicon, { Fold, Unfold } from "@githubprimer/octicons-react";
 
@@ -43,21 +44,22 @@ const Swimlane = ({
     <div className={classNames("swimlane", { "is-collapsed": isCollapsed })}>
         <div className="ui small grey center aligned header swimlane-header">
             <span className="swimlane-header-text">{name}</span>
-            {isCollapsed ? (
-                <button
-                    className="swimlane-toggle-btn"
-                    onClick={() => expandSwimlane(id)}
-                >
-                    <Octicon icon={Unfold} />
-                </button>
-            ) : (
-                <button
-                    className="swimlane-toggle-btn"
-                    onClick={() => collapseSwimlane(id)}
-                >
-                    <Octicon icon={Fold} />
-                </button>
-            )}
+            <Popup
+                trigger={
+                    <button
+                        className="swimlane-toggle-btn"
+                        onClick={() =>
+                            isCollapsed ? expandSwimlane(id) : collapseSwimlane(id)
+                        }
+                    >
+                        <Octicon icon={isCollapsed ? Unfold : Fold} />
+                    </button>
+                }
+                content={`${isCollapsed ? "Expand" : "Collapse"} swimlane`}
+                size="mini"
+                hideOnScroll
+                inverted
+            />
         </div>
         <Droppable droppableId={`Swimlane#swimlane-${id}`} isDropDisabled={isCollapsed}>
             {(provided, snapshot) => (
