@@ -66,6 +66,16 @@ export const ticketMoved = ({ source, destination, boardTicketId }) => ({
     }
 });
 
+export const collapseSwimlane = swimlaneId => ({
+    type: "COLLAPSE_SWIMLANE",
+    payload: { swimlaneId }
+});
+
+export const expandSwimlane = swimlaneId => ({
+    type: "EXPAND_SWIMLANE",
+    payload: { swimlaneId }
+});
+
 export const boardLoaded = board => ({
     type: "BOARD_LOAD",
     payload: board

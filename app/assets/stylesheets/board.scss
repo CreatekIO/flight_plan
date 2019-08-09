@@ -25,20 +25,74 @@ body[data-controller="boards"] {
 
   .swimlane {
     $background: #f9fafb;
+    $width: 250px;
 
+    position: relative;
     // leave room for the header menu
     margin-top: 51px;
-    width: 250px;
+    width: $width;
     padding-top: 6px;
     border-left: 3px solid #e8eff9;
     background-color: $background;
     flex: 0 0 auto;
+    transition: width .2s;
+
+    &.is-collapsed {
+      width: 33px;
+
+      .swimlane-header {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        height: $width;
+        border-bottom: 0;
+        text-align: left;
+      }
+
+      .swimlane-header-text {
+        transform: rotate(90deg);
+        display: inline-block;
+        width: $width;
+        transform-origin: 15px center;
+        padding-left: 51px;
+      }
+
+      .swimlane-toggle-btn {
+        top: 6px;
+        right: auto;
+      }
+
+      .body {
+        margin-top: (50px + 33px);
+      }
+    }
 
     .swimlane-header {
+      position: relative;
       height: 33px;
       border-bottom: 2px solid #e8eff9;
       margin-top: 0.5em;
       margin-bottom: 0;
+    }
+
+    .swimlane-toggle-btn {
+      position: absolute;
+      right: 0.5em;
+      border: 0;
+      background: transparent;
+      color: #767676;
+      cursor: pointer;
+      z-index: 1;
+
+      &:hover {
+        color: #222222;
+      }
+
+      .octicon {
+        transform: rotate(90deg);
+      }
     }
 
     > .body {
