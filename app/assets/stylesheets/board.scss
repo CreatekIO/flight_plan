@@ -27,7 +27,6 @@ body[data-controller="boards"] {
     $background: #f9fafb;
     $width: 250px;
 
-    position: relative;
     // leave room for the header menu
     margin-top: 51px;
     width: $width;
@@ -35,37 +34,32 @@ body[data-controller="boards"] {
     border-left: 3px solid #e8eff9;
     background-color: $background;
     flex: 0 0 auto;
-    transition: width .2s;
+    transition: width .2s ease-out;
 
     &.is-collapsed {
-      width: 33px;
+      width: 40px;
+      overflow: hidden;
 
       .swimlane-header {
-        position: absolute;
-        left: 0;
-        right: 0;
-        top: 0;
-        bottom: 0;
         height: $width;
         border-bottom: 0;
         text-align: left;
       }
 
-      .swimlane-header-text {
+      .swimlane-header--text {
         transform: rotate(90deg);
         display: inline-block;
         width: $width;
-        transform-origin: 15px center;
+        transform-origin: 20px center;
         padding-left: 51px;
       }
 
-      .swimlane-toggle-btn {
-        top: 6px;
-        right: auto;
+      .swimlane-toggle--btn {
+        right: 4px;
       }
 
       .body {
-        margin-top: (50px + 33px);
+        display: none;
       }
     }
 
@@ -77,9 +71,11 @@ body[data-controller="boards"] {
       margin-bottom: 0;
     }
 
-    .swimlane-toggle-btn {
+    .swimlane-toggle--btn {
       position: absolute;
       right: 0.5em;
+      padding: 0.5em;
+      top: -0.4em;
       border: 0;
       background: transparent;
       color: #767676;

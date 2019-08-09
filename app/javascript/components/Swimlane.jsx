@@ -43,11 +43,11 @@ const Swimlane = ({
 }) => (
     <div className={classNames("swimlane", { "is-collapsed": isCollapsed })}>
         <div className="ui small grey center aligned header swimlane-header">
-            <span className="swimlane-header-text">{name}</span>
+            <span className="swimlane-header--text">{name}</span>
             <Popup
                 trigger={
                     <button
-                        className="swimlane-toggle-btn"
+                        className="swimlane-toggle--btn"
                         onClick={() =>
                             isCollapsed ? expandSwimlane(id) : collapseSwimlane(id)
                         }
@@ -55,7 +55,8 @@ const Swimlane = ({
                         <Octicon icon={isCollapsed ? Unfold : Fold} />
                     </button>
                 }
-                content={`${isCollapsed ? "Expand" : "Collapse"} swimlane`}
+                /* \u00A0 is a non-breaking space */
+                content={`${isCollapsed ? "Expand" : "Collapse"}\u00A0swimlane`}
                 size="mini"
                 hideOnScroll
                 inverted
