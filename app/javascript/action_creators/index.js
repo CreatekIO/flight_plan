@@ -13,8 +13,33 @@ const checkForErrors = data =>
         data.error || data.errors ? reject(new Error()) : resolve(data)
     );
 
+const mergeInCollapsedStateOfSwimlanes = board =>
+    new Promise((resolve, reject) => {
+        try {
+            board.swimlanes.forEach(swimlane => {
+                let isCollapsed = false;
+
+                try {
+                    isCollapsed = !!localStorage.getItem(
+                        `swimlane:${swimlane.id}:collapsed`
+                    );
+                } catch (err) {
+                    console.warn(error);
+                }
+
+                swimlane.isCollapsed = isCollapsed;
+            });
+
+            resolve(board);
+        } catch (err) {
+            reject(err);
+        }
+    });
+
 export const loadBoard = () => dispatch =>
-    getBoard().then(board => dispatch(boardLoaded(board)));
+    getBoard()
+        .then(mergeInCollapsedStateOfSwimlanes)
+        .then(board => dispatch(boardLoaded(board)));
 
 export const loadNextActions = () => dispatch =>
     getBoardNextActions().then(repos => dispatch(nextActionsLoaded(repos)));
