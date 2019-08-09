@@ -1,5 +1,6 @@
 import React from "react";
 import classNames from "classnames";
+import { Popup } from "semantic-ui-react";
 
 import NextActionButton from "./NextActionButton";
 import PullRequestIcon from "./PullRequestIcon";
@@ -16,9 +17,18 @@ const PullRequestLine = ({
         <div className="left floated content">
             <PullRequestIcon merged={merged} state={remote_state} />
             &nbsp;
-            <a href={html_url} title={remote_title} target="_blank">
-                {remote_number}
-            </a>
+            <Popup
+                trigger={
+                    <a href={html_url} target="_blank">
+                        {remote_number}
+                    </a>
+                }
+                content={remote_title}
+                position="right center"
+                size="mini"
+                hideOnScroll
+                inverted
+            />
         </div>
         {next_action && (
             <div className="right floated content">
