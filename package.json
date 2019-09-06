@@ -23,7 +23,10 @@
     "webpack-dev-server": "^2.7.1"
   },
   "resolutions": {
-    "tar": "^4.4.2",
-    "jquery": "^3.4.0"
+    "jquery": "^3.4.0",
+    "lodash": "^4.17.13",
+    "lodash.mergewith": "^4.6.2",
+    "lodash.template": "^4.5.0",
+    "tar": "^4.4.2"
   }
 }
