@@ -30,6 +30,7 @@
     "lodash.template": "^4.5.0",
     "macaddress": "^0.2.9",
     "querystringify": "^2.0.0",
+    "sshpk": "^1.13.2",
     "tar": "^4.4.3"
   }
 }
