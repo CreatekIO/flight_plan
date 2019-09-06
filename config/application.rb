@@ -31,5 +31,9 @@ module FlightPlan
     config.generators.system_tests = nil
 
     config.action_cable.mount_path = '/ws'
+    config.action_cable.log_tags = [
+      :actioncable,
+      -> (request) { request.uuid }
+    ]
   end
 end
