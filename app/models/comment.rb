@@ -1,8 +1,15 @@
 class Comment < ApplicationRecord
   belongs_to :ticket
 
-  def self.import(remote_comment, repo, remote_issue: nil)
+  DELETED_ACTION = 'deleted'.freeze
+
+  def self.import(payload, repo)
+    remote_comment = payload[:comment]
+    remote_issue = payload[:issue]
+
     comment = Comment.find_or_initialize_by(remote_id: remote_comment[:id])
+
+    return comment.destroy if payload[:action] == DELETED_ACTION
 
     if comment.new_record?
       comment.ticket = if remote_issue.present?

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190409114643) do
+ActiveRecord::Schema.define(version: 20190531141449) do
 
   create_table "board_repos", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin" do |t|
     t.bigint "board_id"
@@ -50,10 +50,10 @@ ActiveRecord::Schema.define(version: 20190409114643) do
     t.integer "commits_in_push"
     t.boolean "force_push", default: false
     t.datetime "commit_timestamp"
-    t.string "author_username"
-    t.string "committer_username"
+    t.string "author_username", collation: "utf8mb4_general_ci"
+    t.string "committer_username", collation: "utf8mb4_general_ci"
     t.integer "pusher_remote_id"
-    t.string "pusher_username"
+    t.string "pusher_username", collation: "utf8mb4_general_ci"
     t.text "payload"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -83,7 +83,7 @@ ActiveRecord::Schema.define(version: 20190409114643) do
     t.text "remote_body"
     t.string "remote_id"
     t.string "remote_author_id"
-    t.string "remote_author"
+    t.string "remote_author", collation: "utf8mb4_general_ci"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.datetime "remote_created_at"
@@ -101,9 +101,9 @@ ActiveRecord::Schema.define(version: 20190409114643) do
     t.string "url"
     t.string "avatar_url"
     t.integer "author_remote_id"
-    t.string "author_username"
+    t.string "author_username", collation: "utf8mb4_general_ci"
     t.integer "committer_remote_id"
-    t.string "committer_username"
+    t.string "committer_username", collation: "utf8mb4_general_ci"
     t.datetime "remote_created_at"
     t.text "payload"
     t.datetime "created_at", null: false
@@ -128,7 +128,7 @@ ActiveRecord::Schema.define(version: 20190409114643) do
   end
 
   create_table "labels", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin" do |t|
-    t.string "name"
+    t.string "name", collation: "utf8mb4_general_ci"
     t.integer "remote_id"
     t.string "colour", limit: 6
     t.bigint "repo_id"
@@ -170,7 +170,7 @@ ActiveRecord::Schema.define(version: 20190409114643) do
     t.text "body"
     t.string "url"
     t.integer "reviewer_remote_id"
-    t.string "reviewer_username"
+    t.string "reviewer_username", collation: "utf8mb4_general_ci"
     t.datetime "remote_created_at"
     t.text "payload"
     t.datetime "created_at", null: false
@@ -197,7 +197,7 @@ ActiveRecord::Schema.define(version: 20190409114643) do
     t.string "merge_status"
     t.boolean "merged", default: false
     t.bigint "creator_remote_id"
-    t.string "creator_username"
+    t.string "creator_username", collation: "utf8mb4_general_ci"
     t.index ["creator_remote_id"], name: "index_pull_requests_on_creator_remote_id"
     t.index ["merge_status"], name: "index_pull_requests_on_merge_status", length: { merge_status: 191 }
     t.index ["merged"], name: "index_pull_requests_on_merged"
@@ -239,7 +239,7 @@ ActiveRecord::Schema.define(version: 20190409114643) do
 
   create_table "repos", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin" do |t|
     t.string "name"
-    t.string "remote_url"
+    t.string "remote_url", collation: "utf8mb4_general_ci"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -255,7 +255,7 @@ ActiveRecord::Schema.define(version: 20190409114643) do
 
   create_table "swimlanes", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin" do |t|
     t.bigint "board_id"
-    t.string "name"
+    t.string "name", collation: "utf8mb4_general_ci"
     t.integer "position"
     t.boolean "display_duration"
     t.datetime "created_at", null: false
@@ -266,7 +266,7 @@ ActiveRecord::Schema.define(version: 20190409114643) do
   create_table "ticket_assignments", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin" do |t|
     t.bigint "ticket_id"
     t.bigint "assignee_remote_id"
-    t.string "assignee_username"
+    t.string "assignee_username", collation: "utf8mb4_general_ci"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["assignee_remote_id"], name: "index_ticket_assignments_on_assignee_remote_id"
@@ -285,12 +285,12 @@ ActiveRecord::Schema.define(version: 20190409114643) do
     t.bigint "repo_id"
     t.boolean "merged", default: false
     t.integer "creator_remote_id"
-    t.string "creator_username"
+    t.string "creator_username", collation: "utf8mb4_general_ci"
     t.bigint "milestone_id"
     t.datetime "remote_created_at"
     t.datetime "remote_updated_at"
     t.index ["creator_remote_id"], name: "index_tickets_on_creator_remote_id"
-    t.index ["creator_username"], name: "index_tickets_on_creator_username"
+    t.index ["creator_username"], name: "index_tickets_on_creator_username", length: { creator_username: 191 }
     t.index ["milestone_id"], name: "index_tickets_on_milestone_id"
     t.index ["repo_id"], name: "index_tickets_on_repo_id"
   end
@@ -316,7 +316,9 @@ ActiveRecord::Schema.define(version: 20190409114643) do
     t.datetime "updated_at", null: false
     t.string "provider"
     t.string "uid"
+    t.string "username", collation: "utf8mb4_general_ci"
     t.datetime "remember_created_at"
+    t.index ["username"], name: "index_users_on_username", length: { username: 191 }
   end
 
   add_foreign_key "branches", "repos"

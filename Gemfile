@@ -20,22 +20,30 @@ gem 'coffee-rails', '~> 4.2'
 gem 'jbuilder', '~> 2.5'
 gem 'turbolinks', '~> 5'
 
-gem 'bootstrap-sass'
+gem 'bootstrap-sass', '~> 3.4.1'
 gem 'bugsnag'
 gem 'business_time'
 gem 'cancancan', '~> 2.0.0'
-gem 'createk_data_migrator'
 gem 'clockwork'
-gem 'devise'
+gem 'createk_data_migrator'
+gem 'devise', '~> 4.6.0'
 gem 'github_webhook', '~> 1.1'
 gem 'haml'
 gem 'jquery-rails'
 gem 'octicons_helper'
 gem 'octokit'
 gem 'omniauth-github'
+gem 'omniauth-rails_csrf_protection', '~> 0.1'
 gem 'ranked-model', '~> 0.4'
 gem 'sidekiq'
 gem 'slack-ruby-client'
+
+# Fix versions of transitive dependencies due to vulnerabilities
+gem 'ffi', '~> 1.10.0'
+gem 'loofah', '~> 2.2.3'
+gem 'nokogiri', '~> 1.10.1'
+gem 'rack', '~> 2.0.6'
+gem 'rubyzip', '~> 1.2.2'
 
 group :development, :test do
   gem 'active_record_query_trace'
@@ -57,6 +65,10 @@ end
 group :development do
   gem 'spring'
   gem 'web-console', '>= 3.3.0'
+end
+
+group :test do
+  gem 'rspec-sidekiq'
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem

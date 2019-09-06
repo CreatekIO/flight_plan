@@ -1,2 +1,8 @@
-%h1 Flight Plan
-= link_to "Sign in with github", user_github_omniauth_authorize_path, class: 'ui primary button'
+- flash_classes = { alert: 'warning', notice: 'positive' }
+- flash.to_h.symbolize_keys.slice(:alert, :notice).each do |type, message|
+  .ui.bottom.attached.message{ class: flash_classes[type] }
+    %p= message
+
+.ui.center.aligned.basic.padded.segment
+  %h1.ui.header Flight Plan
+  = link_to "Sign in with GitHub", user_github_omniauth_authorize_path, method: :post, class: 'ui primary big button'

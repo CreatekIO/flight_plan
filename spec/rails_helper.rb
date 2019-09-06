@@ -1,3 +1,4 @@
+ENV['RACK_ENV'] ||= 'test'
 ENV['RAILS_ENV'] ||= 'test'
 require File.expand_path('../../config/environment', __FILE__)
 abort('The Rails environemtn is running in a production mode!') if Rails.env.production?
@@ -23,3 +24,9 @@ RSpec.configure do |config|
   config.include Warden::Test::Helpers
 end
 
+RSpec::Matchers.define_negated_matcher :not_change, :change
+
+RSpec::Sidekiq.configure do |config|
+  config.clear_all_enqueued_jobs = true
+  config.warn_when_jobs_not_processed_by_sidekiq = false
+end

@@ -154,6 +154,22 @@ RSpec.describe Ticket do
           expect(ticket.reload.labels.map(&:remote_id)).to eq(remote_issue[:labels].map { |label| label[:id] })
         end
       end
+
+      context 'when ticket has been transferred to another repo' do
+        subject { described_class.import(remote_issue, remote_repo, action: 'transferred') }
+
+        it 'deletes ticket' do
+          expect { subject }.to change { Ticket.where(id: ticket.id).count }.by(-1)
+        end
+      end
+
+      context 'when ticket has been deleted' do
+        subject { described_class.import(remote_issue, remote_repo, action: 'deleted') }
+
+        it 'deletes ticket' do
+          expect { subject }.to change { Ticket.where(id: ticket.id).count }.by(-1)
+        end
+      end
     end
   end
 
@@ -186,6 +202,101 @@ RSpec.describe Ticket do
   end
 
   describe '#update_board_tickets_from_remote' do
-    pending
+    include_context 'board with swimlanes'
+    include_context 'remote issue'
+
+    let(:repo) { create(:repo, remote_url: remote_url) }
+    let(:ticket) { create(:ticket, repo: repo, remote_id: issue_id, remote_state: ticket_state) }
+    let!(:board_ticket) { create(:board_ticket, ticket: ticket, board: board, swimlane: old_swimlane) }
+    let!(:acceptance) { create(:swimlane, name: 'Acceptance', board: board, position: 3) }
+    let!(:closed) { create(:swimlane, name: 'Closed', board: board, position: 4) }
+
+    let(:old_swimlane) { backlog }
+    let(:ticket_state) { 'open' }
+
+    let(:payload) do
+      remote_issue.merge(
+        labels: [{ id: '111', name: "status: #{new_swimlane.name}", color: 'ff0000' }]
+      )
+    end
+
+    before do
+      3.times do
+        ticket = create(:ticket, repo: repo)
+        create(:board_ticket, ticket: ticket, board: board, swimlane: new_swimlane)
+      end
+    end
+
+    context 'when ticket has been opened' do
+      let(:new_swimlane) { backlog }
+      let(:payload) { remote_issue.merge(labels: []) }
+      let(:ticket) { nil }
+      let(:board_ticket) { nil }
+
+      it 'moves board ticket to the top of the first swimlane' do
+        ticket = Ticket.import(payload, full_name: remote_url)
+        board_ticket = ticket.board_tickets.find_by!(board: board)
+
+        expect(board_ticket.swimlane).to eq(backlog)
+        expect(backlog.board_tickets.first).to eq(board_ticket)
+      end
+    end
+
+    context 'when ticket has been closed' do
+      let(:old_swimlane) { dev }
+      let(:new_swimlane) { closed }
+
+      let(:payload) do
+        remote_issue.merge(
+          state: 'closed',
+          labels: [{ id: '111', name: "status: #{dev.name}", color: 'ff0000' }]
+        )
+      end
+
+      it 'moves board ticket to the top of the last swimlane' do
+        expect {
+          Ticket.import(payload, full_name: remote_url)
+        }.to change { board_ticket.reload.swimlane }.from(dev).to(closed)
+          .and change { closed.reload.board_tickets.first }.to(board_ticket)
+      end
+    end
+
+    context 'when ticket has been re-opened' do
+      let(:ticket_state) { 'closed' }
+      let(:old_swimlane) { closed }
+      let(:new_swimlane) { backlog }
+
+      let(:payload) do
+        remote_issue.merge(state: 'open', labels: [])
+      end
+
+      it 'moves board ticket to the top of the first swimlane' do
+        expect {
+          Ticket.import(payload, full_name: remote_url)
+        }.to change { board_ticket.reload.swimlane }.from(closed).to(backlog)
+          .and change { backlog.reload.board_tickets.first }.to(board_ticket)
+      end
+    end
+
+    context 'when ticket hasn\'t moved swimlane via label' do
+      let(:new_swimlane) { board_ticket.swimlane }
+
+      it 'does not move board ticket' do
+        expect {
+          Ticket.import(payload, full_name: remote_url)
+        }.not_to change { board_ticket.reload.swimlane }
+      end
+    end
+
+    context 'when ticket has moved swimlane via label' do
+      let(:new_swimlane) { acceptance }
+
+      it 'moves board ticket to the top of the new swimlane' do
+        expect {
+          Ticket.import(payload, full_name: remote_url)
+        }.to change { board_ticket.reload.swimlane }.from(backlog).to(acceptance)
+          .and change { acceptance.reload.board_tickets.first }.to(board_ticket)
+      end
+    end
   end
 end

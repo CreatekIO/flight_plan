@@ -19,8 +19,16 @@ class Ticket < ApplicationRecord
   scope :merged, -> { where(merged: true) }
   scope :unmerged, -> { where(merged: false) }
 
-  def self.import(remote_issue, remote_repo)
+  DELETED_ACTIONS = %w[deleted transferred].freeze
+
+  def self.import(remote_issue, remote_repo, action: nil)
     ticket = find_by_remote(remote_issue, remote_repo)
+
+    if DELETED_ACTIONS.include?(action)
+      ticket.destroy if ticket.persisted?
+      return ticket
+    end
+
     ticket.update_attributes(
       remote_number: remote_issue[:number],
       remote_title: remote_issue[:title],
@@ -76,10 +84,11 @@ class Ticket < ApplicationRecord
 
   def update_board_tickets_from_remote(remote_issue)
     repo.boards.each do |board|
-      bt = board_tickets.find_or_initialize_by(board: board)
-      bt.update_remote = false # don't sync changes to GitHub
-      bt.swimlane = swimlane_from_remote(remote_issue, board)
-      bt.save
+      board_ticket = board_tickets.find_or_initialize_by(board: board)
+      board_ticket.update_remote = false # don't sync changes to GitHub
+      board_ticket.swimlane = swimlane_from_remote(remote_issue, board)
+      board_ticket.swimlane_position = :first if board_ticket.swimlane_id_changed?
+      board_ticket.save
     end
   end
 
@@ -118,7 +127,7 @@ class Ticket < ApplicationRecord
   private
 
   def swimlane_from_remote(remote_issue, board)
-    if remote_issue['state'] == 'closed'
+    if remote_issue[:state] == 'closed'
       board.closed_swimlane
     else
       status_label = remote_issue[:labels].find do |label|

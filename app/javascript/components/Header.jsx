@@ -3,6 +3,7 @@ import { Dropdown, Popup } from "semantic-ui-react";
 import { connect } from "react-redux";
 
 import NextActionButton from "./NextActionButton";
+import Avatar from "./Avatar";
 import { getOpenPRs } from "../reducers/selectors";
 
 const truncate = (text, length) => {
@@ -58,7 +59,13 @@ const OpenPullRequests = ({ openPRsCount, pullRequests }) => {
     );
 
     return (
-        <Popup trigger={item} on="click" flowing className="open-pull-requests">
+        <Popup
+            trigger={item}
+            on="click"
+            flowing
+            hideOnScroll
+            className="open-pull-requests"
+        >
             {pullRequests.map(repo => (
                 <RepoPullRequests repo={repo} key={repo.id} />
             ))}
@@ -86,6 +93,27 @@ const Header = ({ boards, isWaiting, openPRsCount, pullRequests }) => {
             </Dropdown>
 
             <div className="right menu">
+                <Dropdown
+                    trigger={<Avatar username={flightPlanConfig.currentUser.username} />}
+                    className="item user-menu"
+                    pointing="top left"
+                    icon={null}
+                >
+                    <Dropdown.Menu>
+                        <Dropdown.Header>
+                            Signed in as{" "}
+                            <strong>@{flightPlanConfig.currentUser.username}</strong>
+                        </Dropdown.Header>
+                        <Dropdown.Divider />
+                        <Dropdown.Item
+                            as="a"
+                            href={flightPlanConfig.api.logoutURL}
+                            data-method="delete"
+                        >
+                            Sign out
+                        </Dropdown.Item>
+                    </Dropdown.Menu>
+                </Dropdown>
                 <a className="item" href={currentBoard.dashboardURL}>
                     PR Dashboard
                 </a>

@@ -1,25 +1,34 @@
 module IssueNumberExtractor
-  NUMBER_IN_BRANCH = /
+  NUMBER_IN_BRANCH = %r{
     (?<=\#) # non-capturing octothorpe
     \d+     # >= 1 digits
-  /x
+  }x
 
-  NUMBER_IN_BODY = /
+  NUMBER_IN_BODY = %r{
     connect(?:s|ed)? # matches "connect", "connects", "connected"
     (?:
      \p{Blank}       # space or tab
      to
     )?               # matches all of the above permutations with optional "to"
     \p{Blank}        # space or tab
+    (
+     [a-z0-9\-]+     # user/org name...
+     /
+     [a-z0-9\-_]+    # ...followed by repo name (similar to username, but allows underscores)...
+    )?               # ...which is all optional
     \#
-    (\d+)
-  /ix
+    (\d+)            # issue number
+  }ix
 
   def self.from_branch(branch_name)
     branch_name[NUMBER_IN_BRANCH]
   end
 
-  def self.connections(text)
-    text.to_s.scan(NUMBER_IN_BODY).flatten
+  def self.connections(text, current_repo:)
+    text.to_s.scan(NUMBER_IN_BODY).each_with_object(Set.new) do |(remote_url, number), set|
+      remote_url ||= current_repo.remote_url
+
+      set.add(repo: remote_url, number: number)
+    end
   end
 end
