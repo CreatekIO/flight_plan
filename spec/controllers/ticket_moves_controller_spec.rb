@@ -5,6 +5,8 @@ RSpec.describe TicketMovesController do
     include Devise::Test::ControllerHelpers
     include_context 'board with swimlanes'
 
+    render_views
+
     let(:ticket) { create(:ticket, repo: repo) }
     let!(:board_ticket) { create(:board_ticket, board: board, ticket: ticket, swimlane: backlog) }
 
@@ -19,6 +21,20 @@ RSpec.describe TicketMovesController do
 
     let(:board_ticket_params) do
       { swimlane_id: destination_swimlane.id, swimlane_position: destination_position }
+    end
+
+    let(:expected_payload) do
+      a_hash_including(
+        type: 'TICKET_WAS_MOVED',
+        payload: {
+          userId: user.id,
+          boardTicket: a_string_including(
+            board_ticket_path(board, board_ticket)
+          ),
+          destinationId: destination_swimlane.id,
+          destinationIndex: destination_position
+        }
+      )
     end
 
     subject do
@@ -86,6 +102,7 @@ RSpec.describe TicketMovesController do
             subject
           }.to change { board_ticket.reload.swimlane }.from(backlog).to(dev)
             .and change { dev.reload.board_tickets[destination_position] }.to(board_ticket)
+            .and have_broadcasted_to(board).from_channel(BoardChannel).with(expected_payload)
 
           expect(response).to have_http_status(:created)
           expect(
@@ -121,6 +138,7 @@ RSpec.describe TicketMovesController do
               subject
             }.to change { board_ticket.reload.swimlane }.from(backlog).to(dev)
               .and change { dev.reload.board_tickets[destination_position] }.to(board_ticket)
+              .and have_broadcasted_to(board).from_channel(BoardChannel).with(expected_payload)
 
             expect(response).to have_http_status(:created)
 
