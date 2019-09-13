@@ -6,6 +6,8 @@ import {
     getBoardTicket
 } from "../api";
 
+import { getBoardUpdates } from "../websocket";
+
 const extractId = identifier => identifier.split("-").reverse()[0];
 
 const checkForErrors = data =>
@@ -79,6 +81,17 @@ export const ticketDragged = ({ source, destination, draggableId }) => dispatch 
             )
         );
 };
+
+const conditionalDispatch = dispatch => action => {
+    const { payload } = action;
+
+    if (payload && payload.userId !== flightPlanConfig.currentUser.id) {
+        return dispatch(action);
+    }
+};
+
+export const subscribeToBoard = id => dispatch =>
+    getBoardUpdates(id, conditionalDispatch(dispatch));
 
 export const ticketMoved = ({ source, destination, boardTicketId }) => ({
     type: "TICKET_MOVED",
