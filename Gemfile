@@ -36,6 +36,7 @@ gem 'octokit'
 gem 'omniauth-github'
 gem 'omniauth-rails_csrf_protection', '~> 0.1'
 gem 'ranked-model', '~> 0.4'
+gem 'redis-namespace'
 gem 'sidekiq'
 gem 'slack-ruby-client'
 
