@@ -1,4 +1,5 @@
 import ActionCable from "actioncable";
+import { isFeatureDisabled } from "./features";
 
 const ws = {
     get consumer() {
@@ -8,11 +9,11 @@ const ws = {
 };
 
 const subscribe = (channel, onReceive) => {
-    const subscription = ws.consumer.subscriptions.create(channel, {
-        received: onReceive
-    });
+    if (isFeatureDisabled("realtime_updates")) {
+        return { unsubscribe: () => {} };
+    }
 
-    return subscription;
+    return ws.consumer.subscriptions.create(channel, { received: onReceive });
 };
 
 export const getBoardUpdates = (id, callback) =>
