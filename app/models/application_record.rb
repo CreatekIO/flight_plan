@@ -24,4 +24,9 @@ class ApplicationRecord < ActiveRecord::Base
       value
     end
   end
+
+  # For flipper gem
+  def flipper_id
+    to_gid
+  end
 end
