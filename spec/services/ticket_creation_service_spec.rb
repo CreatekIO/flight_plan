@@ -19,7 +19,7 @@ RSpec.describe TicketCreationService do
 
     it 'creates a new github ticket' do
       allow(Octokit).to receive(:create_issue).and_return(remote_ticket)
-      expect { described_class.new(attributes, board).create_ticket! }.to change { repo.tickets.count }.by(1)
+      expect { described_class.new(attributes).create_ticket! }.to change { repo.tickets.count }.by(1)
     end
   end
 end

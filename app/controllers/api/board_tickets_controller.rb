@@ -1,6 +1,4 @@
 class Api::BoardTicketsController < AuthenticatedController
-  before_action :find_board, only: :create
-
   load_and_authorize_resource
 
   def index
@@ -11,19 +9,14 @@ class Api::BoardTicketsController < AuthenticatedController
   end
 
   def create
-    @board_ticket = TicketCreationService.new(ticket_params, @board).create_ticket!
+    @board_ticket = TicketCreationService.new(ticket_params).create_ticket!
+    @board = board_ticket.board
     render :create, status: :created
   rescue ActiveRecord::RecordInvalid
     head :unprocessable_entity
   end
 
   private
-
-  def find_board
-    @board = Board.find(params[:board_id])
-  rescue ActiveRecord::RecordNotFound
-    head :not_found
-  end
 
   def ticket_params
     params.require(:ticket).permit(:title, :description, :repo_id)

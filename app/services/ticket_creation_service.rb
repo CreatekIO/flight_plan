@@ -1,11 +1,11 @@
 class TicketCreationService
   attr_reader :board, :title, :repo_id, :description
 
-  def initialize(attributes, board)
+  def initialize(attributes)
     @description = attributes[:description]
     @title = attributes[:title]
     @repo_id = attributes[:repo_id]
-    @board = board
+    @board = board_repo.board
   end
 
   def create_ticket!
