@@ -5,11 +5,18 @@ RSpec.describe 'BoardTickets', type: :request do
   let(:path) { "/api/boards/#{board.id}/board_tickets" }
   let(:board) { create(:board) }
   let(:repo) { create(:repo) }
+  let(:board_repo) { create(:board_repo, board: board, repo: repo) }
   let(:ticket_1) { create(:ticket, repo: repo) }
   let(:ticket_2) { create(:ticket, repo: repo) }
   let(:swimlane) { create(:swimlane, board: board) }
   let!(:board_ticket_1) { create(:board_ticket, board: board, ticket: ticket_1, swimlane: swimlane) }
   let!(:board_ticket_2) { create(:board_ticket, board: board, ticket: ticket_2, swimlane: swimlane) }
+  let(:user) { create(:user) }
+
+  before do
+    # stubs warden for request spec
+    sign_in(user)
+  end
 
   context ':index' do
     it 'lists all board tickets' do
@@ -27,7 +34,7 @@ RSpec.describe 'BoardTickets', type: :request do
         ticket: {
           title: 'A new ticket',
           description: 'This is a new ticket',
-          repo_id: repo.id
+          repo_id: board_repo.id
         }
       } 
     end
