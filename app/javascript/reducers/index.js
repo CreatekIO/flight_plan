@@ -86,7 +86,7 @@ const entitiesReducer = (state = initialEntitiesState, { type, payload }) => {
             };
             return update(newEntities, { swimlanes: transform });
 
-        case 'TICKET_MOVED':
+        case 'TICKET_MOVED': {
             const {
                 sourceId,
                 sourceIndex,
@@ -117,7 +117,9 @@ const entitiesReducer = (state = initialEntitiesState, { type, payload }) => {
                 (state, transform) => update(state, { swimlanes: transform }),
                 state
             );
-        case 'SWIMLANE_TICKETS_LOADING':
+        }
+
+        case 'SWIMLANE_TICKETS_LOADING': {
             const { swimlaneId } = payload;
 
             return update(state, {
@@ -125,6 +127,7 @@ const entitiesReducer = (state = initialEntitiesState, { type, payload }) => {
                     [swimlaneId]: { loading_board_tickets: { $set: true } }
                 }
             });
+        }
         case 'SWIMLANE_TICKETS_LOADED': {
             const { board_tickets, ...swimlane } = payload;
 
@@ -145,12 +148,32 @@ const entitiesReducer = (state = initialEntitiesState, { type, payload }) => {
                 }
             });
         }
+
         case 'BOARD_TICKET_LOADED':
             return updateEntities(
                 normalize(payload, boardTicketSchema).entities,
                 state
             );
-        case 'FULL_TICKET_LOADING':
+        case 'COLLAPSE_SWIMLANE': {
+            const { swimlaneId } = payload;
+
+            return update(state, {
+                swimlanes: { [swimlaneId]: { isCollapsed: { $set: true } } }
+            });
+        }
+        case 'EXPAND_SWIMLANE': {
+            const { swimlaneId } = payload;
+
+            return update(state, {
+                swimlanes: { [swimlaneId]: { isCollapsed: { $set: false } } }
+            });
+        }
+        case 'BOARD_TICKET_LOADED':
+            return updateEntities(
+                normalize(payload, boardTicketSchema).entities,
+                state
+            );
+        case 'FULL_TICKET_LOADING': {
             const { boardTicketId } = payload;
 
             return update(state, {
@@ -158,6 +181,7 @@ const entitiesReducer = (state = initialEntitiesState, { type, payload }) => {
                     [boardTicketId]: { loading_state: { $set: 'loading' } }
                 }
             });
+        }
         case 'FULL_TICKET_LOADED': {
             const { entities, result: boardTicketId } = normalize(
                 payload,

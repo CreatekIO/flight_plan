@@ -33,6 +33,7 @@ gem 'jquery-rails'
 gem 'octicons_helper'
 gem 'octokit'
 gem 'omniauth-github'
+gem 'omniauth-rails_csrf_protection', '~> 0.1'
 gem 'ranked-model', '~> 0.4'
 gem 'sidekiq'
 gem 'slack-ruby-client'
@@ -64,6 +65,10 @@ end
 group :development do
   gem 'spring'
   gem 'web-console', '>= 3.3.0'
+end
+
+group :test do
+  gem 'rspec-sidekiq'
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem

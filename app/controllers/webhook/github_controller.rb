@@ -8,7 +8,7 @@ class Webhook::GithubController < Webhook::BaseController
 
   def github_issues(payload)
     repo.with_lock do
-      Ticket.import(payload[:issue], payload[:repository])
+      Ticket.import(payload[:issue], payload[:repository], action: payload[:action])
     end
   end
 
@@ -21,9 +21,9 @@ class Webhook::GithubController < Webhook::BaseController
   end
 
   def github_pull_request(payload)
-    repo.with_lock do
-      PullRequest.import(payload[:pull_request], payload[:repository])
-    end
+    pull_request = repo.with_lock { PullRequest.import(payload[:pull_request], payload[:repository]) }
+
+    PullRequestRefreshWorker.update_after_import(pull_request)
   end
 
   def github_status(payload)

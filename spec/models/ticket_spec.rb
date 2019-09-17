@@ -154,6 +154,22 @@ RSpec.describe Ticket do
           expect(ticket.reload.labels.map(&:remote_id)).to eq(remote_issue[:labels].map { |label| label[:id] })
         end
       end
+
+      context 'when ticket has been transferred to another repo' do
+        subject { described_class.import(remote_issue, remote_repo, action: 'transferred') }
+
+        it 'deletes ticket' do
+          expect { subject }.to change { Ticket.where(id: ticket.id).count }.by(-1)
+        end
+      end
+
+      context 'when ticket has been deleted' do
+        subject { described_class.import(remote_issue, remote_repo, action: 'deleted') }
+
+        it 'deletes ticket' do
+          expect { subject }.to change { Ticket.where(id: ticket.id).count }.by(-1)
+        end
+      end
     end
   end
 

@@ -5,4 +5,4 @@
 
 .ui.center.aligned.basic.padded.segment
   %h1.ui.header Flight Plan
-  = link_to "Sign in with GitHub", user_github_omniauth_authorize_path, class: 'ui primary big button'
+  = link_to "Sign in with GitHub", user_github_omniauth_authorize_path, method: :post, class: 'ui primary big button'

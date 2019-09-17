@@ -95,14 +95,16 @@ RSpec.describe PullRequest do
 
   describe '#update_pull_request_connections' do
     let(:repo) { create(:repo) }
-    let(:branch_ticket) { create(:ticket, repo: repo) }
-    let(:body_ticket) { create(:ticket, repo: repo) }
+    let!(:board) { create(:board, repos: [repo]) }
 
     def connection_counts
       pull_request.pull_request_connections.group(:ticket).count
     end
 
-    context 'new pull request' do
+    context 'referencing ticket in same repo' do
+      let!(:branch_ticket) { create(:ticket, repo: repo) }
+      let!(:body_ticket) { create(:ticket, repo: repo) }
+
       let(:pull_request) do
         build(
           :pull_request,
@@ -112,37 +114,107 @@ RSpec.describe PullRequest do
         )
       end
 
-      it 'creates connections from branch name and body' do
-        expect {
+      context 'new pull request' do
+        it 'creates connections from branch name and body' do
+          expect {
+            pull_request.save!
+          }.to change {
+            connection_counts
+          }.from({}).to(branch_ticket => 1, body_ticket => 1)
+        end
+      end
+
+      context 'existing pull request' do
+        let(:new_branch_ticket) { create(:ticket, repo: repo) }
+        let(:new_body_ticket) { create(:ticket, repo: repo) }
+
+        it 'updates connections from branch name and body' do
           pull_request.save!
-        }.to change {
-          connection_counts
-        }.to(branch_ticket => 1, body_ticket => 1)
+
+          pull_request.remote_head_branch = "bug/##{new_branch_ticket.remote_number}-test"
+          pull_request.remote_body += "\nConnects ##{new_body_ticket.remote_number}"
+
+          expect {
+            pull_request.save!
+          }.to change {
+            connection_counts
+          }.from(branch_ticket => 1, body_ticket => 1)
+            .to(new_branch_ticket => 1, body_ticket => 1, new_body_ticket => 1)
+        end
       end
     end
 
-    context 'existing pull request' do
-      let(:pull_request) do
-        create(
-          :pull_request,
-          repo: repo,
-          remote_head_branch: "feature/##{branch_ticket.remote_number}-test",
-          remote_body: "Connects ##{body_ticket.remote_number}"
-        )
+    context 'referencing ticket in different repo' do
+      let!(:body_ticket) { create(:ticket, repo: other_repo) }
+
+      context 'on the same board' do
+        let!(:other_repo) { create(:repo, boards: [board]) }
+
+        let(:pull_request) do
+          build(
+            :pull_request,
+            repo: repo,
+            remote_body: "Connects #{other_repo.remote_url}##{body_ticket.remote_number}"
+          )
+        end
+
+        context 'new pull request' do
+          it 'creates connections from branch name and body' do
+            expect {
+              pull_request.save!
+            }.to change { connection_counts }.from({}).to(body_ticket => 1)
+          end
+        end
+
+        context 'existing pull request' do
+          let(:new_body_ticket) { create(:ticket, repo: other_repo) }
+
+          it 'updates connections from branch name and body' do
+            pull_request.save!
+
+            pull_request.remote_body += "\nConnects #{other_repo.remote_url}##{new_body_ticket.remote_number}"
+
+            expect {
+              pull_request.save!
+            }.to change {
+              connection_counts
+            }.from(body_ticket => 1).to(body_ticket => 1, new_body_ticket => 1)
+          end
+        end
       end
 
-      let(:new_branch_ticket) { create(:ticket, repo: repo) }
-      let(:new_body_ticket) { create(:ticket, repo: repo) }
+      context 'on a different board' do
+        let(:other_board) { create(:board) }
+        let!(:other_repo) { create(:repo, boards: [other_board]) }
 
-      it 'updates connections from branch name and body' do
-        pull_request.remote_head_branch = "bug/##{new_branch_ticket.remote_number}-test"
-        pull_request.remote_body += "\nConnects ##{new_body_ticket.remote_number}"
+        let(:pull_request) do
+          build(
+            :pull_request,
+            repo: repo,
+            remote_body: "Connects #{other_repo.remote_url}##{body_ticket.remote_number}"
+          )
+        end
 
-        expect {
-          pull_request.save!
-        }.to change {
-          connection_counts
-        }.to(new_branch_ticket => 1, body_ticket => 1, new_body_ticket => 1)
+        context 'new pull request' do
+          it 'doesn\'t create any connections' do
+            pull_request.save!
+
+            expect(connection_counts).to be_empty
+          end
+        end
+
+        context 'existing pull request' do
+          let(:new_body_ticket) { create(:ticket, repo: other_repo) }
+
+          it 'doesn\'t create any connections' do
+            pull_request.save!
+            pull_request.remote_body += "\nConnects #{other_repo.remote_url}##{new_body_ticket.remote_number}"
+
+            pull_request.save!
+
+            expect(connection_counts).to be_empty
+          end
+        end
       end
     end
   end

@@ -34,7 +34,7 @@ class Swimlane < ApplicationRecord
   scope :ordered, -> { order(:position) }
 
   def self.find_by_label!(label)
-    where('LOWER(name) = LOWER(?)', label.gsub(/^status: /, '')).first!
+    where(name: label.remove(/^status: /)).first!
   end
 
   def self.all_board_tickets_loaded?(collection)

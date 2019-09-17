@@ -17,8 +17,8 @@ class BoardTicket < ApplicationRecord
   belongs_to :ticket
   belongs_to :swimlane
   has_many :timesheets, dependent: :destroy
-  has_many :release_board_tickets, dependent: :destroy
-  has_many :releases, through: :release_board_tickets
+  has_many :repo_release_board_tickets, dependent: :destroy
+  has_many :repo_releases, through: :repo_release_board_tickets
   has_one :open_timesheet, -> { where(ended_at: nil) }, class_name: 'Timesheet'
   has_one :repo, through: :ticket
 
