@@ -19,6 +19,8 @@ Rails.application.routes.draw do
     resources :next_actions, only: :index
   end
 
+  resources :board_tickets, only: :create
+
   resources :swimlanes, only: [] do
     resources :tickets, controller: :board_tickets, only: :index
   end
@@ -29,7 +31,7 @@ Rails.application.routes.draw do
 
   namespace :api do
     resources :boards, only: :show do
-      resources :board_tickets, only: %i[index create]
+      resources :board_tickets, only: %i[index]
       resources :releases, only: :create
     end
   end
