@@ -8,14 +8,6 @@ class Api::BoardTicketsController < AuthenticatedController
     @board_tickets = @board_tickets.where(tickets: { remote_number: params[:remote_number] }) if params[:remote_number].present?
   end
 
-  def create
-    @board_ticket = TicketCreationService.new(ticket_params).create_ticket!
-    @board = board_ticket.board
-    render :create, status: :created
-  rescue ActiveRecord::RecordInvalid
-    head :unprocessable_entity
-  end
-
   private
 
   def ticket_params
