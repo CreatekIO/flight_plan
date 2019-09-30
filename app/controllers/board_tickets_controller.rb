@@ -11,8 +11,8 @@ class BoardTicketsController < AuthenticatedController
   end
 
   def create
-    @board_ticket = TicketCreationService.new(ticket_params).create_ticket!
-    @board = @board_ticket.board
+    ticket = TicketCreationService.new(ticket_params).create_ticket!
+    @board_ticket = ticket.board_tickets.find_by(board: @board)
     render :create, status: :created
   rescue ActiveRecord::RecordInvalid
     head :unprocessable_entity

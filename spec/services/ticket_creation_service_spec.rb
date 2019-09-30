@@ -14,7 +14,7 @@ RSpec.describe TicketCreationService do
       }
     end
     let(:remote_ticket) do
-      { remote_id: -1 }
+      { remote_id: -1, labels: [], assignees: [] }
     end
 
     it 'creates a new github ticket' do

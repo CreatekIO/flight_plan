@@ -10,22 +10,15 @@ class TicketCreationService
 
   def create_ticket!
     Ticket.transaction do
-      ticket = repo.tickets.new(remote_title: title, remote_body: description)
-      ticket.save!
       remote_ticket = create_remote_ticket
-      ticket.update!(
-        remote_id: remote_ticket[:id],
-        remote_number: remote_ticket[:number],
-        remote_state: remote_ticket[:state]
-      )
-      board.board_tickets.create!(ticket: ticket, swimlane: board.swimlanes.first)
+      Ticket.import(remote_ticket, full_name: repo.remote_url)
     end
   end
 
   private
 
   def board_repo
-    BoardRepo.find(@repo_id)
+    BoardRepo.find(repo_id)
   end
 
   def repo
