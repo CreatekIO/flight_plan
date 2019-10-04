@@ -2,14 +2,20 @@ require 'flipper/instrumentation/log_subscriber'
 
 Flipper.configure do |config|
   config.default do
-    redis = Redis::Namespace.new(
-      :flipper,
-      redis: Redis.new(url: ENV[ENV['REDIS_PROVIDER'].presence || 'REDIS_URL'])
-    )
+    adapter = if Rails.env.test?
+      Flipper::Adapters::Memory.new
+    else
+      redis = Redis::Namespace.new(
+        :flipper,
+        redis: Redis.new(url: ENV[ENV['REDIS_PROVIDER'].presence || 'REDIS_URL'])
+      )
+
+      Flipper::Adapters::Redis.new(redis)
+    end
 
     Flipper.new(
       Flipper::Adapters::Instrumented.new(
-        Flipper::Adapters::Redis.new(redis),
+        adapter,
         instrumenter: ActiveSupport::Notifications
       )
     )
