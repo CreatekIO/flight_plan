@@ -33,7 +33,7 @@ RSpec.feature 'Webhooks', type: :webhook do
         {
           repository: { full_name: repo.remote_url },
           pull_request: {
-            id: 1,
+            id: generate(:pr_remote_id),
             mergeable: merge_status,
             head: { ref: 'b', sha: 'b' },
             base: { ref: 'a', sha: 'a' },
@@ -51,7 +51,7 @@ RSpec.feature 'Webhooks', type: :webhook do
           }.to change(PullRequest, :count).by(1)
 
           expect(PullRequestRefreshWorker).to have_enqueued_sidekiq_job(
-            payload[:pull_request][:id]
+            PullRequest.reorder(:created_at).last.id
           ).in(1.minute)
         end
       end
