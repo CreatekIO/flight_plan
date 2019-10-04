@@ -29,7 +29,7 @@ ActiveRecord::Schema.define(version: 20190531141449) do
     t.datetime "updated_at", null: false
     t.integer "swimlane_sequence"
     t.index ["board_id"], name: "index_board_tickets_on_board_id"
-    t.index ["swimlane_id", "swimlane_sequence"], name: "index_board_tickets_on_swimlane_id_and_swimlane_sequence", unique: true
+    t.index ["swimlane_id", "swimlane_sequence"], name: "index_board_tickets_on_swimlane_id_and_swimlane_sequence"
     t.index ["swimlane_id"], name: "index_board_tickets_on_swimlane_id"
     t.index ["ticket_id"], name: "index_board_tickets_on_ticket_id"
   end
