@@ -15,3 +15,15 @@ Flipper.configure do |config|
     )
   end
 end
+
+Rails.application.config.after_initialize do
+  %i[realtime_updates].each do |feature|
+    if Rails.env.development? || Rails.env.test?
+      # Enable all features for everyone
+      Flipper.enable(feature)
+    else
+      # Just register feature
+      Flipper.add(feature)
+    end
+  end
+end
