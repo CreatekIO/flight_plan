@@ -93,6 +93,85 @@ RSpec.describe BoardTicket, type: :model do
         expect(stub).to have_been_requested
       end
     end
+
+    context 'moving swimlane' do
+      let(:before_swimlane) { backlog }
+      let(:after_swimlane) { dev }
+
+      context 'with large numbers of tickets in destination swimlane' do
+        let(:bisection_count) { 32 } # we use 32-bit ints
+
+        let!(:board_tickets) do
+          (1..(bisection_count + 5)).map do |n|
+            before_swimlane.board_tickets.create!(
+              board: board,
+              ticket: create(:ticket, repo: repo, remote_title: "Ticket #{n}"),
+              swimlane_position: :first
+            )
+          end
+        end
+
+        before do
+          rebalances = @rebalances = []
+
+          allow(RankedModel::Ranker::Mapper).to receive(:new).with(
+            an_instance_of(RankedModel::Ranker),
+            an_instance_of(BoardTicket)
+          ).and_wrap_original do |new, *args|
+            new.call(*args).tap do |mapper|
+              allow(mapper).to receive(:rebalance_ranks).and_wrap_original do |rebalance_ranks|
+                rebalances << mapper.instance
+                rebalance_ranks.call
+              end
+            end
+          end
+        end
+
+        it 'doesn\'t raise an error when rebalancing' do
+          expect {
+            board_tickets.each do |board_ticket|
+              board_ticket.update_remote = false
+              board_ticket.update_attributes(swimlane: after_swimlane, swimlane_position: :first)
+            end
+          }.to_not raise_error
+
+          expect(board_tickets.map(&:reload).map(&:swimlane_id)).to all eq(after_swimlane.id)
+          expect(@rebalances.count).to be >= 1
+        end
+
+        CustomError = Class.new(StandardError)
+
+        it 'rolls back db changes if error arises during save' do
+          board_tickets.first(bisection_count).each do |board_ticket|
+            board_ticket.update_remote = false
+            board_ticket.update_attributes(swimlane: after_swimlane, swimlane_position: :first)
+          end
+
+          expect(@rebalances.count).to be_zero
+
+          after_rebalance_tickets = board_tickets.drop(bisection_count)
+
+          after_rebalance_tickets.each do |board_ticket|
+            allow(board_ticket).to receive(:save).and_wrap_original do |save, *args|
+              save.call(*args)
+
+              raise CustomError
+            end
+
+            board_ticket.update_remote = false
+
+            begin
+              board_ticket.update_attributes(swimlane: after_swimlane, swimlane_position: :first)
+            rescue CustomError
+              next
+            end
+          end
+
+          expect(after_rebalance_tickets.map(&:reload).map(&:swimlane_id)).to all eq(before_swimlane.id)
+          expect(@rebalances.count).to eq(after_rebalance_tickets.count)
+        end
+      end
+    end
   end
 
   describe '#state_durations' do
