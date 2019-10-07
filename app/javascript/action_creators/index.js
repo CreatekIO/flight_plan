@@ -83,7 +83,12 @@ export const ticketDragged = ({ source, destination, draggableId }) => dispatch 
 
 export const ticketCreated = ticketAttributes => dispatch => {
     return createTicket(ticketAttributes)
-        .then(response => dispatch(ticketCreation(response)))
+        .then(
+            response => dispatch(ticketCreation(response)),
+            reason => {
+                console.warn(reason);
+            }
+        )
         .catch(error, function() {
             console.warn(error);
         });
