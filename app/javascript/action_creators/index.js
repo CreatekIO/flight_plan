@@ -91,9 +91,11 @@ export const ticketDragged = ({
 };
 
 export const ticketCreated = ticketAttributes => dispatch => {
-    return createTicket(ticketAttributes).then(response =>
-        dispatch(ticketCreation(response))
-    );
+    return createTicket(ticketAttributes)
+        .then(response => dispatch(ticketCreation(response)))
+        .catch(error, function() {
+            console.warn(error);
+        });
 };
 
 export const ticketCreation = ticketAttributes => ({
