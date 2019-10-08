@@ -119,12 +119,12 @@ export const ticketMoved = ({ source, destination, boardTicketId }) => ({
 });
 
 export const collapseSwimlane = swimlaneId => ({
-    type: "COLLAPSE_SWIMLANE",
+    type: 'COLLAPSE_SWIMLANE',
     payload: { swimlaneId }
 });
 
 export const expandSwimlane = swimlaneId => ({
-    type: "EXPAND_SWIMLANE",
+    type: 'EXPAND_SWIMLANE',
     payload: { swimlaneId }
 });
 

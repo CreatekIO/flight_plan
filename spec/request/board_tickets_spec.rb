@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe 'BoardTickets', type: :request do
   include_context 'api'
-  let(:path) { '/board_tickets' }
+  let(:path) { "/boards/#{board.id}/board_tickets" }
   let(:board) { create(:board) }
   let(:repo) { create(:repo) }
   let(:board_repo) { create(:board_repo, board: board, repo: repo) }
@@ -29,7 +29,7 @@ RSpec.describe 'BoardTickets', type: :request do
       } 
     end
     let(:remote_ticket) do
-      { remote_id: -1 }
+      { remote_id: -1, labels: [], assignees: [] }
     end
 
     it 'creates a board_ticket' do
