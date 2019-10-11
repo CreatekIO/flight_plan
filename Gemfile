@@ -27,6 +27,7 @@ gem 'cancancan', '~> 2.0.0'
 gem 'clockwork'
 gem 'createk_data_migrator'
 gem 'devise', '~> 4.6.0'
+gem 'flipper-redis'
 gem 'github_webhook', '~> 1.1'
 gem 'haml'
 gem 'jquery-rails'
@@ -35,6 +36,7 @@ gem 'octokit'
 gem 'omniauth-github'
 gem 'omniauth-rails_csrf_protection', '~> 0.1'
 gem 'ranked-model', '~> 0.4'
+gem 'redis-namespace'
 gem 'sidekiq'
 gem 'slack-ruby-client'
 
@@ -68,6 +70,7 @@ group :development do
 end
 
 group :test do
+  gem 'action-cable-testing'
   gem 'rspec-sidekiq'
 end
 

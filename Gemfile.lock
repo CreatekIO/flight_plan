@@ -1,6 +1,8 @@
 GEM
   remote: https://rubygems.org/
   specs:
+    action-cable-testing (0.6.0)
+      actioncable (>= 5.0)
     actioncable (5.1.6)
       actionpack (= 5.1.6)
       nio4r (~> 2.0)
@@ -108,6 +110,10 @@ GEM
     faraday_middleware (0.12.2)
       faraday (>= 0.7.4, < 1.0)
     ffi (1.10.0)
+    flipper (0.16.2)
+    flipper-redis (0.16.2)
+      flipper (~> 0.16.2)
+      redis (>= 2.2, < 5)
     github_webhook (1.1.0)
       activesupport (>= 4)
       rack (>= 1.3)
@@ -213,6 +219,8 @@ GEM
     rb-inotify (0.9.10)
       ffi (>= 0.5.0, < 2)
     redis (4.0.1)
+    redis-namespace (1.6.0)
+      redis (>= 3.0.4)
     responders (2.4.1)
       actionpack (>= 4.2.0, < 6.0)
       railties (>= 4.2.0, < 6.0)
@@ -321,6 +329,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  action-cable-testing
   active_record_query_trace
   bootstrap-sass (~> 3.4.1)
   bugsnag
@@ -338,6 +347,7 @@ DEPENDENCIES
   dotenv-rails
   factory_bot
   ffi (~> 1.10.0)
+  flipper-redis
   github_webhook (~> 1.1)
   haml
   jbuilder (~> 2.5)
@@ -353,6 +363,7 @@ DEPENDENCIES
   rack (~> 2.0.6)
   rails (~> 5.1.4)
   ranked-model (~> 0.4)
+  redis-namespace
   rspec-rails (= 3.7.0)
   rspec-sidekiq
   rubyzip (~> 1.2.2)

@@ -1,10 +1,13 @@
+default: &default
+  adapter: redis
+  url: <%= ENV[ENV['REDIS_PROVIDER'].presence || 'REDIS_URL'] %>
+  channel_prefix: 'flight_plan_<%= Rails.env %>'
+
 development:
-  adapter: async
+  <<: *default
 
 test:
-  adapter: async
+  adapter: test
 
 production:
-  adapter: redis
-  url: redis://localhost:6379/1
-  channel_prefix: flight_plan_production
+  <<: *default

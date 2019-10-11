@@ -5,14 +5,29 @@ import update from "immutability-helper";
 
 import Swimlane from "./Swimlane";
 
-import { loadBoard, loadNextActions, ticketDragged } from "../action_creators";
+import {
+    loadBoard,
+    loadNextActions,
+    ticketDragged,
+    subscribeToBoard
+} from "../action_creators";
 
 class Board extends Component {
     state = { isLoading: true };
 
     componentDidMount() {
-        this.props.loadBoard().finally(() => this.setState({ isLoading: false }));
-        this.props.loadNextActions();
+        const { loadBoard, loadNextActions, subscribeToBoard } = this.props;
+
+        loadBoard()
+            .then(({ payload: { id } }) => {
+                this.boardSubscription = subscribeToBoard(id);
+            })
+            .finally(() => this.setState({ isLoading: false }));
+        loadNextActions();
+    }
+
+    componentWillUnmount() {
+        this.boardSubscription && this.boardSubscription.unsubscribe();
     }
 
     onDragEnd = event => {
@@ -57,5 +72,5 @@ const mapStateToProps = ({ entities, current }) => {
 
 export default connect(
     mapStateToProps,
-    { loadBoard, loadNextActions, ticketDragged }
+    { loadBoard, loadNextActions, ticketDragged, subscribeToBoard }
 )(Board);

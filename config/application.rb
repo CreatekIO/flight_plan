@@ -25,9 +25,17 @@ module FlightPlan
     # Application configuration should go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded.
 
+    config.middleware.use Flipper::Middleware::Memoizer
+
     config.time_zone = 'London'
 
     # Don't generate system test files.
     config.generators.system_tests = nil
+
+    config.action_cable.mount_path = '/ws'
+    config.action_cable.log_tags = [
+      :actioncable,
+      -> (request) { request.uuid }
+    ]
   end
 end

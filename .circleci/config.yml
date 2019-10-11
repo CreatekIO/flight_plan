@@ -1,5 +1,4 @@
 ---
-
 version: 2
 jobs:
   build:
@@ -13,6 +12,7 @@ jobs:
       - image: mysql:5.7
         environment:
           MYSQL_ROOT_PASSWORD: mysecretpassword
+      - image: redis:3.2
 
     working_directory: ~/repo
 
