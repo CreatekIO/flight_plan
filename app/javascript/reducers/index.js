@@ -73,11 +73,10 @@ const entitiesReducer = (state = initialEntitiesState, { type, payload }) => {
                 state
             );
             const swimlane = payload.swimlane;
-            const desiredIndex = newEntities.swimlanes[swimlane].board_tickets.length;
             const transform = {
                 [swimlane]: {
                     board_tickets: {
-                        $splice: [[desiredIndex, 0, ticketAttributes.id]]
+                        $splice: [[0, 0, ticketAttributes.id]]
                     }
                 }
             };

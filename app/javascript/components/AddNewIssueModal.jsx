@@ -24,7 +24,10 @@ class AddNewIssueModal extends Component {
             showModal: false,
             repo_id_error: "",
             description_error: "",
-            title_error: ""
+            title_error: "",
+            description: "",
+            repo_id: "",
+            title: ""
         });
     };
 
@@ -37,11 +40,16 @@ class AddNewIssueModal extends Component {
 
         var fieldsPopulated = formFields.every(this.fieldBlank);
         if (fieldsPopulated) {
-            this.setState({ showModal: false });
             this.props.ticketCreated({
                 title: this.state.title,
                 description: this.state.description,
                 repo_id: this.state.repo_id
+            });
+            this.setState({
+                showModal: false,
+                description: "",
+                repo_id: "",
+                title: ""
             });
         }
     };
