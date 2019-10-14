@@ -98,9 +98,12 @@ export const ticketCreated = ticketAttributes => dispatch => {
                 console.warn(reason);
             }
         )
-        .catch(error, function() {
-            console.warn(error);
-        });
+        .catch(
+            error =>
+                function() {
+                    console.warn(error);
+                }
+        );
 };
 
 export const ticketCreation = ticketAttributes => ({
