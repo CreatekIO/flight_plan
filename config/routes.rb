@@ -12,7 +12,7 @@ Rails.application.routes.draw do
   end
 
   resources :boards do
-    resources :board_tickets, as: :tickets, only: :show do
+    resources :board_tickets, as: :tickets, only: %i[show create] do
       resources :moves, controller: :ticket_moves, only: :create
     end
     get 'pull_requests' => 'pull_request_dashboards#index', as: :pull_requests
@@ -29,7 +29,7 @@ Rails.application.routes.draw do
 
   namespace :api do
     resources :boards, only: :show do
-      resources :board_tickets, only: :index
+      resources :board_tickets, only: %i[index]
       resources :releases, only: :create
     end
   end
