@@ -74,6 +74,17 @@ class BoardTicket < ApplicationRecord
 
   private
 
+  def handle_ranking
+    # Ensure record is already in the right swimlane should we need to rebalance positions
+    self.class.unscoped.where(id: id).update_all(swimlane_id: swimlane_id) if prewrite_swimlane_change?
+
+    super
+  end
+
+  def prewrite_swimlane_change?
+    persisted? && swimlane_position.present? && swimlane_id_changed?
+  end
+
   def update_remote?
     unless defined? @update_remote
       @update_remote = ENV['DO_NOT_SYNC_TO_GITHUB'].blank?
