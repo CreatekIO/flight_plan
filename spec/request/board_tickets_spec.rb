@@ -5,6 +5,7 @@ RSpec.describe 'BoardTickets', type: :request do
   let(:path) { "/boards/#{board.id}/board_tickets" }
   let(:board) { create(:board) }
   let(:repo) { create(:repo) }
+  let(:remote_url) { repo.remote_url }
   let(:board_repo) { create(:board_repo, board: board, repo: repo) }
   let(:ticket_1) { create(:ticket, repo: repo) }
   let(:ticket_2) { create(:ticket, repo: repo) }
@@ -18,7 +19,7 @@ RSpec.describe 'BoardTickets', type: :request do
   end
 
   context ':create' do
-    let(:ticket_params) do 
+    let(:ticket_params) do
       {
         board_id: board.id,
         ticket: {
@@ -26,18 +27,31 @@ RSpec.describe 'BoardTickets', type: :request do
           description: 'This is a new ticket',
           repo_id: board_repo.id
         }
-      } 
+      }
     end
+
     let(:remote_ticket) do
       { remote_id: -1, labels: [], assignees: [] }
     end
 
-    it 'creates a board_ticket' do
-      allow(Octokit).to receive(:create_issue).and_return(remote_ticket)
+    let!(:issue_request) do
+      params = hash_including(
+        title: ticket_params[:ticket][:title],
+        body: ticket_params[:ticket][:description]
+      )
 
-      expect {
-        post path, params: ticket_params, headers: api_headers
-      }.to change { board.board_tickets.count }.by(1)
+      stub_gh_post('issues', params) { remote_ticket }
+    end
+
+    it 'creates a board_ticket' do
+      aggregate_failures do
+        expect {
+          post path, params: ticket_params, headers: api_headers
+        }.to change { board.board_tickets.count }.by(1)
+          .and change { repo.tickets.count }.by(1)
+
+        expect(issue_request).to have_been_requested
+      end
     end
   end
 end

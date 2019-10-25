@@ -11,7 +11,9 @@ class BoardTicketsController < AuthenticatedController
   end
 
   def create
-    ticket = TicketCreationService.new(ticket_params).create_ticket!
+    ticket = TicketCreationService.new(
+      ticket_params.merge(octokit_token: current_user_github_token)
+    ).create_ticket!
     @board_ticket = ticket.board_tickets.find_by(board: @board)
     render :create, status: :created
   rescue ActiveRecord::RecordInvalid
