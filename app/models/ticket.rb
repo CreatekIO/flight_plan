@@ -22,7 +22,7 @@ class Ticket < ApplicationRecord
   DELETED_ACTIONS = %w[deleted transferred].freeze
 
   def self.import(remote_issue, remote_repo, action: nil)
-    remote_issue = remote_issue.to_h
+    remote_issue = HashWithIndifferentAccess.new(remote_issue)
     ticket = find_by_remote(remote_issue, remote_repo)
 
     if DELETED_ACTIONS.include?(action)
