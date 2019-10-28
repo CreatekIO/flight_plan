@@ -43,10 +43,21 @@ jobs:
             DISABLE_SPRING: 1
           command: >
             circleci tests glob "spec/**/*_spec.rb" | circleci tests split | \
-              tee /dev/stderr | xargs bin/rspec --format documentation
+              tee /dev/stderr | xargs bin/rspec \
+              --require rspec_junit_formatter \
+              --format RspecJunitFormatter --out tmp/test-results/rspec/results.xml \
+              --format documentation
+      - store_artifacts:
+          path: log
+          destination: log
       - store_artifacts:
           path: tmp/capybara
           destination: capybara
+      - store_artifacts:
+          path: tmp/rspec
+          destination: rspec
+      - store_test_results:
+          path: tmp/test-results
       - add_ssh_keys:
           fingerprints:
             - 'ab:68:2e:b6:40:01:25:79:e0:70:ba:95:ef:f7:98:85'
