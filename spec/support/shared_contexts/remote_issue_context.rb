@@ -30,7 +30,7 @@ RSpec.shared_context 'remote issue' do
         state: 'open',
         due_on: 2.months.from_now.utc.iso8601
       }
-    }
+    }.with_indifferent_access
   }
 
   let(:remote_repo) {
