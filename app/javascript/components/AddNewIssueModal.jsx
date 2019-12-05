@@ -1,18 +1,20 @@
-import React, { Component } from "react";
-import { connect } from "react-redux";
-import { Button, Header, Image, Modal, Select, Form } from "semantic-ui-react";
-import { ticketCreated } from "../action_creators";
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { Button, Header, Image, Modal, Select, Form } from 'semantic-ui-react';
+import { ticketCreated } from '../action_creators';
 
-const formFields = ["repo_id", "description", "title"];
+const formFields = ['repo_id', 'swimlane', 'description', 'title'];
 
 class AddNewIssueModal extends Component {
     state = {
-        title: "",
-        description: "",
-        repo_id: "",
-        repo_id_error: "",
-        description_error: "",
-        title_error: ""
+        title: '',
+        description: '',
+        repo_id: '',
+        swimlane: '',
+        repo_id_error: '',
+        description_error: '',
+        swimlane_error: '',
+        title_error: ''
     };
 
     handleChange = (e, { name, value }) => {
@@ -22,12 +24,14 @@ class AddNewIssueModal extends Component {
     handleClose = () => {
         this.setState({
             showModal: false,
-            repo_id_error: "",
-            description_error: "",
-            title_error: "",
-            description: "",
-            repo_id: "",
-            title: ""
+            repo_id_error: '',
+            description_error: '',
+            swimlane_error: '',
+            title_error: '',
+            description: '',
+            swimlane: '',
+            repo_id: '',
+            title: ''
         });
     };
 
@@ -43,13 +47,15 @@ class AddNewIssueModal extends Component {
             this.props.ticketCreated({
                 title: this.state.title,
                 description: this.state.description,
-                repo_id: this.state.repo_id
+                repo_id: this.state.repo_id,
+                swimlane: this.state.swimlane
             });
             this.setState({
                 showModal: false,
-                description: "",
-                repo_id: "",
-                title: ""
+                description: '',
+                repo_id: '',
+                swimlane: '',
+                title: ''
             });
         }
     };
@@ -58,8 +64,8 @@ class AddNewIssueModal extends Component {
         return (
             this.state[field]
                 .toString()
-                .split(" ")
-                .join("").length > 0
+                .split(' ')
+                .join('').length > 0
         );
     };
 
@@ -69,24 +75,32 @@ class AddNewIssueModal extends Component {
                 if (
                     this.state[field]
                         .toString()
-                        .split(" ")
-                        .join("").length === 0
+                        .split(' ')
+                        .join('').length === 0
                 ) {
                     this.setState({
-                        [field + "_error"]: "can't be blank"
+                        [field + '_error']: "can't be blank"
                     });
                 } else {
-                    this.setState({ [field + "_error"]: "" });
+                    this.setState({ [field + '_error']: '' });
                 }
             }.bind(this)
         );
     };
 
     boardRepos = () => {
-        return flightPlanConfig.currentBoardRepos.map((repo, index, array) => ({
+        return flightPlanConfig.currentBoardRepos.map((repo, index) => ({
             key: index,
             text: repo.name,
             value: repo.id
+        }));
+    };
+
+    boardSwimlanes = () => {
+        return flightPlanConfig.currentBoardSwimlanes.map((repo, index) => ({
+            key: index,
+            text: repo.name,
+            value: repo.name
         }));
     };
 
@@ -96,15 +110,16 @@ class AddNewIssueModal extends Component {
                 onClose={this.handleClose}
                 onOpen={this.handleOpen}
                 open={this.state.showModal}
-                id={"add-new-issue-modal"}
-                trigger={<a className="item">Add an issue</a>}
-            >
+                id={'add-new-issue-modal'}
+                trigger={<a className="item">Add an issue</a>}>
                 <Modal.Header>Add a new issue</Modal.Header>
                 <Modal.Content>
                     <Form onSubmit={this.handleSubmit}>
                         <div className="field">
                             <label>Repository</label>
-                            <div className="issue-error">{this.state.repo_id_error}</div>
+                            <div className="issue-error">
+                                {this.state.repo_id_error}
+                            </div>
                             <Select
                                 placeholder={this.boardRepos()[0].text}
                                 name="repo_id"
@@ -112,17 +127,33 @@ class AddNewIssueModal extends Component {
                                 onChange={this.handleChange}
                             />
                         </div>
+                        <div className="field">
+                            <label>Swimlane</label>
+                            <div className="issue-error">
+                                {this.state.swimlane_error}
+                            </div>
+                            <Select
+                                placeholder={this.boardSwimlanes()[0].text}
+                                name="swimlane"
+                                options={this.boardSwimlanes()}
+                                onChange={this.handleChange}
+                            />
+                        </div>
                         <label>Title</label>
-                        <div className="issue-error">{this.state.title_error}</div>
+                        <div className="issue-error">
+                            {this.state.title_error}
+                        </div>
                         <Form.Input
-                            placeholder={"Issue title"}
+                            placeholder={'Issue title'}
                             name="title"
                             onChange={this.handleChange}
                         />
                         <label>Description</label>
-                        <div className="issue-error">{this.state.description_error}</div>
+                        <div className="issue-error">
+                            {this.state.description_error}
+                        </div>
                         <Form.TextArea
-                            placeholder={"Issue description"}
+                            placeholder={'Issue description'}
                             name="description"
                             onChange={this.handleChange}
                         />
@@ -134,7 +165,4 @@ class AddNewIssueModal extends Component {
     }
 }
 
-export default connect(
-    null,
-    { ticketCreated }
-)(AddNewIssueModal);
+export default connect(null, { ticketCreated })(AddNewIssueModal);

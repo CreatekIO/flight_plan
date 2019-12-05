@@ -27,7 +27,7 @@ class BoardTicketsController < AuthenticatedController
   private
 
   def ticket_params
-    params.require(:ticket).permit(:title, :description, :repo_id)
+    params.require(:ticket).permit(:title, :description, :repo_id, :swimlane)
   end
 
   def current_cursor

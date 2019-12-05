@@ -6,6 +6,7 @@
       hash[feature.name] = feature.enabled?(current_user)
     end,
     currentBoardRepos: @board.board_repos.map {|board_repo| { id: board_repo.id, name: board_repo.name }},
+    currentBoardSwimlanes: @board.swimlanes.map {|swimlane| { name: swimlane.name }},
     currentUser: { id: current_user.id, username: current_user.username },
     api: {
       logoutURL: destroy_user_session_path,
