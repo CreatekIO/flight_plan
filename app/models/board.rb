@@ -8,6 +8,8 @@ class Board < ApplicationRecord
   belongs_to :deploy_swimlane, class_name: 'Swimlane', optional: true
   validate :check_additional_branches_regex
 
+  scope :with_auto_deploy_repos, -> { joins(:repos).merge(Repo.auto_deployable).distinct }
+
   def open_swimlane
     swimlanes.order(:position).first
   end
