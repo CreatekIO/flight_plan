@@ -20,7 +20,6 @@ class Board < ApplicationRecord
     Jbuilder.new do |board|
       board.id id
       board.name name
-      board.auto_deploy auto_deploy
       board.additional_branches_regex additional_branches_regex
       board.deploy_swimlane deploy_swimlane.to_builder if deploy_swimlane
     end
