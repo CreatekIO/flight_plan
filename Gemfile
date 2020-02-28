@@ -42,7 +42,7 @@ gem 'slack-ruby-client'
 
 # Fix versions of transitive dependencies due to vulnerabilities
 gem 'ffi', '~> 1.10.0'
-gem 'loofah', '~> 2.2.3'
+gem 'loofah', '~> 2.3.1'
 gem 'nokogiri', '~> 1.10.1'
 gem 'rack', '~> 2.0.6'
 gem 'rubyzip', '~> 1.3.0'
