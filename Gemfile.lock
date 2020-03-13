@@ -182,7 +182,7 @@ GEM
     orm_adapter (0.5.0)
     public_suffix (3.0.2)
     puma (3.12.4)
-    rack (2.0.6)
+    rack (2.0.8)
     rack-protection (2.0.1)
       rack
     rack-proxy (0.6.4)
@@ -362,7 +362,7 @@ DEPENDENCIES
   omniauth-github
   omniauth-rails_csrf_protection (~> 0.1)
   puma (~> 3.12)
-  rack (~> 2.0.6)
+  rack (~> 2.0.8)
   rails (~> 5.1.4)
   ranked-model (~> 0.4)
   redis-namespace
