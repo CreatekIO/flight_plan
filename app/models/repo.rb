@@ -13,6 +13,8 @@ class Repo < ApplicationRecord
   has_many :labels
   has_many :milestones
 
+  scope :auto_deployable, -> { where(auto_deploy: true) }
+
   octokit_methods(
     :compare, :pull_requests, :merge_pull_request, :create_pull_request,
     :create_ref, :merge, :refs, :delete_branch,

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190531141449) do
+ActiveRecord::Schema.define(version: 20200228155755) do
 
   create_table "board_repos", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin" do |t|
     t.bigint "board_id"
@@ -39,7 +39,6 @@ ActiveRecord::Schema.define(version: 20190531141449) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "deploy_swimlane_id"
-    t.boolean "auto_deploy", default: false, null: false
     t.string "additional_branches_regex"
   end
 
@@ -242,6 +241,7 @@ ActiveRecord::Schema.define(version: 20190531141449) do
     t.string "remote_url", collation: "utf8mb4_general_ci"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "auto_deploy", default: false, null: false
   end
 
   create_table "swimlane_transitions", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin" do |t|

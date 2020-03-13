@@ -8,6 +8,8 @@ class Board < ApplicationRecord
   belongs_to :deploy_swimlane, class_name: 'Swimlane', optional: true
   validate :check_additional_branches_regex
 
+  scope :with_auto_deploy_repos, -> { joins(:repos).merge(Repo.auto_deployable).distinct }
+
   def open_swimlane
     swimlanes.order(:position).first
   end
@@ -20,7 +22,6 @@ class Board < ApplicationRecord
     Jbuilder.new do |board|
       board.id id
       board.name name
-      board.auto_deploy auto_deploy
       board.additional_branches_regex additional_branches_regex
       board.deploy_swimlane deploy_swimlane.to_builder if deploy_swimlane
     end
