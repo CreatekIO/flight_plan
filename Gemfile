@@ -44,7 +44,7 @@ gem 'slack-ruby-client'
 gem 'ffi', '~> 1.10.0'
 gem 'loofah', '~> 2.3.1'
 gem 'nokogiri', '~> 1.10.8'
-gem 'rack', '~> 2.0.6'
+gem 'rack', '~> 2.0.8'
 gem 'rubyzip', '~> 1.3.0'
 
 group :development, :test do
