@@ -34,6 +34,7 @@
     "lodash.template": "^4.5.0",
     "macaddress": "^0.2.9",
     "mem": "^4.0.0",
+    "minimist": "^1.2.2",
     "querystringify": "^2.0.0",
     "sshpk": "^1.13.2",
     "stringstream": "^0.0.6",
