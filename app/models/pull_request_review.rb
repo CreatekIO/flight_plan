@@ -3,7 +3,8 @@ class PullRequestReview < ApplicationRecord
     approved: 'approved',
     changes_requested: 'changes_requested',
     commented: 'commented',
-    dismissed: 'dismissed'
+    dismissed: 'dismissed',
+    pending: 'pending'
   }
 
   belongs_to :repo
