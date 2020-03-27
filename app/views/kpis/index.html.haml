@@ -1,4 +1,20 @@
-%h2 Cycle time
+%h2.ui.block.header Cycle time
+
+%table.ui.collapsing.definition.table
+  %thead
+    %th
+    %th Days
+  %tbody
+    %tr
+      %td Mean (average)
+      %td= number_with_precision @cycle_time.stats.mean
+    %tr
+      %td Standard deviation
+      %td= number_with_precision @cycle_time.stats.standard_deviation
+    %tr
+      %td 90th percentile
+      %td= @cycle_time.stats.percentile(90).round
+
 
 %table.ui.celled.striped.small.compact.table
   %thead
@@ -11,7 +27,7 @@
       %th Cycle time (days)
 
   %tbody
-    - @cycle_time_results.each do |result|
+    - @cycle_time.results.each do |result|
       %tr
         %td
           = link_to "https://github.com/#{result['repo']}/issues/#{result['number']}", target: :_blank do

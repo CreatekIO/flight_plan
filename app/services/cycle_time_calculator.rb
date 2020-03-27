@@ -23,6 +23,10 @@ class CycleTimeCalculator
     end
   end
 
+  def stats
+    @stats ||= DescriptiveStatistics::Stats.new(results.map { |row| row['cycle_time'] })
+  end
+
   private
 
   attr_reader :board, :start_swimlane, :end_swimlane
