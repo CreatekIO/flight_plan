@@ -17,6 +17,8 @@ Rails.application.routes.draw do
     end
     get 'pull_requests' => 'pull_request_dashboards#index', as: :pull_requests
     resources :next_actions, only: :index
+
+    resources :kpis, only: :index
   end
 
   resources :swimlanes, only: [] do

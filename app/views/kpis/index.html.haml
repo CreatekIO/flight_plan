@@ -1,0 +1,23 @@
+%h2 Cycle time
+
+%table.ui.celled.striped.small.compact.table
+  %thead
+    %tr
+      %th Title
+      %th Number
+      %th Repo
+      %th Started at
+      %th Completed at
+      %th Cycle time (days)
+
+  %tbody
+    - @cycle_time_results.each do |result|
+      %tr
+        %td
+          = link_to "https://github.com/#{result['repo']}/issues/#{result['number']}", target: :_blank do
+            = result['title'].truncate(100)
+        %td= result['number']
+        %td= result['repo']
+        %td= l result['started_at'], format: :short
+        %td= l result['ended_at'], format: :short
+        %td= result['cycle_time'].round
