@@ -23,14 +23,15 @@ class CircleciBuildsCalculator
     end
   end
 
-  def initialize(board)
+  def initialize(board, quarter: Quarter.current)
     @board = board
+    @quarter = quarter
   end
 
   def each
     return enum_for(:each) unless block_given?
 
-    months_in_quarter.each do |date|
+    quarter.months.each do |date|
       REPOS.each do |repo|
         STATES.each do |state|
           count = builds_for_this_quarter.fetch([date, state, repo], 0)
@@ -43,7 +44,7 @@ class CircleciBuildsCalculator
 
   def builds_for_this_quarter
     @builds_for_this_quarter ||= CommitStatus.joins(:repo, :branches).where(
-      remote_created_at: this_quarter,
+      remote_created_at: quarter.as_time_range,
       context: CONTEXTS,
       state: STATES,
       repos: { remote_url: REPOS },
@@ -53,22 +54,9 @@ class CircleciBuildsCalculator
 
   private
 
-  attr_reader :board, :repo_ids
-
-  def this_quarter
-    @this_quarter ||= Time.now.utc.all_quarter
-  end
-
-  def months_in_quarter
-    start = this_quarter.begin.to_date
-
-    Array.new(3) { |n| (start + n.months).strftime('%Y-%m') }
-  end
+  attr_reader :board, :quarter
 
   def year_and_month
-    Arel::Nodes::NamedFunction.new(
-      'DATE_FORMAT',
-      [CommitStatus.arel_table[:remote_created_at], Arel.sql("'%Y-%m'")]
-    )
+    Quarter.calculate_sql(CommitStatus.arel_table[:remote_created_at])
   end
 end
