@@ -1,5 +1,7 @@
 class CommitStatus < ApplicationRecord
   belongs_to :repo
+  has_many :branch_heads, primary_key: :sha, foreign_key: :head_sha
+  has_many :branches, through: :branch_heads
 
   # See https://developer.github.com/v3/repos/statuses/#create-a-status
   permissive_enum state: {
