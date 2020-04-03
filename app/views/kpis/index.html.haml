@@ -1,3 +1,22 @@
+.ui.text.menu
+  .left.menu
+    = link_to board_kpis_path(@board, date: @quarter.previous), class: 'item' do
+      %i.angle.left.large.icon
+      Previous quarter
+
+  .header.item= @quarter.to_s
+
+  - next_quarter = @quarter.next
+  .right.menu
+    - if next_quarter.future?
+      .disabled.item
+        Next quarter
+        %i.angle.right.large.icon
+    - else
+      = link_to board_kpis_path(@board, date: next_quarter), class: 'item' do
+        Next quarter
+        %i.angle.right.large.icon
+
 = render 'bug_tickets'
 = render 'circleci_builds'
 = render 'cycle_time'

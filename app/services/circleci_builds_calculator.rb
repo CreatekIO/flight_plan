@@ -34,7 +34,7 @@ class CircleciBuildsCalculator
     quarter.months.each do |date|
       REPOS.each do |repo|
         STATES.each do |state|
-          count = builds_for_this_quarter.fetch([date, state, repo], 0)
+          count = builds_for_quarter.fetch([date, state, repo], 0)
 
           yield Stat.new(date, state, repo, count)
         end
@@ -42,8 +42,8 @@ class CircleciBuildsCalculator
     end
   end
 
-  def builds_for_this_quarter
-    @builds_for_this_quarter ||= CommitStatus.joins(:repo, :branches).where(
+  def builds_for_quarter
+    @builds_for_quarter ||= CommitStatus.joins(:repo, :branches).where(
       remote_created_at: quarter.as_time_range,
       context: CONTEXTS,
       state: STATES,

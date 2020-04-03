@@ -1,9 +1,18 @@
 class KpisController < AuthenticatedController
   def index
-    board = Board.find(params[:board_id])
+    @board = Board.find(params[:board_id])
 
-    @bug_tickets = BugTicketsCalculator.new(board)
-    @cycle_time = CycleTimeCalculator.new(board)
-    @circleci_builds = CircleciBuildsCalculator.new(board)
+    @quarter = derive_quarter_from(params[:date])
+    @bug_tickets = BugTicketsCalculator.new(@board, quarter: @quarter)
+    @circleci_builds = CircleciBuildsCalculator.new(@board, quarter: @quarter)
+    @cycle_time = CycleTimeCalculator.new(@board)
+  end
+
+  private
+
+  def derive_quarter_from(date)
+    return Quarter.current if date.blank?
+
+    Quarter.from(date)
   end
 end

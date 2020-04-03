@@ -1,8 +1,19 @@
 class Quarter
   FORMAT = '%Y-%m'.freeze
+  UTC = Time.find_zone!('UTC')
 
   def self.current
-    new(Time.now.utc)
+    from(UTC.now)
+  end
+
+  def self.from(date)
+    case date
+    when /^\d{4}-\d{2}$/
+      datetime = UTC.parse(date.tr('-', '/'))
+      new(datetime.all_quarter)
+    when Date, DateTime, ActiveSupport::TimeWithZone
+      new(date.all_quarter)
+    end
   end
 
   def self.calculate_sql(column)
@@ -12,23 +23,38 @@ class Quarter
     )
   end
 
-  attr_reader :reference_time
+  attr_reader :range
+  alias_method :as_time_range, :range
 
-  def initialize(reference_time)
-    @reference_time = reference_time
+  delegate :first, :last, to: :range
+  delegate :future?, to: :start
+
+  alias_method :start, :first
+  alias_method :finish, :last
+
+  def initialize(range)
+    @range = range
   end
 
   def months
-    start = as_date_range.begin
+    start_date = start.to_date
 
-    Array.new(3) { |n| (start + n.months).strftime(FORMAT) }
+    Array.new(3) { |n| (start_date + n.months).strftime(FORMAT) }
   end
 
-  def as_time_range
-    @as_time_range ||= reference_time.all_quarter
+  def next
+    self.class.new(start.next_quarter.all_quarter)
   end
 
-  def as_date_range
-    @as_date_range ||= reference_time.to_date.all_quarter
+  def previous
+    self.class.new(start.last_quarter.all_quarter)
+  end
+
+  def to_param
+    start.strftime(FORMAT)
+  end
+
+  def to_s
+    "#{start.strftime('%b')} - #{finish.strftime('%b %Y')}"
   end
 end
