@@ -1,5 +1,6 @@
 class KpisController < AuthenticatedController
   def index
+    authorize! :index, :kpis
     @board = Board.find(params[:board_id])
 
     @quarter = derive_quarter_from(params[:date])
