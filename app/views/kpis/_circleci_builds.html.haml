@@ -23,15 +23,15 @@
         - if index.multiple_of?(2)
           %td{ rowspan: 2 }
             - total = stat.count + builds[index + 1].count
-            #{total} builds (#{number_to_percentage stat.count.to_f / total * 100, significant: true, precision: 2} passing)
+            #{total} builds (#{calculate_percentage(stat.count, total)} passing)
         - if index.multiple_of?(4)
           %td{ rowspan: 4 }
             - stats = builds[index..(index + 3)]
             - successes = stats.select(&:success?).sum(&:count)
             - total = stats.sum(&:count)
-            #{total} builds (#{number_to_percentage successes.to_f / total * 100, significant: true, precision: 2} passing)
+            #{total} builds (#{calculate_percentage(successes, total)} passing)
         - if index.zero?
           %td{ rowspan: 12 }
             - successes = builds.select(&:success?).sum(&:count)
             - total = builds.sum(&:count)
-            #{total} builds (#{number_to_percentage successes.to_f / total * 100, significant: true, precision: 2} passing)
+            #{total} builds (#{calculate_percentage(successes, total)} passing)
