@@ -13,6 +13,16 @@ module ApplicationHelper
     "https://cdn.polyfill.io/v2/polyfill#{minify}.js?#{query_string.to_query}"
   end
 
+  def calculate_percentage(number, total)
+    return '0%' if total.zero?
+
+    number_to_percentage(
+      (number.to_f / total) * 100,
+      significant: true,
+      precision: 2
+    )
+  end
+
   def next_action_button(pull_request, user: nil, **options)
     next_action = TicketActions.next_action_for(pull_request, user: user)
     return '' if next_action.blank?

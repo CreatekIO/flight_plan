@@ -7,5 +7,9 @@ class Ability
     can :manage, BoardTicket
     can :manage, Swimlane
     can :manage, User
+
+    can :manage, :kpis do
+      Flipper.enabled?(:kpis, user)
+    end
   end
 end

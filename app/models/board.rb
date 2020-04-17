@@ -1,6 +1,7 @@
 class Board < ApplicationRecord
   has_many :board_repos, dependent: :destroy
   has_many :repos, through: :board_repos
+  has_many :tickets, through: :repos
   has_many :open_pull_requests, through: :repos
   has_many :swimlanes, -> { ordered }, dependent: :destroy
   has_many :board_tickets, dependent: :destroy

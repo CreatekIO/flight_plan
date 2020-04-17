@@ -1,0 +1,27 @@
+%h2.ui.block.header Bugs opened/closed
+
+%table.ui.celled.table
+  %thead
+    %th Date
+    %th State
+    %th Tickets
+    %th By Month
+    %th By Quarter
+
+  %tbody
+    - tickets = @bug_tickets.to_a
+    - tickets.each.with_index do |stat, index|
+      %tr
+        - if index.multiple_of?(2)
+          %td{ rowspan: 2 }= stat.date
+        %td{ class: stat.closed? ? 'positive' : 'negative' }= stat.state
+        %td= stat.count
+        - if index.multiple_of?(2)
+          %td{ rowspan: 2 }
+            - total = stat.count + tickets[index + 1].count
+            #{total} tickets (#{calculate_percentage(stat.count, total)} closed)
+        - if index.zero?
+          %td{ rowspan: 12 }
+            - successes = tickets.select(&:closed?).sum(&:count)
+            - total = tickets.sum(&:count)
+            #{total} tickets (#{calculate_percentage(successes, total)} closed)

@@ -90,6 +90,7 @@ GEM
     crass (1.0.5)
     createk_data_migrator (0.1.2)
     database_cleaner (1.7.0)
+    descriptive_statistics (2.5.1)
     devise (4.7.1)
       bcrypt (~> 3.0)
       orm_adapter (~> 0.1)
@@ -345,6 +346,7 @@ DEPENDENCIES
   coffee-rails (~> 4.2)
   createk_data_migrator
   database_cleaner
+  descriptive_statistics
   devise (~> 4.7.1)
   dotenv-rails
   factory_bot
