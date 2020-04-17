@@ -4,8 +4,8 @@ class BugTicketsCalculator
   LABELS = ['bug', 'BUG', 'type: bug'].freeze
 
   Stat = Struct.new(:date, :state, :count) do
-    def open?
-      state == 'open'
+    def opened?
+      state == 'opened'
     end
 
     def closed?
@@ -22,11 +22,11 @@ class BugTicketsCalculator
     return enum_for(:each) unless block_given?
 
     quarter.months.each do |date|
-      %w[closed open].each do |state|
-        count = bugs_created_in_quarter.fetch([date, state], 0)
+      closed_count = bugs_closed_in_quarter.fetch(date, 0)
+      opened_count = bugs_opened_in_quarter.fetch(date, 0)
 
-        yield Stat.new(date, state, count)
-      end
+      yield Stat.new(date, 'closed', closed_count)
+      yield Stat.new(date, 'opened', opened_count)
     end
   end
 
@@ -34,14 +34,21 @@ class BugTicketsCalculator
 
   attr_reader :board, :quarter
 
-  def bugs_created_in_quarter
-    @bugs_created_in_quarter ||= board.tickets.joins(:labels).where(
+  def bugs_opened_in_quarter
+    @bugs_opened_in_quarter ||= board.tickets.joins(:labels).where(
       remote_created_at: quarter.as_time_range,
       labels: { name: LABELS }
-    ).group(year_and_month.to_sql, :remote_state).count
+    ).group(
+      Quarter.calculate_sql(Ticket.arel_table[:remote_created_at]).to_sql
+    ).count
   end
 
-  def year_and_month
-    Quarter.calculate_sql(Ticket.arel_table[:remote_created_at])
+  def bugs_closed_in_quarter
+    @bugs_closed_in_quarter ||= board.tickets.joins(:labels).where(
+      remote_closed_at: quarter.as_time_range,
+      labels: { name: LABELS }
+    ).group(
+      Quarter.calculate_sql(Ticket.arel_table[:remote_closed_at]).to_sql
+    ).count
   end
 end

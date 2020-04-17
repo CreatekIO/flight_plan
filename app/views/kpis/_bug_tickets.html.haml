@@ -17,11 +17,10 @@
         %td{ class: stat.closed? ? 'positive' : 'negative' }= stat.state
         %td= stat.count
         - if index.multiple_of?(2)
-          %td{ rowspan: 2 }
-            - total = stat.count + tickets[index + 1].count
-            #{total} tickets (#{calculate_percentage(stat.count, total)} closed)
+          - aggregate = stat.count - tickets[index + 1].count # closed - opened
+          %td{ rowspan: 2, class: aggregate.negative? ? 'negative' : 'positive' }
+            = format '%+d', aggregate
         - if index.zero?
-          %td{ rowspan: 12 }
-            - successes = tickets.select(&:closed?).sum(&:count)
-            - total = tickets.sum(&:count)
-            #{total} tickets (#{calculate_percentage(successes, total)} closed)
+          - aggregate = tickets.partition(&:closed?).map { |stats| stats.sum(&:count) }.inject(&:-)
+          %td{ rowspan: 12, class: aggregate.negative? ? 'negative' : 'positive' }
+            = format '%+d', aggregate
