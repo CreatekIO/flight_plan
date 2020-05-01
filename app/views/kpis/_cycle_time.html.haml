@@ -9,6 +9,9 @@
     %th Days
   %tbody
     %tr
+      %td Tickets
+      %td= @cycle_time.results.count
+    %tr
       %td Mean (average)
       %td= number_with_precision @cycle_time.stats.mean
     %tr
