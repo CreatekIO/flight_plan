@@ -18,7 +18,7 @@ class CycleTimeCalculator
   end
 
   def results
-    ActiveRecord::Base.connection_pool.with_connection do |conn|
+    @results ||= ActiveRecord::Base.connection_pool.with_connection do |conn|
       conn.select_all(query.to_sql)
     end
   end
