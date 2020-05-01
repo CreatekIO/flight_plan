@@ -47,7 +47,7 @@ class CycleTimeCalculator
         Arel.sql('cycle_time').desc,
         start_time.asc,
         end_time.asc
-      )
+      ).distinct
   end
 
   def board_tickets
