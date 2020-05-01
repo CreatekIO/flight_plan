@@ -1,8 +1,13 @@
-%h2.ui.block.header Bugs opened/closed
+%h2.ui.block.header
+  Bugs opened/closed
+  .sub.header
+    Bug tickets (labelled #{BugTicketsCalculator::LABELS.map { |label| %["#{label}"] }.to_sentence(last_word_connector: ', or ')})
+    opened or closed in
+    = @board.repos.map { |repo| link_to(repo.name, repo.html_url, target: :_blank) }.to_sentence(two_words_connector: ' or ', last_word_connector: ', or ').html_safe
 
 %table.ui.celled.table
   %thead
-    %th Date
+    %th Month
     %th State
     %th Tickets
     %th By Month

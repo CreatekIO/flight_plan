@@ -1,8 +1,14 @@
-%h2.ui.block.header CircleCI builds
+%h2.ui.block.header
+  CircleCI builds
+  .sub.header
+    Passing vs. failing CircleCI builds for "build" jobs for #{CircleciBuildsCalculator::BRANCH_NAMES.map { |branch| content_tag(:code, branch) }.to_sentence(two_words_connector: ' or ').html_safe} on
+    = link_to 'MyRewards', 'https://github.com/CorporateRewards/myrewards', target: :_blank
+    or
+    = link_to 'GPS', 'https://github.com/CorporateRewards/redstone', target: :_blank
 
 %table.ui.celled.table
   %thead
-    %th Date
+    %th Month
     %th Repo
     %th State
     %th Builds
