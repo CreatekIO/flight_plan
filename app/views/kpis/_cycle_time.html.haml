@@ -1,7 +1,16 @@
 %h2.ui.block.header
   Cycle time
   .sub.header
-    Time in business days (Mon-Fri) for tickets to go from "Development" to "Deploying" that were completed in this quarter
+    = form_for :cycle_time, method: :get, html: { class: 'ui form', id: 'cycle_time_settings' } do |f|
+      = hidden_field_tag :date, params[:date]
+
+      Time in business days (Mon-Fri) for tickets to go from
+      %span.inline.field
+        = f.collection_select :start_swimlane_id, @board.swimlanes, :id, :name
+      to
+      %span.inline.field
+        = f.collection_select :end_swimlane_id, @board.swimlanes, :id, :name
+      in this quarter
 
 %table.ui.collapsing.definition.table
   %thead
@@ -43,3 +52,10 @@
         %td= l result['started_at'], format: :short
         %td= l result['ended_at'], format: :short
         %td= result['cycle_time'].round
+
+:javascript
+  $(function() {
+    $('#cycle_time_settings').on('change', 'select', function(event) {
+      $(event.delegateTarget).submit();
+    });
+  });
