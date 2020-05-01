@@ -16,7 +16,7 @@
       %td= number_with_precision @cycle_time.stats.standard_deviation
     %tr
       %td 90th percentile
-      %td= @cycle_time.stats.percentile(90).round
+      %td= @cycle_time.stats.percentile(90).try(:round)
 
 
 %table.ui.celled.striped.small.compact.table
