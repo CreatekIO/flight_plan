@@ -11,8 +11,9 @@ class CycleTimeCalculator
     '0 1 2 3 4 0 0' \
     '0 1 2 3 4 4 0'.remove(/\s+/).freeze
 
-  def initialize(board)
+  def initialize(board, quarter: Quarter.current)
     @board = board
+    @quarter = quarter
     @start_swimlane = board.swimlanes.find_by!(name: 'Development')
     @end_swimlane = board.swimlanes.find_by!(name: 'Deploying')
   end
@@ -29,7 +30,7 @@ class CycleTimeCalculator
 
   private
 
-  attr_reader :board, :start_swimlane, :end_swimlane
+  attr_reader :board, :quarter, :start_swimlane, :end_swimlane
 
   def query
     BoardTicket
@@ -109,6 +110,8 @@ class CycleTimeCalculator
     joins = board_tickets.join(ends).on(
       board_tickets[:id].eq(ends[:board_ticket_id]).and(
         ends[:swimlane_id].eq(end_swimlane.id)
+      ).and(
+        ends[:started_at].between(quarter.as_time_range)
       )
     ).outer_join(next_end).on(
       ends[:swimlane_id].eq(next_end[:swimlane_id]).and(
