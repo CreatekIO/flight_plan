@@ -21,6 +21,12 @@ class Repo < ApplicationRecord
     prefix_with: :remote_url
   )
 
+  URL_TEMPLATE = 'https://github.com/%s'.freeze
+
+  def html_url
+    format(URL_TEMPLATE, remote_url)
+  end
+
   def to_builder
     Jbuilder.new do |repo|
       repo.id id

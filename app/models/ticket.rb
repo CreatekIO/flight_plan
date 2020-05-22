@@ -39,7 +39,8 @@ class Ticket < ApplicationRecord
       remote_updated_at: remote_issue[:updated_at],
       creator_remote_id: remote_issue.dig(:user, :id),
       creator_username: remote_issue.dig(:user, :login),
-      milestone: Milestone.import(remote_issue[:milestone], ticket.repo)
+      milestone: Milestone.import(remote_issue[:milestone], ticket.repo),
+      remote_closed_at: remote_issue[:closed_at]
     )
 
     ticket.update_board_tickets_from_remote(remote_issue)

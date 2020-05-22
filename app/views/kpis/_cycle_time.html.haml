@@ -1,10 +1,25 @@
-%h2.ui.block.header Cycle time (all time)
+%h2.ui.block.header
+  Cycle time
+  .sub.header
+    = form_for :cycle_time, method: :get, html: { class: 'ui form', id: 'cycle_time_settings' } do |f|
+      = hidden_field_tag :date, params[:date]
+
+      Time in business days (Mon-Fri) for tickets to go from
+      %span.inline.field
+        = f.collection_select :start_swimlane_id, @board.swimlanes, :id, :name
+      to
+      %span.inline.field
+        = f.collection_select :end_swimlane_id, @board.swimlanes, :id, :name
+      in this quarter
 
 %table.ui.collapsing.definition.table
   %thead
     %th
     %th Days
   %tbody
+    %tr
+      %td Tickets
+      %td= @cycle_time.results.count
     %tr
       %td Mean (average)
       %td= number_with_precision @cycle_time.stats.mean
@@ -13,7 +28,7 @@
       %td= number_with_precision @cycle_time.stats.standard_deviation
     %tr
       %td 90th percentile
-      %td= @cycle_time.stats.percentile(90).round
+      %td= @cycle_time.stats.percentile(90).try(:round)
 
 
 %table.ui.celled.striped.small.compact.table
@@ -37,3 +52,10 @@
         %td= l result['started_at'], format: :short
         %td= l result['ended_at'], format: :short
         %td= result['cycle_time'].round
+
+:javascript
+  $(function() {
+    $('#cycle_time_settings').on('change', 'select', function(event) {
+      $(event.delegateTarget).submit();
+    });
+  });

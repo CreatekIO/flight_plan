@@ -1,5 +1,7 @@
 class CycleTimeCalculator
   delegate :joins, :where, to: :BoardTicket
+  delegate :id, to: :start_swimlane, prefix: true
+  delegate :id, to: :end_swimlane, prefix: true
 
   # Mon-Sun across the top and down the side
   DATE_MATRIX =
@@ -11,14 +13,15 @@ class CycleTimeCalculator
     '0 1 2 3 4 0 0' \
     '0 1 2 3 4 4 0'.remove(/\s+/).freeze
 
-  def initialize(board)
+  def initialize(board, quarter: Quarter.current, start_swimlane_id: nil, end_swimlane_id: nil)
     @board = board
-    @start_swimlane = board.swimlanes.find_by!(name: 'Development')
-    @end_swimlane = board.swimlanes.find_by!(name: 'Deploying')
+    @quarter = quarter
+    @start_swimlane = find_swimlane(id: start_swimlane_id, fallback: 'Development')
+    @end_swimlane = find_swimlane(id: end_swimlane_id, fallback: 'Deploying')
   end
 
   def results
-    ActiveRecord::Base.connection_pool.with_connection do |conn|
+    @results ||= ActiveRecord::Base.connection_pool.with_connection do |conn|
       conn.select_all(query.to_sql)
     end
   end
@@ -29,7 +32,7 @@ class CycleTimeCalculator
 
   private
 
-  attr_reader :board, :start_swimlane, :end_swimlane
+  attr_reader :board, :quarter, :start_swimlane, :end_swimlane
 
   def query
     BoardTicket
@@ -47,11 +50,19 @@ class CycleTimeCalculator
         Arel.sql('cycle_time').desc,
         start_time.asc,
         end_time.asc
-      )
+      ).distinct
   end
 
   def board_tickets
     @board_tickets ||= BoardTicket.arel_table
+  end
+
+  def find_swimlane(id:, fallback:)
+    if id.present?
+      board.swimlanes.find(id)
+    else
+      board.swimlanes.find_by!(name: fallback)
+    end
   end
 
   def starts
@@ -109,6 +120,8 @@ class CycleTimeCalculator
     joins = board_tickets.join(ends).on(
       board_tickets[:id].eq(ends[:board_ticket_id]).and(
         ends[:swimlane_id].eq(end_swimlane.id)
+      ).and(
+        ends[:started_at].between(quarter.as_time_range)
       )
     ).outer_join(next_end).on(
       ends[:swimlane_id].eq(next_end[:swimlane_id]).and(

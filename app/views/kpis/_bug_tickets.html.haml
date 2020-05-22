@@ -1,8 +1,13 @@
-%h2.ui.block.header Bugs opened/closed
+%h2.ui.block.header
+  Bugs opened/closed
+  .sub.header
+    Bug tickets (labelled #{BugTicketsCalculator::LABELS.map { |label| %["#{label}"] }.to_sentence(last_word_connector: ', or ')})
+    opened or closed in
+    = @board.repos.map { |repo| link_to(repo.name, repo.html_url, target: :_blank) }.to_sentence(two_words_connector: ' or ', last_word_connector: ', or ').html_safe
 
 %table.ui.celled.table
   %thead
-    %th Date
+    %th Month
     %th State
     %th Tickets
     %th By Month
@@ -17,11 +22,10 @@
         %td{ class: stat.closed? ? 'positive' : 'negative' }= stat.state
         %td= stat.count
         - if index.multiple_of?(2)
-          %td{ rowspan: 2 }
-            - total = stat.count + tickets[index + 1].count
-            #{total} tickets (#{calculate_percentage(stat.count, total)} closed)
+          - aggregate = stat.count - tickets[index + 1].count # closed - opened
+          %td{ rowspan: 2, class: aggregate.negative? ? 'negative' : 'positive' }
+            = format '%+d', aggregate
         - if index.zero?
-          %td{ rowspan: 12 }
-            - successes = tickets.select(&:closed?).sum(&:count)
-            - total = tickets.sum(&:count)
-            #{total} tickets (#{calculate_percentage(successes, total)} closed)
+          - aggregate = tickets.partition(&:closed?).map { |stats| stats.sum(&:count) }.inject(&:-)
+          %td{ rowspan: 12, class: aggregate.negative? ? 'negative' : 'positive' }
+            = format '%+d', aggregate

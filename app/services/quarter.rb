@@ -1,6 +1,7 @@
 class Quarter
   FORMAT = '%Y-%m'.freeze
   UTC = Time.find_zone!('UTC')
+  START_MONTHS = [1, 4, 7, 10].freeze
 
   def self.current
     from(UTC.now)
@@ -55,6 +56,10 @@ class Quarter
   end
 
   def to_s
-    "#{start.strftime('%b')} - #{finish.strftime('%b %Y')}"
+    "Q#{number} #{start.strftime('%b')} - #{finish.strftime('%b %Y')}"
+  end
+
+  def number
+    START_MONTHS.index(start.month) + 1
   end
 end
