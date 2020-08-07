@@ -6,6 +6,7 @@ import NextActionButton from "./NextActionButton";
 import Avatar from "./Avatar";
 import AddNewIssueModal from "./AddNewIssueModal";
 import { getOpenPRs } from "../reducers/selectors";
+import { isFeatureEnabled } from "../features";
 
 const truncate = (text, length) => {
     if (text.length <= length) return text;
@@ -116,6 +117,9 @@ const Header = ({ boards, isWaiting, openPRsCount, pullRequests }) => {
                         </Dropdown.Item>
                     </Dropdown.Menu>
                 </Dropdown>
+                {isFeatureEnabled("kpis") && (
+                    <a className="item" href={currentBoard.kpisURL}>KPIs</a>
+                )}
                 <a className="item" href={currentBoard.dashboardURL}>
                     PR Dashboard
                 </a>
