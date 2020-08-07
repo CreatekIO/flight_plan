@@ -23,7 +23,6 @@ services:
     depends_on:
       - db
       - redis
-      - clockwork
     expose:
       - 3000
     environment:
@@ -81,21 +80,3 @@ services:
       - DB_PASSWORD
     env_file:
       - .env
-
-  clockwork:
-    image: createkio/flight_plan:latest
-    command: sh -c 'bundle && bundle exec clockwork clock.rb'
-    volumes:
-      - .:/flight_plan
-    depends_on:
-      - db
-      - redis
-    environment:
-      - REDIS_URL=redis://redis:6379
-      - DB_HOST=db
-      - DB_USERNAME=root
-      - DB_PASSWORD
-    env_file:
-      - .env
-
-
