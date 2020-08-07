@@ -44,7 +44,7 @@ class MassTicketRefresher
 
   def batches
     @batches ||= scope.pluck(:id)
-      .in_groups_of(per_hour)
+      .in_groups_of(per_hour, false)
       .each_with_index.map { |ids, number| Batch.new(number, ids) }
   end
 
