@@ -14,12 +14,26 @@ class SetCaseInsensitiveCollationForIdentifiers < ActiveRecord::Migration[5.1]
   }
 
   def up
-    change_collations 'utf8mb4_general_ci'
+    case connection.adapter_name
+    when 'Mysql2'
+      change_collations 'utf8mb4_general_ci'
+    when 'PostgreSQL'
+      enable_extension :citext
+
+      change_column_types :citext
+    end
   end
 
-  # By omitting the collation we reset it back to the table/database default
   def down
-    change_collations nil
+    case connection.adapter_name
+    when 'Mysql2'
+      # By omitting the collation we reset it back to the table/database default
+      change_collations nil
+    when 'PostgreSQL'
+      disable_extension :citext
+
+      change_column_types :string
+    end
   end
 
   private
@@ -28,6 +42,14 @@ class SetCaseInsensitiveCollationForIdentifiers < ActiveRecord::Migration[5.1]
     COLUMNS_TO_CHANGE.each do |table, columns|
       columns.each do |column|
         change_column table, column, :string, collation: collation
+      end
+    end
+  end
+
+  def change_column_types(type)
+    COLUMNS_TO_CHANGE.each do |table, columns|
+      columns.each do |column|
+        change_column table, column, type
       end
     end
   end
