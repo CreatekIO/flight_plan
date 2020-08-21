@@ -1,7 +1,7 @@
 FROM ruby:2.4.1-alpine3.6
 
 ENV BUILD_PACKAGES='build-base git \
-  mysql-dev \
+  mysql-dev postgresql-dev \
   nodejs nodejs-npm \
   tzdata inotify-tools curl \
   libxml2-dev libxslt-dev'

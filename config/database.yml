@@ -1,18 +1,22 @@
-# MySQL. Versions 5.1.10 and up are supported.
+# PostgreSQL. Versions 9.1 and up are supported.
 #
-# Install the MySQL driver
-#   gem install mysql2
+# Install the pg driver:
+#   gem install pg
+# On OS X with Homebrew:
+#   gem install pg -- --with-pg-config=/usr/local/bin/pg_config
+# On OS X with MacPorts:
+#   gem install pg -- --with-pg-config=/opt/local/lib/postgresql84/bin/pg_config
+# On Windows:
+#   gem install pg
+#       Choose the win32 build.
+#       Install PostgreSQL and put its /bin directory on your path.
 #
-# Ensure the MySQL gem is defined in your Gemfile
-#   gem 'mysql2'
-#
-# And be sure to use new-style password hashing:
-#   http://dev.mysql.com/doc/refman/5.7/en/old-client.html
+# Configure Using Gemfile
+# gem 'pg'
 #
 default: &default
-  adapter: mysql2
-  encoding: utf8mb4
-  collation: utf8mb4_bin
+  adapter: postgresql
+  encoding: unicode
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
   username: <%= ENV['DB_USERNAME'] %>
   password: <%= ENV['DB_PASSWORD'] %>
@@ -26,6 +30,36 @@ test:
   <<: *default
   database: flight_plan_test
 
+##################
+#  Legacy MySQL  #
+##################
+default_mysql: &default_mysql
+  adapter: mysql2
+  encoding: utf8mb4
+  collation: utf8mb4_bin
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  username: <%= ENV['MYSQL_DB_USERNAME'] %>
+  password: <%= ENV['MYSQL_DB_PASSWORD'] %>
+  host: <%= ENV['MYSQL_DB_HOST'] %>
+
+development_mysql:
+  <<: *default_mysql
+  database: flight_plan_development
+
+test_mysql:
+  <<: *default_mysql
+  database: flight_plan_test
+
+production_mysql: &production_mysql
+  <<: *default_mysql
+  url: <%= ENV['CLEARDB_DATABASE_URL'] %>
+##################
+
+<% if ENV["USE_MYSQL"].present? %>
+production:
+  <<: *production_mysql
+<% else %>
 production:
   <<: *default
-  url: <%= ENV['CLEARDB_DATABASE_URL'] %>
+  url: <%= ENV['DATABASE_URL'] %>
+<% end %>

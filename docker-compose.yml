@@ -31,8 +31,11 @@ services:
     environment:
       - REDIS_URL=redis://redis:6379
       - DB_HOST=db
-      - DB_USERNAME=root
-      - DB_PASSWORD
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=password
+      - MYSQL_DB_HOST=db_mysql
+      - MYSQL_DB_USERNAME=root
+      - MYSQL_DB_PASSWORD
       - WEBPACKER_DEV_SERVER_HOST=webpack
       - WEBPACKER_DEV_SERVER_PORT=443
     labels:
@@ -43,7 +46,8 @@ services:
       - traefik.frontend.priority=10
     env_file:
       - .env
-  db:
+
+  db_mysql:
     image: mysql:5.7.19
     environment:
       - MYSQL_ALLOW_EMPTY_PASSWORD=yes
@@ -51,6 +55,15 @@ services:
       - 3306:3306
     volumes:
       - mysql_data:/var/lib/mysql
+
+  db:
+    image: postgres:12.2-alpine
+    environment:
+      POSTGRES_PASSWORD: 'password'
+    ports:
+      - 5432:5432
+    volumes:
+      - postgresql_data:/var/lib/postgresql/data
 
   webpack:
     image: createkio/flight_plan:latest
@@ -92,12 +105,16 @@ services:
     environment:
       - REDIS_URL=redis://redis:6379
       - DB_HOST=db
-      - DB_USERNAME=root
-      - DB_PASSWORD
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=password
+      - MYSQL_DB_HOST=db_mysql
+      - MYSQL_DB_USERNAME=root
+      - MYSQL_DB_PASSWORD
     env_file:
       - .env
 
 volumes:
   mysql_data:
+  postgresql_data:
   gems:
   node_modules:

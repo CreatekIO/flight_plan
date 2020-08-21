@@ -6,12 +6,12 @@ jobs:
       - image: createkio/flight_plan:latest
         environment:
           DB_HOST: 127.0.0.1
-          DB_USERNAME: root
-          DB_PASSWORD: mysecretpassword
+          DB_USERNAME: postgres
+          DB_PASSWORD: password
           RAILS_ENV: test
-      - image: mysql:5.7
+      - image: postgres:12.2-alpine
         environment:
-          MYSQL_ROOT_PASSWORD: mysecretpassword
+          POSTGRES_PASSWORD: password
       - image: redis:3.2
 
     working_directory: ~/repo
@@ -32,9 +32,9 @@ jobs:
       - run:
           name: Database setup
           command: |
-            until curl -s -o /dev/null $DB_HOST:3306; do
+            until curl -s -o /dev/null $DB_HOST:5432; do
               sleep 5;
-              echo "Waiting for MySQL";
+              echo "Waiting for PostgreSQL";
             done;
             rake db:reset
       - run:
