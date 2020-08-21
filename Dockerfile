@@ -3,7 +3,8 @@ FROM ruby:2.4.1-alpine3.6
 ENV BUILD_PACKAGES='build-base git \
   mysql-dev \
   nodejs nodejs-npm \
-  tzdata inotify-tools curl'
+  tzdata inotify-tools curl \
+  libxml2-dev libxslt-dev'
 
 RUN \
   apk add --no-cache --upgrade $BUILD_PACKAGES && \
@@ -18,4 +19,6 @@ COPY package.json yarn.lock ./
 RUN yarn install --ignore-engines
 
 COPY Gemfile Gemfile.lock ./
-RUN bundle install --jobs "$(getconf _NPROCESSORS_ONLN)"
+RUN \
+  bundle config build.nokogiri --use-system-libraries && \
+  bundle install --jobs "$(getconf _NPROCESSORS_ONLN)"
