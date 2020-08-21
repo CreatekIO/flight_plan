@@ -17,10 +17,12 @@ services:
     command: sh -c '
       rm -f /flight_plan/tmp/pids/server.pid &&
       bundle &&
-      if [ "$BYEBUG" -eq "1" ]; then sleep 100d; else rails s; fi
+      if [ "$BYEBUG" -eq "1" ]; then sleep 100d; else bin/rails s; fi
       '
     volumes:
       - .:/flight_plan
+      - gems:/usr/local/bundle
+      - node_modules:/flight_plan/node_modules
     depends_on:
       - db
       - redis
@@ -47,6 +49,8 @@ services:
       - MYSQL_ALLOW_EMPTY_PASSWORD=yes
     ports:
       - 3306:3306
+    volumes:
+      - mysql_data:/var/lib/mysql
 
   webpack:
     image: createkio/flight_plan:latest
@@ -62,6 +66,8 @@ services:
       '
     volumes:
       - .:/flight_plan
+      - gems:/usr/local/bundle
+      - node_modules:/flight_plan/node_modules
     expose:
       - 3035
     labels:
@@ -76,9 +82,10 @@ services:
 
   sidekiq:
     image: createkio/flight_plan:latest
-    command: sh -c 'bundle && bundle exec sidekiq'
+    command: sh -c 'bundle exec sidekiq'
     volumes:
       - .:/flight_plan
+      - gems:/usr/local/bundle
     depends_on:
       - db
       - redis
@@ -89,3 +96,8 @@ services:
       - DB_PASSWORD
     env_file:
       - .env
+
+volumes:
+  mysql_data:
+  gems:
+  node_modules:
