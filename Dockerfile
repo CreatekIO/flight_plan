@@ -1,11 +1,12 @@
 FROM ruby:2.4.1-alpine3.6
 
-MAINTAINER CreatekIO
-
-ENV BUILD_PACKAGES='build-base git mysql-dev nodejs nodejs-npm tzdata inotify-tools curl'
+ENV BUILD_PACKAGES='build-base git \
+  mysql-dev \
+  nodejs nodejs-npm \
+  tzdata inotify-tools curl'
 
 RUN \
-  apk add --update --upgrade $BUILD_PACKAGES && \
+  apk add --no-cache --upgrade $BUILD_PACKAGES && \
   npm install --global yarn@1.5.1 && \
   find / -type f -iname \*.apk-new -delete && \
   rm -rf /var/cache/apk/* && \
@@ -17,4 +18,4 @@ COPY package.json yarn.lock ./
 RUN yarn install --ignore-engines
 
 COPY Gemfile Gemfile.lock ./
-RUN bundle install --jobs 20
+RUN bundle install --jobs "$(getconf _NPROCESSORS_ONLN)"
