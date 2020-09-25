@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20200417120429) do
+ActiveRecord::Schema.define(version: 20200925103038) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -42,7 +42,7 @@ ActiveRecord::Schema.define(version: 20200417120429) do
     t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "deploy_swimlane_id"
+    t.bigint "deploy_swimlane_id"
     t.string "additional_branches_regex"
   end
 
@@ -55,7 +55,7 @@ ActiveRecord::Schema.define(version: 20200417120429) do
     t.datetime "commit_timestamp"
     t.citext "author_username"
     t.citext "committer_username"
-    t.integer "pusher_remote_id"
+    t.bigint "pusher_remote_id"
     t.citext "pusher_username"
     t.text "payload"
     t.datetime "created_at", null: false
@@ -84,8 +84,8 @@ ActiveRecord::Schema.define(version: 20200417120429) do
   create_table "comments", force: :cascade do |t|
     t.bigint "ticket_id"
     t.text "remote_body"
-    t.string "remote_id"
-    t.string "remote_author_id"
+    t.bigint "remote_id"
+    t.bigint "remote_author_id"
     t.citext "remote_author"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -103,9 +103,9 @@ ActiveRecord::Schema.define(version: 20200417120429) do
     t.string "context"
     t.string "url"
     t.string "avatar_url"
-    t.integer "author_remote_id"
+    t.bigint "author_remote_id"
     t.citext "author_username"
-    t.integer "committer_remote_id"
+    t.bigint "committer_remote_id"
     t.citext "committer_username"
     t.datetime "remote_created_at"
     t.text "payload"
@@ -129,7 +129,7 @@ ActiveRecord::Schema.define(version: 20200417120429) do
 
   create_table "labels", force: :cascade do |t|
     t.citext "name"
-    t.integer "remote_id"
+    t.bigint "remote_id"
     t.string "colour", limit: 6
     t.bigint "repo_id"
     t.datetime "created_at", null: false
@@ -162,14 +162,14 @@ ActiveRecord::Schema.define(version: 20200417120429) do
   end
 
   create_table "pull_request_reviews", force: :cascade do |t|
-    t.integer "remote_id"
+    t.bigint "remote_id"
     t.bigint "repo_id"
-    t.integer "remote_pull_request_id"
+    t.bigint "remote_pull_request_id"
     t.string "state"
     t.string "sha"
     t.text "body"
     t.string "url"
-    t.integer "reviewer_remote_id"
+    t.bigint "reviewer_remote_id"
     t.citext "reviewer_username"
     t.datetime "remote_created_at"
     t.text "payload"
@@ -183,7 +183,7 @@ ActiveRecord::Schema.define(version: 20200417120429) do
   end
 
   create_table "pull_requests", force: :cascade do |t|
-    t.string "remote_id"
+    t.bigint "remote_id"
     t.string "remote_number"
     t.string "remote_title"
     t.text "remote_body"
@@ -226,8 +226,8 @@ ActiveRecord::Schema.define(version: 20200417120429) do
     t.bigint "repo_id"
     t.bigint "release_id"
     t.string "status"
-    t.integer "remote_id"
-    t.integer "remote_number"
+    t.bigint "remote_id"
+    t.bigint "remote_number"
     t.string "remote_url"
     t.string "remote_state"
     t.datetime "remote_merged_at"
@@ -247,7 +247,7 @@ ActiveRecord::Schema.define(version: 20200417120429) do
 
   create_table "swimlane_transitions", force: :cascade do |t|
     t.bigint "swimlane_id"
-    t.integer "transition_id"
+    t.bigint "transition_id"
     t.integer "position"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -275,7 +275,7 @@ ActiveRecord::Schema.define(version: 20200417120429) do
   end
 
   create_table "tickets", force: :cascade do |t|
-    t.string "remote_id"
+    t.bigint "remote_id"
     t.string "remote_number"
     t.string "remote_title"
     t.text "remote_body"
@@ -285,7 +285,7 @@ ActiveRecord::Schema.define(version: 20200417120429) do
     t.datetime "updated_at", null: false
     t.bigint "repo_id"
     t.boolean "merged", default: false
-    t.integer "creator_remote_id"
+    t.bigint "creator_remote_id"
     t.citext "creator_username"
     t.bigint "milestone_id"
     t.datetime "remote_created_at"
