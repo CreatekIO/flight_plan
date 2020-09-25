@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20200925103038) do
+ActiveRecord::Schema.define(version: 20200925104437) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -48,8 +48,8 @@ ActiveRecord::Schema.define(version: 20200925103038) do
 
   create_table "branch_heads", force: :cascade do |t|
     t.bigint "branch_id"
-    t.string "head_sha"
-    t.string "previous_head_sha"
+    t.string "head_sha", limit: 40
+    t.string "previous_head_sha", limit: 40
     t.integer "commits_in_push"
     t.boolean "force_push", default: false
     t.datetime "commit_timestamp"
@@ -98,7 +98,7 @@ ActiveRecord::Schema.define(version: 20200925103038) do
     t.bigint "remote_id"
     t.bigint "repo_id"
     t.string "state"
-    t.string "sha"
+    t.string "sha", limit: 40
     t.text "description"
     t.string "context"
     t.string "url"
@@ -166,7 +166,7 @@ ActiveRecord::Schema.define(version: 20200925103038) do
     t.bigint "repo_id"
     t.bigint "remote_pull_request_id"
     t.string "state"
-    t.string "sha"
+    t.string "sha", limit: 40
     t.text "body"
     t.string "url"
     t.bigint "reviewer_remote_id"
@@ -189,7 +189,7 @@ ActiveRecord::Schema.define(version: 20200925103038) do
     t.text "remote_body"
     t.string "remote_state"
     t.string "remote_head_branch"
-    t.string "remote_head_sha"
+    t.string "remote_head_sha", limit: 40
     t.string "remote_base_branch"
     t.bigint "repo_id"
     t.datetime "created_at", null: false
