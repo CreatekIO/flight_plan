@@ -21,6 +21,7 @@ gem 'coffee-rails', '~> 4.2'
 gem 'jbuilder', '~> 2.5'
 gem 'turbolinks', '~> 5'
 
+gem 'activerecord-import'
 gem 'bootstrap-sass', '~> 3.4.1'
 gem 'bugsnag'
 gem 'business_time'
