@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe PullRequestRefresher do
   describe '#run' do
     let(:repo) { create(:repo) }
-    let(:remote_url) { repo.remote_url }
+    let(:slug) { repo.slug }
     let!(:pull_request) { create(:pull_request, repo: repo) }
     let(:state) { 'open' }
 
@@ -12,16 +12,16 @@ RSpec.describe PullRequestRefresher do
     let(:gh_pr_payload) do
       {
         id: pull_request.remote_id,
-        number: pull_request.remote_number,
+        number: pull_request.number,
         state: state,
-        head: { sha: 'abc1234', ref: "feature/#{pull_request.remote_number}-test" },
+        head: { sha: 'abc1234', ref: "feature/#{pull_request.number}-test" },
         base: { sha: '4321cba', ref: 'master' },
         user: { id: 1000 }
       }
     end
 
     let!(:gh_pr_stub) do
-      stub_gh_get("pulls/#{pull_request.remote_number}") do
+      stub_gh_get("pulls/#{pull_request.number}") do
         gh_pr_payload
       end
     end
@@ -31,7 +31,7 @@ RSpec.describe PullRequestRefresher do
     end
 
     let!(:gh_reviews_stub) do
-      stub_gh_get("pulls/#{pull_request.remote_number}/reviews") do
+      stub_gh_get("pulls/#{pull_request.number}/reviews") do
         gh_reviews_payload
       end
     end

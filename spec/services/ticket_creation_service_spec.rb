@@ -6,7 +6,7 @@ RSpec.describe TicketCreationService do
     let(:board) { create(:board) }
     let!(:swimlane) { create(:swimlane, board: board, position: 1) }
     let(:repo) { create(:repo) }
-    let(:remote_url) { repo.remote_url }
+    let(:slug) { repo.slug }
     let(:attributes) do
       {
         title: 'A new ticket',

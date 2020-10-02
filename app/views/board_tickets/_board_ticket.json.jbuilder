@@ -7,7 +7,7 @@ json.url board_ticket_path(@board, board_ticket)
 json.swimlane board_ticket.swimlane_id
 
 json.ticket do
-  json.extract! ticket, :id, :remote_number, :remote_title, :html_url
+  json.extract! ticket, :id, :number, :title, :html_url
   json.repo do
     json.extract! ticket.repo, :id, :name
   end
@@ -17,9 +17,9 @@ json.pull_requests ticket.pull_requests do |pull_request|
   json.extract!(
     pull_request,
     :id,
-    :remote_number,
-    :remote_title,
-    :remote_state,
+    :number,
+    :title,
+    :state,
     :merged,
     :html_url
   )

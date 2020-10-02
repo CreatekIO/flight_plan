@@ -33,7 +33,7 @@ const AssigneeStack = ({ assignees }) => (
 const TicketCard = ({
     id,
     index,
-    ticket: { remote_number, remote_title, html_url, repo },
+    ticket: { number, title, html_url, repo },
     display_duration,
     time_since_last_transition,
     url,
@@ -54,7 +54,7 @@ const TicketCard = ({
                     className="content ticket-card--header"
                 >
                     <a className="issue-number" href={html_url} target="_blank">
-                        {remote_number}
+                        {number}
                     </a>
                     <span className="meta repo-name">{repo.name}</span>
                     <span className="right floated">
@@ -63,7 +63,7 @@ const TicketCard = ({
                 </div>
                 <div className="content ticket-card--title">
                     <TicketModal
-                        trigger={<a className="issue-title">{remote_title}</a>}
+                        trigger={<a className="issue-title">{title}</a>}
                         id={id}
                     />
                     {(labels.length || milestone) && (

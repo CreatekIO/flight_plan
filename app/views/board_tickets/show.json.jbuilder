@@ -5,10 +5,10 @@ json.id @board_ticket.id
 json.state_durations @board_ticket.displayable_durations(@board)
 
 json.ticket do
-  json.extract! ticket, :id, :remote_number, :remote_title, :html_url
-  json.state ticket.remote_state
+  json.extract! ticket, :id, :number, :title, :html_url
+  json.state ticket.state
   json.creator ticket.creator_username || 'ghost'
-  json.body ticket.remote_body
+  json.body ticket.body
   json.timestamp time_ago_in_words(ticket.remote_created_at || ticket.created_at)
 
   json.repo do
@@ -20,9 +20,9 @@ json.pull_requests ticket.pull_requests do |pull_request|
   json.extract!(
     pull_request,
     :id,
-    :remote_number,
-    :remote_title,
-    :remote_state,
+    :number,
+    :title,
+    :state,
     :merged,
     :html_url
   )
@@ -43,7 +43,7 @@ end
 
 json.comments(ticket.comments) do |comment|
   json.id comment.id
-  json.body comment.remote_body
-  json.author comment.remote_author
+  json.body comment.body
+  json.author comment.author_username
   json.timestamp time_ago_in_words(comment.remote_created_at || comment.created_at)
 end

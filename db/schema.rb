@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20200925104437) do
+ActiveRecord::Schema.define(version: 20200925105334) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -83,10 +83,10 @@ ActiveRecord::Schema.define(version: 20200925104437) do
 
   create_table "comments", force: :cascade do |t|
     t.bigint "ticket_id"
-    t.text "remote_body"
+    t.text "body"
     t.bigint "remote_id"
-    t.bigint "remote_author_id"
-    t.citext "remote_author"
+    t.bigint "author_remote_id"
+    t.citext "author_username"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.datetime "remote_created_at"
@@ -140,7 +140,7 @@ ActiveRecord::Schema.define(version: 20200925104437) do
 
   create_table "milestones", force: :cascade do |t|
     t.bigint "remote_id"
-    t.bigint "remote_number"
+    t.bigint "number"
     t.string "title"
     t.string "state"
     t.text "description"
@@ -184,13 +184,13 @@ ActiveRecord::Schema.define(version: 20200925104437) do
 
   create_table "pull_requests", force: :cascade do |t|
     t.bigint "remote_id"
-    t.string "remote_number"
-    t.string "remote_title"
-    t.text "remote_body"
-    t.string "remote_state"
-    t.string "remote_head_branch"
-    t.string "remote_head_sha", limit: 40
-    t.string "remote_base_branch"
+    t.string "number"
+    t.string "title"
+    t.text "body"
+    t.string "state"
+    t.string "head_branch"
+    t.string "head_sha", limit: 40
+    t.string "base_branch"
     t.bigint "repo_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -239,7 +239,7 @@ ActiveRecord::Schema.define(version: 20200925104437) do
 
   create_table "repos", force: :cascade do |t|
     t.string "name"
-    t.citext "remote_url"
+    t.citext "slug"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "auto_deploy", default: false, null: false
@@ -276,10 +276,9 @@ ActiveRecord::Schema.define(version: 20200925104437) do
 
   create_table "tickets", force: :cascade do |t|
     t.bigint "remote_id"
-    t.string "remote_number"
-    t.string "remote_title"
-    t.text "remote_body"
-    t.string "remote_state"
+    t.string "number"
+    t.string "title"
+    t.text "body"
     t.string "state"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

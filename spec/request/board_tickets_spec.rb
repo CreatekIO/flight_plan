@@ -5,7 +5,7 @@ RSpec.describe 'BoardTickets', type: :request do
   let(:path) { "/boards/#{board.id}/board_tickets" }
   let(:board) { create(:board) }
   let(:repo) { create(:repo) }
-  let(:remote_url) { repo.remote_url }
+  let(:slug) { repo.slug }
   let(:board_repo) { create(:board_repo, board: board, repo: repo) }
   let(:ticket_1) { create(:ticket, repo: repo) }
   let(:ticket_2) { create(:ticket, repo: repo) }

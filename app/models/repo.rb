@@ -18,20 +18,23 @@ class Repo < ApplicationRecord
   octokit_methods(
     :compare, :pull_requests, :merge_pull_request, :create_pull_request,
     :create_ref, :merge, :refs, :delete_branch,
-    prefix_with: :remote_url
+    prefix_with: :slug
   )
 
   URL_TEMPLATE = 'https://github.com/%s'.freeze
 
   def html_url
-    format(URL_TEMPLATE, remote_url)
+    format(URL_TEMPLATE, slug)
   end
 
   def to_builder
     Jbuilder.new do |repo|
       repo.id id
       repo.name name
-      repo.remote_url remote_url
+      repo.slug slug
+
+      # TODO: LEGACY - remove
+      repo.remote_url slug
     end
   end
 
@@ -48,6 +51,6 @@ class Repo < ApplicationRecord
   end
 
   def branch_names
-    @branch_names ||= octokit.branches(remote_url).collect { |b| b[:name] }
+    @branch_names ||= octokit.branches(slug).collect { |b| b[:name] }
   end
 end

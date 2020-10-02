@@ -20,7 +20,7 @@ RSpec.describe Ticket do
         }.to change { repo.tickets.count }.by(1)
 
         aggregate_failures do
-          expect(@ticket.remote_title).to eq('issue title')
+          expect(@ticket.title).to eq('issue title')
           expect(@ticket.assignments.pluck(:assignee_remote_id, :assignee_username)).to match_array(
             [assignee.values_at(:uid, :name)]
           )
@@ -91,7 +91,7 @@ RSpec.describe Ticket do
     end
 
     context 'when the ticket exists' do
-      let!(:ticket) { create(:ticket, remote_title: 'before title', repo: repo, remote_id: issue_id) }
+      let!(:ticket) { create(:ticket, title: 'before title', repo: repo, remote_id: issue_id) }
 
       it 'updates the ticket' do
         expect {
@@ -99,7 +99,7 @@ RSpec.describe Ticket do
         }.not_to change { repo.tickets.count }
 
         expect(@imported_ticket).to eq(ticket)
-        expect(ticket.reload.remote_title).to eq(remote_issue[:title])
+        expect(ticket.reload.title).to eq(remote_issue[:title])
       end
 
       context 'when ticket has been reassigned' do
@@ -185,7 +185,7 @@ RSpec.describe Ticket do
         full_name: 'org_name/repo_name'
       }
     }
-    let!(:repo) { create(:repo, remote_url: 'org_name/repo_name') }
+    let!(:repo) { create(:repo, slug: 'org_name/repo_name') }
     context "when the ticket doesn't exist" do
       it 'builds a new ticket' do
         ticket = described_class.find_by_remote(remote_issue, remote_repo)
@@ -205,8 +205,8 @@ RSpec.describe Ticket do
     include_context 'board with swimlanes'
     include_context 'remote issue'
 
-    let(:repo) { create(:repo, remote_url: remote_url) }
-    let(:ticket) { create(:ticket, repo: repo, remote_id: issue_id, remote_state: ticket_state) }
+    let(:repo) { create(:repo, slug: slug) }
+    let(:ticket) { create(:ticket, repo: repo, remote_id: issue_id, state: ticket_state) }
     let!(:board_ticket) { create(:board_ticket, ticket: ticket, board: board, swimlane: old_swimlane) }
     let!(:acceptance) { create(:swimlane, name: 'Acceptance', board: board, position: 3) }
     let!(:closed) { create(:swimlane, name: 'Closed', board: board, position: 4) }
@@ -234,7 +234,7 @@ RSpec.describe Ticket do
       let(:board_ticket) { nil }
 
       it 'moves board ticket to the top of the first swimlane' do
-        ticket = Ticket.import(payload, full_name: remote_url)
+        ticket = Ticket.import(payload, full_name: slug)
         board_ticket = ticket.board_tickets.find_by!(board: board)
 
         expect(board_ticket.swimlane).to eq(backlog)
@@ -255,7 +255,7 @@ RSpec.describe Ticket do
 
       it 'moves board ticket to the top of the last swimlane' do
         expect {
-          Ticket.import(payload, full_name: remote_url)
+          Ticket.import(payload, full_name: slug)
         }.to change { board_ticket.reload.swimlane }.from(dev).to(closed)
           .and change { closed.reload.board_tickets.first }.to(board_ticket)
       end
@@ -272,7 +272,7 @@ RSpec.describe Ticket do
 
       it 'moves board ticket to the top of the first swimlane' do
         expect {
-          Ticket.import(payload, full_name: remote_url)
+          Ticket.import(payload, full_name: slug)
         }.to change { board_ticket.reload.swimlane }.from(closed).to(backlog)
           .and change { backlog.reload.board_tickets.first }.to(board_ticket)
       end
@@ -283,7 +283,7 @@ RSpec.describe Ticket do
 
       it 'does not move board ticket' do
         expect {
-          Ticket.import(payload, full_name: remote_url)
+          Ticket.import(payload, full_name: slug)
         }.not_to change { board_ticket.reload.swimlane }
       end
     end
@@ -293,7 +293,7 @@ RSpec.describe Ticket do
 
       it 'moves board ticket to the top of the new swimlane' do
         expect {
-          Ticket.import(payload, full_name: remote_url)
+          Ticket.import(payload, full_name: slug)
         }.to change { board_ticket.reload.swimlane }.from(backlog).to(acceptance)
           .and change { acceptance.reload.board_tickets.first }.to(board_ticket)
       end

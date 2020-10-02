@@ -89,7 +89,7 @@ class ReleaseManager
   end
 
   def initialize_release_branch
-    log "Creating release branch '#{release_branch_name}' on '#{repo.remote_url}'..."
+    log "Creating release branch '#{release_branch_name}' on '#{repo.slug}'..."
     repo.create_ref("heads/#{release_branch_name}", master.object.sha)
     log 'done'
   end
@@ -128,7 +128,7 @@ class ReleaseManager
 
   def pr_body
     messages = ['**Issues**'] + unmerged_tickets.collect do |ticket|
-      "Connects ##{ticket.remote_number} - #{ticket.remote_title}"
+      "Connects ##{ticket.number} - #{ticket.title}"
     end
 
     messages += extra_branches_pr_messages if extra_branches.any?
@@ -164,7 +164,7 @@ class ReleaseManager
 
   def announce_pr_opened
     tickets = unmerged_tickets.collect do |ticket|
-      "• #{ticket.remote_number} : #{ticket.remote_title}"
+      "• #{ticket.number} : #{ticket.title}"
     end
 
     attachments = [

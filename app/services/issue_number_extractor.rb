@@ -25,10 +25,10 @@ module IssueNumberExtractor
   end
 
   def self.connections(text, current_repo:)
-    text.to_s.scan(NUMBER_IN_BODY).each_with_object(Set.new) do |(remote_url, number), set|
-      remote_url ||= current_repo.remote_url
+    text.to_s.scan(NUMBER_IN_BODY).each_with_object(Set.new) do |(slug, number), set|
+      slug ||= current_repo.slug
 
-      set.add(repo: remote_url, number: number)
+      set.add(repo: slug, number: number)
     end
   end
 end

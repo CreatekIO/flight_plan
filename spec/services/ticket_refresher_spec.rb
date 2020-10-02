@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe TicketRefresher do
   describe '#run' do
     let(:repo) { create(:repo) }
-    let(:remote_url) { repo.remote_url }
+    let(:slug) { repo.slug }
     let!(:ticket) { create(:ticket, repo: repo) }
     let!(:pull_request) { create(:pull_request, repo: repo) }
 
@@ -11,9 +11,9 @@ RSpec.describe TicketRefresher do
 
     let(:gh_ticket_payload) do
       {
-        url: expand_gh_url("issues/#{ticket.remote_number}"),
+        url: expand_gh_url("issues/#{ticket.number}"),
         id: ticket.remote_id,
-        number: ticket.remote_number,
+        number: ticket.number,
         title: "Ticket #{SecureRandom.uuid}",
         body: 'Connects #',
         state: 'open',
@@ -24,7 +24,7 @@ RSpec.describe TicketRefresher do
     end
 
     let!(:gh_issue_stub) do
-      stub_gh_get("issues/#{ticket.remote_number}") do
+      stub_gh_get("issues/#{ticket.number}") do
         gh_ticket_payload
       end
     end
@@ -34,7 +34,7 @@ RSpec.describe TicketRefresher do
     end
 
     let!(:gh_comments_stub) do
-      stub_gh_get("issues/#{ticket.remote_number}/comments") do
+      stub_gh_get("issues/#{ticket.number}/comments") do
         gh_comments_payload
       end
     end
@@ -68,7 +68,7 @@ RSpec.describe TicketRefresher do
         expect(gh_issue_stub).to have_been_requested
         expect(Ticket).to have_received(:import).with(
           gh_ticket_payload,
-          full_name: repo.remote_url
+          full_name: repo.slug
         )
       end
     end

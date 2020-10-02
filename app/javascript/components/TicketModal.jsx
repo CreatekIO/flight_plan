@@ -257,7 +257,7 @@ const TicketModal = ({
     assignees,
     loading_state
 }) => {
-    const { remote_number, remote_title, html_url, repo } = ticket;
+    const { number, title, html_url, repo } = ticket;
     const Inner = choices[`${loading_state}`];
 
     return (
@@ -269,10 +269,10 @@ const TicketModal = ({
         >
             <Modal.Header>
                 <a href={html_url} target="_blank">
-                    #{remote_number}
+                    #{number}
                 </a>
                 &nbsp;&nbsp;
-                {remote_title}
+                {title}
             </Modal.Header>
             <Modal.Content scrolling>
                 <div className="ui grid">

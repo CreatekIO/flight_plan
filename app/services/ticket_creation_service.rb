@@ -2,9 +2,9 @@ class TicketCreationService
   include OctokitClient
 
   attr_reader :board, :title, :repo_id, :description, :swimlane
-  delegate :remote_url, to: :repo, prefix: true
+  delegate :slug, to: :repo, prefix: true
 
-  octokit_methods :create_issue, prefix_with: %i[repo_remote_url]
+  octokit_methods :create_issue, prefix_with: %i[repo_slug]
 
   def initialize(attributes)
     @description = attributes[:description]
@@ -19,7 +19,7 @@ class TicketCreationService
   def create_ticket!
     Ticket.transaction do
       remote_ticket = create_remote_ticket
-      Ticket.import(remote_ticket, full_name: repo_remote_url)
+      Ticket.import(remote_ticket, full_name: repo_slug)
     end
   end
 

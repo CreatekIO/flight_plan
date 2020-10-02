@@ -6,24 +6,24 @@ import NextActionButton from "./NextActionButton";
 import PullRequestIcon from "./PullRequestIcon";
 
 const PullRequestLine = ({
-    remote_state,
+    state,
     merged,
     html_url,
-    remote_title,
-    remote_number,
+    title,
+    number,
     next_action
 }) => (
     <div className="item">
         <div className="left floated content">
-            <PullRequestIcon merged={merged} state={remote_state} />
+            <PullRequestIcon merged={merged} state={state} />
             &nbsp;
             <Popup
                 trigger={
                     <a href={html_url} target="_blank">
-                        {remote_number}
+                        {number}
                     </a>
                 }
-                content={remote_title}
+                content={title}
                 position="right center"
                 size="mini"
                 hideOnScroll

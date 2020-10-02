@@ -40,9 +40,9 @@ class CycleTimeCalculator
       .merge(with_starting_timesheet)
       .merge(with_ending_timesheet)
       .select(
-        Ticket.arel_table[:remote_title].as('title'),
-        Ticket.arel_table[:remote_number].as('number'),
-        Repo.arel_table[:remote_url].as('repo'),
+        Ticket.arel_table[:title].as('title'),
+        Ticket.arel_table[:number].as('number'),
+        Repo.arel_table[:slug].as('repo'),
         start_time.as('started_at'),
         end_time.as('ended_at'),
         cycle_time

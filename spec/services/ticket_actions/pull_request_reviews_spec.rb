@@ -30,7 +30,7 @@ RSpec.describe TicketActions::PullRequestReviews, type: :ticket_action do
         repo: repo,
         state: state,
         pull_request: pull_request,
-        sha: pull_request.remote_head_sha,
+        sha: pull_request.head_sha,
         reviewer_remote_id: reviewer.uid,
         reviewer_username: reviewer.name.parameterize.underscore,
         remote_created_at: time,
@@ -69,7 +69,7 @@ RSpec.describe TicketActions::PullRequestReviews, type: :ticket_action do
           before do
             # Mimic push to PR branch
             new_sha = generate(:sha)
-            pull_request.remote_head_sha = new_sha
+            pull_request.head_sha = new_sha
           end
 
           it 'tells user to re-review PR' do

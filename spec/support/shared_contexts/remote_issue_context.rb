@@ -1,5 +1,5 @@
 RSpec.shared_context 'remote issue' do
-  let(:remote_url) { 'org_name/repo_name' }
+  let(:slug) { 'org_name/repo_name' }
   let(:issue_id) { 888 }
   let(:issue_no) { 2 }
   let(:assignee) { attributes_for(:user) }
@@ -35,7 +35,7 @@ RSpec.shared_context 'remote issue' do
 
   let(:remote_repo) {
     {
-      full_name: remote_url
+      full_name: slug
     }
   }
 end

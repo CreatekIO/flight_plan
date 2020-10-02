@@ -25,13 +25,13 @@ RSpec.describe IssueNumberExtractor do
   end
 
   describe '.connections' do
-    let(:repo) { double(:repo, remote_url: 'a-user/a-repo') }
+    let(:repo) { double(:repo, slug: 'a-user/a-repo') }
 
     let(:expected) do
       nums = %w[1 10 21 32 43 54]
 
       [
-        *nums.map { |n| { repo: repo.remote_url, number: n } },
+        *nums.map { |n| { repo: repo.slug, number: n } },
         *nums.map { |n| { repo: 'another/repo_name', number: n } }
       ]
     end

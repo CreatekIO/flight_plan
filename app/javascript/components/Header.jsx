@@ -35,10 +35,10 @@ const RepoPullRequests = ({ repo }) => (
                     </div>
                     <div className="content">
                         <a href={pullRequest.html_url} target="_blank">
-                            #{pullRequest.remote_number}
+                            #{pullRequest.number}
                             &nbsp;
                             <span className="text-muted">
-                                {truncate(pullRequest.remote_title, 60)}
+                                {truncate(pullRequest.title, 60)}
                             </span>
                         </a>
                     </div>

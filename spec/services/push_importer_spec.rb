@@ -65,7 +65,7 @@ RSpec.describe PushImporter do
         end
 
         context 'when matching ticket exists' do
-          let!(:ticket) { create(:ticket, repo: repo, remote_number: '123') }
+          let!(:ticket) { create(:ticket, repo: repo, number: '123') }
 
           it 'sets ticket on branch' do
             expect {

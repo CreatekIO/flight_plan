@@ -12,7 +12,7 @@ RSpec.describe TicketActions::PullRequestStatuses, type: :ticket_action do
     end
 
     def url(name)
-      "https://ci.#{name}.test/#{pull_request.remote_number}"
+      "https://ci.#{name}.test/#{pull_request.number}"
     end
 
     def description(name)
@@ -24,7 +24,7 @@ RSpec.describe TicketActions::PullRequestStatuses, type: :ticket_action do
         :commit_status,
         context: context,
         state: state,
-        sha: pull_request.remote_head_sha,
+        sha: pull_request.head_sha,
         repo: repo,
         url: url(context),
         description: description(context),
@@ -108,7 +108,7 @@ RSpec.describe TicketActions::PullRequestStatuses, type: :ticket_action do
 
         # Mimic push to PR branch
         new_sha = generate(:sha)
-        pull_request.remote_head_sha = new_sha
+        pull_request.head_sha = new_sha
 
         create_status(:failure, sha: new_sha)
       end

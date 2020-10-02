@@ -8,7 +8,7 @@ class PullRequest < ApplicationRecord
   # Silence warning about overriding `open` method
   # (which is inherited from Kernel)
   logger.silence do
-    permissive_enum remote_state: { open: 'open', closed: 'closed' }
+    permissive_enum state: { open: 'open', closed: 'closed' }
   end
 
   belongs_to :repo
@@ -24,11 +24,11 @@ class PullRequest < ApplicationRecord
     else # eager-loading/join
       joins(
         table.join(PullRequest.arel_table).on(
-          PullRequest.arel_table[:remote_head_sha].eq(table[:sha])
+          PullRequest.arel_table[:head_sha].eq(table[:sha])
         ).join_sources
       ).where(PullRequest.arel_table[:repo_id].eq(table[:repo_id]))
     end
-  }, class_name: 'CommitStatus', foreign_key: :sha, primary_key: :remote_head_sha
+  }, class_name: 'CommitStatus', foreign_key: :sha, primary_key: :head_sha
   has_many :reviews, class_name: 'PullRequestReview', foreign_key: :remote_pull_request_id, primary_key: :remote_id
 
   before_save :update_pull_request_connections
@@ -36,13 +36,13 @@ class PullRequest < ApplicationRecord
   def self.import(remote_pr, remote_repo)
     pull_request = find_by_remote(remote_pr, remote_repo)
     pull_request.update_attributes(
-      remote_number: remote_pr[:number],
-      remote_title: remote_pr[:title],
-      remote_body: remote_pr[:body],
-      remote_state: remote_pr[:state],
-      remote_head_branch: remote_pr[:head][:ref],
-      remote_head_sha: remote_pr[:head][:sha],
-      remote_base_branch: remote_pr[:base][:ref],
+      number: remote_pr[:number],
+      title: remote_pr[:title],
+      body: remote_pr[:body],
+      state: remote_pr[:state],
+      head_branch: remote_pr[:head][:ref],
+      head_sha: remote_pr[:head][:sha],
+      base_branch: remote_pr[:base][:ref],
       merge_status: remote_pr[:mergeable],
       merged: remote_pr[:merged],
       creator_remote_id: remote_pr[:user][:id],
@@ -54,7 +54,7 @@ class PullRequest < ApplicationRecord
   def self.find_by_remote(remote_pr, remote_repo)
     pull_request = find_or_initialize_by(remote_id: remote_pr[:id])
     if pull_request.repo_id.blank?
-      pull_request.repo = Repo.find_by!(remote_url: remote_repo[:full_name])
+      pull_request.repo = Repo.find_by!(slug: remote_repo[:full_name])
     end
     pull_request
   end
@@ -81,7 +81,7 @@ class PullRequest < ApplicationRecord
   URL_TEMPLATE = 'https://github.com/%{repo}/pull/%{number}'.freeze
 
   def html_url
-    format(URL_TEMPLATE, repo: repo.remote_url, number: remote_number)
+    format(URL_TEMPLATE, repo: repo.slug, number: number)
   end
 
   def latest_commit_statuses
@@ -100,7 +100,7 @@ class PullRequest < ApplicationRecord
 
   def update_pull_request_connections
     new_connections = referenced_issues.map do |issue|
-      query = { repos: { remote_url: issue[:repo] }, tickets: { remote_number: issue[:number] } }
+      query = { repos: { slug: issue[:repo] }, tickets: { number: issue[:number] } }
       existing = pull_request_connections.joins(ticket: :repo).find_by(query)
       next(existing) if existing.present?
 
@@ -117,7 +117,7 @@ class PullRequest < ApplicationRecord
     issues_referenced_in_body.tap do |issues|
       return issues if number_from_branch_name.blank?
 
-      issues.add(repo: repo.remote_url, number: number_from_branch_name)
+      issues.add(repo: repo.slug, number: number_from_branch_name)
     end
   end
 
@@ -130,10 +130,10 @@ class PullRequest < ApplicationRecord
   end
 
   def number_from_branch_name
-    IssueNumberExtractor.from_branch(remote_head_branch)
+    IssueNumberExtractor.from_branch(head_branch)
   end
 
   def issues_referenced_in_body
-    IssueNumberExtractor.connections(remote_body, current_repo: repo)
+    IssueNumberExtractor.connections(body, current_repo: repo)
   end
 end
