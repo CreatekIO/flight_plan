@@ -57,6 +57,18 @@ RSpec.describe CleanupCommitStatusesWorker do
       pending +2
     TXT
 
+    generate_scenario :flaky_commit, <<~TXT
+      pending
+      pending +1
+      failure +2
+      pending +3
+      pending +4
+      failure +5
+      pending +6
+      pending +7
+      success +8
+    TXT
+
     generate_scenario :different_repos_commit, <<~TXT
       success  0 circleci repo_a
       success +1 circleci repo_b
@@ -124,12 +136,28 @@ RSpec.describe CleanupCommitStatusesWorker do
     end
 
     context 'with failed and then in-progress (restarted) commit' do
-      it 'only retains latest (pending) status' do
+      it 'retains latest (pending) status and old failed status' do
         subject.perform
 
         aggregate_failures do
-          expect(restarted_commit.statuses[0..1]).to all be_destroyed
+          expect(restarted_commit.statuses.first).to be_destroyed
+          expect(restarted_commit.statuses.second).to have_attributes(present?: true, state: 'failure')
           expect(restarted_commit.statuses.last).to have_attributes(present?: true, state: 'pending')
+        end
+      end
+    end
+
+    context 'with flaky commit' do
+      it 'only retains non-pending statuses' do
+        subject.perform
+
+        aggregate_failures do
+          expect(flaky_commit.statuses[0..1]).to all be_destroyed
+          expect(flaky_commit.statuses[2]).to have_attributes(present?: true, state: 'failure')
+          expect(flaky_commit.statuses[3..4]).to all be_destroyed
+          expect(flaky_commit.statuses[5]).to have_attributes(present?: true, state: 'failure')
+          expect(flaky_commit.statuses[6..7]).to all be_destroyed
+          expect(flaky_commit.statuses[8]).to have_attributes(present?: true, state: 'success')
         end
       end
     end
