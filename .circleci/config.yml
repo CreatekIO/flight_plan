@@ -38,11 +38,21 @@ jobs:
           command: yarn install --ignore-engines
       - run:
           name: Database setup
-          command: |
-            until curl -s -o /dev/null $DB_HOST:5432; do
-              sleep 5;
-              echo "Waiting for PostgreSQL";
-            done;
+          command: >
+            retries=5
+
+            until nc -z $DB_HOST:5432; do
+              retries="$(("$retries" - 1))"
+
+              if [ "$retries" -eq 0 ]; then
+                echo "Failed to reach PostgreSQL" >&2
+                exit 1
+              fi
+
+              sleep 5
+              echo "Waiting for PostgreSQL ($retries retries left)"
+            done
+
             rake db:reset
       - run:
           name: Run Specs
