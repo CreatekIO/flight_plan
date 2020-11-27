@@ -3,6 +3,10 @@ class ApplicationMigrator
     establish_connection :"#{Rails.env}_mysql"
 
     self.abstract_class = true
+
+    def self.with_connection(&block)
+      connection_pool.with_connection(&block)
+    end
   end
 
   class PostgresImport < ActiveRecord::Base
@@ -18,8 +22,20 @@ class ApplicationMigrator
     end
 
     def self.import(collection)
-      without_triggers do
-        super(collection, validate: false)
+      without_triggers { super(collection, validate: false) }
+    end
+
+    def self.with_connection(&block)
+      connection_pool.with_connection(&block)
+    end
+  end
+
+  class ActiveRecordInternalMetadata < PostgresImport
+    self.table_name = 'ar_internal_metadata'
+
+    def self.set(attrs)
+      attrs.each do |key, value|
+        where(key: key.to_s).update_all(value: value.to_s)
       end
     end
   end
@@ -29,8 +45,6 @@ class ApplicationMigrator
   self.logger = ActiveSupport::TaggedLogging.new(
     ActiveSupport::Logger.new($stdout)
   )
-
-  attr_reader :mysql_attrs
 
   class << self
     include ActiveSupport::Benchmarkable
@@ -66,14 +80,13 @@ class ApplicationMigrator
             end
           end
         end
+
+        ActiveRecordInternalMetadata.set(environment: 'production')
       end
     end
 
     def import
-      mysql_class.in_batches.each do |relation|
-        to_import = benchmark('Exporting') { generate_import(relation) }
-        to_import.map!(&:to_h)
-
+      export do |to_import|
         logger.debug("Using columns: #{to_import.first.keys.join(', ')}")
 
         benchmark("Importing #{to_import.size} records") do
@@ -98,7 +111,7 @@ class ApplicationMigrator
       @mysql_class ||= begin
         const_set(:MySQLModel, Class.new(MySQLExport)).tap do |klass|
           klass.table_name = base_class.table_name
-          # klass.logger = logger
+          klass.logger = logger if ENV['MIGRATE_LOGGER'].present?
         end
       end
     end
@@ -107,7 +120,7 @@ class ApplicationMigrator
       @postgres_class ||= begin
         const_set(:PostgresModel, Class.new(PostgresImport)).tap do |klass|
           klass.table_name = base_class.table_name
-          # klass.logger = logger
+          klass.logger = logger if ENV['MIGRATE_LOGGER'].present?
         end
       end
     end
@@ -120,24 +133,25 @@ class ApplicationMigrator
       key_mappings[from] = to
     end
 
-    def generate_import(relation)
-      mysql_class.connection_pool.with_connection do |connection|
-        connection.select_all(relation.to_sql).map { |attrs| new(attrs) }
+    def export
+      mysql_class.in_batches.each do |relation|
+        to_import = benchmark('Exporting') do
+          mysql_class.with_connection do |connection|
+            connection.select_all(relation.to_sql).map do |attrs|
+              attrs.transform_keys { |key| (key_mappings[key] || key).to_s }
+            end
+          end
+        end
+
+        yield(to_import)
       end
     end
-  end
-
-  def initialize(mysql_attrs)
-    @mysql_attrs = mysql_attrs
-  end
-
-  def to_h
-    mysql_attrs.transform_keys { |key| (key_mappings[key] || key).to_s }
   end
 end
 
 # Eager-load all migrator classes
 %w[
+  DataMigration
   BoardRepo
   BoardTicket
   Board
