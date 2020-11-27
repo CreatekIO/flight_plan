@@ -9,10 +9,14 @@ class AddLimitToShaColumns < ActiveRecord::Migration[5.1]
   }.freeze
 
   def up
+    return say('Not running on MySQL') if connection.adapter_name == 'Mysql2'
+
     change_limits_to(SHA_SIZE)
   end
 
   def down
+    return say('Not running on MySQL') if connection.adapter_name == 'Mysql2'
+
     change_limits_to(nil) # remove
   end
 

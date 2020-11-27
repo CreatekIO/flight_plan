@@ -1,5 +1,7 @@
 class MassRenameColumns < ActiveRecord::Migration[5.1]
   def change
+    return say('Not running on MySQL') if connection.adapter_name == 'MySQL'
+
     change_table :comments do |t|
       t.rename :remote_body, :body
       t.rename :remote_author_id, :author_remote_id

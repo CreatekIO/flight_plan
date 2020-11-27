@@ -18,6 +18,8 @@ class SwitchAllIdColumnsToBigInt < ActiveRecord::Migration[5.1]
   ]
 
   def up
+    return say('Not running on MySQL') if connection.adapter_name == 'Mysql2'
+
     COLUMNS_TO_CHANGE.each do |table, columns|
       columns.each do |column|
         change_column table, column, :bigint, cast_as: :integer
@@ -26,6 +28,8 @@ class SwitchAllIdColumnsToBigInt < ActiveRecord::Migration[5.1]
   end
 
   def down
+    return say('Not running on MySQL') if connection.adapter_name == 'Mysql2'
+
     COLUMNS_TO_CHANGE.each do |table, columns|
       columns.each do |column|
         type = string_column?(table, column) ? :string : :integer
