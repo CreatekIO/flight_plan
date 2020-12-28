@@ -9,7 +9,6 @@ end
 
 gem 'rails', '~> 5.1.6.2'
 
-gem 'mysql2', '>= 0.3.18', '< 0.5'
 gem 'pg'
 gem 'puma', '~> 3.12'
 gem 'sass-rails', '~> 5.0'

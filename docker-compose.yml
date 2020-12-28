@@ -33,9 +33,6 @@ services:
       - DB_HOST=db
       - DB_USERNAME=postgres
       - DB_PASSWORD=password
-      - MYSQL_DB_HOST=db_mysql
-      - MYSQL_DB_USERNAME=root
-      - MYSQL_DB_PASSWORD
       - WEBPACKER_DEV_SERVER_HOST=webpack
       - WEBPACKER_DEV_SERVER_PORT=443
     labels:
@@ -46,15 +43,6 @@ services:
       - traefik.frontend.priority=10
     env_file:
       - .env
-
-  db_mysql:
-    image: mysql:5.7.19
-    environment:
-      - MYSQL_ALLOW_EMPTY_PASSWORD=yes
-    ports:
-      - 3306:3306
-    volumes:
-      - mysql_data:/var/lib/mysql
 
   db:
     image: postgres:12.2-alpine
@@ -107,14 +95,10 @@ services:
       - DB_HOST=db
       - DB_USERNAME=postgres
       - DB_PASSWORD=password
-      - MYSQL_DB_HOST=db_mysql
-      - MYSQL_DB_USERNAME=root
-      - MYSQL_DB_PASSWORD
     env_file:
       - .env
 
 volumes:
-  mysql_data:
   postgresql_data:
   gems:
   node_modules:
