@@ -1,10 +1,10 @@
 class TicketRefresher
   include OctokitClient
 
-  delegate :repo, :remote_number, to: :ticket
-  delegate :remote_url, to: :repo
+  delegate :repo, :number, to: :ticket
+  delegate :slug, to: :repo
 
-  octokit_methods :issue, :issue_comments, prefix_with: %i[remote_url remote_number]
+  octokit_methods :issue, :issue_comments, prefix_with: %i[slug number]
 
   def initialize(ticket)
     @ticket = ticket
@@ -21,7 +21,7 @@ class TicketRefresher
   attr_reader :ticket
 
   def update_ticket
-    @ticket = Ticket.import(gh_ticket, full_name: remote_url)
+    @ticket = Ticket.import(gh_ticket, full_name: slug)
   end
 
   def update_ticket_comments

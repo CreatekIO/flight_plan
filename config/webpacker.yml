@@ -35,10 +35,10 @@ development:
 
   dev_server:
     host: webpack.dev.createk.io
-    port: 80
-    public: http://webpack:80
+    port: 3035
+    public: https://webpack:3035
     hmr: true
-    https: false
+    https: true
     inline: true
     overlay: true
     disable_host_check: true

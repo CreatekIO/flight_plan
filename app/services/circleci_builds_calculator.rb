@@ -47,9 +47,9 @@ class CircleciBuildsCalculator
       remote_created_at: quarter.as_time_range,
       context: CONTEXTS,
       state: STATES,
-      repos: { remote_url: REPOS },
+      repos: { slug: REPOS },
       branches: { name: BRANCH_NAMES }
-    ).group(year_and_month.to_sql, :state, Repo.arel_table[:remote_url]).distinct.count
+    ).group(year_and_month.to_sql, :state, Repo.arel_table[:slug]).distinct.count
   end
 
   private

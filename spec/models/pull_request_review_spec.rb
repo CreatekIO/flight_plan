@@ -15,7 +15,7 @@ RSpec.describe PullRequestReview, type: :model do
           :pull_request,
           repo: repo,
           remote_id: payload[:pull_request][:id],
-          remote_number: payload[:pull_request][:number]
+          number: payload[:pull_request][:number]
         )
       end
 

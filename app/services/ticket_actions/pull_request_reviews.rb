@@ -45,6 +45,6 @@ class TicketActions::PullRequestReviews < TicketActions::Base
 
   # Assumes users always review latest commit
   def superceded?(review)
-    pull_request.remote_head_sha != review.sha
+    pull_request.head_sha != review.sha
   end
 end

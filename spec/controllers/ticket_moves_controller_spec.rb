@@ -50,7 +50,7 @@ RSpec.describe TicketMovesController do
     end
 
     let!(:get_all_labels_call) do
-      stub_gh_get("issues/#{ticket.remote_number}/labels") do
+      stub_gh_get("issues/#{ticket.number}/labels") do
         [
           { id: '111', name: 'type: bug', color: 'ff0000' },
           { id: '112', name: "status: #{backlog.name}", color: '00ff00' }
@@ -59,7 +59,7 @@ RSpec.describe TicketMovesController do
     end
 
     let!(:replace_all_labels_call) do
-      stub_gh_put("issues/#{ticket.remote_number}/labels")
+      stub_gh_put("issues/#{ticket.number}/labels")
     end
 
     before do
@@ -116,13 +116,13 @@ RSpec.describe TicketMovesController do
 
       context 'when unable to perform API calls with given token' do
         let!(:get_all_labels_call_invalid) do
-          stub_gh_get("issues/#{ticket.remote_number}/labels", status: 404) do
+          stub_gh_get("issues/#{ticket.number}/labels", status: 404) do
             { message: 'Not Found' }
           end.with(headers: { 'Authorization' => "token #{user_token}" })
         end
 
         let!(:replace_all_labels_call_invalid) do
-          stub_gh_put("issues/#{ticket.remote_number}/labels", status: 404)
+          stub_gh_put("issues/#{ticket.number}/labels", status: 404)
             .with(headers: { 'Authorization' => "token #{user_token}" })
         end
 

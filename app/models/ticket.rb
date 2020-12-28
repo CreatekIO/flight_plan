@@ -3,7 +3,12 @@ class Ticket < ApplicationRecord
   belongs_to :milestone, optional: true
 
   has_many :comments, -> {
-    order('COALESCE(`comments`.`remote_created_at`, `comments`.`created_at`) ASC')
+    order(
+      Arel::Nodes::NamedFunction.new(
+        'COALESCE',
+        [arel_table[:remote_created_at], arel_table[:created_at]]
+      ).asc
+    )
   }, dependent: :destroy
   has_many :board_tickets, dependent: :destroy
   has_many :pull_request_connections
@@ -31,10 +36,10 @@ class Ticket < ApplicationRecord
     end
 
     ticket.update_attributes(
-      remote_number: remote_issue[:number],
-      remote_title: remote_issue[:title],
-      remote_body: remote_issue[:body],
-      remote_state: remote_issue[:state],
+      number: remote_issue[:number],
+      title: remote_issue[:title],
+      body: remote_issue[:body],
+      state: remote_issue[:state],
       remote_created_at: remote_issue[:created_at],
       remote_updated_at: remote_issue[:updated_at],
       creator_remote_id: remote_issue.dig(:user, :id),
@@ -52,7 +57,7 @@ class Ticket < ApplicationRecord
   def self.find_by_remote(remote_issue, remote_repo)
     ticket = Ticket.find_or_initialize_by(remote_id: remote_issue[:id])
     if ticket.repo_id.blank?
-      ticket.repo = Repo.find_by!(remote_url: remote_repo[:full_name])
+      ticket.repo = Repo.find_by!(slug: remote_repo[:full_name])
     end
     ticket
   end
@@ -61,8 +66,8 @@ class Ticket < ApplicationRecord
     org, repo_name, _, issue_number = URI.parse(html_url).path.split('/')
 
     joins(:repo).find_by(
-      repos: { remote_url: "#{org}/#{repo_name}" },
-      tickets: { remote_number: issue_number }
+      repos: { slug: "#{org}/#{repo_name}" },
+      tickets: { number: issue_number }
     )
   rescue URI::Error
     nil
@@ -75,13 +80,13 @@ class Ticket < ApplicationRecord
   end
 
   def branch_names
-    repo.branch_names.grep(/##{remote_number}[^0-9]/)
+    repo.branch_names.grep(/##{number}[^0-9]/)
   end
 
   URL_TEMPLATE = 'https://github.com/%{repo}/issues/%{number}'.freeze
 
   def html_url
-    format(URL_TEMPLATE, repo: repo.remote_url, number: remote_number)
+    format(URL_TEMPLATE, repo: repo.slug, number: number)
   end
 
   def update_board_tickets_from_remote(remote_issue)
@@ -119,10 +124,16 @@ class Ticket < ApplicationRecord
     Jbuilder.new do |ticket|
       ticket.id id
       ticket.remote_id remote_id
-      ticket.remote_number remote_number
-      ticket.remote_title remote_title
-      ticket.remote_body remote_body
-      ticket.remote_state remote_state
+      ticket.number number
+      ticket.title title
+      ticket.body body
+      ticket.state state
+
+      # TODO: LEGACY - remove
+      ticket.remote_number number
+      ticket.remote_title title
+      ticket.remote_body body
+      ticket.remote_state state
     end
   end
 

@@ -13,7 +13,7 @@ class Milestone < ApplicationRecord
 
     repo.milestones.find_or_initialize_by(remote_id: payload.fetch(:id)).tap do |milestone|
       milestone.update_attributes(
-        remote_number: payload[:number],
+        number: payload[:number],
         title: payload[:title],
         state: payload[:state],
         description: payload[:description],

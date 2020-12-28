@@ -26,7 +26,7 @@ RSpec.describe Comment do
         }
       }
     }
-    let!(:repo) { create(:repo, remote_url: remote_url) }
+    let!(:repo) { create(:repo, slug: slug) }
 
     context 'when the comment does not already exist' do
       let(:action) { 'created' }
@@ -43,13 +43,13 @@ RSpec.describe Comment do
       let(:ticket) { create(:ticket, repo: repo) }
 
       it 'updates the comment' do
-        comment = create(:comment, remote_body: 'before text', remote_id: comment_id, ticket: ticket)
+        comment = create(:comment, body: 'before text', remote_id: comment_id, ticket: ticket)
 
         expect {
           subject
         }.not_to change { Comment.count }
 
-        expect(comment.reload.remote_body).to eq('text')
+        expect(comment.reload.body).to eq('text')
       end
     end
 

@@ -12,8 +12,8 @@ RSpec.describe BoardTicket, type: :model do
   describe '#save' do
     include_context 'board with swimlanes'
 
-    let(:remote_number) { '9' }
-    let(:ticket) { create(:ticket, remote_number: remote_number, repo: repo) }
+    let(:number) { '9' }
+    let(:ticket) { create(:ticket, number: number, repo: repo) }
 
     subject { create(:board_ticket, board: board, ticket: ticket, swimlane: backlog) }
 
@@ -29,7 +29,7 @@ RSpec.describe BoardTicket, type: :model do
 
     context 'when an issue is moved to "Closed"' do
       it 'updates the GitHub issue via the API' do
-        stub = stub_request(:patch, "https://api.github.com/repos/#{remote_url}/issues/#{remote_number}")
+        stub = stub_request(:patch, "https://api.github.com/repos/#{slug}/issues/#{number}")
           .with(body: { state: 'closed' }.to_json)
 
         subject.swimlane = closed
@@ -43,7 +43,7 @@ RSpec.describe BoardTicket, type: :model do
       subject { create(:board_ticket, swimlane: closed, ticket: ticket, board: board) }
 
       it 'updates the GitHub issue via the API' do
-        stub = stub_request(:patch, "https://api.github.com/repos/#{remote_url}/issues/#{remote_number}")
+        stub = stub_request(:patch, "https://api.github.com/repos/#{slug}/issues/#{number}")
           .with(body: { state: 'open' }.to_json)
 
         subject.swimlane = backlog
@@ -84,7 +84,7 @@ RSpec.describe BoardTicket, type: :model do
       end
 
       it 'changes labels on the remote' do
-        stub = stub_request(:put, "https://api.github.com/repos/#{remote_url}/issues/#{remote_number}/labels")
+        stub = stub_request(:put, "https://api.github.com/repos/#{slug}/issues/#{number}/labels")
           .with(body: ['status: dev'].to_json)
 
         subject.swimlane = dev
@@ -105,7 +105,7 @@ RSpec.describe BoardTicket, type: :model do
           (1..(bisection_count + 5)).map do |n|
             before_swimlane.board_tickets.create!(
               board: board,
-              ticket: create(:ticket, repo: repo, remote_title: "Ticket #{n}"),
+              ticket: create(:ticket, repo: repo, title: "Ticket #{n}"),
               swimlane_position: :first
             )
           end
@@ -187,7 +187,7 @@ RSpec.describe BoardTicket, type: :model do
   end
 
   def stub_get_issue_labels_request
-    stub_request(:get, "https://api.github.com/repos/#{remote_url}/issues/#{remote_number}/labels?per_page=100")
+    stub_request(:get, "https://api.github.com/repos/#{slug}/issues/#{number}/labels?per_page=100")
       .to_return(
         status: 200,
         body: [].to_json,
@@ -198,7 +198,7 @@ RSpec.describe BoardTicket, type: :model do
   def stub_put_issue_labels_request
     stub_request(
       :put,
-      "https://api.github.com/repos/#{remote_url}/issues/#{remote_number}/labels"
+      "https://api.github.com/repos/#{slug}/issues/#{number}/labels"
     )
   end
 end

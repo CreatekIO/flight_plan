@@ -36,12 +36,12 @@ class BoardTicket < ApplicationRecord
 
   attr_writer :update_remote
 
-  delegate :remote_number, to: :ticket
-  delegate :remote_url, to: :repo
+  delegate :number, to: :ticket
+  delegate :slug, to: :repo
 
   octokit_methods(
     :close_issue, :reopen_issue, :replace_all_labels, :labels_for_issue,
-    prefix_with: %i[remote_url remote_number]
+    prefix_with: %i[slug number]
   )
 
   def state_durations

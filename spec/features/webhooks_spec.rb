@@ -21,7 +21,7 @@ RSpec.feature 'Webhooks', type: :webhook do
   end
 
   let!(:repo) do
-    create(:repo, name: 'FlightPlan', remote_url: 'CreatekIO/flight_plan').tap do
+    create(:repo, name: 'FlightPlan', slug: 'CreatekIO/flight_plan').tap do
       # Ensure repo can be seen by Puma server
       Repo.connection.commit_transaction
     end
@@ -31,7 +31,7 @@ RSpec.feature 'Webhooks', type: :webhook do
     action :created do
       let(:payload) do
         {
-          repository: { full_name: repo.remote_url },
+          repository: { full_name: repo.slug },
           pull_request: {
             id: generate(:pr_remote_id),
             mergeable: merge_status,

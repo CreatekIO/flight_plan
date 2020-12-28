@@ -44,6 +44,6 @@ class PushImporter
   def ticket_for_issue_number
     return if issue_number.blank?
 
-    @ticket_for_issue_number ||= repo.tickets.find_by(remote_number: issue_number)
+    @ticket_for_issue_number ||= repo.tickets.find_by(number: issue_number)
   end
 end

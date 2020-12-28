@@ -1,0 +1,24 @@
+debug = false
+
+logLevel = "INFO"
+defaultEntryPoints = ["https","http"]
+
+[entryPoints]
+  [entryPoints.http]
+  address = ":80"
+    [entryPoints.http.redirect]
+    entryPoint = "https"
+  [entryPoints.https]
+  address = ":443"
+  [entryPoints.https.tls]
+    [[entryPoints.https.tls.certificates]]
+    certFile = '/ssl_certs/flight_plan.pem'
+    keyFile = '/ssl_certs/flight_plan.key'
+
+[retry]
+
+[docker]
+endpoint = "unix:///var/run/docker.sock"
+domain = "dev.createk.co.uk"
+watch = true
+exposedByDefault = false

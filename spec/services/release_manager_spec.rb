@@ -16,7 +16,7 @@ RSpec.describe ReleaseManager, type: :service do
   describe '#open_pr?' do
     let(:repo) { create(:repo) }
     let(:board) { create(:board, repos: [repo]) }
-    let(:remote_url) { repo.remote_url }
+    let(:slug) { repo.slug }
 
     before do
       stub_gh_get('pulls') { body }
@@ -63,7 +63,7 @@ RSpec.describe ReleaseManager, type: :service do
     let(:deploying) { create(:swimlane, name: 'Deploying', board: board, position: 2) }
 
     def self.create_ticket(name)
-      let(name) { create(:ticket, repo: repo, remote_title: name) }
+      let(name) { create(:ticket, repo: repo, title: name) }
     end
 
     create_ticket(:unmerged_ticket_1)
@@ -77,7 +77,7 @@ RSpec.describe ReleaseManager, type: :service do
     let(:release_branch_name) { Time.now.strftime('release/%Y%m%d-%H%M%S') }
 
     def branch_name(ticket)
-      "feature/##{ticket.remote_number}-#{ticket.remote_title.parameterize}"
+      "feature/##{ticket.number}-#{ticket.title.parameterize}"
     end
 
     before do
@@ -133,7 +133,7 @@ RSpec.describe ReleaseManager, type: :service do
 
       let!(:pr_request) do
         stub_gh_post('pulls', hash_including(base: 'master', head: release_branch_name)) do
-          { html_url: "https://github.com/#{remote_url}/pulls/1" }
+          { html_url: "https://github.com/#{slug}/pulls/1" }
         end
       end
 
@@ -176,7 +176,7 @@ RSpec.describe ReleaseManager, type: :service do
         )
 
         stub_gh_post('pulls', params) do
-          { html_url: "https://github.com/#{remote_url}/pulls/1" }
+          { html_url: "https://github.com/#{slug}/pulls/1" }
         end
       end
 
@@ -261,7 +261,7 @@ RSpec.describe ReleaseManager, type: :service do
   describe '#merge_prs' do
     let(:repo) { create(:repo) }
     let(:board) { create(:board, repos: [repo]) }
-    let(:remote_url) { repo.remote_url }
+    let(:slug) { repo.slug }
 
     before do
       stub_gh_get('pulls') { body }

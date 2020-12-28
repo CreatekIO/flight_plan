@@ -1,5 +1,5 @@
 RSpec.shared_context 'remote pull request' do
-  let(:remote_url) { 'org_name/repo_name' }
+  let(:slug) { 'org_name/repo_name' }
   let(:pull_request_id) { 999 }
   let(:pull_request_no) { 3 }
   let(:remote_pull_request) {
@@ -26,7 +26,7 @@ RSpec.shared_context 'remote pull request' do
 
   let(:remote_repo) {
     {
-      full_name: remote_url
+      full_name: slug
     }
   }
 end

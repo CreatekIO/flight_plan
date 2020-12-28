@@ -10,7 +10,7 @@ export const getOpenPRs = ({ pullRequests, repos }) => {
         const pullRequest = pullRequests[pullRequestId];
         const repo = repos[pullRequest.repo];
 
-        if (repo && pullRequest.remote_state === "open") {
+        if (repo && pullRequest.state === "open") {
             openPRs[repo.id] = openPRs[repo.id] || [];
             openPRs[repo.id].push(pullRequest);
             count++;

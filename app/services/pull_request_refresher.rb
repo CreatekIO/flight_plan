@@ -1,10 +1,10 @@
 class PullRequestRefresher
   include OctokitClient
 
-  delegate :repo, :remote_number, to: :pull_request
-  delegate :remote_url, to: :repo
+  delegate :repo, :number, to: :pull_request
+  delegate :slug, to: :repo
 
-  octokit_methods :pull_request, :pull_request_reviews, prefix_with: %i[remote_url remote_number]
+  octokit_methods :pull_request, :pull_request_reviews, prefix_with: %i[slug number]
   alias_method :get_pull_request, :pull_request
 
   def initialize(pull_request)

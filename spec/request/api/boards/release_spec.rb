@@ -16,8 +16,8 @@ RSpec.describe 'Releases', type: :request do
   let(:feature_branch_name_1) { "feature/##{remote_no_1}-some-text" }
   let(:feature_branch_name_2) { "feature/##{remote_no_2}-anything" }
   let(:release_branch_name) { 'release/20180518-101500' }
-  let(:remote_no_1) { ticket_1.remote_number }
-  let(:remote_no_2) { ticket_2.remote_number }
+  let(:remote_no_1) { ticket_1.number }
+  let(:remote_no_2) { ticket_2.number }
   let(:remote_branch_names) {
     [
       { name: 'origin/master' },
@@ -73,8 +73,8 @@ RSpec.describe 'Releases', type: :request do
       )
       expect(repo_releases.first['board_tickets'].first['ticket']).to include(
         'id' => board_ticket_1.ticket_id,
-        'remote_title' => board_ticket_1.ticket.remote_title,
-        'remote_number' => board_ticket_1.ticket.remote_number
+        'title' => board_ticket_1.ticket.title,
+        'number' => board_ticket_1.ticket.number
       )
     end
 
@@ -111,7 +111,7 @@ RSpec.describe 'Releases', type: :request do
       base: 'master',
       head: release_branch_name,
       title: release_branch_name,
-      body: "**Issues**\nConnects ##{ticket.remote_number} - #{ticket.remote_title}"
+      body: "**Issues**\nConnects ##{ticket.number} - #{ticket.title}"
     }
   end
 

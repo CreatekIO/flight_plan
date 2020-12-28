@@ -25,14 +25,14 @@
                 = avatar_tag pr.creator_username
 
                 .content
-                  = link_to pr.remote_title, pr.html_url, class: 'header'
+                  = link_to pr.title, pr.html_url, class: 'header'
                   .ui.list
                     .item
                       %span.text-muted Merging
-                      .ui.label= pr.remote_head_branch
+                      .ui.label= pr.head_branch
                     .item
                       %span.text-muted into
-                      .ui.label= pr.remote_base_branch
+                      .ui.label= pr.base_branch
 
             .pr-age.text-muted
               = short_time_distance pr.created_at

@@ -1,9 +1,9 @@
 namespace :github do
   task :pull => :environment do
-    d = Repo.find_or_create_by(name: 'Dummy', remote_url: 'jcleary/dummy')
-    fp = Repo.find_or_create_by(name: 'FlightPlan', remote_url: 'CreatekIO/flight_plan')
-    myr = Repo.find_or_create_by(name: 'MyRewards', remote_url: 'CorporateRewards/myrewards')
-    gps = Repo.find_or_create_by(name: 'GPS', remote_url: 'CorporateRewards/redstone')
+    d = Repo.find_or_create_by(name: 'Dummy', slug: 'jcleary/dummy')
+    fp = Repo.find_or_create_by(name: 'FlightPlan', slug: 'CreatekIO/flight_plan')
+    myr = Repo.find_or_create_by(name: 'MyRewards', slug: 'CorporateRewards/myrewards')
+    gps = Repo.find_or_create_by(name: 'GPS', slug: 'CorporateRewards/redstone')
 
     fp_board = Board.find_or_create_by(name: 'Flight Plan') do |board|
       board.repos << fp
@@ -79,24 +79,24 @@ namespace :github do
     Repo.all.each do |repo|
       puts "Processing repo #{repo.name}"
 
-      remote_repo = { full_name: repo.remote_url }
-      Octokit.issues(repo.remote_url).each do |remote_issue|
+      remote_repo = { full_name: repo.slug }
+      Octokit.issues(repo.slug).each do |remote_issue|
         next if remote_issue.pull_request.present?
         puts "  issue #{remote_issue.number}"
         ticket = Ticket.import(remote_issue, remote_repo)
 
-        Octokit.issue_comments(repo.remote_url, ticket.remote_number).each do |issue_comment|
+        Octokit.issue_comments(repo.slug, ticket.number).each do |issue_comment|
           comment = Comment.find_or_initialize_by(remote_id: issue_comment.id)
           comment.update_attributes(
             ticket_id: ticket.id,
-            remote_body: issue_comment.body,
-            remote_author_id: issue_comment.user.id,
-            remote_author: issue_comment.user.login
+            body: issue_comment.body,
+            author_remote_id: issue_comment.user.id,
+            author_username: issue_comment.user.login
           )
         end
       end
 
-      Octokit.pull_requests(repo.remote_url, state: "all").each do |remote_pr|
+      Octokit.pull_requests(repo.slug, state: "all").each do |remote_pr|
         puts "  pull request #{remote_pr.number}"
         PullRequest.import(remote_pr, remote_repo)
       end

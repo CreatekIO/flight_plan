@@ -19,7 +19,7 @@ module GitHubApiStubHelper
   end
 
   def expand_gh_url(path)
-    "https://api.github.com/repos/#{remote_url}/#{path}"
+    "https://api.github.com/repos/#{slug}/#{path}"
   end
 
   private
