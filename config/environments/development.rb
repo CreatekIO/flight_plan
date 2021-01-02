@@ -55,6 +55,8 @@ Rails.application.configure do
   #
   config.web_console.whitelisted_ips = '0.0.0.0/0'
 
+  config.action_cable.allowed_request_origins = %w[https://dev.createk.io]
+
   config.after_initialize do
     disabled = [0, '', nil]
 
