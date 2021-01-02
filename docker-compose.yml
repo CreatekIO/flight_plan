@@ -34,7 +34,6 @@ services:
       - DB_USERNAME=postgres
       - DB_PASSWORD=password
       - WEBPACKER_DEV_SERVER_HOST=webpack
-      - WEBPACKER_DEV_SERVER_PORT=443
     labels:
       - traefik.enable=true
       - traefik.http.routers.app.rule=Host(`dev.createk.io`)
@@ -68,10 +67,10 @@ services:
       - gems:/usr/local/bundle
       - node_modules:/flight_plan/node_modules
     expose:
-      - 3035
+      - 443
     labels:
       - traefik.enable=true
-      - traefik.http.routers.webpack.rule=Host(`webpack.dev.createk.io`)
+      - "traefik.http.routers.webpack.rule=Host(`webpack.dev.createk.io`) || (Host(`dev.createk.io`) && PathPrefix(`/sockjs-node/`))"
       - traefik.http.routers.webpack.tls=true
 
   redis:

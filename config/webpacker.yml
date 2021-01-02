@@ -34,11 +34,11 @@ development:
   compile: true
 
   dev_server:
-    host: webpack.dev.createk.io
-    port: 3035
-    public: https://webpack:3035
+    host: dev.createk.io
+    port: 443
+    public: dev.createk.io:443
     hmr: true
-    https: true
+    https: false
     inline: true
     overlay: true
     disable_host_check: true
