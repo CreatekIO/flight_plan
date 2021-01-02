@@ -1,15 +1,15 @@
 version: '3'
 services:
   lb:
-    image: traefik:1.7.3
-    command: --api --docker
+    image: traefik:2.3.6
     ports:
       - 80:80
       - 443:443
       - 8080:8080
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - ./tools/traefik/traefik.toml:/traefik.toml
+      - ./tools/traefik/traefik.yml:/etc/traefik/traefik.yml
+      - ./tools/traefik/dynamic.yml:/etc/traefik/dynamic.yml
       - ./tools/ssl_certs:/ssl_certs
 
   app:
@@ -37,10 +37,8 @@ services:
       - WEBPACKER_DEV_SERVER_PORT=443
     labels:
       - traefik.enable=true
-      - traefik.frontend.rule=Host:dev.createk.io
-      - traefik.port=3000
-      - traefik.protocol=http
-      - traefik.frontend.priority=10
+      - traefik.http.routers.app.rule=Host(`dev.createk.io`)
+      - traefik.http.routers.app.tls=true
     env_file:
       - .env
 
@@ -73,10 +71,8 @@ services:
       - 3035
     labels:
       - traefik.enable=true
-      - traefik.frontend.rule=Host:webpack.dev.createk.io
-      - traefik.port=3035
-      - traefik.protocol=http
-      - traefik.frontend.priority=100
+      - traefik.http.routers.webpack.rule=Host(`webpack.dev.createk.io`)
+      - traefik.http.routers.webpack.tls=true
 
   redis:
     image: redis:3.2
