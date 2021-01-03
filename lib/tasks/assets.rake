@@ -4,3 +4,12 @@ Rake::Task['assets:precompile'].enhance do
     Rails.root.join('public', 'assets')
   )
 end
+
+namespace :tailwind do
+  task compile: :environment do
+    TailwindCompiler.compile
+  end
+end
+
+# Run `tailwind:compile` before compiling other assets
+Rake::Task['assets:precompile'].enhance(%w[tailwind:compile])
