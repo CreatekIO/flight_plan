@@ -7,7 +7,7 @@
     end,
     currentBoardRepos: @board.board_repos.map {|board_repo| { id: board_repo.id, name: board_repo.name }},
     currentBoardSwimlanes: @board.swimlanes.map {|swimlane| { name: swimlane.name }},
-    currentUser: { id: current_user.id, username: current_user.username },
+    currentUser: current_user.slice(:id, :username),
     api: {
       logoutURL: destroy_user_session_path,
       boardURL: board_path(@board, format: :json),
@@ -28,4 +28,8 @@
   window.flightPlanConfig = #{raw config.to_json};
 
 = javascript_include_tag polyfill_url
-= javascript_pack_tag 'application'
+
+- if use_v2_ui?
+  = javascript_pack_tag 'application_v2'
+- else
+  = javascript_pack_tag 'application'
