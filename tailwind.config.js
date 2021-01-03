@@ -1,3 +1,5 @@
+const defaultTheme = require('./app/javascript/v2/node_modules/tailwindcss/defaultTheme');
+
 module.exports = {
   purge: [
     './app/javascript/v2/components/**/.{js,jsx}',
@@ -5,7 +7,11 @@ module.exports = {
   ],
   darkMode: false, // or 'media' or 'class'
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        sans: ['Lato', ...defaultTheme.fontFamily.sans]
+      }
+    }
   },
   variants: {
     extend: {},
