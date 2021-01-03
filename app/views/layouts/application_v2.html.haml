@@ -1,0 +1,13 @@
+!!!
+%html
+  %head
+    %meta(charset="UTF-8")
+    %meta(name="viewport" content="width=device-width, initial-scale=1.0")
+    %title FlightPlan
+    = csrf_meta_tags
+    = action_cable_meta_tag
+    = stylesheet_link_tag 'application_v2', media: 'all'
+
+  %body.overscroll-none
+    = yield
+    = javascript_include_tag 'application_v2'
