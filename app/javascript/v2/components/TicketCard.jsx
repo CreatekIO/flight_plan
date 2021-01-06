@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Fragment } from "react";
 import { connect } from "react-redux";
 import { denormalize } from "normalizr";
 import { Draggable } from "react-beautiful-dnd";
@@ -12,26 +12,45 @@ import { boardTicket as boardTicketSchema } from "../../schema";
 
 const TicketModal = ({ trigger }) => trigger;
 
-const assigneeStackClass = {
-    0: "none",
-    1: "one",
-    2: "two",
-    3: "three"
+const assigneeClassNames = {
+    1: [/* no classes */],
+    2: ["mr-0.5", /* no classes */],
+    3: [
+        "-mr-3 z-20 ring-2 ring-white",
+        "-mr-3 z-10 ring-2 ring-white",
+        /* no classes */
+    ],
+    // only two avatars shown in this case
+    4: ["-ml-6 z-20 ring-2 ring-white", "-ml-3 mr-1 z-10"]
 };
 
-const AssigneeStack = ({ assignees }) => (
-    <span
-        className={`assignee-stack has-${assigneeStackClass[assignees.length] || "many"}`}
-    >
-        {assignees.slice(0, 3).map(({ username }) => (
-            <Avatar username={username} size="mini" key={username} />
-        ))}
-        {assignees.length > 3 && (
-            /* We hide the third avatar in this case */
-            <span className="meta">+{assignees.length - 2}</span>
-        )}
-    </span>
-);
+const AssigneeStack = ({ assignees }) => {
+    const numOfAvatars = assignees.length <= 3 ? 3 : 2;
+    const classes = assigneeClassNames[assignees.length] || assigneeClassNames[4];
+
+    return (
+        <Fragment>
+            {assignees.slice(0, numOfAvatars).map(({ username }, index) => (
+                <Avatar
+                    key={username}
+                    username={username}
+                    size="mini"
+                    className={
+                        classNames(
+                            "inline align-middle relative",
+                            classes[index]
+                        )
+                    }
+                />
+            ))}
+            {assignees.length > 3 && (
+                <span className="text-sm align-middle">
+                    +{assignees.length - numOfAvatars}
+                </span>
+            )}
+        </Fragment>
+    );
+}
 
 const TicketCard = ({
     id,
@@ -64,7 +83,7 @@ const TicketCard = ({
                         {number}
                     </a>
                     <span className="text-gray-400">{repo.name}</span>
-                    <span className="right floated">
+                    <span className="float-right">
                         <AssigneeStack assignees={assignees} />
                     </span>
                 </div>
