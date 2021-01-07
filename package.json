@@ -4,6 +4,7 @@
   "dependencies": {
     "@githubprimer/octicons-react": "^8.1.0",
     "@rails/webpacker": "^3.0.2",
+    "@reach/dialog": "0.2.4",
     "actioncable": "5.1.6-2",
     "babel-preset-react": "^6.24.1",
     "font-color-contrast": "^1.0.3",
@@ -24,6 +25,8 @@
     "webpack-dev-server": "^2.7.1"
   },
   "resolutions": {
+    "@reach/portal": "0.2.0",
+    "@reach/utils": "0.2.1",
     "acorn": "^5.7.4",
     "atob": "^2.1.0",
     "braces": "^2.3.1",
