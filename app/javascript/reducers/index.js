@@ -30,6 +30,12 @@ const current = (state = {}, { type, payload }) => {
     switch (type) {
         case "BOARD_LOAD":
             return { ...state, board: "" + payload.id };
+        case "FULL_TICKET_LOADED":
+            return { ...state, boardTicket: payload.id };
+        case "TICKET_MODAL_CLOSED":
+            return state.boardTicket === payload.boardTicketId
+                ? { ...state, boardTicket: null }
+                : state;
         default:
             return state;
     }

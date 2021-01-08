@@ -21,7 +21,7 @@ export const boardTicket = new schema.Entity("boardTickets", {
     ticket,
     milestone,
     labels: [label],
-    pull_requests: [pullRequest],
+    pull_requests: [pullRequestWithRepo],
     comments: [comment]
 });
 

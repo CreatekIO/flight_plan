@@ -9,7 +9,7 @@ json.swimlane board_ticket.swimlane_id
 json.ticket do
   json.extract! ticket, :id, :number, :title, :html_url
   json.repo do
-    json.extract! ticket.repo, :id, :name
+    json.extract! ticket.repo, :id, :name, :slug
   end
 end
 

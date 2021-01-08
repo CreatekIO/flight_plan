@@ -2,15 +2,13 @@ import React, { Fragment } from "react";
 import { connect } from "react-redux";
 import { denormalize } from "normalizr";
 import { Draggable } from "react-beautiful-dnd";
+import { Link } from "@reach/router";
 import classNames from "classnames";
 
 import PullRequestList from "./PullRequestList";
-// import TicketModal from "./TicketModal";
 import LabelList from "./LabelList";
 import Avatar from "./Avatar";
 import { boardTicket as boardTicketSchema } from "../../schema";
-
-const TicketModal = ({ trigger }) => trigger;
 
 const assigneeClassNames = {
     1: [/* no classes */],
@@ -88,10 +86,13 @@ const TicketCard = ({
                     </span>
                 </div>
                 <div className="flex-grow px-2 flex flex-col justify-center border-transparent space-y-2">
-                    <TicketModal
-                        trigger={<a className="text-blue-600 break-words block">{title}</a>}
-                        id={id}
-                    />
+                    <Link
+                        to={`./${repo.slug}/${number}?v2=1`}
+                        state={{ boardTicketId: id }}
+                        className="text-blue-600 break-words block"
+                    >
+                        {title}
+                    </Link>
                     {(labels.length || milestone) && (
                         <LabelList labels={labels} milestone={milestone} />
                     )}

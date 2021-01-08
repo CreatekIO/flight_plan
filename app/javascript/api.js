@@ -19,12 +19,15 @@ const createApiFunction = method => (url, body) =>
 const post = createApiFunction("POST");
 const put = createApiFunction("PUT");
 
-const formatURL = (url, params) => url.replace(/:([^\/]+)/i, (_, key) => params[key]);
+const formatURL = (url, params) => url.replace(/:([a-z_]+)/gi, (_, key) => params[key]);
 
 export const getBoard = () => get(flightPlanConfig.api.boardURL);
 export const getBoardNextActions = () => get(flightPlanConfig.api.nextActionsURL);
 export const getSwimlaneTickets = url => get(url);
 export const getBoardTicket = url => get(url);
+export const getBoardTicketFromSlug = (slug, number) => get(
+    formatURL(flightPlanConfig.api.sluggedTicketURL, { slug, number })
+);
 
 export const createTicketMove = (boardTicketId, swimlaneId, indexInSwimlane) =>
     post(formatURL(flightPlanConfig.api.createTicketMoveURL, { boardTicketId }), {

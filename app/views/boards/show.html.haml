@@ -10,10 +10,13 @@
     currentUser: current_user.slice(:id, :username),
     api: {
       logoutURL: destroy_user_session_path,
+      htmlBoardURL: board_path(@board),
       boardURL: board_path(@board, format: :json),
       nextActionsURL: board_next_actions_path(@board, format: :json),
       createTicketMoveURL: board_ticket_moves_path(@board, ':boardTicketId', format: :json),
-      createTicketURL: board_tickets_path(@board, format: :json)
+      createTicketURL: board_tickets_path(@board, format: :json),
+      # Hard to use the `board_slugged_ticket_path` here due to the param constraints
+      sluggedTicketURL: client_side_board_path(@board, 'tickets/:slug/:number', format: :json)
     },
     boards: @boards.map do |board|
       board.slice(:id, :name).merge(
