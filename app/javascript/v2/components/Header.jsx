@@ -156,6 +156,9 @@ const Header = ({ boards, isWaiting, openPRsCount, pullRequests }) => {
             </Menu>
 
             <AddNewIssueModal />
+            <a className={headerItemClasses} href="/features/v2_ui" data-method="delete">
+                Back to V1
+            </a>
             <Menu
                 menuProps={{ className: "w-48" }}
                 title={<Avatar username={flightPlanConfig.currentUser.username} />}

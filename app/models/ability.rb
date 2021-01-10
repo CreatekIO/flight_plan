@@ -2,6 +2,8 @@ class Ability
   include CanCan::Ability
 
   def initialize(user)
+    return unless user.present?
+
     can :manage, Board
     can :manage, Ticket
     can :manage, BoardTicket
@@ -11,5 +13,7 @@ class Ability
     can :manage, :kpis do
       Flipper.enabled?(:kpis, user)
     end
+
+    can :manage, Flipper::Feature, name: %i[v2_ui]
   end
 end
