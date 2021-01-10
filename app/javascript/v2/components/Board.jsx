@@ -47,7 +47,7 @@ class Board extends Component {
     render() {
         return (
             <DragDropContext onDragEnd={this.onDragEnd}>
-                <main className="fp-board flex flex-1 flex-nowrap mt-12 relative">
+                <main className="fp-board flex flex-1 flex-nowrap mt-14 relative">
                     {this.props.swimlanes.map(swimlaneId => (
                         <Swimlane key={swimlaneId} id={swimlaneId} />
                     ))}
