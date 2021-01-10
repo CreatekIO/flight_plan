@@ -27,8 +27,8 @@ const PullRequestLine = ({
     } = pull_request_icons[merged ? "merged" : state] || pull_request_icons.open;
 
     return (
-        <div className="px-2 pt-1">
-            <div className="left floated content">
+        <div className="px-2 pt-1 clear-both">
+            <div className="float-left">
                 <Octicon icon={icon} className={classNames("mr-0.5", iconClassName)} />
                 &nbsp;
                 <Popup
@@ -45,7 +45,7 @@ const PullRequestLine = ({
                 />
             </div>
             {next_action && (
-                <div className="right floated content">
+                <div className="float-right">
                     <NextActionButton {...next_action} className="compact mini" />
                 </div>
             )}
