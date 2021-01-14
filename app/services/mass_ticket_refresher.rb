@@ -1,9 +1,9 @@
 class MassTicketRefresher
   Batch = Struct.new(:number, :ids) do
-    delegate :first, :last, :each, to: :ids
+    delegate :first, :last, :each, :size, to: :ids
 
     def inspect
-      "<Batch number=#{number} ids=#{first}..#{last}>"
+      "<Batch number=#{number} ids=#{first}..#{last} size=#{size}>"
     end
 
     def perform_in(delay)
@@ -45,7 +45,7 @@ class MassTicketRefresher
   def batches
     @batches ||= scope.pluck(:id)
       .in_groups_of(per_hour, false)
-      .each_with_index.map { |ids, number| Batch.new(number, ids) }
+      .each.with_index(1).map { |ids, number| Batch.new(number, ids) }
   end
 
   # Load scope into memory to calculate total, rather than issuing a
@@ -55,7 +55,7 @@ class MassTicketRefresher
   end
 
   def offset_for(batch)
-    batch.number.hours + delay
+    (batch.number - 1).hours + delay
   end
 
   def log(message)
