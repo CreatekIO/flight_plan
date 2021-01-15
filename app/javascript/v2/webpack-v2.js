@@ -4,7 +4,7 @@ const helpers = require('@rails/webpacker/package/utils/helpers');
 const originalModuleExists = helpers.moduleExists;
 const originalCanProcess = helpers.canProcess;
 
-const IGNORED = ['css-loader', 'sass-loader']
+const IGNORED = ['sass-loader']
 
 helpers.moduleExists = (name) =>
     IGNORED.includes(name) ? null : originalModuleExists(name);
