@@ -34,19 +34,21 @@ class BugTicketsCalculator
 
   attr_reader :board, :quarter
 
+  def bug_tickets
+    @bug_tickets ||= board.tickets.joins(:labels).where(labels: { name: LABELS })
+  end
+
   def bugs_opened_in_quarter
-    @bugs_opened_in_quarter ||= board.tickets.joins(:labels).where(
-      remote_created_at: quarter.as_time_range,
-      labels: { name: LABELS }
+    @bugs_opened_in_quarter ||= bug_tickets.where(
+      remote_created_at: quarter.as_time_range
     ).group(
       Quarter.calculate_sql(Ticket.arel_table[:remote_created_at]).to_sql
     ).count
   end
 
   def bugs_closed_in_quarter
-    @bugs_closed_in_quarter ||= board.tickets.joins(:labels).where(
-      remote_closed_at: quarter.as_time_range,
-      labels: { name: LABELS }
+    @bugs_closed_in_quarter ||= bug_tickets.where(
+      remote_closed_at: quarter.as_time_range
     ).group(
       Quarter.calculate_sql(Ticket.arel_table[:remote_closed_at]).to_sql
     ).count
