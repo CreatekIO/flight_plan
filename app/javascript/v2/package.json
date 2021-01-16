@@ -12,6 +12,7 @@
     "postcss": "^8.2.4",
     "postcss-loader": "^4.1.0",
     "react": "^16.14.0",
+    "react-beautiful-dnd": "^13.0.0",
     "react-dom": "16.14.0",
     "tailwindcss": "^2.0.2",
     "webpack": "^5.11.0",
