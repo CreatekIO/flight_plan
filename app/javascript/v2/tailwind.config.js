@@ -1,5 +1,4 @@
-// Run `bin/rake tailwind:compile` if you change this file
-const defaultTheme = require('./app/javascript/v2/node_modules/tailwindcss/defaultTheme');
+const defaultTheme = require('tailwindcss/defaultTheme');
 
 module.exports = {
   purge: [
