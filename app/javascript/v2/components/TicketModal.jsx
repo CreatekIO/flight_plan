@@ -224,6 +224,7 @@ class TicketModal extends Component {
         } = this.props;
         const { number, title, html_url, repo } = ticket;
         const isLoaded = loading_state === "loaded";
+        const labelId = `ticket-modal-${id}`;
 
         return (
             <Modal
@@ -231,8 +232,12 @@ class TicketModal extends Component {
                 onDismiss={() => navigate(
                     `${flightPlanConfig.api.htmlBoardURL}?v2=1`
                 )}
+                aria-labelledby={labelId}
             >
-                <div className="text-lg border-b border-gray-300 p-4 pb-3 font-bold bg-white">
+                <div
+                    className="text-lg border-b border-gray-300 p-4 pb-3 font-bold bg-white"
+                    id={labelId}
+                >
                     <a href={html_url} target="_blank" className="text-blue-500 hover:text-blue-600">
                         #{number}
                     </a>
