@@ -1,8 +1,10 @@
+import "core-js/stable";
+import "regenerator-runtime/runtime";
 import React from "react";
 import ReactDOM from "react-dom";
 
 const rootRender = () => {
-    const Application = require("../v2/components/Application").default;
+    const Application = require("../components/Application").default;
 
     ReactDOM.render(
         <Application />,
@@ -23,7 +25,7 @@ const preserveScrollPosition = (selector, fn) => {
 document.addEventListener("DOMContentLoaded", rootRender);
 
 if (module.hot) {
-    module.hot.accept("../v2/components/Application", () => {
+    module.hot.accept("../components/Application", () => {
         preserveScrollPosition(".fp-board", rootRender);
     });
 }

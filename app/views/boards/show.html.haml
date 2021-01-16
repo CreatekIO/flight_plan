@@ -32,7 +32,5 @@
 
 = javascript_include_tag polyfill_url
 
-- if use_v2_ui?
-  = javascript_pack_tag 'application_v2'
-- else
+- unless use_v2_ui?
   = javascript_pack_tag 'application'
