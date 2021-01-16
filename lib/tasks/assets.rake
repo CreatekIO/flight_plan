@@ -5,11 +5,11 @@ Rake::Task['assets:precompile'].enhance do
   )
 end
 
-namespace :tailwind do
+namespace :v2 do
   task compile: :environment do
-    TailwindCompiler.compile
+    V2Compiler.compile
   end
 end
 
-# Run `tailwind:compile` before compiling other assets
-Rake::Task['assets:precompile'].enhance(%w[tailwind:compile])
+# Run `v2:compile` before compiling other assets
+Rake::Task['assets:precompile'].enhance(%w[v2:compile])
