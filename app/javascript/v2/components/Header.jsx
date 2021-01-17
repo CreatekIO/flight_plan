@@ -128,7 +128,7 @@ const Header = ({ boards, isWaiting, openPRsCount, pullRequests }) => {
                     if (id === currentBoard.id) return null;
 
                     return (
-                        <MenuLink href={`${url}?v2=1`} key={id} className={menuItemClasses}>
+                        <MenuLink href={url} key={id} className={menuItemClasses}>
                             {name}
                         </MenuLink>
                     );

@@ -87,7 +87,7 @@ const TicketCard = ({
                 </div>
                 <div className="flex-grow px-2 flex flex-col justify-center border-transparent space-y-2">
                     <Link
-                        to={`./${repo.slug}/${number}?v2=1`}
+                        to={`./${repo.slug}/${number}`}
                         state={{ boardTicketId: id }}
                         className="text-blue-600 break-words block"
                     >
