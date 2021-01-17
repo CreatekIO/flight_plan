@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { connect } from "react-redux";
 import { DragDropContext } from "react-beautiful-dnd";
 import update from "immutability-helper";
@@ -20,42 +20,41 @@ const LoadingOverlay = () => (
     </div>
 );
 
-class Board extends Component {
-    state = { isLoading: true };
+const Board = ({
+    swimlanes,
+    loadBoard,
+    loadNextActions,
+    ticketDragged,
+    subscribeToBoard
+}) => {
+    const [isLoading, setLoading] = useState(true);
 
-    componentDidMount() {
-        const { loadBoard, loadNextActions, subscribeToBoard } = this.props;
+    useEffect(() => {
+        let boardSubscription;
 
         loadBoard()
-            .then(({ payload: { id } }) => {
-                this.boardSubscription = subscribeToBoard(id);
-            })
-            .finally(() => this.setState({ isLoading: false }));
+            .then(({ payload: { id } }) => { boardSubscription = subscribeToBoard(id) })
+            .finally(() => setLoading(false));
         loadNextActions();
-    }
 
-    componentWillUnmount() {
-        this.boardSubscription && this.boardSubscription.unsubscribe();
-    }
+        return () => boardSubscription && boardSubscription.unsubscribe();
+    }, [loadBoard, loadNextActions]);
 
-    onDragEnd = event => {
-        if (!event.destination) return;
+    const onDragEnd = useCallback(
+        event => event.destination && ticketDragged(event),
+        [ticketDragged]
+    );
 
-        this.props.ticketDragged(event);
-    };
-
-    render() {
-        return (
-            <DragDropContext onDragEnd={this.onDragEnd}>
-                <main className="fp-board flex flex-1 flex-nowrap mt-14 relative">
-                    {this.props.swimlanes.map(swimlaneId => (
-                        <Swimlane key={swimlaneId} id={swimlaneId} />
-                    ))}
-                    {this.state.isLoading && <LoadingOverlay/>}
-                </main>
-            </DragDropContext>
-        );
-    }
+    return (
+        <DragDropContext onDragEnd={onDragEnd}>
+            <main className="fp-board flex flex-1 flex-nowrap mt-14 relative">
+                {swimlanes.map(swimlaneId => (
+                    <Swimlane key={swimlaneId} id={swimlaneId} />
+                ))}
+                {isLoading && <LoadingOverlay/>}
+            </main>
+        </DragDropContext>
+    );
 }
 
 const mapStateToProps = ({ entities, current }) => {
