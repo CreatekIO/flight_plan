@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from "react";
+import React, { Fragment, useEffect } from "react";
 import { connect } from "react-redux";
 import { denormalize } from "normalizr";
 import showdown from "showdown";
@@ -141,9 +141,7 @@ const Sidebar = ({
         </SidebarEntry>
 
         <SidebarEntry title="State">
-            <span className={
-                classNames("uppercase text-lg", ticket_state_classes[state])
-            }>
+            <span className={classNames("uppercase text-lg", ticket_state_classes[state])}>
                 {state}
             </span>
         </SidebarEntry>
@@ -202,76 +200,74 @@ const Sidebar = ({
     </div>
 );
 
-class TicketModal extends Component {
-    componentDidMount() {
-        const { slug, number, loadFullTicketFromSlug } = this.props;
+const TicketModal = ({
+    loadFullTicketFromSlug,
+    id,
+    slug,
+    number,
+    url,
+    state_durations,
+    ticket,
+    comments = [],
+    pull_requests,
+    labels,
+    milestone,
+    assignees,
+    loading_state
+}) => {
+    const { title, html_url, repo } = ticket;
+    const isLoaded = loading_state === "loaded";
+    const labelId = `ticket-modal-${id}`;
+
+    useEffect(() => {
         loadFullTicketFromSlug(slug, number);
-    }
+    }, [slug, number, loadFullTicketFromSlug]);
 
-    render() {
-        const {
-            loadFullTicketFromSlug,
-            id,
-            url,
-            state_durations,
-            ticket,
-            comments = [],
-            pull_requests,
-            labels,
-            milestone,
-            assignees,
-            loading_state
-        } = this.props;
-        const { number, title, html_url, repo } = ticket;
-        const isLoaded = loading_state === "loaded";
-        const labelId = `ticket-modal-${id}`;
-
-        return (
-            <Modal
-                isOpen
-                onDismiss={() => navigate(
-                    `${flightPlanConfig.api.htmlBoardURL}?v2=1`
-                )}
-                aria-labelledby={labelId}
+    return (
+        <Modal
+            isOpen
+            onDismiss={() => navigate(
+                `${flightPlanConfig.api.htmlBoardURL}?v2=1`
+            )}
+            aria-labelledby={labelId}
+        >
+            <div
+                className="text-lg border-b border-gray-300 p-4 pb-3 font-bold bg-white"
+                id={labelId}
             >
-                <div
-                    className="text-lg border-b border-gray-300 p-4 pb-3 font-bold bg-white"
-                    id={labelId}
-                >
-                    <a href={html_url} target="_blank" className="text-blue-500 hover:text-blue-600">
-                        #{number}
-                    </a>
-                    &nbsp;&nbsp;
-                    {title}
+                <a href={html_url} target="_blank" className="text-blue-500 hover:text-blue-600">
+                    #{number}
+                </a>
+                &nbsp;&nbsp;
+                {title}
+            </div>
+
+            <div className="p-4 grid grid-cols-4 gap-5 absolute top-14 inset-0 overflow-auto">
+                <div className="col-span-3 relative">
+                    <Feed ticket={ticket} comments={comments} />
+
+                    {!isLoaded && (
+                        <div className="flex justify-center text-gray-600 absolute inset-0 bg-white bg-opacity-50">
+                            <Loading size="large" className="mt-14"/>
+                        </div>
+                    )}
                 </div>
 
-                <div className="p-4 grid grid-cols-4 gap-5 absolute top-14 inset-0 overflow-auto">
-                    <div className="col-span-3 relative">
-                        <Feed ticket={ticket} comments={comments} />
-
-                        {!isLoaded && (
-                            <div className="flex justify-center text-gray-600 absolute inset-0 bg-white bg-opacity-50">
-                                <Loading size="large" className="mt-14"/>
-                            </div>
-                        )}
-                    </div>
-
-                    <div className="col-span=1"> {/* this wrapper needed for position: sticky to work */}
-                        {isLoaded && (
-                            <Sidebar
-                                state_durations={state_durations || []}
-                                ticket={ticket}
-                                labels={labels}
-                                milestone={milestone}
-                                pull_requests={pull_requests}
-                                assignees={assignees}
-                            />
-                        )}
-                    </div>
+                <div className="col-span=1"> {/* this wrapper needed for position: sticky to work */}
+                    {isLoaded && (
+                        <Sidebar
+                            state_durations={state_durations || []}
+                            ticket={ticket}
+                            labels={labels}
+                            milestone={milestone}
+                            pull_requests={pull_requests}
+                            assignees={assignees}
+                        />
+                    )}
                 </div>
-            </Modal>
-        );
-    }
+            </div>
+        </Modal>
+    );
 }
 
 const mapStateToProps = (_, { id: idFromProps, number, slug }) => ({ entities, current }) => {
