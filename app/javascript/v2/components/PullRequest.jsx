@@ -1,4 +1,5 @@
 import React from "react";
+import { connect } from "react-redux";
 import Octicon, { GitMerge, GitPullRequest } from "@githubprimer/octicons-react";
 import classNames from "classnames";
 
@@ -7,33 +8,37 @@ import NextActionButton from "./NextActionButton";
 // FIXME: implement
 const Popup = ({ trigger }) => trigger;
 
-const pull_request_icons = {
+const pullRequestIcons = {
     open: { icon: GitPullRequest, className: "text-github-green" },
     closed: { icon: GitPullRequest, className: "text-github-red" },
     merged: { icon: GitMerge, className: "text-github-purple" }
 };
 
-const PullRequestLine = ({
+const PullRequest = ({
     state,
     merged,
-    html_url,
     title,
     number,
-    next_action
+    next_action: nextAction,
+    html_url: htmlURL
 }) => {
     const {
         className: iconClassName,
         icon
-    } = pull_request_icons[merged ? "merged" : state] || pull_request_icons.open;
+    } = pullRequestIcons[merged ? "merged" : state] || pullRequestIcons.open;
 
     return (
-        <div className="px-2 pt-1 clear-both">
-            <div className="float-left">
+        <div className="px-2 pt-1 flex">
+            <div className="flex-grow">
                 <Octicon icon={icon} className={classNames("mr-0.5", iconClassName)} />
                 &nbsp;
                 <Popup
                     trigger={
-                        <a href={html_url} target="_blank" className="text-blue-600 hover:text-blue-400 focus:text-blue-800">
+                        <a
+                            href={htmlURL}
+                            target="_blank"
+                            className="text-blue-600 hover:text-blue-400 focus:text-blue-800"
+                        >
                             {number}
                         </a>
                     }
@@ -44,26 +49,13 @@ const PullRequestLine = ({
                     inverted
                 />
             </div>
-            {next_action && (
-                <div className="float-right">
-                    <NextActionButton {...next_action} className="compact mini" />
-                </div>
+            {nextAction && (
+                <NextActionButton {...nextAction} className="compact mini" />
             )}
         </div>
     );
 }
 
-export default function PullRequestList({ pullRequests, listStyle }) {
-    return (
-        <div
-            className={classNames(
-                "space-y-1",
-                { "divide-y": listStyle === "celled" }
-            )}
-        >
-            {pullRequests.map(pullRequest => (
-                <PullRequestLine {...pullRequest} key={pullRequest.id} />
-            ))}
-        </div>
-    );
-}
+const mapStateToProps = (_, { id }) => ({ entities: { pullRequests }}) => pullRequests[id];
+
+export default connect(mapStateToProps)(PullRequest);

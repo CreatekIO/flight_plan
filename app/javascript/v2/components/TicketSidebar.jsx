@@ -1,52 +1,48 @@
 import React, { Fragment } from "react";
 import { connect } from "react-redux";
-import { denormalize } from "normalizr";
+import { denormalize, schema } from "normalizr";
 import classNames from "classnames";
 
-import LabelList from "./LabelList";
-import PullRequestList from "./PullRequestList";
+import Label, { Milestone } from "./Label";
+import PullRequest from "./PullRequest";
 import Avatar from "./Avatar";
 
-import {
-    boardTicket as boardTicketSchema,
-    pullRequestWithRepo as pullRequestWithRepoSchema
-} from "../../schema";
+const GroupedPullRequestList = connect(
+    (_, { id: boardTicketId }) => ({ entities: { pullRequests: allPRs, boardTickets, repos }}) => {
+        const { pull_requests: pullRequestIds } = boardTickets[boardTicketId];
+        if (!pullRequestIds) return { pullRequestsByRepo: [] };
 
-const UnconnectedGroupedPullRequestList = ({ pullRequests }) => {
-    const grouped = {};
+        const grouped = pullRequestIds.reduce((out, id) => {
+            const { repo: repoId } = allPRs[id];
+            out[repoId] = out[repoId] || [];
+            out[repoId].push(id);
+            return out;
+        }, {});
 
-    pullRequests.forEach(pullRequest => {
-        grouped[pullRequest.repo.id] = grouped[pullRequest.repo.id] || [];
-        grouped[pullRequest.repo.id].push(pullRequest);
-    });
+        const pullRequestsByRepo = Object.entries(grouped).map(
+            ([repoId, pullRequestIds]) => ({ repo: repos[repoId], pullRequestIds })
+        )
 
-    if (Object.keys(grouped).length === 1) {
-        return (
-            <PullRequestList pullRequests={Object.values(grouped)[0]} listStyle={null} />
-        );
+        return { pullRequestsByRepo };
     }
+)(({ pullRequestsByRepo }) => {
+    if (!pullRequestsByRepo.length) return <Blank message="No pull requests" />;
 
     return (
-        <Fragment>
-            {Object.values(grouped).map(prs => (
-                <Fragment key={prs[0].repo.id}>
-                    <div className="uppercase text-gray-500 text-xs mt-1">{prs[0].repo.name}</div>
-                    <PullRequestList pullRequests={prs} listStyle={null} />
+        <div className="text-sm">
+            {pullRequestsByRepo.map(({ repo: { id, name }, pullRequestIds }) => (
+                <Fragment key={id}>
+                    {pullRequestsByRepo.length > 1 && (
+                        <h3 className="uppercase text-gray-500 text-xs mt-1">{name}</h3>
+                    )}
+                    <div className="space-y-1">
+                        {pullRequestIds.map(id => <PullRequest key={id} id={id} />)}
+                    </div>
                 </Fragment>
             ))}
-        </Fragment>
+        </div>
     );
-};
-
-const prMapStateToProps = ({ entities }, { pullRequests }) => ({
-    pullRequests: pullRequests.map(pullRequest =>
-        denormalize(pullRequest, pullRequestWithRepoSchema, entities)
-    )
 });
-
-const GroupedPullRequestList = connect(prMapStateToProps)(
-    UnconnectedGroupedPullRequestList
-);
 
 const SidebarEntry = ({ title, children }) => (
     <Fragment>
@@ -59,18 +55,31 @@ const Blank = ({ message }) => (
     <em className="text-sm text-gray-500">{message}</em>
 );
 
+const Assignee = ({ username }) => (
+    <Fragment>
+        <Avatar username={username} size="mini" className="inline mr-2" />
+        <a
+            href={`https://github.com/${username}`}
+            target="_blank"
+            className="text-blue-500 hover:text-blue-600"
+        >
+            {username}
+        </a>
+    </Fragment>
+);
+
 const ticketStateClasses = {
     open: 'text-github-green',
     closed: 'text-github-red'
 }
 
 const Sidebar = ({
-    state_durations = [],
-    ticket: { state, repo: { name: repoName }},
-    labels,
-    milestone,
-    pull_requests,
-    assignees
+    id,
+    assignees,
+    milestone: milestoneId,
+    labels: labelIds,
+    state_durations: stateDurations = [],
+    ticket: { state, repo: { name: repoName }}
 }) => (
     <div className="sticky top-3 pb-12 bg-white">
         <SidebarEntry title="Repo">
@@ -86,18 +95,7 @@ const Sidebar = ({
         <SidebarEntry title="Assignees">
             {assignees.length ? (
                 <div className="text-sm font-bold space-y-1 mt-1">
-                    {assignees.map(({ username }) => (
-                        <Fragment key={username}>
-                            <Avatar username={username} size="mini" className="inline mr-2" />
-                            <a
-                                href={`https://github.com/${username}`}
-                                target="_blank"
-                                className="text-blue-500 hover:text-blue-600"
-                            >
-                                {username}
-                            </a>
-                        </Fragment>
-                    ))}
+                    {assignees.map(({ username }) => <Assignee key={username} username={username} />)}
                 </div>
             ) : (
                 <Blank message="No assignees"/>
@@ -105,20 +103,20 @@ const Sidebar = ({
         </SidebarEntry>
 
         <SidebarEntry title="Labels">
-            <LabelList labels={labels} noLabels={<Blank message="No labels"/>} fullWidth />
+            {labelIds.length ? (
+                <div className="space-y-1">
+                    {labelIds.map(id => <Label key={id} id={id} className="w-full" />)}
+                </div>
+            ) : <Blank message="No labels" />}
         </SidebarEntry>
 
         <SidebarEntry title="Milestone">
-            <LabelList
-                milestone={milestone}
-                noMilestone={<Blank message="No milestone"/>}
-                fullWidth
-            />
+            {milestoneId ? <Milestone id={milestoneId} fullWidth /> : <Blank message="No milestone" />}
         </SidebarEntry>
 
-        {!!state_durations.length && (
+        {Boolean(stateDurations.length) && (
             <SidebarEntry title="Durations">
-                {state_durations.map(({ id, name, duration }) => (
+                {stateDurations.map(({ id, name, duration }) => (
                     <div className="text-xs clear-right rounded border border-blue-200 bg-blue-50 px-2 py-1 mt-1" key={id}>
                         {name}
                         <div className="float-right">{duration}</div>
@@ -128,16 +126,18 @@ const Sidebar = ({
         )}
 
         <SidebarEntry title="Pull requests">
-            {pull_requests.length ? (
-                <GroupedPullRequestList pullRequests={pull_requests} />
-            ) : (
-                <Blank message="No pull requests"/>
-            )}
+            <GroupedPullRequestList id={id} />
         </SidebarEntry>
     </div>
 );
 
+const boardTicketSchema = new schema.Entity("boardTickets", {
+    ticket: new schema.Entity("tickets", {
+        repo: new schema.Entity("repos")
+    })
+});
+
 const mapStateToProps = (_, { id }) => ({ entities }) =>
-    denormalize(entities.boardTickets[id], boardTicketSchema, entities);
+    denormalize(id, boardTicketSchema, entities);
 
 export default connect(mapStateToProps)(Sidebar);
