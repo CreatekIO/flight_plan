@@ -1,0 +1,6 @@
+tls:
+  stores:
+    default:
+      defaultCertificate:
+        certFile: /ssl_certs/flight_plan.pem
+        keyFile: /ssl_certs/flight_plan.key

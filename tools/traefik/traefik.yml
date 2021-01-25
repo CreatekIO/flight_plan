@@ -1,0 +1,33 @@
+entryPoints:
+  web:
+    address: ":80"
+    http:
+      redirections:
+        entryPoint:
+          to: websecure
+          scheme: https
+  websecure:
+    address: ":443"
+
+api:
+  dashboard: true
+  insecure: true
+
+log:
+  level: INFO
+
+# Uncomment the below to aid in troubleshooting
+# log:
+#   level: DEBUG
+# accessLog: {}
+
+providers:
+  docker:
+    exposedByDefault: false
+
+  file:
+    # TLS config can't be in this file (the "static" configuration)
+    # and so we need to put in a separate file (`./dynamic.yml` in
+    # this repo, the filename is where we mount it into the `traefik`
+    # container)
+    filename: /etc/traefik/dynamic.yml

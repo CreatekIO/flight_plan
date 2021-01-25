@@ -4,6 +4,7 @@ import {
     getSwimlaneTickets,
     createTicketMove,
     getBoardTicket,
+    getBoardTicketFromSlug,
     createTicket
 } from '../api';
 
@@ -60,6 +61,12 @@ export const loadFullTicket = (id, url) => dispatch => {
     dispatch(fullTicketLoading(id));
 
     return getBoardTicket(url).then(boardTicket =>
+        dispatch(fullTicketLoaded(boardTicket))
+    );
+};
+
+export const loadFullTicketFromSlug = (slug, number) => dispatch => {
+    return getBoardTicketFromSlug(slug, number).then(boardTicket =>
         dispatch(fullTicketLoaded(boardTicket))
     );
 };
@@ -178,4 +185,9 @@ export const fullTicketLoading = boardTicketId => ({
 export const fullTicketLoaded = boardTicket => ({
     type: 'FULL_TICKET_LOADED',
     payload: boardTicket
+});
+
+export const ticketModalClosed = boardTicketId => ({
+    type: 'TICKET_MODAL_CLOSED',
+    payload: boardTicketId
 });

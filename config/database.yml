@@ -30,36 +30,6 @@ test:
   <<: *default
   database: flight_plan_test
 
-##################
-#  Legacy MySQL  #
-##################
-default_mysql: &default_mysql
-  adapter: mysql2
-  encoding: utf8mb4
-  collation: utf8mb4_bin
-  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
-  username: <%= ENV['MYSQL_DB_USERNAME'] %>
-  password: <%= ENV['MYSQL_DB_PASSWORD'] %>
-  host: <%= ENV['MYSQL_DB_HOST'] %>
-
-development_mysql:
-  <<: *default_mysql
-  database: flight_plan_development
-
-test_mysql:
-  <<: *default_mysql
-  database: flight_plan_test
-
-production_mysql: &production_mysql
-  <<: *default_mysql
-  url: <%= ENV['CLEARDB_DATABASE_URL'] %>
-##################
-
-<% if ENV["USE_MYSQL"].present? %>
-production:
-  <<: *production_mysql
-<% else %>
 production:
   <<: *default
   url: <%= ENV['DATABASE_URL'] %>
-<% end %>

@@ -2,7 +2,7 @@ class BoardTicketsController < AuthenticatedController
   load_and_authorize_resource :swimlane, only: :index
 
   load_and_authorize_resource :board, only: %i[show create]
-  load_and_authorize_resource through: :board, only: :show
+  before_action :assign_board_ticket, only: :show
 
   def index
     @board = @swimlane.board
@@ -25,6 +25,21 @@ class BoardTicketsController < AuthenticatedController
   end
 
   private
+
+  def assign_board_ticket
+    scope = @board.board_tickets
+
+    @board_ticket = if params[:slug]
+      scope.joins(ticket: :repo).find_by!(
+        repos: { slug: params[:slug] },
+        tickets: { number: params[:number] }
+      )
+    else
+      scope.find(params[:id])
+    end
+
+    authorize! action_name, @board_ticket
+  end
 
   def ticket_params
     params.require(:ticket).permit(:title, :description, :repo_id, :swimlane)
