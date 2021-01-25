@@ -35,7 +35,7 @@ class V2Compiler
   def download_node_v14
     return if NODE.exist?
 
-    platform = PLATFORMS.fetch(RbConfig['arch']) { raise 'Unsupported platform' }
+    platform = PLATFORMS.fetch(RbConfig::CONFIG['arch']) { raise 'Unsupported platform' }
 
     system!(
       'curl',
