@@ -3,7 +3,7 @@ const defaultTheme = require('./app/javascript/v2/node_modules/tailwindcss/defau
 
 module.exports = {
   purge: [
-    './app/javascript/v2/components/**/.{js,jsx}',
+    './app/javascript/v2/components/**/*.{js,jsx}',
     './app/views/**/*.{js,erb,haml}'
   ],
   darkMode: false, // or 'media' or 'class'
