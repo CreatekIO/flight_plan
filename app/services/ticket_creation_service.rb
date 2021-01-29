@@ -34,7 +34,7 @@ class TicketCreationService
   end
 
   def create_remote_ticket
-    create_issue(title, description, labels: [ initial_label_name ])
+    octokit_create_issue(title, description, labels: [ initial_label_name ])
   end
 
   def initial_label_name

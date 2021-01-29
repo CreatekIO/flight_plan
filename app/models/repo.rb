@@ -18,8 +18,10 @@ class Repo < ApplicationRecord
   octokit_methods(
     :compare, :pull_requests, :merge_pull_request, :create_pull_request,
     :create_ref, :merge, :refs, :delete_branch,
-    prefix_with: :slug
+    prefix_with: :slug, add_aliases: true
   )
+
+  octokit_methods :branches, prefix_with: :slug
 
   URL_TEMPLATE = 'https://github.com/%s'.freeze
 
@@ -51,6 +53,6 @@ class Repo < ApplicationRecord
   end
 
   def branch_names
-    @branch_names ||= octokit.branches(slug).collect { |b| b[:name] }
+    @branch_names ||= octokit_branches.map { |branch| branch[:name] }
   end
 end

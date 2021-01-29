@@ -1,11 +1,9 @@
 class PullRequestRefresher
   include OctokitClient
 
-  delegate :repo, :number, to: :pull_request
-  delegate :slug, to: :repo
+  delegate :repo, to: :pull_request
 
-  octokit_methods :pull_request, :pull_request_reviews, prefix_with: %i[slug number]
-  alias_method :get_pull_request, :pull_request
+  octokit_methods :pull_request, :pull_request_reviews, prefix_with: %w[repo.slug pull_request.number]
 
   def initialize(pull_request)
     @pull_request = pull_request
@@ -27,7 +25,7 @@ class PullRequestRefresher
   def update_reviews
     return if gh_pull_request[:state] == 'closed'
 
-    pull_request_reviews.each do |gh_review|
+    octokit_pull_request_reviews.each do |gh_review|
       PullRequestReview.import(
         { review: gh_review.to_hash, pull_request: gh_pull_request },
         repo
@@ -36,6 +34,6 @@ class PullRequestRefresher
   end
 
   def gh_pull_request
-    @gh_pull_request ||= get_pull_request.to_hash
+    @gh_pull_request ||= octokit_pull_request.to_hash
   end
 end
