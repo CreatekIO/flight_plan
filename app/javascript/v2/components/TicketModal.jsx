@@ -9,6 +9,7 @@ import Loading from "./Loading";
 import Sidebar from "./TicketSidebar";
 import Feed from "./TicketFeed";
 import FormWrapper from "./TicketFormWrapper";
+import LabelPicker from "./LabelPicker";
 
 import { loadFullTicketFromSlug, ticketModalClosed } from "../../action_creators";
 
@@ -17,8 +18,11 @@ import { loadFullTicketFromSlug, ticketModalClosed } from "../../action_creators
 // => sum = 15.25rem
 const feedWidth = "calc(100% - 15.25rem)";
 
+const transitionClasses = "transform transition-transform duration-150";
+const TRANSITION_DURATION = 150; // should match `duration-*` class above
+
 const EDITORS = {
-    labels: () => (<FormWrapper label="Edit labels" backPath="." />),
+    labels: LabelPicker,
     assignees: () => (<FormWrapper label="Edit assignees" backPath="." />),
     milestone: () => (<FormWrapper label="Edit milestone" backPath="." />)
 };
@@ -69,7 +73,8 @@ const TicketModal = ({
                 {isLoaded && (
                     <div
                         className={classNames(
-                            "sticky w-56 top-4 right-0 ml-auto pr-3 pb-12 transform transition-transform",
+                            "sticky w-56 top-4 right-0 ml-auto pr-3 pb-12",
+                            transitionClasses,
                             section ? "-translate-x-56" : "translate-x-0"
                         )}
                     >
@@ -93,7 +98,7 @@ const TicketModal = ({
                 <div
                     className={classNames(
                         "w-56 absolute top-14 bottom-0 right-0 pt-4 bg-white mt-px border-l border-gray-300 bg-gray-100",
-                        "transform transition-transform",
+                        transitionClasses,
                         section ? "translate-x-0" : "translate-x-56"
                     )}
                     /* Ensure we keep the editor in the DOM until the transition ends */
@@ -101,7 +106,9 @@ const TicketModal = ({
                 >
                     {/* As soon as we navigate to a section, mount the corresponding editor */}
                     {/* so that it's present before the transition starts */}
-                    {Boolean(ActiveEditor) && <ActiveEditor />}
+                    {Boolean(ActiveEditor) && (
+                        <ActiveEditor boardTicketId={id} backPath="." enableAfter={TRANSITION_DURATION} />
+                    )}
                 </div>
             )}
         </Modal>
