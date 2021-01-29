@@ -53,15 +53,11 @@ class V2Compiler
   end
 
   def yarn_install
-    system!(
-      'yarn',
-      '--cwd', V2_DIR,
-      '--ignore-engines'
-    )
+    system!('yarn', '--ignore-engines')
   end
 
   def run_webpack
-    run(
+    system!(
       NODE.to_s,
       V2_DIR.join('node_modules/.bin/webpack'),
       '--config', WEBPACK_CONFIG,
@@ -73,7 +69,7 @@ class V2Compiler
     )
   end
 
-  def run(*args, env: nil)
+  def system!(*args, env: nil)
     debug = args.join(' ')
     puts "== Running #{debug} =="
 
