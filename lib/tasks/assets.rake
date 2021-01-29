@@ -11,5 +11,7 @@ namespace :v2 do
   end
 end
 
-# Run `v2:compile` before compiling other assets
-Rake::Task['assets:precompile'].enhance(%w[v2:compile])
+# Run `v2:compile` after compiling other assets
+Rake::Task['assets:precompile'].enhance do
+  Rake::Task['v2:compile'].invoke
+end
