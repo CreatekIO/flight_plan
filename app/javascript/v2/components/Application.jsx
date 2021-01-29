@@ -7,7 +7,7 @@ import Board from "./Board";
 import Header from "./Header";
 import TicketModal from "./TicketModal";
 
-import configureStore from "../../store";
+import configureStore from "../store";
 
 const store = configureStore();
 
