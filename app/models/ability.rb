@@ -3,6 +3,7 @@ class Ability
 
   def initialize(user)
     can :manage, Board
+    can :manage, Repo
     can :manage, Ticket
     can :manage, BoardTicket
     can :manage, Swimlane
