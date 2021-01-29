@@ -1,13 +1,14 @@
 import { configureStore, combineReducers } from "@reduxjs/toolkit";
 
 import v1Reducer from "../reducers";
+import labels from "./slices/labels";
 
 const nullReducer = (state = {}) => state;
 
 const entitiesReducer = combineReducers({
+    labels,
     // These need to be here otherwise `combineReducers`
     // discards the default state from the V1 reducer
-    labels: nullReducer,
     boards: nullReducer,
     repos: nullReducer,
     swimlanes: nullReducer,

@@ -5,6 +5,7 @@ import classNames from "classnames";
 import Octicon, { Check, X } from "@githubprimer/octicons-react";
 
 import FormWrapper from "./TicketFormWrapper";
+import { fetchLabelsForRepo } from "../slices/labels";
 
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions#Escaping
 const escapeRegexp = text => text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -48,8 +49,10 @@ const useDelayedFocus = timeout => {
 const LabelPicker = ({
     currentLabelIds,
     repoLabels,
+    repoId,
     backPath,
-    enableAfter
+    enableAfter,
+    fetchLabelsForRepo
 }) => {
     const [inputItems, setInputItems] = useState(repoLabels);
     const [selectedIds, setSelectedIds] = useState(currentLabelIds);
@@ -107,6 +110,8 @@ const LabelPicker = ({
     useEffect(() => {
         setInputItems(filterItems(repoLabels, inputValue));
     }, [repoLabels]);
+
+    useEffect(() => { fetchLabelsForRepo(repoId) }, [repoId]);
 
     return (
         <FormWrapper
@@ -188,7 +193,7 @@ const mapStateToProps = (_, { boardTicketId }) => ({
         }
     });
 
-    return { currentLabelIds, repoLabels };
+    return { currentLabelIds, repoLabels, repoId };
 };
 
-export default connect(mapStateToProps)(LabelPicker);
+export default connect(mapStateToProps, { fetchLabelsForRepo })(LabelPicker);

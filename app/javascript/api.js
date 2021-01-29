@@ -28,6 +28,9 @@ export const getBoardTicket = url => get(url);
 export const getBoardTicketFromSlug = (slug, number) => get(
     formatURL(flightPlanConfig.api.sluggedTicketURL, { slug, number })
 );
+export const getRepoLabels = id => get(
+    formatURL(flightPlanConfig.api.repoLabelsURL, { id })
+);
 
 export const createTicketMove = (boardTicketId, swimlaneId, indexInSwimlane) =>
     post(formatURL(flightPlanConfig.api.createTicketMoveURL, { boardTicketId }), {
