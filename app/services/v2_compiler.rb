@@ -1,4 +1,4 @@
-class TailwindCompiler
+class V2Compiler
   include Singleton
 
   class << self
@@ -6,8 +6,9 @@ class TailwindCompiler
   end
 
   NODE = Rails.root.join('bin/node14').freeze
-  OUTPUT_CSS_FILE = Rails.root.join('app/assets/stylesheets/tailwind.css').freeze
   V2_DIR = Rails.root.join('app/javascript/v2').freeze
+  WEBPACK_CONFIG = V2_DIR.join('webpack-v2.js').freeze
+  WEBPACKER_CONFIG = V2_DIR.join('webpacker-v2.yml').freeze
 
   PLATFORMS = {
     'x86_64-linux' => 'linux-x64', # Heroku
@@ -24,7 +25,7 @@ class TailwindCompiler
     @compiling = true
     download_node_v14
     yarn_install
-    run_tailwind_cli
+    run_webpack
   ensure
     @compiling = false
   end
@@ -59,26 +60,28 @@ class TailwindCompiler
     )
   end
 
-  def run_tailwind_cli
-    env = {}
-    env['NODE_ENV'] = 'production' if Rails.env.production?
-
-    system!(
+  def run_webpack
+    run(
       NODE.to_s,
-      V2_DIR.join('node_modules/.bin/tailwind'),
-      'build',
-      '-o', OUTPUT_CSS_FILE,
-      env: env
+      V2_DIR.join('node_modules/.bin/webpack'),
+      '--config', WEBPACK_CONFIG,
+      env: {
+        'WEBPACKER_CONFIG' => WEBPACKER_CONFIG,
+        'RAILS_ENV' => Rails.env,
+        'NODE_ENV' => Rails.env
+      }
     )
   end
 
-  def system!(*args, env: nil)
+  def run(*args, env: nil)
     debug = args.join(' ')
     puts "== Running #{debug} =="
 
     cmd = args.map(&:to_s)
     cmd.unshift(env) if env.present?
 
-    Kernel.system(*cmd) or raise "Program failed: #{debug}"
+    Dir.chdir(V2_DIR) do
+      Kernel.system(*cmd) or raise "Program failed: #{debug}"
+    end
   end
 end

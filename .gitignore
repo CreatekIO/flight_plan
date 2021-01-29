@@ -27,8 +27,8 @@
 # Rubocop remote URL cache
 .rubocop-*
 
-# Tailwind temp stuff
+# V2 UI temp stuff
 /bin/node14
-/app/assets/stylesheets/tailwind.css
 /app/javascript/v2/node_modules
 /app/javascript/v2/yarn-error.log
+/public/packs-v2
