@@ -1,7 +1,9 @@
-import React, { Fragment, useEffect } from "react";
+import React, { Fragment, useState, useEffect } from "react";
 import { connect } from "react-redux";
-import { navigate } from "@reach/router";
+import { navigate, Link } from "@reach/router";
+import classNames from "classnames";
 
+import { useConstrainedMatch } from "../hooks";
 import Modal from "./Modal";
 import Loading from "./Loading";
 import Sidebar from "./TicketSidebar";
@@ -9,15 +11,30 @@ import Feed from "./TicketFeed";
 
 import { loadFullTicketFromSlug, ticketModalClosed } from "../../action_creators";
 
+// sidebar width = w-56 = 14rem
+// sidebar gutter = pl-5 = 1.25rem
+// => sum = 15.25rem
+const feedWidth = "calc(100% - 15.25rem)";
+
 const TicketModal = ({
     id,
     slug,
     number,
-    ticket: { title, html_url },
+    ticket: { title, html_url: htmlURL },
     isLoaded,
     loadFullTicketFromSlug
 }) => {
     const labelId = `ticket-modal-${id}`;
+
+    const { section } = useConstrainedMatch(
+        ":section/edit",
+        { section: ["labels", "assignees", "milestone"] }
+    ) || {};
+    const [sectionWas, setSectionWas] = useState(null);
+
+    useEffect(() => { section && setSectionWas(section) }, [section]);
+
+    const activeSection = section || sectionWas;
 
     useEffect(() => {
         loadFullTicketFromSlug(slug, number);
@@ -33,15 +50,27 @@ const TicketModal = ({
                 className="text-lg border-b border-gray-300 p-4 pb-3 font-bold bg-white"
                 id={labelId}
             >
-                <a href={html_url} target="_blank" className="text-blue-500 hover:text-blue-600">
+                <a href={htmlURL} target="_blank" className="text-blue-500 hover:text-blue-600">
                     #{number}
                 </a>
                 &nbsp;&nbsp;
                 {title}
             </div>
 
-            <div className="p-4 grid grid-cols-4 gap-5 absolute top-14 inset-0 overflow-auto">
-                <div className="col-span-3 relative">
+            <div className="absolute top-14 inset-0 overflow-auto mt-px">
+                {isLoaded && (
+                    <div
+                        className={classNames(
+                            "sticky w-56 top-4 right-0 ml-auto pr-3 pb-12 transform transition-transform",
+                            section ? "-translate-x-56" : "translate-x-0"
+                        )}
+                    >
+                        <Sidebar id={id} />
+                    </div>
+                )}
+
+                {/* Put <Feed/> after <Sidebar/> in the DOM so that it has a higher z-index */}
+                <div className="absolute left-4 top-4 pr-5 bg-white" style={{ width: feedWidth }}>
                     <Feed id={id} />
 
                     {!isLoaded && (
@@ -50,11 +79,29 @@ const TicketModal = ({
                         </div>
                     )}
                 </div>
-
-                <div className="col-span=1"> {/* this wrapper needed for position: sticky to work */}
-                    {isLoaded && <Sidebar id={id} />}
-                </div>
             </div>
+
+            {isLoaded && (
+                <div
+                    className={classNames(
+                        "w-56 absolute top-14 bottom-0 right-0 pt-4 bg-white mt-px",
+                        "transform transition-transform",
+                        section ? "translate-x-0" : "translate-x-56"
+                    )}
+                    /* Ensure we keep the editor in the DOM until the transition ends */
+                    onTransitionEnd={() => section || setSectionWas(null)}
+                >
+                    {/* As soon as we navigate to a section, mount the corresponding editor */}
+                    {/* so that it's present before the transition starts */}
+                    {Boolean(activeSection) && (
+                        <Fragment>
+                            Editor for {activeSection}
+                            <br/>
+                            <Link to=".">Back</Link>
+                        </Fragment>
+                    )}
+                </div>
+            )}
         </Modal>
     );
 }
