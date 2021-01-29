@@ -33,7 +33,8 @@ const TicketModal = ({
     number,
     ticket: { title, html_url: htmlURL },
     isLoaded,
-    loadFullTicketFromSlug
+    loadFullTicketFromSlug,
+    ticketModalClosed
 }) => {
     const labelId = `ticket-modal-${id}`;
 
@@ -55,7 +56,10 @@ const TicketModal = ({
     return (
         <Modal
             isOpen
-            onDismiss={() => navigate(flightPlanConfig.api.htmlBoardURL)}
+            onDismiss={() => {
+                ticketModalClosed(id);
+                navigate(flightPlanConfig.api.htmlBoardURL);
+            }}
             aria-labelledby={labelId}
         >
             <div
@@ -138,4 +142,7 @@ const mapStateToProps = (_, { id: idFromProps, number, slug }) => ({
     };
 };
 
-export default connect(mapStateToProps, { loadFullTicketFromSlug })(TicketModal);
+export default connect(
+    mapStateToProps,
+    { loadFullTicketFromSlug, ticketModalClosed }
+)(TicketModal);
