@@ -95,7 +95,7 @@ const Swimlane = ({
                         "bg-blue-50": isDraggingOver,
                         "hidden": isCollapsed
                     })}
-                    style={{ ...droppableProps.style, height: 'calc(100vh - 88px)' }}
+                    style={{ ...droppableProps.style, height: 'calc(100vh - 98px)' }}
                 >
                     {isCollapsed || (
                         <Fragment>
