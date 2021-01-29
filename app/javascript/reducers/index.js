@@ -231,18 +231,9 @@ const entitiesReducer = (state = initialEntitiesState, { type, payload }) => {
     }
 };
 
-const sliceReducer = combineReducers({
+const rootReducer = combineReducers({
     entities: entitiesReducer,
     current
 });
-
-const rootReducer = (state = {}, action) => {
-    switch (action.type) {
-        case "RESET":
-            return {};
-        default:
-            return sliceReducer(state, action);
-    }
-};
 
 export default rootReducer;
