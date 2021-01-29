@@ -8,6 +8,7 @@ import Modal from "./Modal";
 import Loading from "./Loading";
 import Sidebar from "./TicketSidebar";
 import Feed from "./TicketFeed";
+import FormWrapper from "./TicketFormWrapper";
 
 import { loadFullTicketFromSlug, ticketModalClosed } from "../../action_creators";
 
@@ -15,6 +16,12 @@ import { loadFullTicketFromSlug, ticketModalClosed } from "../../action_creators
 // sidebar gutter = pl-5 = 1.25rem
 // => sum = 15.25rem
 const feedWidth = "calc(100% - 15.25rem)";
+
+const EDITORS = {
+    labels: () => (<FormWrapper label="Edit labels" backPath="." />),
+    assignees: () => (<FormWrapper label="Edit assignees" backPath="." />),
+    milestone: () => (<FormWrapper label="Edit milestone" backPath="." />)
+};
 
 const TicketModal = ({
     id,
@@ -35,6 +42,7 @@ const TicketModal = ({
     useEffect(() => { section && setSectionWas(section) }, [section]);
 
     const activeSection = section || sectionWas;
+    const ActiveEditor = activeSection && EDITORS[activeSection];
 
     useEffect(() => {
         loadFullTicketFromSlug(slug, number);
@@ -84,7 +92,7 @@ const TicketModal = ({
             {isLoaded && (
                 <div
                     className={classNames(
-                        "w-56 absolute top-14 bottom-0 right-0 pt-4 bg-white mt-px",
+                        "w-56 absolute top-14 bottom-0 right-0 pt-4 bg-white mt-px border-l border-gray-300 bg-gray-100",
                         "transform transition-transform",
                         section ? "translate-x-0" : "translate-x-56"
                     )}
@@ -93,13 +101,7 @@ const TicketModal = ({
                 >
                     {/* As soon as we navigate to a section, mount the corresponding editor */}
                     {/* so that it's present before the transition starts */}
-                    {Boolean(activeSection) && (
-                        <Fragment>
-                            Editor for {activeSection}
-                            <br/>
-                            <Link to=".">Back</Link>
-                        </Fragment>
-                    )}
+                    {Boolean(ActiveEditor) && <ActiveEditor />}
                 </div>
             )}
         </Modal>
