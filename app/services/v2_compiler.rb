@@ -74,7 +74,7 @@ class V2Compiler
     puts "== Running #{debug} =="
 
     cmd = args.map(&:to_s)
-    cmd.unshift(env) if env.present?
+    cmd.unshift(env.transform_values(&:to_s)) if env.present?
 
     Dir.chdir(V2_DIR) do
       Kernel.system(*cmd) or raise "Program failed: #{debug}"
