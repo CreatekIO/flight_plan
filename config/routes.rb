@@ -14,6 +14,7 @@ Rails.application.routes.draw do
   resources :boards do
     resources :board_tickets, as: :tickets, only: %i[show create] do
       resources :moves, controller: :ticket_moves, only: :create
+      resource :labelling, path: 'labels', only: :update
     end
     get 'tickets/:slug/:number' => 'board_tickets#show', as: :slugged_ticket, constraints: {
       slug: %r{[a-z0-9\-]+/[a-z0-9\-_]+}i

@@ -25,7 +25,12 @@ module GitHubApiStubHelper
   private
 
   def stub_gh_request(verb, path, status:)
-    response = block_given? ? yield.to_json : ''
+    response = if block_given?
+      generated = yield
+      generated.respond_to?(:call) ? generated : generated.to_json
+    else
+      ''
+    end
 
     url = expand_gh_url(path)
     url = Addressable::Template.new(url) if url.include?('{')
