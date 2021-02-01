@@ -227,10 +227,10 @@ RSpec.describe LabellingsController, type: :request do
     end
 
     context 'adding and removing multiple labels' do
-      let(:labels_to_add) { create_pair(:label, repo: repo) }
-      let(:labels_to_remove) { create_pair(:label, repo: repo) }
-      let(:other_label) { create(:label, repo: repo) }
-      let(:starting_labels) { [*labels_to_remove, swimlane_label, other_label] }
+      let!(:labels_to_add) { create_pair(:label, repo: repo) }
+      let!(:labels_to_remove) { create_pair(:label, repo: repo) }
+      let!(:other_label) { create(:label, repo: repo) }
+      let!(:starting_labels) { [*labels_to_remove, swimlane_label, other_label] }
 
       let(:params) do
         { add: labels_to_add.map(&:name), remove: labels_to_remove.map(&:name) }
@@ -314,7 +314,9 @@ RSpec.describe LabellingsController, type: :request do
           aggregate_failures do
             expect(response).to have_http_status(:unprocessable_entity)
             expect(json).to eq(
-              'errors' => { 'remove' => labels_to_remove.map(&:name) }
+              'errors' => [
+                "Unable to remove labels '#{labels_to_remove.first.name}', '#{labels_to_remove.second.name}'"
+              ]
             )
           end
         end
@@ -353,7 +355,45 @@ RSpec.describe LabellingsController, type: :request do
           aggregate_failures do
             expect(response).to have_http_status(:unprocessable_entity)
             expect(json).to eq(
-              'errors' => { 'add' => labels_to_add.map(&:name) }
+              'errors' => [
+                "Unable to add labels '#{labels_to_add.first.name}', '#{labels_to_add.second.name}'"
+              ]
+            )
+          end
+        end
+      end
+
+      context 'everything fails' do
+        let!(:add_labels_request) do
+          stub_gh_post("issues/#{ticket.number}/labels", anything, status: 500) do
+            { error: 'Server error' }
+          end
+        end
+
+        let!(:remove_labels_request) do
+          stub_gh_delete(delete_url_pattern, status: 500) do
+            { error: 'Server error' }
+          end
+        end
+
+        it 'makes no changes to db' do
+          aggregate_failures do
+            expect { subject }
+              .to not_change { ticket.labels.reload }
+              .and not_change { Label.count }
+          end
+        end
+
+        it 'returns error' do
+          subject
+
+          aggregate_failures do
+            expect(response).to have_http_status(:unprocessable_entity)
+            expect(json).to eq(
+              'errors' => [
+                "Unable to add labels '#{labels_to_add.first.name}', '#{labels_to_add.second.name}'" \
+                " or remove labels '#{labels_to_remove.first.name}', '#{labels_to_remove.second.name}'"
+              ]
             )
           end
         end

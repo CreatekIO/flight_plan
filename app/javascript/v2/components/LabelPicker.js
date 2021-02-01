@@ -1,20 +1,17 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { connect } from "react-redux";
+import { useNavigate } from "@reach/router";
 import { useCombobox } from "downshift";
 import classNames from "classnames";
 import Octicon, { Check, X } from "@githubprimer/octicons-react";
 
 import FormWrapper from "./TicketFormWrapper";
 import { fetchLabelsForRepo } from "../slices/labels";
+import { updateLabelsForTicket } from "../slices/board_tickets";
 
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions#Escaping
 const escapeRegexp = text => text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 const isBlank = text => !/\S+/.test(text);
-
-const deriveChanges = (original, updated) => ({
-    add: updated.filter(id => !original.includes(id)),
-    remove: original.filter(id => !updated.includes(id))
-});
 
 const {
     InputKeyDownEnter,
@@ -47,12 +44,14 @@ const useDelayedFocus = timeout => {
 };
 
 const LabelPicker = ({
+    boardTicketId,
     currentLabelIds,
     repoLabels,
     repoId,
     backPath,
     enableAfter,
-    fetchLabelsForRepo
+    fetchLabelsForRepo,
+    updateLabelsForTicket
 }) => {
     const [inputItems, setInputItems] = useState(repoLabels);
     const [selectedIds, setSelectedIds] = useState(currentLabelIds);
@@ -113,11 +112,23 @@ const LabelPicker = ({
 
     useEffect(() => { fetchLabelsForRepo(repoId) }, [repoId]);
 
+    const navigate = useNavigate();
+
+    const onSubmit = useCallback(() => {
+        updateLabelsForTicket({
+            id: boardTicketId,
+            add: selectedIds.filter(id => !currentLabelIds.includes(id)),
+            remove: currentLabelIds.filter(id => !selectedIds.includes(id))
+        });
+
+        navigate(backPath);
+    }, [boardTicketId, currentLabelIds, selectedIds, backPath]);
+
     return (
         <FormWrapper
             label="Edit labels"
             labelProps={getLabelProps()}
-            onSubmit={() => console.log(deriveChanges(currentLabelIds, selectedIds))}
+            onSubmit={onSubmit}
             backPath={backPath}
         >
             <div className="relative">
@@ -196,4 +207,7 @@ const mapStateToProps = (_, { boardTicketId }) => ({
     return { currentLabelIds, repoLabels, repoId };
 };
 
-export default connect(mapStateToProps, { fetchLabelsForRepo })(LabelPicker);
+export default connect(
+    mapStateToProps,
+    { fetchLabelsForRepo, updateLabelsForTicket }
+)(LabelPicker);

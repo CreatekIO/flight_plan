@@ -13,7 +13,7 @@ class LabellingsController < AuthenticatedController
     if changeset.save
       render json: json_array_from(@ticket.display_labels.reload), status: :ok
     else
-      render json: { errors: changeset.errors }, status: :unprocessable_entity
+      render json: { errors: changeset.error_messages }, status: :unprocessable_entity
     end
   end
 

@@ -22,6 +22,16 @@ class TicketLabelChangeset
     errors.each_value.all?(&:empty?)
   end
 
+  def error_messages
+    message = errors.map do |(type, names)|
+      label = 'label'.pluralize(names.size)
+      formatted_names = names.map { |name| "'#{name}'"}.join(', ')
+      "#{type} #{label} #{formatted_names}"
+    end.join(' or ')
+
+    ["Unable to #{message}"]
+  end
+
   private
 
   attr_reader :ticket, :additions, :deletions, :latest_labels_from_github

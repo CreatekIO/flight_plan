@@ -1,6 +1,7 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk, isFulfilled } from "@reduxjs/toolkit";
 
 import { getRepoLabels } from "../../api";
+import { updateLabelsForTicket } from "./board_tickets";
 
 export const fetchLabelsForRepo = createAsyncThunk(
     "labels/fetchForRepo",
@@ -14,15 +15,17 @@ const upsert = (state, records) => {
     });
 }
 
+const hasLabelsPayload = isFulfilled(fetchLabelsForRepo, updateLabelsForTicket);
+
 const slice = createSlice({
     name: "labels",
     // This won't be used since V1 will set it first, but set it for
     // the time when we are no longer using V1
     initialState: {},
-    extraReducers: {
-        [fetchLabelsForRepo.fulfilled]: (state, action) => {
-            upsert(state, action.payload);
-        }
+    extraReducers: builder => {
+        builder.addMatcher(hasLabelsPayload, (state, { payload }) =>
+            upsert(state, payload)
+        );
     }
 });
 

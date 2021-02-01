@@ -17,7 +17,8 @@
       createTicketURL: board_tickets_path(@board, format: :json),
       # Hard to use the `board_slugged_ticket_path` here due to the param constraints
       sluggedTicketURL: client_side_board_path(@board, 'tickets/:slug/:number', format: :json),
-      repoLabelsURL: repo_labels_path(':id')
+      repoLabelsURL: repo_labels_path(':id'),
+      ticketLabellingURL: board_ticket_labelling_path(@board, ':boardTicketId', format: :json)
     },
     boards: @boards.map do |board|
       board.slice(:id, :name).merge(

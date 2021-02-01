@@ -18,34 +18,43 @@ const createApiFunction = method => (url, body) =>
 
 const post = createApiFunction("POST");
 const put = createApiFunction("PUT");
+const patch = createApiFunction("PATCH");
 
 const formatURL = (url, params) => url.replace(/:([a-z_]+)/gi, (_, key) => params[key]);
 
-export const getBoard = () => get(flightPlanConfig.api.boardURL);
-export const getBoardNextActions = () => get(flightPlanConfig.api.nextActionsURL);
+const {
+    boardURL,
+    nextActionsURL,
+    sluggedTicketURL,
+    repoLabelsURL,
+    createTicketMoveURL,
+    createTicketURL,
+    ticketLabellingURL
+} = flightPlanConfig.api;
+
+export const getBoard = () => get(boardURL);
+export const getBoardNextActions = () => get(nextActionsURL);
 export const getSwimlaneTickets = url => get(url);
 export const getBoardTicket = url => get(url);
 export const getBoardTicketFromSlug = (slug, number) => get(
-    formatURL(flightPlanConfig.api.sluggedTicketURL, { slug, number })
+    formatURL(sluggedTicketURL, { slug, number })
 );
-export const getRepoLabels = id => get(
-    formatURL(flightPlanConfig.api.repoLabelsURL, { id })
-);
+export const getRepoLabels = id => get(formatURL(repoLabelsURL, { id }));
 
 export const createTicketMove = (boardTicketId, swimlaneId, indexInSwimlane) =>
-    post(formatURL(flightPlanConfig.api.createTicketMoveURL, { boardTicketId }), {
+    post(formatURL(createTicketMoveURL, { boardTicketId }), {
         board_ticket: {
             swimlane_id: swimlaneId,
             swimlane_position: indexInSwimlane
         }
     });
 
-export const createTicket = ticketAttributes =>
-    post(formatURL(flightPlanConfig.api.createTicketURL), {
-        ticket: {
-            repo_id: ticketAttributes['repo_id'],
-            swimlane: ticketAttributes['swimlane'],
-            title: ticketAttributes['title'],
-            description: ticketAttributes['description']
-        }
+export const createTicket = ({ repo_id, swimlane, title, description }) =>
+    post(createTicketURL, {
+        ticket: { repo_id, swimlane, title, description }
     });
+
+export const updateTicketLabels = (boardTicketId, changes) => patch(
+    formatURL(ticketLabellingURL, { boardTicketId }),
+    { labelling: changes }
+);
