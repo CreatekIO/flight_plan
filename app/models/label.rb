@@ -15,4 +15,11 @@ class Label < ApplicationRecord
       )
     end
   end
+
+  def to_builder
+    Jbuilder.new do |json|
+      json.extract! self, :id, :name, :colour
+      json.repo repo_id
+    end
+  end
 end
