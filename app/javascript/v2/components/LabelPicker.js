@@ -4,6 +4,7 @@ import { useNavigate } from "@reach/router";
 import { useCombobox } from "downshift";
 import classNames from "classnames";
 import Octicon, { Check, X } from "@githubprimer/octicons-react";
+import { toast } from "react-toastify";
 
 import FormWrapper from "./TicketFormWrapper";
 import { fetchLabelsForRepo } from "../slices/labels";
@@ -119,6 +120,12 @@ const LabelPicker = ({
             id: boardTicketId,
             add: selectedIds.filter(id => !currentLabelIds.includes(id)),
             remove: currentLabelIds.filter(id => !selectedIds.includes(id))
+        }).then(({ meta, payload }) => {
+            if (meta.rejectedWithValue) {
+                payload.forEach(message => toast.error(message));
+            } else {
+                toast.success("Labels updated");
+            }
         });
 
         navigate(backPath);
