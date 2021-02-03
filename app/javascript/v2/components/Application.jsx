@@ -6,6 +6,7 @@ import ErrorBoundary from "./ErrorBoundary";
 import Board from "./Board";
 import Header from "./Header";
 import TicketModal from "./TicketModal";
+import Notifications from "./Notifications";
 
 import configureStore from "../store";
 
@@ -36,9 +37,11 @@ const Application = () => (
     <ErrorBoundary>
         <Provider store={store}>
             <Router basepath={flightPlanConfig.api.htmlBoardURL}>
-                <BoardWrapper path="/*"/>
+                <BoardWrapper path="/*" />
             </Router>
         </Provider>
+
+        <Notifications />
     </ErrorBoundary>
 );
 

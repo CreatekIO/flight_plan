@@ -17,6 +17,36 @@ module.exports = {
       },
       fontFamily: {
         sans: ['Lato', ...defaultTheme.fontFamily.sans]
+      },
+      animation: {
+        'toast-in': 'toast-slide-in 150ms linear both',
+        'toast-out': 'toast-slide-out 150ms linear both'
+      },
+      keyframes: theme => {
+        // Corresponds to `w-64` + `right-2` - keep in sync with Notifications.jsx
+        const transform = `translateX(${theme('spacing.64')} + ${theme('spacing.2')})`;
+        const nullTransform = `translateX(0)`;
+
+        return {
+          'toast-slide-in': {
+            from: {
+              visibility: 'visible',
+              transform
+            },
+            to: {
+              transform: nullTransform
+            }
+          },
+          'toast-slide-out': {
+            from: {
+              transform: nullTransform
+            },
+            to: {
+              visibility: 'hidden',
+              transform
+            }
+          }
+        };
       }
     }
   },
