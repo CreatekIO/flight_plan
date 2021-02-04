@@ -47,7 +47,50 @@ module.exports = {
             }
           }
         };
-      }
+      },
+      typography: theme => ({
+        DEFAULT: {
+          css: {
+            color: theme('colors.gray.900'),
+            maxWidth: null,
+            'a': {
+              textDecoration: null
+            },
+            'table': {
+              marginTop: '1em',
+              marginBottom: '1em'
+            },
+            'p > img': {
+              margin: 0,
+              display: 'inline'
+            },
+            'li.task-list-item::before': {
+              display: 'none'
+            },
+            'code::before': {
+              content: null
+            },
+            'code::after': {
+              content: null
+            }
+          }
+        },
+        sm: {
+          css: {
+            lineHeight: theme('lineHeight.normal'),
+            // using !important so that we don't have to override
+            // all the fiddly selectors for first/last-child etc.
+            'ul ul, ul ol, ol ul, ol ol': {
+              marginTop: '0 !important',
+              marginBottom: '0 !important'
+            },
+            'ul li, ol li': {
+              marginTop: '0 !important',
+              marginBottom: '0 !important'
+            }
+          }
+        }
+      })
     }
   },
   variants: {
