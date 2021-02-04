@@ -58,7 +58,7 @@ const Swimlane = ({
             )}>
             <span
                 className={classNames({
-                    "inline-block transform rotate-90 w-64 pl-16": isCollapsed
+                    "inline-block absolute top-0 left-0 transform rotate-90 w-64 pl-16": isCollapsed
                 })}
                 style={{ transformOrigin: '20px center' }}
             >{name}</span>
@@ -66,8 +66,8 @@ const Swimlane = ({
                 trigger={
                     <button
                         className={classNames(
-                            "absolute right-2 pointer",
-                            { "right-2": !isCollapsed, "right-2.5 top-2": isCollapsed }
+                            "absolute pointer",
+                            { "right-2": !isCollapsed, "right-3 top-2": isCollapsed }
                         )}
                         onClick={() =>
                             isCollapsed ? expandSwimlane(id) : collapseSwimlane(id)
