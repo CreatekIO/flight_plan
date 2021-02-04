@@ -20,7 +20,6 @@ gem 'jbuilder', '~> 2.5'
 gem 'turbolinks', '~> 5'
 
 gem 'activerecord-import'
-gem 'bootstrap-sass', '~> 3.4.1'
 gem 'bugsnag'
 gem 'business_time'
 gem 'cancancan', '~> 2.0.0'
