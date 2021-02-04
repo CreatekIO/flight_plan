@@ -20,4 +20,4 @@ UTIL = {
     }
 };
 
-$(document).on('turbolinks:load', UTIL.init);
+$(document).on('ready', UTIL.init);
