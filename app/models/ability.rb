@@ -5,8 +5,11 @@ class Ability
     return unless user.present?
 
     can :manage, Board
-    can :manage, Ticket
     can :manage, BoardTicket
+
+    return if user == :api_user
+
+    can :manage, Ticket
     can :manage, Swimlane
     can :manage, User
 

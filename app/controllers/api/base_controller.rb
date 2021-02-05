@@ -23,4 +23,8 @@ class Api::BaseController < ActionController::Base
   def render_error(messages, status: :unprocessable_entity)
     render json: { errors: Array(messages) }, status: status
   end
+
+  def current_ability
+    @current_ability ||= Ability.new(:api_user)
+  end
 end
