@@ -96,6 +96,12 @@ const Header = ({ boards, isWaiting, openPRsCount, pullRequests }) => {
 
             <div className="right menu">
                 <AddNewIssueModal />
+                {isFeatureEnabled("self_serve_features") && (
+                    <a href="/user/features/v2_ui" data-method="post" className="link item">
+                        Try out V2
+                        <span className="ui circular orange label">Beta</span>
+                    </a>
+                )}
                 <Dropdown
                     trigger={<Avatar username={flightPlanConfig.currentUser.username} />}
                     className="item user-menu"

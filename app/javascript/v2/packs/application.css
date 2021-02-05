@@ -1,7 +1,13 @@
 @import "@reach/dialog/styles";
+@import "@reach/menu-button/styles";
 
 @import "tailwindcss/base";
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 
 @import url("https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic&subset=latin");
+
+/* Easier to style here rather than from React callback */
+.fp-header-menu [data-reach-menu-item][data-selected] {
+  @apply bg-blue-50 text-black;
+}

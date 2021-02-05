@@ -1,14 +1,13 @@
 import React, { Fragment } from "react";
 import { connect } from "react-redux";
-import { denormalize } from "normalizr";
+import { denormalize, schema } from "normalizr";
 import { Draggable } from "react-beautiful-dnd";
 import { Link } from "@reach/router";
 import classNames from "classnames";
 
-import PullRequestList from "./PullRequestList";
-import LabelList from "./LabelList";
+import PullRequest from "./PullRequest";
+import Label, { Milestone } from "./Label";
 import Avatar from "./Avatar";
-import { boardTicket as boardTicketSchema } from "../../schema";
 
 const assigneeClassNames = {
     1: [/* no classes */],
@@ -53,14 +52,17 @@ const AssigneeStack = ({ assignees }) => {
 const TicketCard = ({
     id,
     index,
-    ticket: { number, title, html_url, repo },
-    display_duration,
-    time_since_last_transition,
     url,
-    pull_requests,
-    labels,
-    milestone,
-    assignees
+    assignees,
+    display_duration: shouldDisplayDuration,
+    time_since_last_transition: timeSinceLastTransition,
+    pull_requests: pullRequestIds,
+    labels: labelIds,
+    milestone: milestoneId,
+    ticket: {
+        number, title, html_url: htmlURL,
+        repo: { slug, name: repoName }
+    }
 }) => (
     <Draggable draggableId={`TicketCard#board-ticket-${id}`} index={index}>
         {({ innerRef, draggableProps, dragHandleProps }, snapshot) => (
@@ -69,7 +71,7 @@ const TicketCard = ({
                 {...draggableProps}
                 className={classNames(
                     "flex flex-col rounded bg-white shadow border border-gray-400 border-opacity-50 mb-4 space-y-2 divide-y text-sm",
-                    pull_requests.length ? "pb-1" : "pb-2"
+                    pullRequestIds.length ? "pb-1" : "pb-2"
                 )}
                 style={{ ...draggableProps.style, minHeight: 88 }}
             >
@@ -77,43 +79,65 @@ const TicketCard = ({
                     {...dragHandleProps}
                     className="px-2 pt-2"
                 >
-                    <a className="pr-2 text-blue-600" href={html_url} target="_blank">
+                    <a className="pr-2 text-blue-600" href={htmlURL} target="_blank">
                         {number}
                     </a>
-                    <span className="text-gray-400">{repo.name}</span>
+                    <span className="text-gray-400">{repoName}</span>
                     <span className="float-right">
                         <AssigneeStack assignees={assignees} />
                     </span>
                 </div>
+
                 <div className="flex-grow px-2 flex flex-col justify-center border-transparent space-y-2">
                     <Link
-                        to={`./${repo.slug}/${number}?v2=1`}
+                        to={`./${slug}/${number}`}
                         state={{ boardTicketId: id }}
                         className="text-blue-600 break-words block"
                     >
                         {title}
                     </Link>
-                    {(labels.length || milestone) && (
-                        <LabelList labels={labels} milestone={milestone} />
+
+                    {Boolean(milestoneId || labelIds.length) && (
+                        <div>
+                            {milestoneId && (
+                                <Milestone id={milestoneId} className={classNames({ "mr-1": labelIds.length })} />
+                            )}
+                            {Boolean(labelIds.length) && labelIds.map((id, index) => (
+                                <Label
+                                    id={id}
+                                    key={id}
+                                    className={classNames({
+                                        "mt-1": milestoneId || index > 0,
+                                        "mr-1": index !== labelIds.length - 1
+                                    })}
+                                />
+                            ))}
+                        </div>
                     )}
                 </div>
-                {display_duration && (
+                {shouldDisplayDuration && (
                     <div className="px-2 pt-2 text-gray-400">
-                        Since last move: {time_since_last_transition}
+                        Since last move: {timeSinceLastTransition}
                     </div>
                 )}
-                {!!pull_requests.length && (
-                    <PullRequestList pullRequests={pull_requests} listStyle="celled" />
+                {Boolean(pullRequestIds.length) && (
+                    <div className="space-y-1 divide-y">
+                        {pullRequestIds.map(id => <PullRequest key={id} id={id} />)}
+                    </div>
                 )}
             </div>
         )}
     </Draggable>
 );
 
-const mapStateToProps = (_, { id }) => ({ entities }) => {
-    const boardTicket = entities.boardTickets[id];
+const boardTicketSchema = new schema.Entity("boardTickets", {
+    ticket: new schema.Entity("tickets", {
+        repo: new schema.Entity("repos")
+    })
+});
 
-    return denormalize(boardTicket, boardTicketSchema, entities);
-};
+const mapStateToProps = (_, { id }) => ({ entities }) =>
+    denormalize(id, boardTicketSchema, entities);
+
 
 export default connect(mapStateToProps)(TicketCard);

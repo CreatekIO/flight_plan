@@ -1,113 +1,68 @@
 import React, { Component, Fragment, createRef } from "react";
 import { connect } from "react-redux";
 import classNames from "classnames";
+import {
+    Menu as ReachMenu,
+    MenuButton,
+    MenuLink,
+    MenuPopover,
+    MenuItems
+} from "@reach/menu-button";
 
 import NextActionButton from "./NextActionButton";
 import Avatar from "./Avatar";
 import AddNewIssueModal from "./AddNewIssueModal";
 import { getOpenPRs } from "../../reducers/selectors";
+import { isFeatureEnabled } from "../../features";
 
 // FIXME: implement
 const Popup = ({ children }) => children;
 
-class Menu extends Component {
-    static defaultProps = { pointing: false, menuProps: {} };
+const menuItemClasses = "block p-2 text-left";
+const countClasses = "w-6 h-6 font-bold leading-6 ml-2 text-center rounded-full bg-gray-400 text-white text-xs";
+const headerItemClasses = "block px-3 flex items-center justify-start hover:bg-gray-50 focus:outline-none focus:shadow-inner";
 
-    constructor(props) {
-        super(props);
-        this.state = { open: false };
-        this.button = createRef();
-    }
-
-    handleClickOutside = ({ target }) => {
-        const { current } = this.button;
-
-        if (!this.state.open) return;
-        if (current && current.contains(target)) return;
-
-        this.setState({ open: false });
-        current && current.blur();
-    }
-
-    toggleOpen = () => {
-        this.setState(({ open }) => ({ open: !open }))
-    }
-
-    componentDidMount() {
-        window.addEventListener("click", this.handleClickOutside);
-    }
-
-    componentWillUnmount() {
-        window.removeEventListener("click", this.handleClickOutside);
-    }
-
-    render() {
-        const {
-            title,
-            pointing,
-            children,
-            className,
-            menuProps: { className: menuClass, ...menuProps }
-        } = this.props;
-
-        return (
-            <button
-                type="button"
-                className={classNames("relative", headerItemClasses, className)}
-                onClick={this.toggleOpen}
-                ref={this.button}
+// See packs/application.css for additional styles
+const Menu = ({
+    title,
+    pointing,
+    children,
+    className,
+    position = "left",
+    menuProps: { className: menuClass, ...menuProps } = {}
+}) => (
+    <div className={classNames("relative flex items-center justify-start", className)}>
+        <ReachMenu>
+            <MenuButton
+                className={classNames("w-full h-full", headerItemClasses)}
             >
                 {title}
                 {pointing &&
-                    <span className="text-xs ml-auto text-gray-600">&#9660;</span>
+                    <span className="text-xs ml-auto text-gray-600" aria-hidden>
+                        &#9660;
+                    </span>
                 }
+            </MenuButton>
 
-                <div
-                    {...menuProps}
+            <MenuPopover
+                portal={false}
+                {...menuProps}
+                className={classNames(
+                    "absolute top-full focus:outline-none",
+                    { "left-0": position === "left", "right-0": position === "right" }
+                )}>
+                <MenuItems
                     className={classNames(
-                        "absolute top-full right-0 min-w-full bg-white shadow-xl rounded-b border-t border-gray-200",
-                        menuClass,
-                        this.state.open || "hidden"
-                    )}>
-                    {children}
-                </div>
-            </button>
-        );
-    }
-}
-
-const menuItemClasses = "block p-2 text-left hover:bg-blue-50";
-const countClasses = "w-6 h-6 font-bold leading-6 ml-2 text-center rounded-full bg-gray-400 text-white text-xs";
-
-const RepoPullRequests = ({ name, pullRequests }) => (
-    <Fragment>
-        <h4 className="text-lg font-bold text-left">
-            {name}
-            &nbsp;
-            <span className={classNames("inline-block align-text-top", countClasses)}>
-                {pullRequests.length}
-            </span>
-        </h4>
-        {pullRequests.map(({ id, next_action, html_url, number, title }) => (
-            <div className="mt-2 mb-1 text-left flex" key={id}>
-                <a
-                    href={html_url}
-                    target="_blank"
-                    className="group text-gray-500 flex-grow truncate"
+                        "fp-header-menu p-0 bg-white shadow-xl rounded-b border-t border-gray-200 text-sm",
+                        menuClass
+                    )}
                 >
-                    <span className="text-blue-500 group-hover:text-blue-600">#{number}</span>
-                    {' '}
-                    <span className="ml-1 text-gray-500 group-hover:text-gray-600">{title}</span>
-                </a>
-                {next_action && (
-                    <NextActionButton {...next_action} className="float-right" />
-                )}
-            </div>
-        ))}
-    </Fragment>
+                    {children}
+                </MenuItems>
+            </MenuPopover>
+        </ReachMenu>
+    </div>
 );
-
-const headerItemClasses = "block px-3 flex items-center justify-start hover:bg-gray-50 focus:outline-none focus:shadow-inner";
 
 const OpenPullRequests = ({ openPRsCount, pullRequests }) => {
     const title = <Fragment>
@@ -122,13 +77,38 @@ const OpenPullRequests = ({ openPRsCount, pullRequests }) => {
             title={title}
             menuProps={{ className: "p-3", style: { width: 600 }}}
             pointing
+            position="right"
         >
-            {pullRequests.map(({ id, name, pullRequests }) => (
-                <RepoPullRequests
-                    key={id}
-                    name={name}
-                    pullRequests={pullRequests}
-                />
+            {pullRequests.map(({ id: repoId, name: repoName, pullRequests }) => (
+                <Fragment key={repoId}>
+                    <h4 className="text-lg font-bold text-left">
+                        {repoName}
+                        &nbsp;
+                        <span className={classNames("inline-block align-text-top", countClasses)}>
+                            {pullRequests.length}
+                        </span>
+                    </h4>
+                    {pullRequests.map(({ id, next_action, html_url, number, title }) => (
+                        <div className="mt-1 text-left relative" key={id}>
+                            <MenuLink
+                                href={html_url}
+                                target="_blank"
+                                className="text-gray-500 truncate p-1"
+                            >
+                                <span className="text-blue-500">#{number}</span>
+                                {' '}
+                                <span className="ml-1 text-gray-500">{title}</span>
+                            </MenuLink>
+                            {next_action && (
+                                <NextActionButton
+                                    {...next_action}
+                                    className="absolute right-1 top-0"
+                                    style={{ marginTop: 3 }}
+                                />
+                            )}
+                        </div>
+                    ))}
+                </Fragment>
             ))}
         </Menu>
     );
@@ -143,19 +123,25 @@ const Header = ({ boards, isWaiting, openPRsCount, pullRequests }) => {
                 pointing
                 title={currentBoard.name}
                 className="mr-auto border-r border-gray-200 w-56"
+                menuProps={{ className: "w-56" }}
             >
                 {boards.map(({ id, name, url }) => {
                     if (id === currentBoard.id) return null;
 
                     return (
-                        <a href={`${url}?v2=1`} key={id} className={menuItemClasses}>
+                        <MenuLink href={url} key={id} className={menuItemClasses}>
                             {name}
-                        </a>
+                        </MenuLink>
                     );
                 })}
             </Menu>
 
             <AddNewIssueModal />
+            {isFeatureEnabled("self_serve_features") && (
+                <a className={headerItemClasses} href="/user/features/v2_ui" data-method="delete">
+                    Back to V1
+                </a>
+            )}
             <Menu
                 menuProps={{ className: "w-48" }}
                 title={<Avatar username={flightPlanConfig.currentUser.username} />}
@@ -165,13 +151,13 @@ const Header = ({ boards, isWaiting, openPRsCount, pullRequests }) => {
                     <strong>@{flightPlanConfig.currentUser.username}</strong>
                 </div>
                 <hr/>
-                <a
+                <MenuLink
                     href={flightPlanConfig.api.logoutURL}
                     data-method="delete"
                     className={menuItemClasses}
                 >
                     Sign out
-                </a>
+                </MenuLink>
             </Menu>
             <a className={headerItemClasses} href={currentBoard.dashboardURL}>
                 PR Dashboard

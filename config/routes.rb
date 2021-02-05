@@ -11,6 +11,12 @@ Rails.application.routes.draw do
     delete 'sign_out', to: 'devise/sessions#destroy', as: :destroy_user_session
   end
 
+  resource :user, only: [] do
+    resources :features, param: :name, only: %i[destroy] do
+      post :create, on: :member
+    end
+  end
+
   resources :boards do
     resources :board_tickets, as: :tickets, only: %i[show create] do
       resources :moves, controller: :ticket_moves, only: :create
