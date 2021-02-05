@@ -13,6 +13,7 @@ import NextActionButton from "./NextActionButton";
 import Avatar from "./Avatar";
 import AddNewIssueModal from "./AddNewIssueModal";
 import { getOpenPRs } from "../../reducers/selectors";
+import { isFeatureEnabled } from "../../features";
 
 // FIXME: implement
 const Popup = ({ children }) => children;
@@ -136,6 +137,11 @@ const Header = ({ boards, isWaiting, openPRsCount, pullRequests }) => {
             </Menu>
 
             <AddNewIssueModal />
+            {isFeatureEnabled("self_serve_features") && (
+                <a className={headerItemClasses} href="/user/features/v2_ui" data-method="delete">
+                    Back to V1
+                </a>
+            )}
             <Menu
                 menuProps={{ className: "w-48" }}
                 title={<Avatar username={flightPlanConfig.currentUser.username} />}
