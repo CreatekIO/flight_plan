@@ -128,7 +128,7 @@ const LabelPicker = ({
             }
         });
 
-        navigate(backPath);
+        navigate(`../${backPath}`);
     }, [boardTicketId, currentLabelIds, selectedIds, backPath]);
 
     return (
