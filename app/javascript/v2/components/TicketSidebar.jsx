@@ -87,13 +87,14 @@ const ticketStateClasses = {
 
 const Sidebar = ({
     id,
+    className,
     assignees,
     milestone: milestoneId,
     labels: labelIds,
     state_durations: stateDurations = [],
     ticket: { state, repo: { name: repoName }}
 }) => (
-    <div className="bg-white">
+    <div className={classNames("bg-white", className)}>
         <SidebarEntry title="Repo">
             <span className="text-sm text-gray-500">{repoName}</span>
         </SidebarEntry>

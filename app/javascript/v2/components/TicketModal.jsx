@@ -75,14 +75,15 @@ const TicketModal = ({
 
             <div className="absolute top-14 inset-0 overflow-auto mt-px">
                 {isLoaded && (
-                    <div
-                        className={classNames(
-                            "sticky w-56 top-4 right-0 ml-auto pr-3 pb-12",
-                            transitionClasses,
-                            section ? "-translate-x-56" : "translate-x-0"
-                        )}
-                    >
-                        <Sidebar id={id} />
+                    <div className="sticky w-56 top-4 right-0 ml-auto overflow-x-hidden">
+                        <Sidebar
+                            id={id}
+                            className={classNames(
+                                "pr-3 pb-12",
+                                transitionClasses,
+                                section ? "-translate-x-56" : "translate-x-0"
+                            )}
+                        />
                     </div>
                 )}
 
