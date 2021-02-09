@@ -20,6 +20,7 @@ Rails.application.routes.draw do
   resources :boards do
     resources :board_tickets, as: :tickets, only: %i[show create] do
       resources :moves, controller: :ticket_moves, only: :create
+      resource :labelling, path: 'labels', only: :update
     end
     get 'tickets/:slug/:number' => 'board_tickets#show', as: :slugged_ticket, constraints: {
       slug: %r{[a-z0-9\-]+/[a-z0-9\-_]+}i
@@ -35,6 +36,10 @@ Rails.application.routes.draw do
 
   resources :swimlanes, only: [] do
     resources :tickets, controller: :board_tickets, only: :index
+  end
+
+  resources :repos, only: [] do
+    resources :labels, only: :index
   end
 
   namespace :webhook do

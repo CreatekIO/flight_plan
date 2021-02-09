@@ -817,39 +817,39 @@
     webpack-merge "^5.7.2"
     webpack-sources "^2.2.0"
 
-"@reach/auto-id@0.12.1":
-  version "0.12.1"
-  resolved "https://registry.yarnpkg.com/@reach/auto-id/-/auto-id-0.12.1.tgz#2e4a7250d2067ec16a9b4ea732695bc75572405c"
+"@reach/auto-id@0.13.0":
+  version "0.13.0"
+  resolved "https://registry.yarnpkg.com/@reach/auto-id/-/auto-id-0.13.0.tgz#0dfa4c1af46d1ad68d8282c786c03362ae35e335"
   dependencies:
-    "@reach/utils" "0.12.1"
+    "@reach/utils" "0.13.0"
     tslib "^2.0.0"
 
-"@reach/descendants@0.12.1":
-  version "0.12.1"
-  resolved "https://registry.yarnpkg.com/@reach/descendants/-/descendants-0.12.1.tgz#dd124e15ee66327692043fea798cc4b6232c1522"
+"@reach/descendants@0.13.0":
+  version "0.13.0"
+  resolved "https://registry.yarnpkg.com/@reach/descendants/-/descendants-0.13.0.tgz#e4034aecfe529a6ef27be464932846636861fe5b"
   dependencies:
-    "@reach/utils" "0.12.1"
+    "@reach/utils" "0.13.0"
     tslib "^2.0.0"
 
-"@reach/dialog@^0.12.1":
-  version "0.12.1"
-  resolved "https://registry.yarnpkg.com/@reach/dialog/-/dialog-0.12.1.tgz#1fe67d7d09eccac57292a06a9388b5ef7d529d06"
+"@reach/dialog@^0.13.0":
+  version "0.13.0"
+  resolved "https://registry.yarnpkg.com/@reach/dialog/-/dialog-0.13.0.tgz#2110725c3b8a3c64685834cdc9f3ce5c15617809"
   dependencies:
-    "@reach/portal" "0.12.1"
-    "@reach/utils" "0.12.1"
+    "@reach/portal" "0.13.0"
+    "@reach/utils" "0.13.0"
     prop-types "^15.7.2"
-    react-focus-lock "^2.3.1"
-    react-remove-scroll "^2.3.0"
+    react-focus-lock "^2.5.0"
+    react-remove-scroll "^2.4.1"
     tslib "^2.0.0"
 
-"@reach/menu-button@^0.12.1":
-  version "0.12.1"
-  resolved "https://registry.yarnpkg.com/@reach/menu-button/-/menu-button-0.12.1.tgz#73976bd101431c67351a811f2fbf76ddefbecf53"
+"@reach/menu-button@^0.13.0":
+  version "0.13.0"
+  resolved "https://registry.yarnpkg.com/@reach/menu-button/-/menu-button-0.13.0.tgz#7e2cae631ecf1743e00e5c58827ae6c3a44475df"
   dependencies:
-    "@reach/auto-id" "0.12.1"
-    "@reach/descendants" "0.12.1"
-    "@reach/popover" "0.12.1"
-    "@reach/utils" "0.12.1"
+    "@reach/auto-id" "0.13.0"
+    "@reach/descendants" "0.13.0"
+    "@reach/popover" "0.13.0"
+    "@reach/utils" "0.13.0"
     prop-types "^15.7.2"
     tslib "^2.0.0"
 
@@ -857,29 +857,29 @@
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/@reach/observe-rect/-/observe-rect-1.2.0.tgz#d7a6013b8aafcc64c778a0ccb83355a11204d3b2"
 
-"@reach/popover@0.12.1":
-  version "0.12.1"
-  resolved "https://registry.yarnpkg.com/@reach/popover/-/popover-0.12.1.tgz#d35dbff5d7751600ac9a2a0703e8585b8820964d"
+"@reach/popover@0.13.0":
+  version "0.13.0"
+  resolved "https://registry.yarnpkg.com/@reach/popover/-/popover-0.13.0.tgz#c3cfe34a85ca10f934646c5d906b349775c4695c"
   dependencies:
-    "@reach/portal" "0.12.1"
-    "@reach/rect" "0.12.1"
-    "@reach/utils" "0.12.1"
+    "@reach/portal" "0.13.0"
+    "@reach/rect" "0.13.0"
+    "@reach/utils" "0.13.0"
     tabbable "^4.0.0"
     tslib "^2.0.0"
 
-"@reach/portal@0.12.1":
-  version "0.12.1"
-  resolved "https://registry.yarnpkg.com/@reach/portal/-/portal-0.12.1.tgz#995858a6e758d9446870937b60b8707a2efa11cb"
+"@reach/portal@0.13.0", "@reach/portal@^0.13.0":
+  version "0.13.0"
+  resolved "https://registry.yarnpkg.com/@reach/portal/-/portal-0.13.0.tgz#bed220d41097deb1454a7928b22529ba10d3ea2b"
   dependencies:
-    "@reach/utils" "0.12.1"
+    "@reach/utils" "0.13.0"
     tslib "^2.0.0"
 
-"@reach/rect@0.12.1":
-  version "0.12.1"
-  resolved "https://registry.yarnpkg.com/@reach/rect/-/rect-0.12.1.tgz#5b018da4dccca852df21668ae54d5941c16f5bf7"
+"@reach/rect@0.13.0":
+  version "0.13.0"
+  resolved "https://registry.yarnpkg.com/@reach/rect/-/rect-0.13.0.tgz#4d1b0f53d3714c850c430f1ec6a79e70803b37f8"
   dependencies:
     "@reach/observe-rect" "1.2.0"
-    "@reach/utils" "0.12.1"
+    "@reach/utils" "0.13.0"
     prop-types "^15.7.2"
     tslib "^2.0.0"
 
@@ -892,13 +892,31 @@
     prop-types "^15.6.1"
     react-lifecycles-compat "^3.0.4"
 
-"@reach/utils@0.12.1":
-  version "0.12.1"
-  resolved "https://registry.yarnpkg.com/@reach/utils/-/utils-0.12.1.tgz#02b9c15ba5cddf23e16f2d2ca77aef98a9702607"
+"@reach/utils@0.13.0":
+  version "0.13.0"
+  resolved "https://registry.yarnpkg.com/@reach/utils/-/utils-0.13.0.tgz#2da775a910d8894bb34e1e94fe95842674f71844"
   dependencies:
     "@types/warning" "^3.0.0"
     tslib "^2.0.0"
     warning "^4.0.3"
+
+"@reduxjs/toolkit@^1.5.0":
+  version "1.5.0"
+  resolved "https://registry.yarnpkg.com/@reduxjs/toolkit/-/toolkit-1.5.0.tgz#1025c1ccb224d1fc06d8d98a61f6717d57e6d477"
+  dependencies:
+    immer "^8.0.0"
+    redux "^4.0.0"
+    redux-thunk "^2.3.0"
+    reselect "^4.0.0"
+
+"@tailwindcss/typography@^0.4.0":
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/@tailwindcss/typography/-/typography-0.4.0.tgz#b80974ad6af93df7b06e1981cb4d79698b6ad5c7"
+  dependencies:
+    lodash.castarray "^4.4.0"
+    lodash.isplainobject "^4.0.6"
+    lodash.merge "^4.6.2"
+    lodash.uniq "^4.5.0"
 
 "@types/eslint-scope@^3.7.0":
   version "3.7.0"
@@ -1547,6 +1565,10 @@ clone-deep@^4.0.1:
     kind-of "^6.0.2"
     shallow-clone "^3.0.0"
 
+clsx@^1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/clsx/-/clsx-1.1.1.tgz#98b3134f9abbdf23b2663491ace13c5c03a73188"
+
 coa@^2.0.2:
   version "2.0.2"
   resolved "https://registry.yarnpkg.com/coa/-/coa-2.0.2.tgz#43f6c21151b4ef2bf57187db0d73de229e3e7ec3"
@@ -1640,6 +1662,10 @@ compression@^1.7.4:
     on-headers "~1.0.2"
     safe-buffer "5.1.2"
     vary "~1.1.2"
+
+compute-scroll-into-view@^1.0.16:
+  version "1.0.16"
+  resolved "https://registry.yarnpkg.com/compute-scroll-into-view/-/compute-scroll-into-view-1.0.16.tgz#5b7bf4f7127ea2c19b750353d7ce6776a90ee088"
 
 concat-map@0.0.1:
   version "0.0.1"
@@ -2052,6 +2078,15 @@ dot-prop@^5.2.0:
   resolved "https://registry.yarnpkg.com/dot-prop/-/dot-prop-5.3.0.tgz#90ccce708cd9cd82cc4dc8c3ddd9abdd55b20e88"
   dependencies:
     is-obj "^2.0.0"
+
+downshift@^6.1.0:
+  version "6.1.0"
+  resolved "https://registry.yarnpkg.com/downshift/-/downshift-6.1.0.tgz#f008063d9b63935910d9db12ead07979ab51ce66"
+  dependencies:
+    "@babel/runtime" "^7.12.5"
+    compute-scroll-into-view "^1.0.16"
+    prop-types "^15.7.2"
+    react-is "^17.0.1"
 
 ee-first@1.1.1:
   version "1.1.1"
@@ -2682,6 +2717,10 @@ icss-utils@^5.0.0:
   version "5.1.0"
   resolved "https://registry.yarnpkg.com/icss-utils/-/icss-utils-5.1.0.tgz#c6be6858abd013d768e98366ae47e25d5887b1ae"
 
+immer@^8.0.0:
+  version "8.0.1"
+  resolved "https://registry.yarnpkg.com/immer/-/immer-8.0.1.tgz#9c73db683e2b3975c424fb0572af5889877ae656"
+
 import-fresh@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/import-fresh/-/import-fresh-2.0.0.tgz#d81355c15612d386c61f9ddd3922d4304822a546"
@@ -3133,6 +3172,10 @@ lockfile@^1.0:
   dependencies:
     signal-exit "^3.0.2"
 
+lodash.castarray@^4.4.0:
+  version "4.4.0"
+  resolved "https://registry.yarnpkg.com/lodash.castarray/-/lodash.castarray-4.4.0.tgz#c02513515e309daddd4c24c60cfddcf5976d9115"
+
 lodash.escaperegexp@^4.0:
   version "4.1.2"
   resolved "https://registry.yarnpkg.com/lodash.escaperegexp/-/lodash.escaperegexp-4.1.2.tgz#64762c48618082518ac3df4ccf5d5886dae20347"
@@ -3145,9 +3188,17 @@ lodash.has@^4.0:
   version "4.5.2"
   resolved "https://registry.yarnpkg.com/lodash.has/-/lodash.has-4.5.2.tgz#d19f4dc1095058cccbe2b0cdf4ee0fe4aa37c862"
 
+lodash.isplainobject@^4.0.6:
+  version "4.0.6"
+  resolved "https://registry.yarnpkg.com/lodash.isplainobject/-/lodash.isplainobject-4.0.6.tgz#7c526a52d89b45c45cc690b88163be0497f550cb"
+
 lodash.memoize@^4.1.2:
   version "4.1.2"
   resolved "https://registry.yarnpkg.com/lodash.memoize/-/lodash.memoize-4.1.2.tgz#bcc6c49a42a2840ed997f323eada5ecd182e0bfe"
+
+lodash.merge@^4.6.2:
+  version "4.6.2"
+  resolved "https://registry.yarnpkg.com/lodash.merge/-/lodash.merge-4.6.2.tgz#558aa53b43b661e1925a0afdfa36a9a1085fe57a"
 
 lodash.toarray@^4.4.0:
   version "4.4.0"
@@ -4198,7 +4249,7 @@ react-dom@16.14.0:
     prop-types "^15.6.2"
     scheduler "^0.19.1"
 
-react-focus-lock@^2.3.1:
+react-focus-lock@^2.5.0:
   version "2.5.0"
   resolved "https://registry.yarnpkg.com/react-focus-lock/-/react-focus-lock-2.5.0.tgz#12e3a3940e897c26e2c2a0408cd25ea3c99b3709"
   dependencies:
@@ -4212,6 +4263,10 @@ react-focus-lock@^2.3.1:
 react-is@^16.13.1, react-is@^16.7.0, react-is@^16.8.1:
   version "16.13.1"
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.13.1.tgz#789729a4dc36de2999dc156dd6c1d9c18cea56a4"
+
+react-is@^17.0.1:
+  version "17.0.1"
+  resolved "https://registry.yarnpkg.com/react-is/-/react-is-17.0.1.tgz#5b3531bd76a645a4c9fb6e693ed36419e3301339"
 
 react-lifecycles-compat@^3.0.4:
   version "3.0.4"
@@ -4234,7 +4289,7 @@ react-remove-scroll-bar@^2.1.0:
     react-style-singleton "^2.1.0"
     tslib "^1.0.0"
 
-react-remove-scroll@^2.3.0:
+react-remove-scroll@^2.4.1:
   version "2.4.1"
   resolved "https://registry.yarnpkg.com/react-remove-scroll/-/react-remove-scroll-2.4.1.tgz#e0af6126621083a5064591d367291a81b2d107f5"
   dependencies:
@@ -4251,6 +4306,12 @@ react-style-singleton@^2.1.0:
     get-nonce "^1.0.0"
     invariant "^2.2.4"
     tslib "^1.0.0"
+
+react-toastify@^7.0.3:
+  version "7.0.3"
+  resolved "https://registry.yarnpkg.com/react-toastify/-/react-toastify-7.0.3.tgz#93804c777ecf918872ba3b5be9c654db14547f85"
+  dependencies:
+    clsx "^1.1.1"
 
 react@^16.14.0:
   version "16.14.0"
@@ -4301,7 +4362,11 @@ reduce-css-calc@^2.1.6:
     css-unit-converter "^1.1.1"
     postcss-value-parser "^3.3.0"
 
-redux@^4.0.4, redux@^4.0.5:
+redux-thunk@^2.3.0:
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/redux-thunk/-/redux-thunk-2.3.0.tgz#51c2c19a185ed5187aaa9a2d08b666d0d6467622"
+
+redux@^4.0.0, redux@^4.0.4, redux@^4.0.5:
   version "4.0.5"
   resolved "https://registry.yarnpkg.com/redux/-/redux-4.0.5.tgz#4db5de5816e17891de8a80c424232d06f051d93f"
   dependencies:
@@ -4386,6 +4451,10 @@ require-main-filename@^2.0.0:
 requires-port@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/requires-port/-/requires-port-1.0.0.tgz#925d2601d39ac485e091cf0da5c6e694dc3dcaff"
+
+reselect@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/reselect/-/reselect-4.0.0.tgz#f2529830e5d3d0e021408b246a206ef4ea4437f7"
 
 resolve-cwd@^2.0.0:
   version "2.0.0"
@@ -5094,16 +5163,16 @@ url@^0.11.0:
     querystring "0.2.0"
 
 use-callback-ref@^1.2.1, use-callback-ref@^1.2.3:
-  version "1.2.4"
-  resolved "https://registry.yarnpkg.com/use-callback-ref/-/use-callback-ref-1.2.4.tgz#d86d1577bfd0b955b6e04aaf5971025f406bea3c"
+  version "1.2.5"
+  resolved "https://registry.yarnpkg.com/use-callback-ref/-/use-callback-ref-1.2.5.tgz#6115ed242cfbaed5915499c0a9842ca2912f38a5"
 
 use-memo-one@^1.1.1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/use-memo-one/-/use-memo-one-1.1.1.tgz#39e6f08fe27e422a7d7b234b5f9056af313bd22c"
 
 use-sidecar@^1.0.1:
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/use-sidecar/-/use-sidecar-1.0.3.tgz#17a4e567d4830c0c0ee100040e85a7fe68611e0f"
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/use-sidecar/-/use-sidecar-1.0.4.tgz#38398c3723727f9f924bed2343dfa3db6aaaee46"
   dependencies:
     detect-node-es "^1.0.0"
     tslib "^1.9.3"

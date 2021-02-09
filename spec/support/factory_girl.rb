@@ -1,4 +1,4 @@
-FactoryBot.definition_file_paths = %w( spec/support/factories )
+FactoryBot.definition_file_paths = %w[spec/support/factories]
 FactoryBot.find_definitions
 
 FactoryBot.define do
@@ -10,6 +10,7 @@ FactoryBot.define do
   sequence(:hex_colour) { format('%06x', (rand * 0xffffff)) }
 
   sequence(:user_id, 10_000)
+  sequence(:label_id, 2_000_000_000)
 
   # Generates odd numbers
   sequence(:issue_number, fp_number_generator(1))
@@ -23,4 +24,3 @@ end
 RSpec.configure do |config|
   config.include FactoryBot::Syntax::Methods
 end
-

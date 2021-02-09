@@ -6,12 +6,6 @@ RSpec.describe CleanupCommitStatusesWorker do
   before do
     # Silence logger
     allow(Sidekiq).to receive(:logger).and_return(double.as_null_object)
-
-    # Allow records to persist between examples, since we create all
-    # objects up-front (to more mimic a production-like scenario where
-    # we have statuses for many commits), but we test each scenario in
-    # a separate example for clarity
-    DatabaseCleaner.strategy = nil
   end
 
   after(:context) do
@@ -73,6 +67,14 @@ RSpec.describe CleanupCommitStatusesWorker do
       success  0 circleci repo_a
       success +1 circleci repo_b
     TXT
+
+    before do
+      # Allow records to persist between examples, since we create all
+      # objects up-front (to more mimic a production-like scenario where
+      # we have statuses for many commits), but we test each scenario in
+      # a separate example for clarity
+      CommitStatus.connection.commit_transaction
+    end
 
     context 'with failing commit' do
       it 'removes all but latest (failing) status' do

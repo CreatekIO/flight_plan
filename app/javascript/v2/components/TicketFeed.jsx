@@ -6,7 +6,17 @@ import classNames from "classnames";
 
 import Avatar from "./Avatar";
 
-const markdownConverter = new showdown.Converter();
+const markdownConverter = new showdown.Converter({
+    extensions: [
+        {
+            type: "output",
+            regex: new RegExp("<(/)?table(.*)>", "g"),
+            replace: (tag, isClosing) => (
+                isClosing ? `${tag}</div>`: `<div class="overflow-x-auto">${tag}`
+            )
+        }
+    ]
+});
 markdownConverter.setFlavor("github");
 markdownConverter.setOption("openLinksInNewWindow", true);
 
@@ -14,8 +24,8 @@ const Entry = ({ author = "ghost", body, timestamp, action = "commented" }) => (
     <div className="flex mb-4">
         <Avatar username={author} />
 
-        <div className="border border-gray-300 rounded ml-3 flex-grow">
-            <div className="border-b border-gray-300 bg-gray-100 px-3 py-2 font-bold text-sm">
+        <div className="ml-3 flex-grow" style={{ width: "calc(100% - 3rem)" }}>
+            <div className="border border-gray-300 rounded-t bg-gray-100 px-3 py-2 font-bold text-sm">
                 <a
                     href={`https://github.com/${author}`}
                     target="_blank"
@@ -31,7 +41,7 @@ const Entry = ({ author = "ghost", body, timestamp, action = "commented" }) => (
                 )}
             </div>
             <div
-                className="px-4 py-3 text-sm gh-markdown"
+                className="border border-gray-300 border-t-0 rounded-b px-4 py-3 prose prose-sm prose-blue"
                 dangerouslySetInnerHTML={{ __html: markdownConverter.makeHtml(body)}}
             />
         </div>

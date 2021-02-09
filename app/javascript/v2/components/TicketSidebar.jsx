@@ -1,7 +1,9 @@
 import React, { Fragment } from "react";
 import { connect } from "react-redux";
+import { Link } from "@reach/router";
 import { denormalize, schema } from "normalizr";
 import classNames from "classnames";
+import Octicon, { Gear } from "@githubprimer/octicons-react";
 
 import Label, { Milestone } from "./Label";
 import PullRequest from "./PullRequest";
@@ -44,9 +46,19 @@ const GroupedPullRequestList = connect(
     );
 });
 
-const SidebarEntry = ({ title, children }) => (
+const SidebarEntry = ({ title, children, url }) => (
     <Fragment>
-        <h2 className="mt-3 text-gray-600">{title}</h2>
+        <h2 className="mt-3 text-gray-600">
+            {Boolean(url) ? (
+                <Link
+                    to={url}
+                    className="w-full flex items-center justify-start hover:text-blue-500 focus:text-blue-500 focus:outline-none"
+                >
+                    <span className="flex-grow text-left">{title}</span>
+                    <Octicon icon={Gear} />
+                </Link>
+            ) : title}
+        </h2>
         {children}
     </Fragment>
 );
@@ -75,13 +87,14 @@ const ticketStateClasses = {
 
 const Sidebar = ({
     id,
+    className,
     assignees,
     milestone: milestoneId,
     labels: labelIds,
     state_durations: stateDurations = [],
     ticket: { state, repo: { name: repoName }}
 }) => (
-    <div className="sticky top-3 pb-12 bg-white">
+    <div className={classNames("bg-white", className)}>
         <SidebarEntry title="Repo">
             <span className="text-sm text-gray-500">{repoName}</span>
         </SidebarEntry>
@@ -102,7 +115,7 @@ const Sidebar = ({
             )}
         </SidebarEntry>
 
-        <SidebarEntry title="Labels">
+        <SidebarEntry title="Labels" url="labels/edit">
             {labelIds.length ? (
                 <div className="space-y-1">
                     {labelIds.map(id => <Label key={id} id={id} className="w-full" />)}

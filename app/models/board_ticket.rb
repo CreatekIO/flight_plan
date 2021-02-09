@@ -36,12 +36,9 @@ class BoardTicket < ApplicationRecord
 
   attr_writer :update_remote
 
-  delegate :number, to: :ticket
-  delegate :slug, to: :repo
-
   octokit_methods(
     :close_issue, :reopen_issue, :replace_all_labels, :labels_for_issue,
-    prefix_with: %i[slug number]
+    prefix_with: %w[repo.slug ticket.number]
   )
 
   def state_durations
@@ -127,17 +124,17 @@ class BoardTicket < ApplicationRecord
 
     retry_with_global_token_if_fails do
       if swimlane_id == closed_swimlane.id
-        close_issue
+        octokit_close_issue
       elsif attribute_before_last_save(:swimlane_id) == closed_swimlane.id
-        reopen_issue
+        octokit_reopen_issue
       end
 
-      replace_all_labels(new_github_labels)
+      octokit_replace_all_labels(new_github_labels)
     end
   end
 
   def new_github_labels
-    non_status_labels = labels_for_issue
+    non_status_labels = octokit_labels_for_issue
       .map(&:name)
       .reject { |label| label.start_with? 'status:' }
 

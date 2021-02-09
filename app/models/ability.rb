@@ -9,6 +9,7 @@ class Ability
 
     return if user == :api_user
 
+    can :manage, Repo
     can :manage, Ticket
     can :manage, Swimlane
     can :manage, User

@@ -32,8 +32,7 @@ json.pull_requests ticket.pull_requests.includes(:repo) do |pull_request|
 end
 
 json.labels ticket.display_labels do |label|
-  json.extract! label, :id, :name, :colour
-  json.repo label.repo_id
+  json.merge! label.to_builder.attributes!
 end
 
 if milestone.present?

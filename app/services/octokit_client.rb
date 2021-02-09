@@ -2,7 +2,7 @@ module OctokitClient
   extend ActiveSupport::Concern
 
   module ClassMethods
-    def octokit_methods(*names, prefix_with: nil)
+    def octokit_methods(*names, prefix_with: nil, add_aliases: false)
       prefix_args = Array.wrap(prefix_with).map(&:to_s).join(', ')
       @octokit_module ||= const_set(:OctokitClientMethods, Module.new).tap do |mod|
         include mod
@@ -10,13 +10,17 @@ module OctokitClient
 
       names.each do |name|
         @octokit_module.class_eval <<-RUBY, __FILE__, __LINE__ + 1
-          def #{name}(*args)
+          def octokit_#{name}(*args)
             octokit.#{name}(
               #{prefix_args + ',' if prefix_args.present?}
               *args
             )
           end
         RUBY
+
+        next unless add_aliases
+
+        @octokit_module.send(:alias_method, name, "octokit_#{name}")
       end
     end
   end

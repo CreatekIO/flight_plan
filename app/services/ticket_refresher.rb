@@ -1,10 +1,9 @@
 class TicketRefresher
   include OctokitClient
 
-  delegate :repo, :number, to: :ticket
-  delegate :slug, to: :repo
+  delegate :repo, to: :ticket
 
-  octokit_methods :issue, :issue_comments, prefix_with: %i[slug number]
+  octokit_methods :issue, :issue_comments, prefix_with: %w[repo.slug ticket.number]
 
   def initialize(ticket)
     @ticket = ticket
@@ -21,11 +20,11 @@ class TicketRefresher
   attr_reader :ticket
 
   def update_ticket
-    @ticket = Ticket.import(gh_ticket, full_name: slug)
+    @ticket = Ticket.import(gh_ticket, full_name: repo.slug)
   end
 
   def update_ticket_comments
-    issue_comments.each do |gh_comment|
+    octokit_issue_comments.each do |gh_comment|
       Comment.import({ comment: gh_comment.to_hash, issue: gh_ticket }, repo)
     end
   end
@@ -37,6 +36,6 @@ class TicketRefresher
   end
 
   def gh_ticket
-    @gh_ticket ||= issue.to_hash
+    @gh_ticket ||= octokit_issue.to_hash
   end
 end
