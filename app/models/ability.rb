@@ -1,6 +1,10 @@
 class Ability
   include CanCan::Ability
 
+  SELF_SERVE_FEATURES = %i[v2_ui].flat_map do |name|
+    [name, name.to_s]
+  end.freeze
+
   def initialize(user)
     return unless user.present?
 
@@ -18,6 +22,6 @@ class Ability
       Flipper.enabled?(:kpis, user)
     end
 
-    can %i[opt_in opt_out], Flipper::Feature, name: %i[v2_ui]
+    can %i[opt_in opt_out], Flipper::Feature, name: SELF_SERVE_FEATURES
   end
 end
