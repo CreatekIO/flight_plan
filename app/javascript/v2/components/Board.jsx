@@ -21,7 +21,8 @@ const LoadingOverlay = () => (
 );
 
 const Board = ({
-    swimlanes,
+    boardId,
+    swimlaneIds,
     loadBoard,
     loadNextActions,
     ticketDragged,
@@ -33,7 +34,7 @@ const Board = ({
         let boardSubscription;
 
         loadBoard()
-            .then(({ payload: { id } }) => { boardSubscription = subscribeToBoard(id) })
+            .then(() => { boardSubscription = subscribeToBoard(boardId) })
             .finally(() => setLoading(false));
         loadNextActions();
 
@@ -48,26 +49,21 @@ const Board = ({
     return (
         <DragDropContext onDragEnd={onDragEnd}>
             <main className="fp-board flex flex-1 flex-nowrap mt-14 relative">
-                {swimlanes.map(swimlaneId => (
-                    <Swimlane key={swimlaneId} id={swimlaneId} />
-                ))}
+                {swimlaneIds.map(id => <Swimlane key={id} id={id} />)}
+
                 {isLoading && <LoadingOverlay/>}
             </main>
         </DragDropContext>
     );
 }
 
-const mapStateToProps = ({ entities, current }) => {
-    let swimlanes = [];
+const EMPTY = [];
 
-    if (current.board) {
-        swimlanes = entities.boards[current.board].swimlanes;
-    }
-
-    return {
-        swimlanes
-    };
-};
+const mapStateToProps = (_, { boardId: id }) => ({
+    entities: { boards }
+}) => ({
+    swimlaneIds: (boards[id] && boards[id].swimlanes) || EMPTY
+})
 
 export default connect(
     mapStateToProps,

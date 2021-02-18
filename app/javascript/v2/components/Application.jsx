@@ -24,10 +24,10 @@ const TicketModalWrapper = ({ owner, repo, number, location: { state }}) => (
 // Use a nested <Router> here instead of a <Match> so that
 // further nested routers don't need to include the full
 // owner-repo-number path in their routes
-const BoardWrapper = () => (
+const BoardWrapper = ({ children, ...props }) => (
     <div className="flex flex-col h-screen">
         <Header boards={flightPlanConfig.boards} />
-        <Board />
+        <Board {...props} />
         <Router>
             <TicketModalWrapper path=":owner/:repo/:number/*" />
         </Router>
@@ -40,8 +40,8 @@ const Application = () => {
     return (
         <ErrorBoundary>
             <Provider store={store}>
-                <Router basepath={flightPlanConfig.api.htmlBoardURL}>
-                    <BoardWrapper path="/*" />
+                <Router>
+                    <BoardWrapper path="boards/:boardId/*" />
                 </Router>
             </Provider>
 
