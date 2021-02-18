@@ -3,17 +3,9 @@ const handleResponse = response => {
     if (status == 204) return Promise.resolve({ success: true });
 
     if (ok || (status >= 400 && status < 500)) {
-        return response.json().then(json => {
-            const errorData = json.error || json.errors;
-
-            if (errorData) {
-                const error = new Error("Request failed");
-                error.data = errorData;
-                throw error;
-            }
-
-            return json;
-        });
+        return response.headers.get("Content-Type").startsWith("application/json")
+            ? response.json()
+            : response.text().then(text => ({ [ok ? "data" : "error"]: text }))
     }
 
     throw new Error("Request failed");

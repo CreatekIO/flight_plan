@@ -1,4 +1,6 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
+
+import { createRequestThunk } from "./utils";
 
 const getIn = (object, path, notFound = null) => {
     const parts = Array.isArray(path) ? path : path.split(".");
@@ -15,18 +17,17 @@ const getIn = (object, path, notFound = null) => {
 const idsToNames = (ids, state) =>
     ids.map(id => getIn(state, `entities.labels.${id}.name`)).filter(Boolean);
 
-export const updateLabelsForTicket = createAsyncThunk(
-    "boardTickets/updateLabels",
-    ({ id, add: idsToAdd, remove: idsToRemove }, { getState, extra: { patch }}) => (
-        patch(`${flightPlanConfig.api.htmlBoardURL}/board_tickets/${id}/labels`, {
-            labelling: {
-                add: idsToNames(idsToAdd, getState()),
-                remove: idsToNames(idsToRemove, getState())
-            }
-        })
-    ),
-    { condition: ({ add, remove }) => Boolean(add.length || remove.length) }
-);
+export const updateLabelsForTicket = createRequestThunk.patch({
+    name: "boardTickets/updateLabels",
+    path: ({ id }) => `/${flightPlanConfig.api.htmlBoardURL}/board_tickets/${id}/labels`,
+    body: ({ add: idsToAdd, remove: idsToRemove }, { getState }) => ({
+        labelling: {
+            add: idsToNames(idsToAdd, getState()),
+            remove: idsToNames(idsToRemove, getState())
+        }
+    }),
+    condition: ({ add, remove }) => Boolean(add.length || remove.length)
+});
 
 const makeLabelChanges = (labels, { add, remove }) => {
     add.forEach(id => labels.includes(id) || labels.push(id));
