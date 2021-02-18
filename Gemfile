@@ -56,7 +56,6 @@ group :development, :test do
   gem 'rspec-rails', '3.7.0'
   gem 'shoulda-matchers'
   gem 'spring-commands-rspec'
-  gem 'timecop'
   gem 'webmock'
 end
 
@@ -68,4 +67,5 @@ group :test do
   gem 'action-cable-testing'
   gem 'rspec-sidekiq'
   gem 'rspec_junit_formatter'
+  gem 'timecop'
 end
