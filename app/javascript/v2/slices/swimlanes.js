@@ -1,5 +1,7 @@
 import { createSlice, current } from "@reduxjs/toolkit";
 
+import { rehydrateStore, upsert } from "./utils";
+
 const {
     reducer,
     actions: { collapse, expand }
@@ -14,6 +16,20 @@ const {
         expand: (state, { payload: id }) => {
             const swimlane = state[id];
             if (swimlane) swimlane.isCollapsed = false;
+        }
+    },
+    extraReducers: {
+        [rehydrateStore]: (state, { payload }) => {
+            const changes = [];
+
+            for (const key in payload) {
+                const match = key.match(/^swimlane:(\d+):collapsed$/);
+                if (!match) continue;
+
+                changes.push({ id: parseInt(match[1], 10), isCollapsed: true });
+            }
+
+            upsert(state, changes);
         }
     }
 });

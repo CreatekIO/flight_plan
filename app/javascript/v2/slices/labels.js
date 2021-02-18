@@ -2,18 +2,12 @@ import { createSlice, isFulfilled } from "@reduxjs/toolkit";
 import { createRequestThunk } from "./utils";
 
 import { updateLabelsForTicket } from "./board_tickets";
+import { upsert } from "./utils";
 
 export const fetchLabelsForRepo = createRequestThunk.get({
     name: "labels/fetchForRepo",
     path: id => `/repos/${id}/labels`
 });
-
-const upsert = (state, records) => {
-    records.forEach(record => {
-        const { id } = record;
-        state[id] = { ...state[id], ...record };
-    });
-}
 
 const hasLabelsPayload = isFulfilled(fetchLabelsForRepo, updateLabelsForTicket);
 

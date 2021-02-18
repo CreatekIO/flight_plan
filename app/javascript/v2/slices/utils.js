@@ -22,6 +22,13 @@ for (const method of ["get", "post", "patch", "put"]) {
     createRequestThunk[method] = args => createRequestThunk({ ...args, method });
 }
 
+export const upsert = (state, records) => {
+    records.forEach(record => {
+        const { id } = record;
+        state[id] = { ...state[id], ...record };
+    });
+}
+
 export const rehydrateStore = createAction(
     "flightplan/rehydrate",
     () => {
