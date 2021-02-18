@@ -1,11 +1,8 @@
 require 'rails_helper'
 
-RSpec.describe TicketMovesController do
+RSpec.describe TicketMovesController, type: :request do
   describe 'POST #create' do
-    include Devise::Test::ControllerHelpers
     include_context 'board with swimlanes'
-
-    render_views
 
     let(:ticket) { create(:ticket, repo: repo) }
     let!(:board_ticket) { create(:board_ticket, board: board, ticket: ticket, swimlane: backlog) }
@@ -13,8 +10,11 @@ RSpec.describe TicketMovesController do
     let(:user) { create(:user) }
 
     before do
-      request.env['devise.mapping'] = Devise.mappings[:user]
       sign_in user
+
+      Warden.on_next_request do |proxy|
+        proxy.session['github.token'] = user_token
+      end
     end
 
     let(:user_token) { "github_token_user_#{user.id}" }
@@ -39,13 +39,9 @@ RSpec.describe TicketMovesController do
 
     subject do
       post(
-        :create,
-        params: {
-          board_id: board, ticket_id: board_ticket, board_ticket: board_ticket_params, format: :json
-        },
-        session: {
-          'warden.user.user.session' => { 'github.token' => user_token }
-        }
+        board_ticket_moves_path(board, board_ticket),
+        params: { board_ticket: board_ticket_params }.to_json,
+        headers: { 'Accept' => 'application/json', 'Content-Type' => 'application/json' }
       )
     end
 
