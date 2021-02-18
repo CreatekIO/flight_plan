@@ -1,6 +1,7 @@
 import { configureStore, combineReducers } from "@reduxjs/toolkit";
 
 import v1Reducer from "../reducers";
+import api from "./api";
 import boardTickets from "./slices/board_tickets";
 import labels from "./slices/labels";
 
@@ -57,6 +58,9 @@ const persistSwimlaneCollapses = () => {
 const setupStore = () => {
     const store = configureStore({
         reducer: rootReducer,
+        middleware: getDefaultMiddleware => getDefaultMiddleware({
+            thunk: { extraArgument: api }
+        }),
         devTools: {
             name: `FlightPlan/app@v2 [${process.env.NODE_ENV}]`
         }
