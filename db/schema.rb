@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20200925105334) do
+ActiveRecord::Schema.define(version: 20210218135636) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -258,7 +258,7 @@ ActiveRecord::Schema.define(version: 20200925105334) do
     t.bigint "board_id"
     t.citext "name"
     t.integer "position"
-    t.boolean "display_duration"
+    t.boolean "display_duration", default: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["board_id"], name: "index_swimlanes_on_board_id"
