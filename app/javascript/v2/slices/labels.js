@@ -1,11 +1,10 @@
 import { createSlice, createAsyncThunk, isFulfilled } from "@reduxjs/toolkit";
 
-import { getRepoLabels } from "../../api";
 import { updateLabelsForTicket } from "./board_tickets";
 
 export const fetchLabelsForRepo = createAsyncThunk(
     "labels/fetchForRepo",
-    repoId => getRepoLabels(repoId)
+    (id, { extra: { get }}) => get(`/repos/${id}/labels`)
 );
 
 const upsert = (state, records) => {

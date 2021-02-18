@@ -1,7 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
-import { updateTicketLabels } from "../../api";
-
 const getIn = (object, path, notFound = null) => {
     const parts = Array.isArray(path) ? path : path.split(".");
     let current = object;
@@ -19,13 +17,13 @@ const idsToNames = (ids, state) =>
 
 export const updateLabelsForTicket = createAsyncThunk(
     "boardTickets/updateLabels",
-    ({ id, add: idsToAdd, remove: idsToRemove }, { getState, rejectWithValue }) => (
-        updateTicketLabels(id, {
-            add: idsToNames(idsToAdd, getState()),
-            remove: idsToNames(idsToRemove, getState())
-        }).then(response =>
-            ("errors" in response) ? rejectWithValue(response.errors) : response
-        )
+    ({ id, add: idsToAdd, remove: idsToRemove }, { getState, extra: { patch }}) => (
+        patch(`${flightPlanConfig.api.htmlBoardURL}/board_tickets/${id}/labels`, {
+            labelling: {
+                add: idsToNames(idsToAdd, getState()),
+                remove: idsToNames(idsToRemove, getState())
+            }
+        })
     ),
     { condition: ({ add, remove }) => Boolean(add.length || remove.length) }
 );
@@ -39,7 +37,7 @@ const makeLabelChanges = (labels, { add, remove }) => {
     });
 };
 
-const slice = createSlice({
+const { reducer } = createSlice({
     name: "boardTickets",
     // This won't be used since V1 will set it first, but set it for
     // the time when we are no longer using V1
@@ -60,4 +58,4 @@ const slice = createSlice({
     }
 });
 
-export default slice.reducer;
+export default reducer;
