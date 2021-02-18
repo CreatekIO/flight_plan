@@ -29,18 +29,19 @@ const GroupedPullRequestList = connect(
     }
 )(({ pullRequestsByRepo }) => {
     if (!pullRequestsByRepo.length) return <Blank message="No pull requests" />;
+    const multiRepo = pullRequestsByRepo.length > 1;
 
     return (
-        <div className="text-sm">
+        <div className="text-sm space-y-2 mt-0.5">
             {pullRequestsByRepo.map(({ repo: { id, name }, pullRequestIds }) => (
-                <Fragment key={id}>
-                    {pullRequestsByRepo.length > 1 && (
-                        <h3 className="uppercase text-gray-500 text-xs mt-1">{name}</h3>
+                <div key={id} className={classNames({ "pt-2": multiRepo })}>
+                    {multiRepo && (
+                        <h3 className="uppercase text-gray-500 text-xs">{name}</h3>
                     )}
-                    <div className="space-y-1">
-                        {pullRequestIds.map(id => <PullRequest key={id} id={id} />)}
-                    </div>
-                </Fragment>
+                    {pullRequestIds.map(id => (
+                        <PullRequest key={id} id={id} className="pl-0.5" />
+                    ))}
+                </div>
             ))}
         </div>
     );
@@ -68,7 +69,7 @@ const Blank = ({ message }) => (
 );
 
 const Assignee = ({ username }) => (
-    <Fragment>
+    <li>
         <Avatar username={username} size="mini" className="inline mr-2" />
         <a
             href={`https://github.com/${username}`}
@@ -77,7 +78,7 @@ const Assignee = ({ username }) => (
         >
             {username}
         </a>
-    </Fragment>
+    </li>
 );
 
 const ticketStateClasses = {
@@ -107,9 +108,9 @@ const Sidebar = ({
 
         <SidebarEntry title="Assignees">
             {assignees.length ? (
-                <div className="text-sm font-bold space-y-1 mt-1">
+                <ul className="text-sm font-bold space-y-2 mt-1">
                     {assignees.map(({ username }) => <Assignee key={username} username={username} />)}
-                </div>
+                </ul>
             ) : (
                 <Blank message="No assignees"/>
             )}
@@ -124,7 +125,7 @@ const Sidebar = ({
         </SidebarEntry>
 
         <SidebarEntry title="Milestone">
-            {milestoneId ? <Milestone id={milestoneId} fullWidth /> : <Blank message="No milestone" />}
+            {milestoneId ? <Milestone id={milestoneId} className="w-full" /> : <Blank message="No milestone" />}
         </SidebarEntry>
 
         {Boolean(stateDurations.length) && (

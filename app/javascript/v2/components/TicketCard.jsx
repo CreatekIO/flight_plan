@@ -122,7 +122,9 @@ const TicketCard = ({
                 )}
                 {Boolean(pullRequestIds.length) && (
                     <div className="space-y-1 divide-y">
-                        {pullRequestIds.map(id => <PullRequest key={id} id={id} />)}
+                        {pullRequestIds.map(id => (
+                            <PullRequest key={id} id={id} className="px-2" />
+                        ))}
                     </div>
                 )}
             </div>
