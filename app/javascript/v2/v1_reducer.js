@@ -161,20 +161,6 @@ const entitiesReducer = (state = initialEntitiesState, { type, payload }) => {
                 }
             });
         }
-        case "COLLAPSE_SWIMLANE": {
-            const { swimlaneId } = payload;
-
-            return update(state, {
-                swimlanes: { [swimlaneId]: { isCollapsed: { $set: true } } }
-            });
-        }
-        case "EXPAND_SWIMLANE": {
-            const { swimlaneId } = payload;
-
-            return update(state, {
-                swimlanes: { [swimlaneId]: { isCollapsed: { $set: false } } }
-            });
-        }
         case "BOARD_TICKET_LOADED":
             return updateEntities(normalize(payload, boardTicketSchema).entities, state);
         case "FULL_TICKET_LOADING": {

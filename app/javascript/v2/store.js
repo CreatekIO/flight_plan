@@ -4,17 +4,18 @@ import v1Reducer from "./v1_reducer";
 import api from "./api";
 import boardTickets from "./slices/board_tickets";
 import labels from "./slices/labels";
+import swimlanes from "./slices/swimlanes";
 
 const nullReducer = (state = {}) => state;
 
 const entitiesReducer = combineReducers({
     boardTickets,
     labels,
+    swimlanes,
     // These need to be here otherwise `combineReducers`
     // discards the default state from the V1 reducer
     boards: nullReducer,
     repos: nullReducer,
-    swimlanes: nullReducer,
     tickets: nullReducer,
     pullRequests: nullReducer,
     milestones: nullReducer,
@@ -33,43 +34,14 @@ const rootReducer = (initialState, action) => REDUCERS.reduce(
     initialState
 );
 
-const persistSwimlaneCollapses = () => {
-    let lastSwimlanes;
-
-    return ({ entities: { swimlanes }}) => {
-        try {
-            if (lastSwimlanes !== swimlanes) {
-                Object.values(swimlanes).forEach(({ id, isCollapsed }) => {
-                    const key = `swimlane:${id}:collapsed`;
-
-                    isCollapsed
-                        ? localStorage.setItem(key, 1)
-                        : localStorage.removeItem(key);
-                });
-            }
-
-            lastSwimlanes = swimlanes;
-        } catch (error) {
-            console.warn(error);
-        }
-    };
-};
-
-const setupStore = () => {
-    const store = configureStore({
-        reducer: rootReducer,
-        middleware: getDefaultMiddleware => getDefaultMiddleware({
-            thunk: { extraArgument: api }
-        }),
-        devTools: {
-            name: `FlightPlan/app@v2 [${process.env.NODE_ENV}]`
-        }
-    });
-
-    const persister = persistSwimlaneCollapses();
-    store.subscribe(() => persister(store.getState()));
-
-    return store;
-}
+const setupStore = () => configureStore({
+    reducer: rootReducer,
+    middleware: getDefaultMiddleware => getDefaultMiddleware({
+        thunk: { extraArgument: api }
+    }),
+    devTools: {
+        name: `FlightPlan/app@v2 [${process.env.NODE_ENV}]`
+    }
+});
 
 export default setupStore;

@@ -6,11 +6,8 @@ import Octicon, { Fold, Unfold } from "@githubprimer/octicons-react";
 
 import TicketCard from "./TicketCard";
 
-import {
-    loadSwimlaneTickets,
-    collapseSwimlane,
-    expandSwimlane
-} from "../../action_creators";
+import { loadSwimlaneTickets } from "../../action_creators";
+import { collapseSwimlane, expandSwimlane } from "../slices/swimlanes";
 
 // FIXME: implement
 const Popup = ({ trigger }) => trigger;
