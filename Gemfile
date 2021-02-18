@@ -48,15 +48,10 @@ group :development, :test do
   gem 'active_record_query_trace'
   gem 'bullet'
   gem 'byebug', platforms: %i[mri mingw x64_mingw]
-  gem 'capybara', '~> 2.15.1'
-  gem 'capybara-screenshot'
-  gem 'database_cleaner'
   gem 'dotenv-rails'
   gem 'factory_bot'
   gem 'rspec-rails', '3.7.0'
-  gem 'shoulda-matchers'
   gem 'spring-commands-rspec'
-  gem 'webmock'
 end
 
 group :development do
@@ -65,7 +60,12 @@ end
 
 group :test do
   gem 'action-cable-testing'
+  gem 'capybara', '~> 2.15.1'
+  gem 'capybara-screenshot'
+  gem 'database_cleaner'
   gem 'rspec-sidekiq'
   gem 'rspec_junit_formatter'
+  gem 'shoulda-matchers'
   gem 'timecop'
+  gem 'webmock'
 end
