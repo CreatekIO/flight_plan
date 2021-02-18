@@ -5,7 +5,11 @@ RSpec.describe TicketMovesController, type: :request do
     include_context 'board with swimlanes'
 
     let(:ticket) { create(:ticket, repo: repo) }
-    let!(:board_ticket) { create(:board_ticket, board: board, ticket: ticket, swimlane: backlog) }
+    let!(:board_ticket) do
+      Timecop.travel(1.day.ago) do # ensure we get an 'old' #started_at on BoardTicket#open_timesheet
+        create(:board_ticket, board: board, ticket: ticket, swimlane: backlog)
+      end
+    end
 
     let(:user) { create(:user) }
 
@@ -59,6 +63,8 @@ RSpec.describe TicketMovesController, type: :request do
     end
 
     before do
+      dev.update_attributes!(display_duration: true)
+
       2.times do
         ticket = create(:ticket, repo: repo)
         create(
@@ -101,6 +107,9 @@ RSpec.describe TicketMovesController, type: :request do
             .and have_broadcasted_to(board).from_channel(BoardChannel).with(expected_payload)
 
           expect(response).to have_http_status(:created)
+          expect(JSON.parse(response.body)).to include(
+            'time_since_last_transition' => '< 1h'
+          )
           expect(
             replace_all_labels_call.with(
               body: ['type: bug', "status: #{dev.name.downcase}"].to_json,

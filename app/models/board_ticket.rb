@@ -102,18 +102,21 @@ class BoardTicket < ApplicationRecord
   def update_timesheet
     time_now = Time.now
 
-    if open_timesheet
-      open_timesheet.update_attributes(
-        ended_at: time_now,
-        after_swimlane: swimlane
-      )
-    end
+    open_timesheet.try(
+      :update_attributes,
+      ended_at: time_now,
+      after_swimlane: swimlane
+    )
 
     timesheets.create!(
       started_at: time_now,
       swimlane: swimlane,
       before_swimlane_id: attribute_before_last_save(:swimlane_id)
     )
+
+    # We've changed what should considered the 'open timesheet',
+    # so make Rails (and downstream code) aware of this
+    reload_open_timesheet
   end
 
   def update_github

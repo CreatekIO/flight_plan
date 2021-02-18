@@ -79,7 +79,7 @@ RSpec.describe BoardTicket, type: :model do
         expect {
           subject.update_attributes(swimlane_id: dev.id)
         }.to change {
-          subject.reload.open_timesheet.id
+          subject.open_timesheet.id
         }
       end
 
