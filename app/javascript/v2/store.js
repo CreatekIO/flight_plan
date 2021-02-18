@@ -1,6 +1,6 @@
 import { configureStore, combineReducers } from "@reduxjs/toolkit";
 
-import v1Reducer from "../reducers";
+import v1Reducer from "./v1_reducer";
 import api from "./api";
 import boardTickets from "./slices/board_tickets";
 import labels from "./slices/labels";
