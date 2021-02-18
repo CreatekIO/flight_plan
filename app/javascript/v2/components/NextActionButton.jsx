@@ -12,16 +12,10 @@ const nextActionClasses = {
 const defaultClasses = "border py-0.5 px-1 text-xs rounded";
 
 const SingleURLButton = ({ url, text, className, ...props }) => (
-    <a
-        href={url}
-        className={classNames(defaultClasses, className)}
-        target="_blank"
-        {...props}
-    >
+    <a href={url} className={className} target="_blank" {...props}>
         {text}
     </a>
 );
-;
 
 const DownArrow = () => (
     <span
@@ -36,8 +30,7 @@ const DownArrow = () => (
 const MultipleURLsButton = ({ urls, text, className, ...props }) =>(
     <div
         className={classNames(
-            "relative cursor-pointer group inline-block",
-            defaultClasses,
+            "cursor-pointer group inline-block",
             className
         )}
         {...props}
@@ -59,7 +52,7 @@ const MultipleURLsButton = ({ urls, text, className, ...props }) =>(
 );
 
 export default function NextActionButton({ type, text, urls, className, ...props }) {
-    const classes = classNames(nextActionClasses[type], className);
+    const classes = classNames(nextActionClasses[type], defaultClasses, className);
 
     return urls.length > 1
         ? <MultipleURLsButton urls={urls} text={text} className={classes} {...props} />
