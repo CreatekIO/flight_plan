@@ -50,7 +50,8 @@ const PullRequest = ({
                     inverted
                 />
             </div>
-            {nextAction && (
+            {/* At the moment, we don't have any 'next actions' for closed PRs */}
+            {nextAction && state === "open" && (
                 <NextActionButton {...nextAction} className="compact mini" />
             )}
         </div>
