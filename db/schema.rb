@@ -118,6 +118,11 @@ ActiveRecord::Schema.define(version: 20210218135636) do
     t.index ["state"], name: "index_commit_statuses_on_state"
   end
 
+  create_table "data_migrations", id: false, force: :cascade do |t|
+    t.string "version", null: false
+    t.index ["version"], name: "index_data_migrations_on_version", unique: true
+  end
+
   create_table "labellings", force: :cascade do |t|
     t.bigint "label_id"
     t.bigint "ticket_id"
