@@ -120,9 +120,13 @@ const LabelPicker = ({
             id: boardTicketId,
             add: selectedIds.filter(id => !currentLabelIds.includes(id)),
             remove: currentLabelIds.filter(id => !selectedIds.includes(id))
-        }).then(({ meta, payload }) => {
-            if (meta.rejectedWithValue) {
-                payload.forEach(message => toast.error(message));
+        }).then(({ meta, payload, error }) => {
+            if (error && !meta.condition) {
+                if (meta.rejectedWithValue) {
+                    payload.forEach(message => toast.error(message));
+                } else {
+                    toast.error("Failed to update labels");
+                }
             } else {
                 toast.success("Labels updated");
             }

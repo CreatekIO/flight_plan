@@ -1,20 +1,24 @@
 require 'rails_helper'
 
-RSpec.describe TicketMovesController do
+RSpec.describe TicketMovesController, type: :request do
   describe 'POST #create' do
-    include Devise::Test::ControllerHelpers
     include_context 'board with swimlanes'
 
-    render_views
-
     let(:ticket) { create(:ticket, repo: repo) }
-    let!(:board_ticket) { create(:board_ticket, board: board, ticket: ticket, swimlane: backlog) }
+    let!(:board_ticket) do
+      Timecop.travel(1.day.ago) do # ensure we get an 'old' #started_at on BoardTicket#open_timesheet
+        create(:board_ticket, board: board, ticket: ticket, swimlane: backlog)
+      end
+    end
 
     let(:user) { create(:user) }
 
     before do
-      request.env['devise.mapping'] = Devise.mappings[:user]
       sign_in user
+
+      Warden.on_next_request do |proxy|
+        proxy.session['github.token'] = user_token
+      end
     end
 
     let(:user_token) { "github_token_user_#{user.id}" }
@@ -39,13 +43,9 @@ RSpec.describe TicketMovesController do
 
     subject do
       post(
-        :create,
-        params: {
-          board_id: board, ticket_id: board_ticket, board_ticket: board_ticket_params, format: :json
-        },
-        session: {
-          'warden.user.user.session' => { 'github.token' => user_token }
-        }
+        board_ticket_moves_path(board, board_ticket),
+        params: { board_ticket: board_ticket_params }.to_json,
+        headers: { 'Accept' => 'application/json', 'Content-Type' => 'application/json' }
       )
     end
 
@@ -63,6 +63,8 @@ RSpec.describe TicketMovesController do
     end
 
     before do
+      dev.update_attributes!(display_duration: true)
+
       2.times do
         ticket = create(:ticket, repo: repo)
         create(
@@ -105,6 +107,9 @@ RSpec.describe TicketMovesController do
             .and have_broadcasted_to(board).from_channel(BoardChannel).with(expected_payload)
 
           expect(response).to have_http_status(:created)
+          expect(JSON.parse(response.body)).to include(
+            'time_since_last_transition' => '< 1h'
+          )
           expect(
             replace_all_labels_call.with(
               body: ['type: bug', "status: #{dev.name.downcase}"].to_json,

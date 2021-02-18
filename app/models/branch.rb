@@ -30,9 +30,7 @@ class Branch < ApplicationRecord
         author_username: payload.dig(:head_commit, :author, :username),
         committer_username: payload.dig(:head_commit, :committer, :username),
         pusher_remote_id: payload.dig(:sender, :id),
-        pusher_username: payload.dig(:sender, :login),
-        # For debugging
-        payload: payload
+        pusher_username: payload.dig(:sender, :login)
       )
 
       branch.update_attributes!(latest_head: new_head)

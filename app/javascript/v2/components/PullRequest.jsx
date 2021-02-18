@@ -15,6 +15,7 @@ const pullRequestIcons = {
 };
 
 const PullRequest = ({
+    className,
     state,
     merged,
     title,
@@ -28,7 +29,7 @@ const PullRequest = ({
     } = pullRequestIcons[merged ? "merged" : state] || pullRequestIcons.open;
 
     return (
-        <div className="px-2 pt-1 flex">
+        <div className={classNames("flex pt-1", className)}>
             <div className="flex-grow">
                 <Octicon icon={icon} className={classNames("mr-0.5", iconClassName)} />
                 &nbsp;
@@ -49,7 +50,8 @@ const PullRequest = ({
                     inverted
                 />
             </div>
-            {nextAction && (
+            {/* At the moment, we don't have any 'next actions' for closed PRs */}
+            {nextAction && state === "open" && (
                 <NextActionButton {...nextAction} className="compact mini" />
             )}
         </div>

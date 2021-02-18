@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20200925105334) do
+ActiveRecord::Schema.define(version: 20210218135636) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -116,6 +116,11 @@ ActiveRecord::Schema.define(version: 20200925105334) do
     t.index ["repo_id"], name: "index_commit_statuses_on_repo_id"
     t.index ["sha"], name: "index_commit_statuses_on_sha"
     t.index ["state"], name: "index_commit_statuses_on_state"
+  end
+
+  create_table "data_migrations", id: false, force: :cascade do |t|
+    t.string "version", null: false
+    t.index ["version"], name: "index_data_migrations_on_version", unique: true
   end
 
   create_table "labellings", force: :cascade do |t|
@@ -258,7 +263,7 @@ ActiveRecord::Schema.define(version: 20200925105334) do
     t.bigint "board_id"
     t.citext "name"
     t.integer "position"
-    t.boolean "display_duration"
+    t.boolean "display_duration", default: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["board_id"], name: "index_swimlanes_on_board_id"

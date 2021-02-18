@@ -11,6 +11,8 @@ class CommitStatus < ApplicationRecord
     error: 'error'
   }
 
+  self.ignored_columns = %w[payload]
+
   def self.import(payload, repo)
     create(
       remote_id: payload[:id],
@@ -26,9 +28,7 @@ class CommitStatus < ApplicationRecord
       author_username: payload.dig(:commit, :author, :login),
       committer_remote_id: payload.dig(:commit, :committer, :id),
       committer_username: payload.dig(:commit, :committer, :login),
-      remote_created_at: payload[:created_at],
-      # For debugging purposes whilst developing
-      payload: payload
+      remote_created_at: payload[:created_at]
     )
   end
 
