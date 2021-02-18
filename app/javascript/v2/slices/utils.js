@@ -1,4 +1,4 @@
-import { createAsyncThunk } from "@reduxjs/toolkit";
+import { createAction, createAsyncThunk } from "@reduxjs/toolkit";
 
 export const createRequestThunk = ({
     name,
@@ -21,3 +21,23 @@ export const createRequestThunk = ({
 for (const method of ["get", "post", "patch", "put"]) {
     createRequestThunk[method] = args => createRequestThunk({ ...args, method });
 }
+
+export const rehydrateStore = createAction(
+    "flightplan/rehydrate",
+    () => {
+        const payload = {};
+
+        try {
+            let size = localStorage.length;
+
+            while (size--) {
+                const key = localStorage.key(size);
+                payload[key] = localStorage.getItem(key);
+            }
+        } catch(error) {
+            if (process.env.NODE_ENV !== "production") console.warn(error);
+        }
+
+        return { payload };
+    }
+);

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Provider } from "react-redux";
 import { Router } from "@reach/router";
 
@@ -9,6 +9,7 @@ import TicketModal from "./TicketModal";
 import Notifications from "./Notifications";
 
 import configureStore from "../store";
+import { rehydrateStore } from "../slices/utils";
 
 const store = configureStore();
 
@@ -33,16 +34,20 @@ const BoardWrapper = () => (
     </div>
 );
 
-const Application = () => (
-    <ErrorBoundary>
-        <Provider store={store}>
-            <Router basepath={flightPlanConfig.api.htmlBoardURL}>
-                <BoardWrapper path="/*" />
-            </Router>
-        </Provider>
+const Application = () => {
+    useEffect(() => { store.dispatch(rehydrateStore()) }, []);
 
-        <Notifications />
-    </ErrorBoundary>
-);
+    return (
+        <ErrorBoundary>
+            <Provider store={store}>
+                <Router basepath={flightPlanConfig.api.htmlBoardURL}>
+                    <BoardWrapper path="/*" />
+                </Router>
+            </Provider>
+
+            <Notifications />
+        </ErrorBoundary>
+    );
+}
 
 export default Application;
