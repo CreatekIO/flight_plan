@@ -7,6 +7,8 @@ class PullRequestReview < ApplicationRecord
     pending: 'pending'
   }
 
+  self.ignored_columns = %w[payload]
+
   belongs_to :repo
   belongs_to :pull_request, optional: true,
     foreign_key: :remote_pull_request_id, primary_key: :remote_id
@@ -27,9 +29,7 @@ class PullRequestReview < ApplicationRecord
         url: payload.dig(:review, :html_url),
         reviewer_remote_id: payload.dig(:review, :user, :id),
         reviewer_username: payload.dig(:review, :user, :login),
-        remote_created_at: payload.dig(:review, :submitted_at),
-        # For debugging purposes whilst developing
-        payload: payload
+        remote_created_at: payload.dig(:review, :submitted_at)
       )
     end
   end
