@@ -1,10 +1,62 @@
 business_time:
-  beginning_of_workday: 9:00 am
-  end_of_workday: 5:00 pm
+  beginning_of_workday: '9:00am'
+  end_of_workday: '5:00pm'
   holidays:
-    - December 25th, 2017
-    - December 26th, 2017
-    - Jan 01, 2018
+    # FlightPlan's first commit was 4th Sept '17,
+    # so no point including dates prior to that
+
+    # From https://www.gov.uk/bank-holidays
+    - '25 December  2017' # Christmas Day
+    - '26 December  2017' # Boxing Day
+
+    - '01 January   2018' # New Year’s Day
+    - '30 March     2018' # Good Friday
+    - '02 April     2018' # Easter Monday
+    - '07 May       2018' # Early May bank holiday
+    - '28 May       2018' # Spring bank holiday
+    - '27 August    2018' # Summer bank holiday
+    - '25 December  2018' # Christmas Day
+    - '26 December  2018' # Boxing Day
+
+    - '01 January   2019' # New Year’s Day
+    - '19 April     2019' # Good Friday
+    - '22 April     2019' # Easter Monday
+    - '06 May       2019' # Early May bank holiday
+    - '27 May       2019' # Spring bank holiday
+    - '26 August    2019' # Summer bank holiday
+    - '25 December  2019' # Christmas Day
+    - '26 December  2019' # Boxing Day
+
+    - '01 January   2020' # New Year’s Day
+    - '10 April     2020' # Good Friday
+    - '13 April     2020' # Easter Monday
+    - '08 May       2020' # Early May bank holiday (VE day)
+    - '25 May       2020' # Spring bank holiday
+    - '31 August    2020' # Summer bank holiday
+    - '25 December  2020' # Christmas Day
+    - '28 December  2020' # Boxing Day
+
+    - '01 January   2021' # New Year’s Day
+    - '02 April     2021' # Good Friday
+    - '05 April     2021' # Easter Monday
+    - '03 May       2021' # Early May bank holiday
+    - '31 May       2021' # Spring bank holiday
+    - '30 August    2021' # Summer bank holiday
+    - '27 December  2021' # Christmas Day
+    - '28 December  2021' # Boxing Day
+
+    - '03 January   2022' # New Year’s Day
+    - '15 April     2022' # Good Friday
+    - '18 April     2022' # Easter Monday
+    - '02 May       2022' # Early May bank holiday
+    - '02 June      2022' # Spring bank holiday
+    - '03 June      2022' # Platinum Jubilee bank holiday
+    - '29 August    2022' # Summer bank holiday
+    - '26 December  2022' # Boxing Day
+    - '27 December  2022' # Christmas Day
+
+    # # Extra dates
+    - '18 December  2020' # company-wide holiday
   work_week:
     - mon
     - tue
