@@ -31,12 +31,13 @@ const MultipleURLsButton = ({ urls, text, className, ...props }) =>(
     <div
         className={classNames(
             "cursor-pointer group inline-block",
+            { "relative": !className.includes("absolute") },
             className
         )}
         {...props}
     >
         {text} <DownArrow/>
-        <div className="w-60 absolute shadow rounded bg-white top-full left-0 hidden group-hover:block">
+        <div className="w-60 absolute shadow rounded bg-white top-full left-0 hidden group-hover:block z-10">
             {urls.map(({ url, title }) => (
                 <a
                     href={url}
