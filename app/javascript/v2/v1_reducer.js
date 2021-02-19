@@ -135,13 +135,6 @@ const entitiesReducer = (state = initialEntitiesState, { type, payload }) => {
                 newEntities
             );
         }
-        case "SWIMLANE_TICKETS_LOADING": {
-            const { swimlaneId } = payload;
-
-            return update(state, {
-                swimlanes: { [swimlaneId]: { loading_board_tickets: { $set: true } } }
-            });
-        }
         case "SWIMLANE_TICKETS_LOADED": {
             const { board_tickets, ...swimlane } = payload;
 
@@ -155,8 +148,7 @@ const entitiesReducer = (state = initialEntitiesState, { type, payload }) => {
                 swimlanes: {
                     [swimlane.id]: {
                         $merge: swimlane,
-                        board_tickets: { $push: boardTicketIds },
-                        loading_board_tickets: { $set: false }
+                        board_tickets: { $push: boardTicketIds }
                     }
                 }
             });

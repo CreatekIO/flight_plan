@@ -52,9 +52,9 @@ const AssigneeStack = ({ assignees }) => {
 const TicketCard = ({
     id,
     index,
+    shouldDisplayDuration,
     url,
     assignees,
-    display_duration: shouldDisplayDuration,
     time_since_last_transition: timeSinceLastTransition,
     pull_requests: pullRequestIds,
     labels: labelIds,
