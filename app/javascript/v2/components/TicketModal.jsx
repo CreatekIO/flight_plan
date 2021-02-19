@@ -32,7 +32,6 @@ const TicketModal = ({
     slug,
     number,
     ticket: { title, html_url: htmlURL },
-    isLoaded,
     loadFullTicketFromSlug,
     ticketModalClosed
 }) => {
@@ -49,8 +48,11 @@ const TicketModal = ({
     const activeSection = section || sectionWas;
     const ActiveEditor = activeSection && EDITORS[activeSection];
 
+    const [isLoaded, setIsLoaded] = useState(false);
+
     useEffect(() => {
-        loadFullTicketFromSlug(slug, number);
+        loadFullTicketFromSlug(slug, number)
+            .finally(() => setIsLoaded(true));
     }, [slug, number, loadFullTicketFromSlug]);
 
     return (
@@ -127,20 +129,15 @@ const mapStateToProps = (_, { id: idFromProps, number, slug }) => ({
     const id = idFromProps || current.boardTicket;
 
     if (!id || !(id in boardTickets)) return {
-        isLoaded: false,
         ticket: {
             html_url: `https://github.com/${slug}/${number}`
         }
     };
 
-    const { loading_state, ...boardTicket } = boardTickets[id];
+    const boardTicket = boardTickets[id];
     const ticket = tickets[boardTicket.ticket];
 
-    return {
-        ...boardTicket,
-        ticket,
-        isLoaded: loading_state === "loaded"
-    };
+    return { ...boardTicket, ticket };
 };
 
 export default connect(

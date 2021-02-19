@@ -162,30 +162,8 @@ const entitiesReducer = (state = initialEntitiesState, { type, payload }) => {
             });
         }
         case "BOARD_TICKET_LOADED":
+        case "FULL_TICKET_LOADED":
             return updateEntities(normalize(payload, boardTicketSchema).entities, state);
-        case "FULL_TICKET_LOADING": {
-            const { boardTicketId } = payload;
-
-            return update(state, {
-                boardTickets: { [boardTicketId]: { loading_state: { $set: "loading" } } }
-            });
-        }
-        case "FULL_TICKET_LOADED": {
-            const { entities, result: boardTicketId } = normalize(
-                payload,
-                boardTicketSchema
-            );
-
-            const newEntities = updateEntities(entities, state);
-
-            return update(newEntities, {
-                boardTickets: {
-                    [boardTicketId]: {
-                        loading_state: { $set: "loaded" }
-                    }
-                }
-            });
-        }
         default:
             return state;
     }
