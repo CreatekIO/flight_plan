@@ -22,6 +22,14 @@ for (const method of ["get", "post", "patch", "put"]) {
     createRequestThunk[method] = args => createRequestThunk({ ...args, method });
 }
 
+export const reduceReducers = (...reducers) => (
+    initialState,
+    action
+) => reducers.reduce(
+    (prevState, reducer) => reducer(prevState, action),
+    initialState
+);
+
 export const upsert = (state, records) => {
     records.forEach(record => {
         const { id } = record;
