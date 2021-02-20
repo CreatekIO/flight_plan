@@ -53,8 +53,6 @@ const initialEntitiesState = {
 
 const entitiesReducer = (state = initialEntitiesState, { type, payload }) => {
     switch (type) {
-        case "NEXT_ACTIONS_LOADED":
-            return updateEntities(normalize(payload, [repoSchema]).entities, state);
         case "TICKET_MOVED": {
             const { sourceId, sourceIndex, destinationId, destinationIndex } = payload;
             const movedCard = state.swimlanes[sourceId].board_tickets[sourceIndex];

@@ -6,12 +6,9 @@ import update from "immutability-helper";
 import Swimlane from "./Swimlane";
 import Loading from "./Loading";
 import { fetchBoard } from "../slices/boards";
+import { fetchNextActions } from "../slices/pull_requests";
 
-import {
-    loadNextActions,
-    ticketDragged,
-    subscribeToBoard
-} from "../../action_creators";
+import { ticketDragged, subscribeToBoard } from "../../action_creators";
 
 const LoadingOverlay = () => (
     <div className="absolute inset-0 bg-white bg-opacity-50 flex flex-col items-center justify-center text-gray-600">
@@ -24,7 +21,7 @@ const Board = ({
     boardId,
     swimlaneIds,
     fetchBoard,
-    loadNextActions,
+    fetchNextActions,
     ticketDragged,
     subscribeToBoard
 }) => {
@@ -36,10 +33,10 @@ const Board = ({
         fetchBoard()
             .then(() => { boardSubscription = subscribeToBoard(boardId) })
             .finally(() => setLoading(false));
-        loadNextActions();
+        fetchNextActions(boardId);
 
         return () => boardSubscription && boardSubscription.unsubscribe();
-    }, [fetchBoard, loadNextActions]);
+    }, [fetchBoard, fetchNextActions]);
 
     const onDragEnd = useCallback(
         event => event.destination && ticketDragged(event),
@@ -67,5 +64,5 @@ const mapStateToProps = (_, { boardId: id }) => ({
 
 export default connect(
     mapStateToProps,
-    { fetchBoard, loadNextActions, ticketDragged, subscribeToBoard }
+    { fetchBoard, fetchNextActions, ticketDragged, subscribeToBoard }
 )(Board);
