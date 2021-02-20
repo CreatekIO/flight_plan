@@ -28,8 +28,6 @@ const updateEntities = (updates, entities) => {
 
 const current = (state = {}, { type, payload }) => {
     switch (type) {
-        case "BOARD_LOAD":
-            return { ...state, board: "" + payload.id };
         case "FULL_TICKET_LOADED":
             return { ...state, boardTicket: payload.id };
         case "TICKET_MODAL_CLOSED":
@@ -55,11 +53,6 @@ const initialEntitiesState = {
 
 const entitiesReducer = (state = initialEntitiesState, { type, payload }) => {
     switch (type) {
-        case "BOARD_LOAD": {
-            const { entities, result } = normalize(payload, boardSchema);
-
-            return updateEntities(entities, state);
-        }
         case "NEXT_ACTIONS_LOADED":
             return updateEntities(normalize(payload, [repoSchema]).entities, state);
         case "TICKET_MOVED": {

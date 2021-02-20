@@ -5,9 +5,9 @@ import update from "immutability-helper";
 
 import Swimlane from "./Swimlane";
 import Loading from "./Loading";
+import { fetchBoard } from "../slices/boards";
 
 import {
-    loadBoard,
     loadNextActions,
     ticketDragged,
     subscribeToBoard
@@ -23,7 +23,7 @@ const LoadingOverlay = () => (
 const Board = ({
     boardId,
     swimlaneIds,
-    loadBoard,
+    fetchBoard,
     loadNextActions,
     ticketDragged,
     subscribeToBoard
@@ -33,13 +33,13 @@ const Board = ({
     useEffect(() => {
         let boardSubscription;
 
-        loadBoard()
+        fetchBoard()
             .then(() => { boardSubscription = subscribeToBoard(boardId) })
             .finally(() => setLoading(false));
         loadNextActions();
 
         return () => boardSubscription && boardSubscription.unsubscribe();
-    }, [loadBoard, loadNextActions]);
+    }, [fetchBoard, loadNextActions]);
 
     const onDragEnd = useCallback(
         event => event.destination && ticketDragged(event),
@@ -67,5 +67,5 @@ const mapStateToProps = (_, { boardId: id }) => ({
 
 export default connect(
     mapStateToProps,
-    { loadBoard, loadNextActions, ticketDragged, subscribeToBoard }
+    { fetchBoard, loadNextActions, ticketDragged, subscribeToBoard }
 )(Board);

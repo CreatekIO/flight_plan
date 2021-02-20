@@ -5,7 +5,8 @@ export const createRequestThunk = ({
     method = "get",
     path,
     body,
-    condition
+    condition,
+    process = json => json
 }) => createAsyncThunk(
     name,
     (arg, thunkArg) => thunkArg.extra[method.toLowerCase()](
@@ -13,7 +14,9 @@ export const createRequestThunk = ({
         body && body(arg, thunkArg)
     ).then(json => {
         const errorData = json.error || json.errors;
-        return errorData ? thunkArg.rejectWithValue(errorData) : json;
+        return errorData
+            ? thunkArg.rejectWithValue(errorData)
+            : process(json, arg, thunkArg);
     }),
     { condition }
 );
@@ -31,6 +34,8 @@ export const reduceReducers = (...reducers) => (
 );
 
 export const upsert = (state, records) => {
+    if (!Array.isArray(records)) records = Object.values(records);
+
     records.forEach(record => {
         const { id } = record;
         state[id] = { ...state[id], ...record };

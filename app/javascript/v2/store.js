@@ -2,15 +2,19 @@ import { configureStore, combineReducers } from "@reduxjs/toolkit";
 
 import v1Reducer from "./v1_reducer";
 import entities from "./slices/entities";
+import { fetchBoard } from "./slices/boards";
 import { reduceReducers } from "./slices/utils";
 import api from "./api";
 
-const nullReducer = (state = {}) => state;
+const current = (state = {}, action) => {
+    if (fetchBoard.fulfilled.match(action)) {
+        return { ...state, board: action.payload.boardId };
+    } else {
+        return state;
+    }
+};
 
-const v2Reducer = combineReducers({
-    entities,
-    current: nullReducer
-});
+const v2Reducer = combineReducers({ entities, current });
 
 const rootReducer = reduceReducers(v1Reducer, v2Reducer);
 
