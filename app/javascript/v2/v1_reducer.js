@@ -126,24 +126,6 @@ const entitiesReducer = (state = initialEntitiesState, { type, payload }) => {
                 newEntities
             );
         }
-        case "SWIMLANE_TICKETS_LOADED": {
-            const { board_tickets, ...swimlane } = payload;
-
-            const { entities, result: boardTicketIds } = normalize(board_tickets, [
-                boardTicketSchema
-            ]);
-
-            const newEntities = updateEntities(entities, state);
-
-            return update(newEntities, {
-                swimlanes: {
-                    [swimlane.id]: {
-                        $merge: swimlane,
-                        board_tickets: { $push: boardTicketIds }
-                    }
-                }
-            });
-        }
         case "BOARD_TICKET_LOADED":
         case "FULL_TICKET_LOADED":
             return updateEntities(normalize(payload, boardTicketSchema).entities, state);

@@ -4,10 +4,14 @@ import boardTickets from "./board_tickets";
 import boards, { fetchBoard } from "./boards";
 import labels from "./labels";
 import pullRequests, { fetchNextActions } from "./pull_requests";
-import swimlanes from "./swimlanes";
+import swimlanes, { fetchSwimlaneTickets } from "./swimlanes";
 import { reduceReducers, upsert } from "./utils";
 
-const isUpsertable = isFulfilled(fetchBoard, fetchNextActions);
+const isUpsertable = isFulfilled(
+    fetchBoard,
+    fetchSwimlaneTickets,
+    fetchNextActions
+);
 
 // Initial state comes from `combined` reducer below
 const reducer = createReducer(undefined, ({ addMatcher }) => {

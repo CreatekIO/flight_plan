@@ -1,6 +1,36 @@
 import { createSlice, current } from "@reduxjs/toolkit";
+import { normalize, schema } from "normalizr";
 
-import { rehydrateStore, upsert } from "./utils";
+import { createRequestThunk, rehydrateStore, upsert } from "./utils";
+
+const { Entity } = schema;
+
+const boardTicketSchema = [
+    new Entity("boardTickets", {
+        ticket: new Entity("tickets", {
+            repo: new Entity("repos")
+        }),
+        milestone: new Entity("milestones"),
+        labels: [new Entity("labels")],
+        pull_requests: [
+            new Entity("pullRequests")
+        ]
+    })
+];
+
+export const fetchSwimlaneTickets = createRequestThunk.get({
+    name: "swimlanes/fetchBoardTickets",
+    path: url => url,
+    process: ({ board_tickets, ...swimlane }) => {
+        const { result, entities } = normalize(board_tickets, boardTicketSchema);
+
+        return {
+            swimlaneId: swimlane.id,
+            boardTicketIds: result,
+            entities: { ...entities, swimlanes: { [swimlane.id]: swimlane }}
+        };
+    }
+});
 
 const {
     reducer,
@@ -30,6 +60,14 @@ const {
             }
 
             upsert(state, changes);
+        },
+        [fetchSwimlaneTickets.fulfilled]: (state, { payload: { swimlaneId: id, boardTicketIds }}) => {
+            const swimlane = state[id];
+
+            swimlane.board_tickets = [
+                ...swimlane.board_tickets,
+                ...boardTicketIds
+            ];
         }
     }
 });

@@ -6,8 +6,11 @@ import Octicon, { Fold, Unfold } from "@githubprimer/octicons-react";
 
 import TicketCard from "./TicketCard";
 
-import { loadSwimlaneTickets } from "../../action_creators";
-import { collapseSwimlane, expandSwimlane } from "../slices/swimlanes";
+import {
+    collapseSwimlane,
+    expandSwimlane,
+    fetchSwimlaneTickets
+} from "../slices/swimlanes";
 
 // FIXME: implement
 const Popup = ({ trigger }) => trigger;
@@ -35,7 +38,7 @@ const Swimlane = ({
     display_duration: shouldDisplayDuration,
     next_board_tickets_url: nextBoardTicketsURL,
     all_board_tickets_loaded: areAllBoardTicketsLoaded,
-    loadSwimlaneTickets,
+    fetchSwimlaneTickets,
     collapseSwimlane,
     expandSwimlane
 }) => {
@@ -43,9 +46,9 @@ const Swimlane = ({
 
     const loadMore = useCallback(() => {
         setIsLoadingMore(true);
-        loadSwimlaneTickets(id, nextBoardTicketsURL)
+        fetchSwimlaneTickets(nextBoardTicketsURL)
             .finally(() => setIsLoadingMore(false));
-    }, [loadSwimlaneTickets, id, nextBoardTicketsURL]);
+    }, [fetchSwimlaneTickets, nextBoardTicketsURL]);
 
     return (
         <div
@@ -137,5 +140,5 @@ const mapStateToProps = (_, { id }) => ({ entities }) => entities.swimlanes[id];
 
 export default connect(
     mapStateToProps,
-    { loadSwimlaneTickets, collapseSwimlane, expandSwimlane }
+    { fetchSwimlaneTickets, collapseSwimlane, expandSwimlane }
 )(Swimlane);
