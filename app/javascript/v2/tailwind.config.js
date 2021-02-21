@@ -1,10 +1,15 @@
 const defaultTheme = require('tailwindcss/defaultTheme');
 
 module.exports = {
-  purge: [
-    './components/**/*.{js,jsx}',
-    '../../views/**/*.{js,html}'
-  ],
+  purge: {
+    content: [
+      './components/**/*.{js,jsx}',
+      '../../views/**/*.{html,js}.*'
+    ],
+    options: {
+      safelist: [/task-list-item/]
+    }
+  },
   darkMode: false, // or 'media' or 'class'
   theme: {
     extend: {
@@ -99,6 +104,6 @@ module.exports = {
     }
   },
   plugins: [
-      require('@tailwindcss/typography')
+    require('@tailwindcss/typography')
   ],
 }
