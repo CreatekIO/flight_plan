@@ -21,10 +21,14 @@ const boardTicketSchema = [
 
 const moveTicketId = (state, { boardTicketId, swimlaneId, index }) => {
     // Remove boardTicketId from wherever we currently have it (if at all)...
-    Object.values(state).forEach(({ board_tickets: boardTicketIds }) => {
+    Object.values(state).forEach(swimlane => {
+        const { board_tickets: boardTicketIds } = swimlane;
         if (!boardTicketIds) return;
-        const index = boardTicketIds.indexOf(boardTicketId);
-        if (index > -1) boardTicketIds.splice(index, 1);
+
+        const withoutId = boardTicketIds.filter(id => id !== boardTicketId);
+        if (withoutId.length !== boardTicketIds.length) {
+            swimlane.board_tickets = withoutId;
+        }
     });
 
     // ...and place it in its new location (if it would be visible)
