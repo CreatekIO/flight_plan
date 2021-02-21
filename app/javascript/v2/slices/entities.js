@@ -1,6 +1,6 @@
 import { combineReducers, createReducer, isFulfilled } from "@reduxjs/toolkit";
 
-import boardTickets from "./board_tickets";
+import boardTickets, { moveTicket } from "./board_tickets";
 import boards, { fetchBoard } from "./boards";
 import labels from "./labels";
 import pullRequests, { fetchNextActions } from "./pull_requests";
@@ -10,7 +10,8 @@ import { reduceReducers, upsert } from "./utils";
 const isUpsertable = isFulfilled(
     fetchBoard,
     fetchSwimlaneTickets,
-    fetchNextActions
+    fetchNextActions,
+    moveTicket
 );
 
 // Initial state comes from `combined` reducer below

@@ -1,6 +1,7 @@
 import { createSlice, current } from "@reduxjs/toolkit";
 import { normalize, schema } from "normalizr";
 
+import { moveTicket } from "./board_tickets";
 import { createRequestThunk, rehydrateStore, upsert } from "./utils";
 
 const { Entity } = schema;
@@ -17,6 +18,22 @@ const boardTicketSchema = [
         ]
     })
 ];
+
+const moveTicketId = (state, { boardTicketId, swimlaneId, index }) => {
+    // Remove boardTicketId from wherever we currently have it (if at all)...
+    Object.values(state).forEach(({ board_tickets: boardTicketIds }) => {
+        if (!boardTicketIds) return;
+        const index = boardTicketIds.indexOf(boardTicketId);
+        if (index > -1) boardTicketIds.splice(index, 1);
+    });
+
+    // ...and place it in its new location (if it would be visible)
+    const { board_tickets: boardTickets } = state[swimlaneId];
+
+    if (boardTickets.length >= index) {
+        boardTickets.splice(index, 0, boardTicketId);
+    }
+};
 
 export const fetchSwimlaneTickets = createRequestThunk.get({
     name: "swimlanes/fetchBoardTickets",
@@ -68,6 +85,14 @@ const {
                 ...swimlane.board_tickets,
                 ...boardTicketIds
             ];
+        },
+        [moveTicket.pending]: (state, { meta: { arg }}) => {
+            const { boardTicketId, to: { swimlaneId, index }} = arg;
+            moveTicketId(state, { boardTicketId, swimlaneId, index });
+        },
+        [moveTicket.rejected]: (state, { meta: { arg }}) => {
+            const { boardTicketId, from: { swimlaneId, index }} = arg;
+            moveTicketId(state, { boardTicketId, swimlaneId, index });
         }
     }
 });

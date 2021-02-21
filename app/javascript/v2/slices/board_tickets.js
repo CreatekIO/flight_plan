@@ -1,6 +1,34 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { normalize, schema } from "normalizr";
 
 import { createRequestThunk } from "./utils";
+
+const { htmlBoardURL } = flightPlanConfig.api;
+const { Entity } = schema;
+
+const boardTicketSchema = new Entity("boardTickets", {
+    ticket: new Entity("tickets", {
+        repo: new Entity("repos")
+    }),
+    milestone: new Entity("milestones"),
+    labels: [new Entity("labels")],
+    pull_requests: [
+        new Entity("pullRequests")
+    ]
+});
+
+export const moveTicket = createRequestThunk.post({
+    name: 'boardTickets/move',
+    path: ({ boardTicketId }) =>
+        `${htmlBoardURL}/board_tickets/${boardTicketId}/moves`,
+    body: ({ boardTicketId, to: { swimlaneId, index }}) => ({
+        board_ticket: {
+            swimlane_id: swimlaneId,
+            swimlane_position: index
+        }
+    }),
+    process: payload => normalize(payload, boardTicketSchema)
+});
 
 const getIn = (object, path, notFound = null) => {
     const parts = Array.isArray(path) ? path : path.split(".");
@@ -19,7 +47,7 @@ const idsToNames = (ids, state) =>
 
 export const updateLabelsForTicket = createRequestThunk.patch({
     name: "boardTickets/updateLabels",
-    path: ({ id }) => `/${flightPlanConfig.api.htmlBoardURL}/board_tickets/${id}/labels`,
+    path: ({ id }) => `${htmlBoardURL}/board_tickets/${id}/labels`,
     body: ({ add: idsToAdd, remove: idsToRemove }, { getState }) => ({
         labelling: {
             add: idsToNames(idsToAdd, getState()),

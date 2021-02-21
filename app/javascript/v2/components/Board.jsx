@@ -6,9 +6,13 @@ import update from "immutability-helper";
 import Swimlane from "./Swimlane";
 import Loading from "./Loading";
 import { fetchBoard } from "../slices/boards";
+import { moveTicket } from "../slices/board_tickets";
 import { fetchNextActions } from "../slices/pull_requests";
 
-import { ticketDragged, subscribeToBoard } from "../../action_creators";
+import { subscribeToBoard } from "../../action_creators";
+
+// Format is `Component/model_name#id`
+const extractId = id => parseInt(id.split("#")[1], 10);
 
 const LoadingOverlay = () => (
     <div className="absolute inset-0 bg-white bg-opacity-50 flex flex-col items-center justify-center text-gray-600">
@@ -22,7 +26,7 @@ const Board = ({
     swimlaneIds,
     fetchBoard,
     fetchNextActions,
-    ticketDragged,
+    moveTicket,
     subscribeToBoard
 }) => {
     const [isLoading, setLoading] = useState(true);
@@ -39,8 +43,22 @@ const Board = ({
     }, [fetchBoard, fetchNextActions]);
 
     const onDragEnd = useCallback(
-        event => event.destination && ticketDragged(event),
-        [ticketDragged]
+        ({ draggableId, source, destination }) => {
+            if (!destination) return;
+
+            moveTicket({
+                boardTicketId: extractId(draggableId),
+                from: {
+                    swimlaneId: extractId(source.droppableId),
+                    index: source.index,
+                },
+                to: {
+                    swimlaneId: extractId(destination.droppableId),
+                    index: destination.index
+                }
+            });
+        },
+        [moveTicket]
     );
 
     return (
@@ -64,5 +82,5 @@ const mapStateToProps = (_, { boardId: id }) => ({
 
 export default connect(
     mapStateToProps,
-    { fetchBoard, fetchNextActions, ticketDragged, subscribeToBoard }
+    { fetchBoard, fetchNextActions, moveTicket, subscribeToBoard }
 )(Board);

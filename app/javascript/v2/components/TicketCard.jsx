@@ -64,7 +64,7 @@ const TicketCard = ({
         repo: { slug, name: repoName }
     }
 }) => (
-    <Draggable draggableId={`TicketCard#board-ticket-${id}`} index={index}>
+    <Draggable draggableId={`TicketCard/boardTicket#${id}`} index={index}>
         {({ innerRef, draggableProps, dragHandleProps }, snapshot) => (
             <div
                 ref={innerRef}

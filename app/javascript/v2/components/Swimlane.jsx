@@ -100,7 +100,7 @@ const Swimlane = ({
                     inverted
                 />
             </div>
-            <Droppable droppableId={`Swimlane#swimlane-${id}`} isDropDisabled={isCollapsed}>
+            <Droppable droppableId={`Swimlane/swimlane#${id}`} isDropDisabled={isCollapsed}>
                 {({ placeholder, innerRef, droppableProps }, { isDraggingOver }) => (
                     <div
                         ref={innerRef}

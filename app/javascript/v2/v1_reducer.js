@@ -53,30 +53,6 @@ const initialEntitiesState = {
 
 const entitiesReducer = (state = initialEntitiesState, { type, payload }) => {
     switch (type) {
-        case "TICKET_MOVED": {
-            const { sourceId, sourceIndex, destinationId, destinationIndex } = payload;
-            const movedCard = state.swimlanes[sourceId].board_tickets[sourceIndex];
-
-            const transforms = [
-                {
-                    // Remove card from source swimlane...
-                    [sourceId]: {
-                        board_tickets: { $splice: [[sourceIndex, 1]] }
-                    }
-                },
-                {
-                    // ...and place it in destination swimlane
-                    [destinationId]: {
-                        board_tickets: { $splice: [[destinationIndex, 0, movedCard]] }
-                    }
-                }
-            ];
-
-            return transforms.reduce(
-                (state, transform) => update(state, { swimlanes: transform }),
-                state
-            );
-        }
         case "ws/TICKET_WAS_MOVED": {
             const { destinationId, destinationIndex } = payload;
             let { boardTicket } = payload;
