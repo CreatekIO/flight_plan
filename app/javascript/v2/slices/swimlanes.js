@@ -2,6 +2,7 @@ import { createSlice, current } from "@reduxjs/toolkit";
 import { normalize, schema } from "normalizr";
 
 import { moveTicket } from "./board_tickets";
+import { ticketWasMoved } from "./websocket";
 import { createRequestThunk, rehydrateStore, upsert } from "./utils";
 
 const { Entity } = schema;
@@ -96,6 +97,10 @@ const {
         },
         [moveTicket.rejected]: (state, { meta: { arg }}) => {
             const { boardTicketId, from: { swimlaneId, index }} = arg;
+            moveTicketId(state, { boardTicketId, swimlaneId, index });
+        },
+        [ticketWasMoved]: (state, { payload }) => {
+            const { boardTicketId, to: { swimlaneId, index }} = payload;
             moveTicketId(state, { boardTicketId, swimlaneId, index });
         }
     }

@@ -1,17 +1,21 @@
-import { combineReducers, createReducer, isFulfilled } from "@reduxjs/toolkit";
+import { combineReducers, createReducer, isFulfilled, isAnyOf } from "@reduxjs/toolkit";
 
 import boardTickets, { moveTicket } from "./board_tickets";
 import boards, { fetchBoard } from "./boards";
 import labels from "./labels";
 import pullRequests, { fetchNextActions } from "./pull_requests";
 import swimlanes, { fetchSwimlaneTickets } from "./swimlanes";
+import { ticketWasMoved } from "./websocket";
 import { reduceReducers, upsert } from "./utils";
 
-const isUpsertable = isFulfilled(
-    fetchBoard,
-    fetchSwimlaneTickets,
-    fetchNextActions,
-    moveTicket
+const isUpsertable = isAnyOf(
+    isFulfilled(
+        fetchBoard,
+        fetchSwimlaneTickets,
+        fetchNextActions,
+        moveTicket
+    ),
+    ticketWasMoved
 );
 
 // Initial state comes from `combined` reducer below
