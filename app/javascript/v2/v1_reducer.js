@@ -77,11 +77,9 @@ const entitiesReducer = (state = initialEntitiesState, { type, payload }) => {
                 state
             );
         }
-        case "TICKET_WAS_MOVED": {
+        case "ws/TICKET_WAS_MOVED": {
             const { destinationId, destinationIndex } = payload;
             let { boardTicket } = payload;
-
-            if (typeof boardTicket === "string") boardTicket = JSON.parse(boardTicket);
 
             // Add board ticket to db
             const newEntities = updateEntities(
