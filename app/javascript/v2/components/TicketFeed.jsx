@@ -78,14 +78,9 @@ const Feed = ({ ticket, comments = [] }) => (
     </Fragment>
 );
 
-const mapStateToProps = (_, { id: idFromProps }) => ({
-    entities: { boardTickets },
-    current
-}) => {
-    const id = idFromProps || current.boardTicket;
-
-    if (!id || !(id in boardTickets)) return {
-        comments: []
+const mapStateToProps = ({ entities: { boardTickets }}, { id }) => {
+    if (!id || !(id in boardTickets)) {
+        return { comments: [] };
     }
 
     return boardTickets[id];

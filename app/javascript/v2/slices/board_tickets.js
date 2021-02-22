@@ -6,15 +6,32 @@ import { createRequestThunk } from "./utils";
 const { htmlBoardURL } = flightPlanConfig.api;
 const { Entity } = schema;
 
-const boardTicketSchema = new Entity("boardTickets", {
+const baseSchema = new Entity("boardTickets", {
     ticket: new Entity("tickets", {
         repo: new Entity("repos")
     }),
     milestone: new Entity("milestones"),
     labels: [new Entity("labels")],
+    pull_requests: [new Entity("pullRequests")]
+});
+
+const fullSchema = new Entity("boardTickets", {
+    ...baseSchema.schema,
+    comments: [new Entity("comments")],
     pull_requests: [
-        new Entity("pullRequests")
+        new Entity("pullRequests", {
+            repo: new Entity("repos")
+        })
     ]
+});
+
+export const fetchTicket = createRequestThunk.get({
+    name: 'boardTickets/fetch',
+    path: ({ slug, number }) => `${htmlBoardURL}/tickets/${slug}/${number}`,
+    process: payload => {
+        const { result, entities } = normalize(payload, fullSchema);
+        return { entities, boardTicketId: result };
+    }
 });
 
 export const moveTicket = createRequestThunk.post({
@@ -27,7 +44,10 @@ export const moveTicket = createRequestThunk.post({
             swimlane_position: index
         }
     }),
-    process: payload => normalize(payload, boardTicketSchema)
+    process: payload => {
+        const { result, entities } = normalize(payload, baseSchema);
+        return { entities, boardTicketId: result };
+    }
 });
 
 const getIn = (object, path, notFound = null) => {

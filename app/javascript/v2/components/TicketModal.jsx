@@ -1,6 +1,6 @@
 import React, { Fragment, useState, useEffect } from "react";
 import { connect } from "react-redux";
-import { navigate, Link } from "@reach/router";
+import { navigate, Link, useLocation } from "@reach/router";
 import classNames from "classnames";
 
 import { useConstrainedMatch } from "../hooks";
@@ -10,8 +10,7 @@ import Sidebar from "./TicketSidebar";
 import Feed from "./TicketFeed";
 import FormWrapper from "./TicketFormWrapper";
 import LabelPicker from "./LabelPicker";
-
-import { loadFullTicketFromSlug, ticketModalClosed } from "../../action_creators";
+import { fetchTicket } from "../slices/board_tickets";
 
 // sidebar width = w-56 = 14rem
 // sidebar gutter = pl-5 = 1.25rem
@@ -32,7 +31,7 @@ const TicketModal = ({
     slug,
     number,
     ticket: { title, html_url: htmlURL },
-    loadFullTicketFromSlug,
+    fetchTicket,
     ticketModalClosed
 }) => {
     const labelId = `ticket-modal-${id}`;
@@ -50,16 +49,22 @@ const TicketModal = ({
 
     const [isLoaded, setIsLoaded] = useState(false);
 
+    const { href } = useLocation();
+
     useEffect(() => {
-        loadFullTicketFromSlug(slug, number)
-            .finally(() => setIsLoaded(true));
-    }, [slug, number, loadFullTicketFromSlug]);
+        fetchTicket({ slug, number })
+            .then(({ meta, payload: { boardTicketId }}) => {
+                if (meta.requestStatus === "fulfilled") {
+                    return navigate(href, { state: { boardTicketId }, replace: true })
+                }
+            })
+            .finally(() => setIsLoaded(true))
+    }, [slug, number, fetchTicket]);
 
     return (
         <Modal
             isOpen
             onDismiss={() => {
-                ticketModalClosed(id);
                 navigate(flightPlanConfig.api.htmlBoardURL);
             }}
             aria-labelledby={labelId}
@@ -122,25 +127,20 @@ const TicketModal = ({
     );
 }
 
-const mapStateToProps = (_, { id: idFromProps, number, slug }) => ({
-    entities: { boardTickets, tickets },
-    current
-}) => {
-    const id = idFromProps || current.boardTicket;
-
-    if (!id || !(id in boardTickets)) return {
+const mapStateToProps = (_, { number, slug }) => {
+    const loading = {
         ticket: {
             html_url: `https://github.com/${slug}/${number}`
         }
     };
 
-    const boardTicket = boardTickets[id];
-    const ticket = tickets[boardTicket.ticket];
+    return ({ entities: { boardTickets, tickets }}, { id }) => {
+        const boardTicket = id && boardTickets[id];
+        if (!boardTicket) return loading;
 
-    return { ...boardTicket, ticket };
+        const ticket = tickets[boardTicket.ticket];
+        return { ...boardTicket, ticket };
+    };
 };
 
-export default connect(
-    mapStateToProps,
-    { loadFullTicketFromSlug, ticketModalClosed }
-)(TicketModal);
+export default connect(mapStateToProps, { fetchTicket })(TicketModal);
