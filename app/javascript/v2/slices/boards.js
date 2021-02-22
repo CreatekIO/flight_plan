@@ -26,7 +26,7 @@ const boardSchema = new Entity("boards", {
 
 export const fetchBoard = createRequestThunk.get({
     name: "boards/fetch",
-    path: () => flightPlanConfig.api.boardURL,
+    path: id => `/boards/${id}.json`,
     process: payload => {
         const { result, entities } = normalize(payload, boardSchema);
         return { boardId: result, entities };

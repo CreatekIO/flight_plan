@@ -31,8 +31,8 @@ const Board = ({
     const [isLoading, setLoading] = useState(true);
 
     useEffect(() => {
-        fetchBoard().finally(() => setLoading(false));
-    }, [fetchBoard]);
+        fetchBoard(boardId).finally(() => setLoading(false));
+    }, [boardId, fetchBoard]);
 
     useEffect(() => {
         fetchNextActions(boardId);
