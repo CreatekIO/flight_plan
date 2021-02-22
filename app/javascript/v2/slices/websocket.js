@@ -14,7 +14,8 @@ const boardTicketSchema = new Entity("boardTickets", {
 
 export const ticketWasMoved = createAction(
     "ws/TICKET_WAS_MOVED",
-    ({ payload: { boardTicket, destinationId, destinationIndex }}) => ({
+    ({ meta, payload: { boardTicket, destinationId, destinationIndex }}) => ({
+        meta,
         payload: {
             to: { swimlaneId: destinationId, index: destinationIndex },
             entities: normalize(boardTicket, boardTicketSchema).entities,
@@ -28,6 +29,8 @@ const handlers = [ticketWasMoved];
 const middleware = _store => next => action => {
     const handler = handlers.find(handler => handler.match(action));
     if (!handler) return next(action);
+
+    if (action.meta && action.meta.userId === flightPlanConfig.currentUser.id) return;
 
     return next(handler(action));
 }

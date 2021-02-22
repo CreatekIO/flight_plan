@@ -5,11 +5,10 @@ import update from "immutability-helper";
 
 import Swimlane from "./Swimlane";
 import Loading from "./Loading";
+import { useSubscription } from "../hooks";
 import { fetchBoard } from "../slices/boards";
 import { moveTicket } from "../slices/board_tickets";
 import { fetchNextActions } from "../slices/pull_requests";
-
-import { subscribeToBoard } from "../../action_creators";
 
 // Format is `Component/model_name#id`
 const extractId = id => parseInt(id.split("#")[1], 10);
@@ -32,15 +31,14 @@ const Board = ({
     const [isLoading, setLoading] = useState(true);
 
     useEffect(() => {
-        let boardSubscription;
+        fetchBoard().finally(() => setLoading(false));
+    }, [fetchBoard]);
 
-        fetchBoard()
-            .then(() => { boardSubscription = subscribeToBoard(boardId) })
-            .finally(() => setLoading(false));
+    useEffect(() => {
         fetchNextActions(boardId);
+    }, [boardId, fetchNextActions]);
 
-        return () => boardSubscription && boardSubscription.unsubscribe();
-    }, [fetchBoard, fetchNextActions]);
+    useSubscription("BoardChannel", boardId);
 
     const onDragEnd = useCallback(
         ({ draggableId, source, destination }) => {
@@ -82,5 +80,5 @@ const mapStateToProps = (_, { boardId: id }) => ({
 
 export default connect(
     mapStateToProps,
-    { fetchBoard, fetchNextActions, moveTicket, subscribeToBoard }
+    { fetchBoard, fetchNextActions, moveTicket }
 )(Board);
