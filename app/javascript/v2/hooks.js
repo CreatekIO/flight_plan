@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useMatch } from "@reach/router";
+import { useMatch, useLocation } from "@reach/router";
 import { useDispatch } from "react-redux";
 import ActionCable from "actioncable";
 
@@ -40,4 +40,12 @@ export const useSubscription = (channel, id) => {
 
         return subscription.unsubscribe;
     }, [channel, id])
+};
+
+const EMPTY_STATE = Object.freeze({});
+
+export const useLocationState = () => {
+    const { state } = useLocation();
+
+    return state || EMPTY_STATE;
 };

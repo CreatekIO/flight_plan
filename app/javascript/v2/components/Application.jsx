@@ -29,7 +29,7 @@ const BoardWrapper = ({ children, ...props }) => (
         <Header boards={flightPlanConfig.boards} boardId={props.boardId} />
         <Board {...props} />
         <Router>
-            <TicketModalWrapper path=":owner/:repo/:number/*" />
+            <TicketModal path=":owner/:repo/:number/*" />
         </Router>
     </div>
 );
