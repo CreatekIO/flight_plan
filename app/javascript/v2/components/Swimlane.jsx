@@ -2,6 +2,7 @@ import React, { Fragment, useState, useCallback } from "react";
 import { connect } from "react-redux";
 import { Droppable } from "react-beautiful-dnd";
 import classNames from "classnames";
+import { Tooltip } from "@reach/tooltip";
 import Octicon, { Fold, Unfold } from "@githubprimer/octicons-react";
 
 import TicketCard from "./TicketCard";
@@ -11,9 +12,6 @@ import {
     expandSwimlane,
     fetchSwimlaneTickets
 } from "../slices/swimlanes";
-
-// FIXME: implement
-const Popup = ({ trigger }) => trigger;
 
 // Performance optimisation as recommended by
 // https://github.com/atlassian/react-beautiful-dnd#recommended-droppable-performance-optimisation
@@ -74,31 +72,20 @@ const Swimlane = ({
                     {name}
                 </span>
 
-                <Popup
-                    trigger={
-                        <button
-                            className={classNames(
-                                "absolute pointer",
-                                { "right-2": !isCollapsed, "right-3 top-2": isCollapsed }
-                            )}
-                            onClick={
-                                () => isCollapsed
-                                    ? expandSwimlane(id)
-                                    : collapseSwimlane(id)
-                            }
-                        >
-                            <Octicon
-                                icon={isCollapsed ? Unfold : Fold}
-                                className="transform rotate-90"
-                            />
-                        </button>
-                    }
-                    /* \u00A0 is a non-breaking space */
-                    content={`${isCollapsed ? "Expand" : "Collapse"}\u00A0swimlane`}
-                    size="mini"
-                    hideOnScroll
-                    inverted
-                />
+                <Tooltip label={`${isCollapsed ? "Expand" : "Collapse"} swimlane`}>
+                    <button
+                        className={classNames(
+                            "absolute pointer",
+                            { "right-2": !isCollapsed, "right-3 top-2": isCollapsed }
+                        )}
+                        onClick={() => isCollapsed ? expandSwimlane(id) : collapseSwimlane(id)}
+                    >
+                        <Octicon
+                            icon={isCollapsed ? Unfold : Fold}
+                            className="transform rotate-90"
+                        />
+                    </button>
+                </Tooltip>
             </div>
             <Droppable droppableId={`Swimlane/swimlane#${id}`} isDropDisabled={isCollapsed}>
                 {({ placeholder, innerRef, droppableProps }, { isDraggingOver }) => (
