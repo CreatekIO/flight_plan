@@ -892,6 +892,18 @@
     prop-types "^15.6.1"
     react-lifecycles-compat "^3.0.4"
 
+"@reach/tooltip@^0.13.2":
+  version "0.13.2"
+  resolved "https://registry.yarnpkg.com/@reach/tooltip/-/tooltip-0.13.2.tgz#d81aaf8a625ece280f1db04723bba79c3c7ae6e2"
+  dependencies:
+    "@reach/auto-id" "0.13.2"
+    "@reach/portal" "0.13.2"
+    "@reach/rect" "0.13.2"
+    "@reach/utils" "0.13.2"
+    "@reach/visually-hidden" "0.13.2"
+    prop-types "^15.7.2"
+    tslib "^2.1.0"
+
 "@reach/utils@0.13.2":
   version "0.13.2"
   resolved "https://registry.yarnpkg.com/@reach/utils/-/utils-0.13.2.tgz#87e8fef8ebfe583fa48250238a1a3ed03189fcc8"
@@ -899,6 +911,13 @@
     "@types/warning" "^3.0.0"
     tslib "^2.1.0"
     warning "^4.0.3"
+
+"@reach/visually-hidden@0.13.2":
+  version "0.13.2"
+  resolved "https://registry.yarnpkg.com/@reach/visually-hidden/-/visually-hidden-0.13.2.tgz#ee21de376a7e57e60dc92d95a671073796caa17e"
+  dependencies:
+    prop-types "^15.7.2"
+    tslib "^2.1.0"
 
 "@reduxjs/toolkit@^1.5.0":
   version "1.5.0"
