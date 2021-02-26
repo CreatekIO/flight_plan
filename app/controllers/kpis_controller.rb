@@ -1,7 +1,8 @@
 class KpisController < AuthenticatedController
+  load_and_authorize_resource :board
+
   def index
     authorize! :index, :kpis
-    @board = Board.find(params[:board_id])
 
     @quarter = derive_quarter_from(params[:date])
     @bug_tickets = BugTicketsCalculator.new(@board, quarter: @quarter)
