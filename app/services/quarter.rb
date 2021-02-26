@@ -1,5 +1,6 @@
 class Quarter
   FORMAT = '%Y-%m'.freeze
+  SQL_FORMAT = 'YYYY-MM'.freeze
   UTC = Time.find_zone!('UTC')
   START_MONTHS = [1, 4, 7, 10].freeze
 
@@ -19,8 +20,8 @@ class Quarter
 
   def self.calculate_sql(column)
     Arel::Nodes::NamedFunction.new(
-      'DATE_FORMAT',
-      [column, Arel.sql("'#{FORMAT}'")]
+      'to_char',
+      [column, Arel.sql("'#{SQL_FORMAT}'")]
     )
   end
 
