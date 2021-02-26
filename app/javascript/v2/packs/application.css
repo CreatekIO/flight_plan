@@ -1,5 +1,6 @@
 @import "@reach/dialog/styles";
 @import "@reach/menu-button/styles";
+@import "@reach/tooltip/styles";
 @import "react-toastify/dist/ReactToastify.minimal";
 
 @import "tailwindcss/base";
@@ -11,4 +12,8 @@
 /* Easier to style here rather than from React callback */
 .fp-header-menu [data-reach-menu-item][data-selected] {
   @apply bg-blue-50 text-black;
+}
+
+[data-reach-tooltip] {
+  @apply bg-black border-black text-white rounded shadow-xl text-xs px-2 py-1 z-50;
 }

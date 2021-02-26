@@ -1,12 +1,10 @@
 import React from "react";
 import { connect } from "react-redux";
 import Octicon, { GitMerge, GitPullRequest } from "@githubprimer/octicons-react";
+import { Tooltip } from "@reach/tooltip";
 import classNames from "classnames";
 
 import NextActionButton from "./NextActionButton";
-
-// FIXME: implement
-const Popup = ({ trigger }) => trigger;
 
 const pullRequestIcons = {
     open: { icon: GitPullRequest, className: "text-github-green" },
@@ -33,22 +31,15 @@ const PullRequest = ({
             <div className="flex-grow">
                 <Octicon icon={icon} className={classNames("mr-0.5", iconClassName)} />
                 &nbsp;
-                <Popup
-                    trigger={
-                        <a
-                            href={htmlURL}
-                            target="_blank"
-                            className="text-blue-600 hover:text-blue-400 focus:text-blue-800"
-                        >
-                            {number}
-                        </a>
-                    }
-                    content={title}
-                    position="right center"
-                    size="mini"
-                    hideOnScroll
-                    inverted
-                />
+                <Tooltip label={title}>
+                    <a
+                        href={htmlURL}
+                        target="_blank"
+                        className="text-blue-600 hover:text-blue-400 focus:text-blue-800"
+                    >
+                        {number}
+                    </a>
+                </Tooltip>
             </div>
             {/* At the moment, we don't have any 'next actions' for closed PRs */}
             {nextAction && state === "open" && (
