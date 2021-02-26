@@ -54,8 +54,6 @@
         %td= result.duration.ceil
 
 :javascript
-  $(function() {
-    $('#cycle_time_settings').on('change', 'select', function(event) {
-      $(event.delegateTarget).submit();
-    });
+  document.querySelector('#cycle_time_settings').addEventListener('change', function(event) {
+    event.target.form.submit();
   });
