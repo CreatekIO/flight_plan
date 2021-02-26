@@ -1,4 +1,9 @@
-import { useMatch } from "@reach/router";
+import { useEffect } from "react";
+import { useMatch, useLocation } from "@reach/router";
+import { useDispatch } from "react-redux";
+import ActionCable from "actioncable";
+
+import { isFeatureDisabled } from "../features";
 
 // You can't use regexes with Reach Router, so this hook provides
 // a way to set additional constraints on path params, like Rails
@@ -16,4 +21,31 @@ export const useConstrainedMatch = (path, constraints) => {
     }
 
     return match;
+};
+
+let cable;
+
+export const useSubscription = (channel, id) => {
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        if (isFeatureDisabled("realtime_updates")) return () => {};
+
+        cable = cable || ActionCable.createConsumer();
+
+        const subscription = cable.subscriptions.create(
+            { channel, id: parseInt(id, 10) },
+            { received: dispatch }
+        );
+
+        return subscription.unsubscribe;
+    }, [channel, id])
+};
+
+const EMPTY_STATE = Object.freeze({});
+
+export const useLocationState = () => {
+    const { state } = useLocation();
+
+    return state || EMPTY_STATE;
 };

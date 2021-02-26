@@ -214,10 +214,10 @@ const Header = ({ boards, isWaiting, openPRsCount, pullRequests }) => {
     );
 };
 
-const mapStateToProps = ({ current, entities }) => {
+const mapStateToProps = ({ entities }, { boardId }) => {
     const { count: openPRsCount, pullRequests } = getOpenPRs(entities);
 
-    return { openPRsCount, pullRequests, isWaiting: !current.board };
+    return { openPRsCount, pullRequests, isWaiting: !(boardId in entities.boards) };
 };
 
 export default connect(mapStateToProps)(Header);

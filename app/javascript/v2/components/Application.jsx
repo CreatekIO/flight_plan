@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Provider } from "react-redux";
 import { Router } from "@reach/router";
 
@@ -9,6 +9,7 @@ import TicketModal from "./TicketModal";
 import Notifications from "./Notifications";
 
 import configureStore from "../store";
+import { rehydrateStore } from "../slices/utils";
 
 const store = configureStore();
 
@@ -23,26 +24,30 @@ const TicketModalWrapper = ({ owner, repo, number, location: { state }}) => (
 // Use a nested <Router> here instead of a <Match> so that
 // further nested routers don't need to include the full
 // owner-repo-number path in their routes
-const BoardWrapper = () => (
+const BoardWrapper = ({ children, ...props }) => (
     <div className="flex flex-col h-screen">
-        <Header boards={flightPlanConfig.boards} />
-        <Board />
+        <Header boards={flightPlanConfig.boards} boardId={props.boardId} />
+        <Board {...props} />
         <Router>
-            <TicketModalWrapper path=":owner/:repo/:number/*" />
+            <TicketModal path=":owner/:repo/:number/*" />
         </Router>
     </div>
 );
 
-const Application = () => (
-    <ErrorBoundary>
-        <Provider store={store}>
-            <Router basepath={flightPlanConfig.api.htmlBoardURL}>
-                <BoardWrapper path="/*" />
-            </Router>
-        </Provider>
+const Application = () => {
+    useEffect(() => { store.dispatch(rehydrateStore()) }, []);
 
-        <Notifications />
-    </ErrorBoundary>
-);
+    return (
+        <ErrorBoundary>
+            <Provider store={store}>
+                <Router>
+                    <BoardWrapper path="boards/:boardId/*" />
+                </Router>
+            </Provider>
+
+            <Notifications />
+        </ErrorBoundary>
+    );
+}
 
 export default Application;

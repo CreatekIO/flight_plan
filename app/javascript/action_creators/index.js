@@ -100,9 +100,9 @@ export const ticketDragged = ({
 };
 
 const conditionalDispatch = dispatch => action => {
-    const { payload } = action;
+    const { meta } = action;
 
-    if (payload && payload.userId !== flightPlanConfig.currentUser.id) {
+    if (meta && meta.userId !== flightPlanConfig.currentUser.id) {
         return dispatch(action);
     }
 };

@@ -1,17 +1,16 @@
 import React, { Fragment, useState, useEffect } from "react";
-import { connect } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { navigate, Link } from "@reach/router";
 import classNames from "classnames";
 
-import { useConstrainedMatch } from "../hooks";
+import { useConstrainedMatch, useLocationState } from "../hooks";
 import Modal from "./Modal";
 import Loading from "./Loading";
 import Sidebar from "./TicketSidebar";
 import Feed from "./TicketFeed";
 import FormWrapper from "./TicketFormWrapper";
 import LabelPicker from "./LabelPicker";
-
-import { loadFullTicketFromSlug, ticketModalClosed } from "../../action_creators";
+import { fetchTicket } from "../slices/board_tickets";
 
 // sidebar width = w-56 = 14rem
 // sidebar gutter = pl-5 = 1.25rem
@@ -27,46 +26,72 @@ const EDITORS = {
     milestone: () => (<FormWrapper label="Edit milestone" backPath="." />)
 };
 
+const useTrailingState = current => {
+    const [previous, setPrevious] = useState(null);
+
+    useEffect(() => { current && setPrevious(current) }, [current]);
+
+    const reset = () => {
+        if (!current) setPrevious(null);
+    }
+
+    return [current || previous, reset];
+};
+
 const TicketModal = ({
-    id,
-    slug,
-    number,
-    ticket: { title, html_url: htmlURL },
-    isLoaded,
-    loadFullTicketFromSlug,
-    ticketModalClosed
+    owner,
+    repo,
+    number
 }) => {
-    const labelId = `ticket-modal-${id}`;
+    const slug = `${owner}/${repo}`;
+    const labelId = `ticket-modal-${owner}-${repo}-${number}`;
+
+    const { boardTicketId } = useLocationState();
+    const [id, setId] = useState(boardTicketId);
+    const [isLoaded, setIsLoaded] = useState(false);
+    const dispatch = useDispatch();
 
     const { section } = useConstrainedMatch(
         ":section/edit",
         { section: ["labels", "assignees", "milestone"] }
     ) || {};
-    const [sectionWas, setSectionWas] = useState(null);
 
-    useEffect(() => { section && setSectionWas(section) }, [section]);
-
-    const activeSection = section || sectionWas;
+    const [activeSection, resetActiveSection] = useTrailingState(section);
     const ActiveEditor = activeSection && EDITORS[activeSection];
 
+    const title = useSelector(
+        ({ entities: { boardTickets, tickets }}) => {
+            const boardTicket = id && boardTickets[id];
+            if (!boardTicket) return;
+
+            const ticket = tickets[boardTicket.ticket];
+            return ticket && ticket.title;
+        }
+    );
+
     useEffect(() => {
-        loadFullTicketFromSlug(slug, number);
-    }, [slug, number, loadFullTicketFromSlug]);
+        dispatch(fetchTicket({ slug, number }))
+            .then(({ meta: { requestStatus }, payload: { boardTicketId }}) => {
+                if (requestStatus === "fulfilled") setId(boardTicketId);
+            })
+            .finally(() => setIsLoaded(true))
+    }, [slug, number]);
 
     return (
         <Modal
             isOpen
-            onDismiss={() => {
-                ticketModalClosed(id);
-                navigate(flightPlanConfig.api.htmlBoardURL);
-            }}
+            onDismiss={() => navigate(flightPlanConfig.api.htmlBoardURL)}
             aria-labelledby={labelId}
         >
             <div
                 className="text-lg border-b border-gray-300 p-4 pb-3 font-bold bg-white"
                 id={labelId}
             >
-                <a href={htmlURL} target="_blank" className="text-blue-500 hover:text-blue-600">
+                <a
+                    href={`https://github.com/${slug}/${number}`}
+                    target="_blank"
+                    className="text-blue-500 hover:text-blue-600"
+                >
                     #{number}
                 </a>
                 &nbsp;&nbsp;
@@ -107,7 +132,7 @@ const TicketModal = ({
                         section ? "translate-x-0" : "translate-x-56"
                     )}
                     /* Ensure we keep the editor in the DOM until the transition ends */
-                    onTransitionEnd={() => section || setSectionWas(null)}
+                    onTransitionEnd={resetActiveSection}
                 >
                     {/* As soon as we navigate to a section, mount the corresponding editor */}
                     {/* so that it's present before the transition starts */}
@@ -120,30 +145,4 @@ const TicketModal = ({
     );
 }
 
-const mapStateToProps = (_, { id: idFromProps, number, slug }) => ({
-    entities: { boardTickets, tickets },
-    current
-}) => {
-    const id = idFromProps || current.boardTicket;
-
-    if (!id || !(id in boardTickets)) return {
-        isLoaded: false,
-        ticket: {
-            html_url: `https://github.com/${slug}/${number}`
-        }
-    };
-
-    const { loading_state, ...boardTicket } = boardTickets[id];
-    const ticket = tickets[boardTicket.ticket];
-
-    return {
-        ...boardTicket,
-        ticket,
-        isLoaded: loading_state === "loaded"
-    };
-};
-
-export default connect(
-    mapStateToProps,
-    { loadFullTicketFromSlug, ticketModalClosed }
-)(TicketModal);
+export default TicketModal;

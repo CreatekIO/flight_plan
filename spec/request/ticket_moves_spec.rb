@@ -29,14 +29,17 @@ RSpec.describe TicketMovesController, type: :request do
 
     let(:expected_payload) do
       a_hash_including(
-        type: 'TICKET_WAS_MOVED',
+        type: 'ws/TICKET_WAS_MOVED',
         payload: {
-          userId: user.id,
-          boardTicket: a_string_including(
-            board_ticket_path(board, board_ticket)
+          boardTicket: a_hash_including(
+            id: board_ticket.id,
+            url: board_ticket_path(board, board_ticket)
           ),
           destinationId: destination_swimlane.id,
           destinationIndex: destination_position
+        },
+        meta: {
+          userId: user.id
         }
       )
     end

@@ -1,6 +1,54 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
+import { normalize, schema } from "normalizr";
 
-import { updateTicketLabels } from "../../api";
+import { createRequestThunk } from "./utils";
+
+const { htmlBoardURL } = flightPlanConfig.api;
+const { Entity } = schema;
+
+const baseSchema = new Entity("boardTickets", {
+    ticket: new Entity("tickets", {
+        repo: new Entity("repos")
+    }),
+    milestone: new Entity("milestones"),
+    labels: [new Entity("labels")],
+    pull_requests: [new Entity("pullRequests")]
+});
+
+const fullSchema = new Entity("boardTickets", {
+    ...baseSchema.schema,
+    comments: [new Entity("comments")],
+    pull_requests: [
+        new Entity("pullRequests", {
+            repo: new Entity("repos")
+        })
+    ]
+});
+
+export const fetchTicket = createRequestThunk.get({
+    name: 'boardTickets/fetch',
+    path: ({ slug, number }) => `${htmlBoardURL}/tickets/${slug}/${number}`,
+    process: payload => {
+        const { result, entities } = normalize(payload, fullSchema);
+        return { entities, boardTicketId: result };
+    }
+});
+
+export const moveTicket = createRequestThunk.post({
+    name: 'boardTickets/move',
+    path: ({ boardTicketId }) =>
+        `${htmlBoardURL}/board_tickets/${boardTicketId}/moves`,
+    body: ({ boardTicketId, to: { swimlaneId, index }}) => ({
+        board_ticket: {
+            swimlane_id: swimlaneId,
+            swimlane_position: index
+        }
+    }),
+    process: payload => {
+        const { result, entities } = normalize(payload, baseSchema);
+        return { entities, boardTicketId: result };
+    }
+});
 
 const getIn = (object, path, notFound = null) => {
     const parts = Array.isArray(path) ? path : path.split(".");
@@ -17,18 +65,17 @@ const getIn = (object, path, notFound = null) => {
 const idsToNames = (ids, state) =>
     ids.map(id => getIn(state, `entities.labels.${id}.name`)).filter(Boolean);
 
-export const updateLabelsForTicket = createAsyncThunk(
-    "boardTickets/updateLabels",
-    ({ id, add: idsToAdd, remove: idsToRemove }, { getState, rejectWithValue }) => (
-        updateTicketLabels(id, {
+export const updateLabelsForTicket = createRequestThunk.patch({
+    name: "boardTickets/updateLabels",
+    path: ({ id }) => `${htmlBoardURL}/board_tickets/${id}/labels`,
+    body: ({ add: idsToAdd, remove: idsToRemove }, { getState }) => ({
+        labelling: {
             add: idsToNames(idsToAdd, getState()),
             remove: idsToNames(idsToRemove, getState())
-        }).then(response =>
-            ("errors" in response) ? rejectWithValue(response.errors) : response
-        )
-    ),
-    { condition: ({ add, remove }) => Boolean(add.length || remove.length) }
-);
+        }
+    }),
+    condition: ({ add, remove }) => Boolean(add.length || remove.length)
+});
 
 const makeLabelChanges = (labels, { add, remove }) => {
     add.forEach(id => labels.includes(id) || labels.push(id));
@@ -39,7 +86,7 @@ const makeLabelChanges = (labels, { add, remove }) => {
     });
 };
 
-const slice = createSlice({
+const { reducer } = createSlice({
     name: "boardTickets",
     // This won't be used since V1 will set it first, but set it for
     // the time when we are no longer using V1
@@ -60,4 +107,4 @@ const slice = createSlice({
     }
 });
 
-export default slice.reducer;
+export default reducer;

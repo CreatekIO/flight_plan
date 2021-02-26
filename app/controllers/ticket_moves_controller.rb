@@ -20,13 +20,21 @@ class TicketMovesController < AuthenticatedController
   def broadcast_update
     BoardChannel.broadcast_to(
       @board,
-      type: 'TICKET_WAS_MOVED',
-      payload: {
-        userId: current_user.id,
-        boardTicket: render_to_string(:create, formats: :json),
-        destinationId: @board_ticket.swimlane_id,
-        destinationIndex: board_ticket_params[:swimlane_position].to_i
-      }
+      redux_action(:TICKET_WAS_MOVED) do |json|
+        json.boardTicket do
+          json.partial! @board_ticket, swimlane: @board_ticket.swimlane
+        end
+        json.destinationId @board_ticket.swimlane_id
+        json.destinationIndex board_ticket_params[:swimlane_position].to_i
+      end
     )
+  end
+
+  def redux_action(type)
+    JbuilderTemplate.new(view_context) do |json|
+      json.type "ws/#{type}"
+      json.payload { yield(json) }
+      json.meta { json.userId(current_user.id) }
+    end.attributes!
   end
 end

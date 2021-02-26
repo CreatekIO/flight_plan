@@ -1,19 +1,13 @@
-import { createSlice, createAsyncThunk, isFulfilled } from "@reduxjs/toolkit";
+import { createSlice, isFulfilled } from "@reduxjs/toolkit";
+import { createRequestThunk } from "./utils";
 
-import { getRepoLabels } from "../../api";
 import { updateLabelsForTicket } from "./board_tickets";
+import { upsert } from "./utils";
 
-export const fetchLabelsForRepo = createAsyncThunk(
-    "labels/fetchForRepo",
-    repoId => getRepoLabels(repoId)
-);
-
-const upsert = (state, records) => {
-    records.forEach(record => {
-        const { id } = record;
-        state[id] = { ...state[id], ...record };
-    });
-}
+export const fetchLabelsForRepo = createRequestThunk.get({
+    name: "labels/fetchForRepo",
+    path: id => `/repos/${id}/labels`
+});
 
 const hasLabelsPayload = isFulfilled(fetchLabelsForRepo, updateLabelsForTicket);
 

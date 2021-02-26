@@ -52,9 +52,9 @@ const AssigneeStack = ({ assignees }) => {
 const TicketCard = ({
     id,
     index,
+    shouldDisplayDuration,
     url,
     assignees,
-    display_duration: shouldDisplayDuration,
     time_since_last_transition: timeSinceLastTransition,
     pull_requests: pullRequestIds,
     labels: labelIds,
@@ -64,7 +64,7 @@ const TicketCard = ({
         repo: { slug, name: repoName }
     }
 }) => (
-    <Draggable draggableId={`TicketCard#board-ticket-${id}`} index={index}>
+    <Draggable draggableId={`TicketCard/boardTicket#${id}`} index={index}>
         {({ innerRef, draggableProps, dragHandleProps }, snapshot) => (
             <div
                 ref={innerRef}
