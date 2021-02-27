@@ -3,6 +3,7 @@ import { Router, Link } from "@reach/router";
 
 import Header from "./Header.demo";
 import TicketCard from "./TicketCard.demo";
+import TicketSidebar from "./TicketSidebar.demo";
 
 const Default = () => (
     <div className="h-screen flex items-center justify-center text-gray-400">
@@ -13,6 +14,7 @@ const Default = () => (
 const components = Object.entries({
     Header,
     TicketCard,
+    TicketSidebar
 });
 
 const Root = () => (
