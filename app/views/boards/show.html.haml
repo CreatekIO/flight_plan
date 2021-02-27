@@ -35,5 +35,7 @@
 
 = javascript_include_tag polyfill_url
 
-- unless use_v2_ui?
+- if use_v2_ui?
+  = v2_javascripts :application
+- else
   = javascript_pack_tag 'application'

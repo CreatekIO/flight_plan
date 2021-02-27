@@ -6,9 +6,8 @@
     %title FlightPlan
     = csrf_meta_tags
     = action_cable_meta_tag
-    = v2_stylesheets
+    = v2_stylesheets :application
 
   %body.overscroll-none
     = yield
     = javascript_include_tag 'application_v2'
-    = v2_javascripts
