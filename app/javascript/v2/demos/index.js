@@ -1,6 +1,7 @@
 import React from "react";
 import { Router, Link } from "@reach/router";
 
+import Header from "./Header.demo";
 import TicketCard from "./TicketCard.demo";
 
 const Default = () => (
@@ -10,6 +11,7 @@ const Default = () => (
 );
 
 const components = Object.entries({
+    Header,
     TicketCard,
 });
 
