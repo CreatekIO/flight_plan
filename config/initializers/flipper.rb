@@ -1,6 +1,8 @@
 require 'flipper/instrumentation/log_subscriber'
 
 Flipper.configure do |config|
+  features = %i[realtime_updates kpis self_serve_features]
+
   config.default do
     adapter = if Rails.env.test?
       Flipper::Adapters::Memory.new
@@ -18,18 +20,14 @@ Flipper.configure do |config|
         adapter,
         instrumenter: ActiveSupport::Notifications
       )
-    )
-  end
-end
-
-Rails.application.config.after_initialize do
-  %i[realtime_updates kpis self_serve_features].each do |feature|
-    if Rails.env.development? || Rails.env.test?
-      # Enable all features for everyone
-      Flipper.enable(feature)
-    else
-      # Just register feature
-      Flipper.add(feature)
+    ).tap do |instance|
+      if Rails.env.development? || Rails.env.test?
+        # Enable all features for everyone
+        features.each { |feature| instance.enable(feature) }
+      else
+        # Just register feature
+        features.each { |feature| instance.add(feature) }
+      end
     end
   end
 end
