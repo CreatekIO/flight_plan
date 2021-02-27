@@ -52,4 +52,6 @@ Rails.application.routes.draw do
       resources :releases, only: :create
     end
   end
+
+  get '/__components__(/*extras)' => 'components#index', as: :components if Rails.env.development?
 end
