@@ -1,13 +1,17 @@
 import React from "react";
 import { Router, Link } from "@reach/router";
 
+import TicketCard from "./TicketCard.demo";
+
 const Default = () => (
     <div className="h-screen flex items-center justify-center text-gray-400">
         Select a component from the menu
     </div>
 );
 
-const components = [];
+const components = Object.entries({
+    TicketCard,
+});
 
 const Root = () => (
     <div>
