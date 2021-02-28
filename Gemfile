@@ -65,7 +65,7 @@ group :test do
   gem 'database_cleaner'
   gem 'rspec-sidekiq'
   gem 'rspec_junit_formatter'
-  gem 'shoulda-matchers'
+  gem 'shoulda-matchers', '~> 3.1.3'
   gem 'timecop'
   gem 'webmock', '~> 3.5.0'
 end
