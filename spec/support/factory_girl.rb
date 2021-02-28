@@ -3,7 +3,7 @@ FactoryBot.find_definitions
 
 FactoryBot.define do
   def fp_number_generator(start, step: 2)
-    start.step(Float::INFINITY, step).lazy
+    start.step(Float::INFINITY, step).lazy.map(&:to_i)
   end
 
   sequence(:sha) { SecureRandom.hex(20) }
