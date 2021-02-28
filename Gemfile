@@ -67,5 +67,5 @@ group :test do
   gem 'rspec_junit_formatter'
   gem 'shoulda-matchers'
   gem 'timecop'
-  gem 'webmock'
+  gem 'webmock', '~> 3.5.0'
 end
