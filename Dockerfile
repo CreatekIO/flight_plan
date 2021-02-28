@@ -1,24 +1,34 @@
-FROM ruby:2.4.1-alpine3.6
+# see: https://github.com/docker-library/ruby/blob/master/2.6/alpine3.13/Dockerfile
+FROM ruby:2.6.6-alpine3.13
 
-ENV BUILD_PACKAGES='build-base git \
+# Should match version of Alpine used in `FROM`
+COPY --from=node:14.16.0-alpine3.13 /usr/local/bin/node /usr/local/bin
+
+# Yarn version is that contained in node image above
+# see: https://github.com/nodejs/docker-node/blob/master/14/alpine3.13/Dockerfile
+COPY --from=node:14.16.0-alpine3.13 /opt/yarn-v1.22.5/ /opt/yarn/
+# Ensure Yarn executables are in $PATH
+RUN ln -s /opt/yarn/bin/yarn /usr/local/bin/yarn && \
+  ln -s /opt/yarn/bin/yarnpkg /usr/local/bin/yarnpkg
+
+RUN apk add --no-cache \
+  build-base \
+  libstdc++ \
+  git \
+  tzdata curl \
   postgresql-dev \
-  nodejs nodejs-npm \
-  tzdata inotify-tools curl \
-  libxml2-dev libxslt-dev'
-
-RUN \
-  apk add --no-cache --upgrade $BUILD_PACKAGES && \
-  npm install --global yarn@1.5.1 && \
-  find / -type f -iname \*.apk-new -delete && \
-  rm -rf /var/cache/apk/* && \
-  rm -rf /usr/lib/lib/ruby/gems/*/cache/*
+  libxml2-dev libxslt-dev \
+  python2
 
 WORKDIR /flight_plan
 
 COPY package.json yarn.lock ./
-RUN yarn install --ignore-engines
+# Stop node-sass post-install failure from halting build
+RUN yarn install || true
+
+COPY app/javascript/v2/package.json app/javascript/v2/yarn.lock ./app/javascript/v2/
+RUN yarn --cwd app/javascript/v2 install
 
 COPY Gemfile Gemfile.lock ./
-RUN \
-  bundle config build.nokogiri --use-system-libraries && \
+RUN bundle config build.nokogiri --use-system-libraries && \
   bundle install --jobs "$(getconf _NPROCESSORS_ONLN)"
