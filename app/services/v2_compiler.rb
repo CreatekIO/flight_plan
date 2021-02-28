@@ -5,15 +5,9 @@ class V2Compiler
     delegate :compile, to: :instance
   end
 
-  NODE = Rails.root.join('bin/node14').freeze
   V2_DIR = Rails.root.join('app/javascript/v2').freeze
   WEBPACK_CONFIG = V2_DIR.join('webpack-v2.js').freeze
   WEBPACKER_CONFIG = V2_DIR.join('webpacker-v2.yml').freeze
-
-  PLATFORMS = {
-    'x86_64-linux' => 'linux-x64', # Heroku
-    'x86_64-linux-musl' => 'alpine-x64' # Docker container
-  }.freeze
 
   def initialize
     @compiling = false
@@ -23,7 +17,6 @@ class V2Compiler
     return warn('Already compiling!') if @compiling
 
     @compiling = true
-    download_node_v14
     yarn_install
     run_webpack
   ensure
@@ -32,33 +25,12 @@ class V2Compiler
 
   private
 
-  def download_node_v14
-    return if NODE.exist?
-
-    platform = PLATFORMS.fetch(RbConfig::CONFIG['arch']) { raise 'Unsupported platform' }
-
-    system!(
-      'curl',
-      '--fail',
-      '--silent',
-      '--show-error',
-      '--compressed',
-      '--location',
-      '--max-time', 5.minutes.to_i,
-      '--output', NODE,
-      "https://github.com/vercel/pkg-fetch/releases/download/v2.6/uploaded-v2.6-node-v14.4.0-#{platform}"
-    )
-
-    FileUtils.chmod('a+x', NODE.to_s, verbose: true)
-  end
-
   def yarn_install
     system!('yarn', '--ignore-engines')
   end
 
   def run_webpack
     system!(
-      NODE.to_s,
       V2_DIR.join('node_modules/.bin/webpack'),
       '--config', WEBPACK_CONFIG,
       env: {
