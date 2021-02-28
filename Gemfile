@@ -55,7 +55,7 @@ group :development, :test do
 end
 
 group :development do
-  gem 'spring'
+  gem 'spring', '~> 2.1'
 end
 
 group :test do
