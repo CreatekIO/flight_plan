@@ -13,7 +13,7 @@ services:
       - ./tools/ssl_certs:/ssl_certs
 
   app:
-    image: createkio/flight_plan:latest
+    image: createkio/flight_plan:${IMAGE_TAG:-latest}
     command: sh -c '
       rm -f /flight_plan/tmp/pids/server.pid &&
       bundle &&
@@ -52,7 +52,7 @@ services:
       - postgresql_data:/var/lib/postgresql/data
 
   webpack:
-    image: createkio/flight_plan:latest
+    image: createkio/flight_plan:${IMAGE_TAG:-latest}
     command: >
       sh -c '
         yarn install --ignore-engines &&
@@ -79,7 +79,7 @@ services:
     image: redis:3.2
 
   sidekiq:
-    image: createkio/flight_plan:latest
+    image: createkio/flight_plan:${IMAGE_TAG:-latest}
     command: sh -c 'bundle exec sidekiq'
     volumes:
       - .:/flight_plan
