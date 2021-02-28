@@ -23,6 +23,10 @@
   "devDependencies": {
     "webpack-dev-server": "^2.7.1"
   },
+  "engines": {
+    "node": "14.16.0",
+    "yarn": "1.22.5"
+  },
   "resolutions": {
     "acorn": "^5.7.4",
     "atob": "^2.1.0",
