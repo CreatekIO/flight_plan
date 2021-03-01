@@ -14,6 +14,7 @@ helpers.canProcess = (name, fn) =>
 // END MONKEYPATCHES
 
 const { webpackConfig, merge } = require('@rails/webpacker');
+const { isProduction } = require('@rails/webpacker/package/env');
 const { NormalModuleReplacementPlugin } = require('webpack');
 const path = require('path');
 const fs = require('fs');
@@ -35,4 +36,10 @@ const customConfig = {
     ]
 };
 
-module.exports = merge(webpackConfig, customConfig);
+const mergedConfig = merge(webpackConfig, customConfig);
+
+if (isProduction) {
+    delete mergedConfig.entry.component_demos;
+}
+
+module.exports = mergedConfig;
