@@ -5,12 +5,19 @@ module V2Helper
     attr_accessor :v2_manifest
   end
 
-  def v2_javascripts
-    javascript_include_tag(*v2_assets['js'], host: v2_host)
+  def v2_javascripts(entrypoint)
+    javascript_include_tag(
+      *v2_assets.fetch(entrypoint.to_s).fetch('assets')['js'],
+      host: v2_host
+    )
   end
 
-  def v2_stylesheets
-    stylesheet_link_tag(*v2_assets['css'], host: v2_host, media: 'all')
+  def v2_stylesheets(entrypoint)
+    stylesheet_link_tag(
+      *v2_assets.fetch(entrypoint.to_s).fetch('assets')['css'],
+      host: v2_host,
+      media: 'all'
+    )
   end
 
   private
@@ -30,6 +37,6 @@ module V2Helper
   def load_v2_manifest
     JSON.parse(
       Rails.root.join('public/packs-v2/manifest.json').read
-    ).fetch('entrypoints').fetch('application').fetch('assets')
+    ).fetch('entrypoints')
   end
 end

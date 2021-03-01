@@ -196,6 +196,11 @@ const Header = ({ boards, isWaiting, openPRsCount, pullRequests }) => {
                     Sign out
                 </MenuLink>
             </Menu>
+            {isFeatureEnabled("kpis") && (
+                <HeaderItem href={currentBoard.kpisURL}>
+                    KPIs
+                </HeaderItem>
+            )}
             <HeaderItem href={currentBoard.dashboardURL}>
                 PR Dashboard
             </HeaderItem>
