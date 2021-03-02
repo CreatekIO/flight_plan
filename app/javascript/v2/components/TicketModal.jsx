@@ -88,7 +88,7 @@ const TicketModal = ({
                 id={labelId}
             >
                 <a
-                    href={`https://github.com/${slug}/${number}`}
+                    href={`https://github.com/${slug}/issues/${number}`}
                     target="_blank"
                     className="text-blue-500 hover:text-blue-600"
                 >
