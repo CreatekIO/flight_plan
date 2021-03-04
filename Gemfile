@@ -62,6 +62,7 @@ group :test do
   gem 'action-cable-testing'
   gem 'capybara', '~> 2.15.1'
   gem 'capybara-screenshot'
+  gem 'cuprite'
   gem 'database_cleaner'
   gem 'rspec-sidekiq'
   gem 'rspec_junit_formatter'

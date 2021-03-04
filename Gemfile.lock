@@ -68,6 +68,7 @@ GEM
     capybara-screenshot (1.0.19)
       capybara (>= 1.0, < 4)
       launchy
+    cliver (0.3.2)
     clockwork (2.0.3)
       tzinfo
     concurrent-ruby (1.1.5)
@@ -76,6 +77,9 @@ GEM
       rexml
     crass (1.0.5)
     createk_data_migrator (0.1.2)
+    cuprite (0.12)
+      capybara (>= 2.1, < 4)
+      ferrum (~> 0.10.0)
     database_cleaner (1.7.0)
     descriptive_statistics (2.5.1)
     devise (4.7.1)
@@ -97,6 +101,11 @@ GEM
       multipart-post (>= 1.2, < 3)
     faraday_middleware (0.12.2)
       faraday (>= 0.7.4, < 1.0)
+    ferrum (0.10.2)
+      addressable (~> 2.5)
+      cliver (~> 0.3)
+      concurrent-ruby (~> 1.1)
+      websocket-driver (>= 0.6, < 0.8)
     ffi (1.10.0)
     flipper (0.16.2)
     flipper-redis (0.16.2)
@@ -310,6 +319,7 @@ DEPENDENCIES
   capybara-screenshot
   clockwork
   createk_data_migrator
+  cuprite
   database_cleaner
   descriptive_statistics
   devise (~> 4.7.1)
