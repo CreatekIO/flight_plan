@@ -23,7 +23,7 @@ module V2Helper
   private
 
   def v2_host
-    Rails.env.production? ? nil : DEVELOPMENT_HOST
+    Rails.env.development? ? DEVELOPMENT_HOST : nil
   end
 
   def v2_assets
@@ -35,8 +35,11 @@ module V2Helper
   end
 
   def load_v2_manifest
+    config = YAML.load_file(V2Compiler::WEBPACKER_CONFIG).with_indifferent_access
+    packs_path = config[Rails.env][:public_output_path]
+
     JSON.parse(
-      Rails.root.join('public/packs-v2/manifest.json').read
+      Rails.root.join('public', packs_path, 'manifest.json').read
     ).fetch('entrypoints')
   end
 end
