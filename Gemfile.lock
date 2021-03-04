@@ -65,9 +65,6 @@ GEM
       rack (>= 1.0.0)
       rack-test (>= 0.5.4)
       xpath (~> 2.0)
-    capybara-screenshot (1.0.19)
-      capybara (>= 1.0, < 4)
-      launchy
     cliver (0.3.2)
     clockwork (2.0.3)
       tzinfo
@@ -80,7 +77,6 @@ GEM
     cuprite (0.12)
       capybara (>= 2.1, < 4)
       ferrum (~> 0.10.0)
-    database_cleaner (1.7.0)
     descriptive_statistics (2.5.1)
     devise (4.7.1)
       bcrypt (~> 3.0)
@@ -133,8 +129,6 @@ GEM
       railties (>= 4.2.0)
       thor (>= 0.14, < 2.0)
     jwt (2.2.2)
-    launchy (2.4.3)
-      addressable (~> 2.3)
     loofah (2.3.1)
       crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
@@ -316,11 +310,9 @@ DEPENDENCIES
   byebug
   cancancan (~> 2.0.0)
   capybara (~> 2.15.1)
-  capybara-screenshot
   clockwork
   createk_data_migrator
   cuprite
-  database_cleaner
   descriptive_statistics
   devise (~> 4.7.1)
   dotenv-rails

@@ -44,10 +44,6 @@ module WebhookTestCase
       end
     end
 
-    before do
-      DatabaseCleaner.strategy = [:truncation, pre_count: true]
-    end
-
     around do |example|
       begin
         WebMock.disable_net_connect!(allow_localhost: true)
