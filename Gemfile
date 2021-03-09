@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-ruby '2.4.1'
+ruby '2.6.6'
 
 git_source(:github) do |repo_name|
   repo_name = "#{repo_name}/#{repo_name}" unless repo_name.include?('/')
@@ -55,7 +55,7 @@ group :development, :test do
 end
 
 group :development do
-  gem 'spring'
+  gem 'spring', '~> 2.1'
 end
 
 group :test do
@@ -65,7 +65,7 @@ group :test do
   gem 'database_cleaner'
   gem 'rspec-sidekiq'
   gem 'rspec_junit_formatter'
-  gem 'shoulda-matchers'
+  gem 'shoulda-matchers', '~> 3.1.3'
   gem 'timecop'
-  gem 'webmock'
+  gem 'webmock', '~> 3.5.0'
 end
