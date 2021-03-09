@@ -47,6 +47,7 @@
     "mem": "^4.0.0",
     "mime": "^1.4.1",
     "minimist": "^1.2.2",
+    "node-sass": "file:./node-sass-stub",
     "querystringify": "^2.0.0",
     "sshpk": "^1.13.2",
     "stringstream": "^0.0.6",
