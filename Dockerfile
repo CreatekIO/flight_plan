@@ -23,8 +23,7 @@ RUN apk add --no-cache \
 WORKDIR /flight_plan
 
 COPY package.json yarn.lock ./
-# Stop node-sass post-install failure from halting build
-RUN yarn install || true
+RUN yarn install
 
 COPY app/javascript/v2/package.json app/javascript/v2/yarn.lock ./app/javascript/v2/
 RUN yarn --cwd app/javascript/v2 install

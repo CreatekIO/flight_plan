@@ -31,7 +31,7 @@ jobs:
             --without development
       - run:
           name: Yarn Install
-          command: yarn install --ignore-engines || true
+          command: yarn install --ignore-engines
       - run:
           name: Database setup
           command: >
