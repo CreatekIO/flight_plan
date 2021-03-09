@@ -9,7 +9,8 @@ Capybara.register_driver(:cuprite) do |app|
     # logger: $stderr, # uncomment for debugging logs
     js_errors: true,
     browser_options: {
-      'no-sandbox' => nil # needed as we run as root inside Docker
+      'no-sandbox' => nil, # needed as we run as root inside Docker
+      # 'auto-open-devtools-for-tabs' => nil # uncomment to open devtools
     }
   }
 
