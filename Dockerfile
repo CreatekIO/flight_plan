@@ -17,8 +17,7 @@ RUN apk add --no-cache \
   git \
   tzdata curl \
   postgresql-dev \
-  libxml2-dev libxslt-dev \
-  python2
+  libxml2-dev libxslt-dev
 
 WORKDIR /flight_plan
 
