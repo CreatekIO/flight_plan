@@ -11,6 +11,7 @@ jobs:
           DB_HOST: 127.0.0.1
           DB_USERNAME: postgres
           DB_PASSWORD: password
+          DISABLE_SPRING: 1
           RAILS_ENV: test
       - image: postgres:12.2-alpine
         environment:
@@ -23,6 +24,15 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Install dependencies
+          command: >
+            if [ -z "$(which chromium-browser)" ]; then
+              apk add \
+                --no-cache \
+                --repository=https://dl-cdn.alpinelinux.org/alpine/edge/community \
+                chromium
+            fi
+      - run:
           name: Bundle Install
           command: |
             bundle install \
@@ -32,6 +42,10 @@ jobs:
       - run:
           name: Yarn Install
           command: yarn install --ignore-engines
+      - run:
+          name: Yarn Install (V2)
+          working_directory: app/javascript/v2
+          command: yarn install
       - run:
           name: Database setup
           command: >
@@ -49,7 +63,12 @@ jobs:
               echo "Waiting for PostgreSQL ($retries retries left)"
             done
 
-            rake db:reset
+            bin/rake db:reset
+      - run:
+          name: Build V2 assets for system specs
+          environment:
+            NODE_ENV: test
+          command: bin/rake v2:compile
       - run:
           name: Run Specs
           environment:
