@@ -43,10 +43,6 @@ jobs:
           name: Yarn Install
           command: yarn install --ignore-engines
       - run:
-          name: Yarn Install (V2)
-          working_directory: app/javascript/v2
-          command: yarn install
-      - run:
           name: Database setup
           command: >
             retries=5
