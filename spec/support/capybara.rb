@@ -11,7 +11,8 @@ Capybara.register_driver(:cuprite) do |app|
     browser_options: {
       'no-sandbox' => nil, # needed as we run as root inside Docker
       # 'auto-open-devtools-for-tabs' => nil # uncomment to open devtools
-    }
+    },
+    url_whitelist: [%r{^https?://(localhost|127\.0\.0\.1)}]
   }
 
   # Instructions here for macOS:
