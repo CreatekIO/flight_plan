@@ -20,7 +20,7 @@ jobs:
 
     working_directory: ~/repo
 
-    parallelism: 2
+    parallelism: 1
     steps:
       - checkout
       - run:
