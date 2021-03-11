@@ -73,6 +73,8 @@ jobs:
           name: Run Specs
           environment:
             DISABLE_SPRING: 1
+            FERRUM_PROCESS_TIMEOUT: 10
+            FERRUM_DEFAULT_TIMEOUT: 10
           command: >
             circleci tests glob "spec/**/*_spec.rb" | circleci tests split | \
               tee /dev/stderr | xargs bin/rspec \
