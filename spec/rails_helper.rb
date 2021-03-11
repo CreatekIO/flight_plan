@@ -13,6 +13,10 @@ Dir[Rails.root.join('spec/support/shared_examples/*.rb')].each { |file| require 
 
 ActiveRecord::Migration.maintain_test_schema!
 
+# silence warnings from Faraday on CircleCI
+ENV.delete('no_proxy')
+ENV.delete('NO_PROXY')
+
 RSpec.configure do |config|
   config.use_transactional_fixtures = true
 
