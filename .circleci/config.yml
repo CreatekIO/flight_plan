@@ -86,6 +86,9 @@ jobs:
           path: tmp/capybara
           destination: capybara
       - store_artifacts:
+          path: tmp/screenshots
+          destination: screenshots
+      - store_artifacts:
           path: tmp/rspec
           destination: rspec
       - store_test_results:
