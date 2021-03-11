@@ -62,6 +62,7 @@ group :test do
   gem 'action-cable-testing'
   gem 'capybara', '~> 2.15.1'
   gem 'cuprite'
+  gem 'rspec-retry'
   gem 'rspec-sidekiq'
   gem 'rspec_junit_formatter'
   gem 'shoulda-matchers', '~> 3.1.3'
