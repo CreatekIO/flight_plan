@@ -7,42 +7,37 @@ git_source(:github) do |repo_name|
   "https://github.com/#{repo_name}.git"
 end
 
-gem 'rails', '~> 5.1.6.2'
-
-gem 'pg'
-gem 'puma', '~> 3.12'
-gem 'sass-rails', '~> 5.0'
-gem 'sprockets',  '~> 3.7.2'
-gem 'uglifier', '>= 1.3.0'
-gem 'webpacker'
-
-gem 'jbuilder', '~> 2.5'
+gem 'rails', '~> 5.2'
 
 gem 'activerecord-import'
 gem 'bugsnag'
 gem 'business_time'
-gem 'cancancan', '~> 2.0.0'
+gem 'cancancan'
 gem 'clockwork'
 gem 'createk_data_migrator'
 gem 'descriptive_statistics', require: 'descriptive_statistics/safe'
-gem 'devise', '~> 4.7.1'
+gem 'devise'
 gem 'flipper-redis'
-gem 'github_webhook', '~> 1.1'
+gem 'github_webhook'
 gem 'haml'
+gem 'jbuilder'
 gem 'jquery-rails'
 gem 'octokit'
-gem 'omniauth-github', '~> 1.4'
-gem 'omniauth-rails_csrf_protection', '~> 0.1'
-gem 'ranked-model', '~> 0.4'
+
+# upgrade once Devise updated
+gem 'omniauth-github', '~> 1'
+gem 'omniauth-rails_csrf_protection', '< 1'
+
+gem 'pg'
+gem 'puma'
+gem 'ranked-model'
 gem 'redis-namespace'
+gem 'sass-rails'
 gem 'sidekiq'
 gem 'slack-ruby-client'
-
-# Fix versions of transitive dependencies due to vulnerabilities
-gem 'ffi', '~> 1.10.0'
-gem 'loofah', '~> 2.3.1'
-gem 'nokogiri', '~> 1.10.8'
-gem 'rack', '~> 2.1.4'
+gem 'sprockets'
+gem 'uglifier'
+gem 'webpacker', '~> 3.4.3'
 
 group :development, :test do
   gem 'active_record_query_trace'
@@ -50,22 +45,22 @@ group :development, :test do
   gem 'byebug', platforms: %i[mri mingw x64_mingw]
   gem 'dotenv-rails'
   gem 'factory_bot'
-  gem 'rspec-rails', '3.7.0'
+  gem 'rspec-rails', '~> 5'
   gem 'spring-commands-rspec'
 end
 
 group :development do
-  gem 'spring', '~> 2.1'
+  gem 'spring'
 end
 
 group :test do
   gem 'action-cable-testing'
-  gem 'capybara', '~> 2.15.1'
+  gem 'capybara'
   gem 'cuprite'
   gem 'rspec-retry'
   gem 'rspec-sidekiq'
-  gem 'rspec_junit_formatter'
-  gem 'shoulda-matchers', '~> 3.1.3'
+  gem 'rspec_junit_formatter', require: false
+  gem 'shoulda-matchers'
   gem 'timecop'
-  gem 'webmock', '~> 3.5.0'
+  gem 'webmock'
 end
