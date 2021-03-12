@@ -107,7 +107,7 @@ RSpec.describe TicketMovesController, type: :request do
             subject
           }.to change { board_ticket.reload.swimlane }.from(backlog).to(dev)
             .and change { dev.reload.board_tickets[destination_position] }.to(board_ticket)
-            .and have_broadcasted_to(board).from_channel(BoardChannel).with(expected_payload)
+            .and have_broadcasted_to([:board, board]).from_channel(BoardChannel).with(expected_payload)
 
           expect(response).to have_http_status(:created)
           expect(JSON.parse(response.body)).to include(
@@ -146,7 +146,7 @@ RSpec.describe TicketMovesController, type: :request do
               subject
             }.to change { board_ticket.reload.swimlane }.from(backlog).to(dev)
               .and change { dev.reload.board_tickets[destination_position] }.to(board_ticket)
-              .and have_broadcasted_to(board).from_channel(BoardChannel).with(expected_payload)
+              .and have_broadcasted_to([:board, board]).from_channel(BoardChannel).with(expected_payload)
 
             expect(response).to have_http_status(:created)
 
