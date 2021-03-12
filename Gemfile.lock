@@ -345,7 +345,7 @@ DEPENDENCIES
   omniauth-rails_csrf_protection (< 1)
   pg
   puma
-  rails (~> 5.2)
+  rails (~> 5.2.4, >= 5.2.4.5)
   ranked-model
   redis-namespace
   rspec-rails (~> 5)
