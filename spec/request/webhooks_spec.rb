@@ -1,16 +1,11 @@
 require 'rails_helper'
 
-RSpec.feature 'Webhooks', type: :webhook do
+RSpec.describe 'Webhooks', type: :request do
   let(:webhook_secret) { SecureRandom.hex }
 
-  around do |example|
-    key = 'GITHUB_WEBHOOK_SECRET'
-    original = ENV[key]
-    ENV[key] = webhook_secret
-
-    example.run
-
-    original ? ENV[key] = original : ENV.delete(key)
+  before do |example|
+    allow(ENV).to receive(:[]).and_call_original
+    allow(ENV).to receive(:[]).with('GITHUB_WEBHOOK_SECRET').and_return(webhook_secret)
   end
 
   around do |example|
@@ -21,10 +16,7 @@ RSpec.feature 'Webhooks', type: :webhook do
   end
 
   let!(:repo) do
-    create(:repo, name: 'FlightPlan', slug: 'CreatekIO/flight_plan').tap do
-      # Ensure repo can be seen by Puma server
-      Repo.connection.commit_transaction
-    end
+    create(:repo, name: 'FlightPlan', slug: 'CreatekIO/flight_plan')
   end
 
   event_type :pull_request do

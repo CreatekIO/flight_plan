@@ -11,6 +11,7 @@ jobs:
           DB_HOST: 127.0.0.1
           DB_USERNAME: postgres
           DB_PASSWORD: password
+          DISABLE_SPRING: 1
           RAILS_ENV: test
       - image: postgres:12.2-alpine
         environment:
@@ -22,6 +23,15 @@ jobs:
     parallelism: 2
     steps:
       - checkout
+      - run:
+          name: Install dependencies
+          command: >
+            if [ -z "$(which chromium-browser)" ]; then
+              apk add \
+                --no-cache \
+                --repository=https://dl-cdn.alpinelinux.org/alpine/edge/community \
+                chromium
+            fi
       - run:
           name: Bundle Install
           command: |
@@ -49,11 +59,18 @@ jobs:
               echo "Waiting for PostgreSQL ($retries retries left)"
             done
 
-            rake db:reset
+            bin/rake db:reset
+      - run:
+          name: Build V2 assets for system specs
+          environment:
+            NODE_ENV: test
+          command: bin/rake v2:compile
       - run:
           name: Run Specs
           environment:
             DISABLE_SPRING: 1
+            FERRUM_PROCESS_TIMEOUT: 10
+            FERRUM_DEFAULT_TIMEOUT: 20
           command: >
             circleci tests glob "spec/**/*_spec.rb" | circleci tests split | \
               tee /dev/stderr | xargs bin/rspec \
@@ -66,6 +83,9 @@ jobs:
       - store_artifacts:
           path: tmp/capybara
           destination: capybara
+      - store_artifacts:
+          path: tmp/screenshots
+          destination: screenshots
       - store_artifacts:
           path: tmp/rspec
           destination: rspec

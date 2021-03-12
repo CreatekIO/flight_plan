@@ -65,9 +65,7 @@ GEM
       rack (>= 1.0.0)
       rack-test (>= 0.5.4)
       xpath (~> 2.0)
-    capybara-screenshot (1.0.19)
-      capybara (>= 1.0, < 4)
-      launchy
+    cliver (0.3.2)
     clockwork (2.0.3)
       tzinfo
     concurrent-ruby (1.1.5)
@@ -76,7 +74,9 @@ GEM
       rexml
     crass (1.0.5)
     createk_data_migrator (0.1.2)
-    database_cleaner (1.7.0)
+    cuprite (0.12)
+      capybara (>= 2.1, < 4)
+      ferrum (~> 0.10.0)
     descriptive_statistics (2.5.1)
     devise (4.7.1)
       bcrypt (~> 3.0)
@@ -97,6 +97,11 @@ GEM
       multipart-post (>= 1.2, < 3)
     faraday_middleware (0.12.2)
       faraday (>= 0.7.4, < 1.0)
+    ferrum (0.10.2)
+      addressable (~> 2.5)
+      cliver (~> 0.3)
+      concurrent-ruby (~> 1.1)
+      websocket-driver (>= 0.6, < 0.8)
     ffi (1.10.0)
     flipper (0.16.2)
     flipper-redis (0.16.2)
@@ -124,8 +129,6 @@ GEM
       railties (>= 4.2.0)
       thor (>= 0.14, < 2.0)
     jwt (2.2.2)
-    launchy (2.4.3)
-      addressable (~> 2.3)
     loofah (2.3.1)
       crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
@@ -224,6 +227,8 @@ GEM
       rspec-expectations (~> 3.7.0)
       rspec-mocks (~> 3.7.0)
       rspec-support (~> 3.7.0)
+    rspec-retry (0.6.2)
+      rspec-core (> 3.3)
     rspec-sidekiq (3.0.3)
       rspec-core (~> 3.0, >= 3.0.0)
       sidekiq (>= 2.4.0)
@@ -307,10 +312,9 @@ DEPENDENCIES
   byebug
   cancancan (~> 2.0.0)
   capybara (~> 2.15.1)
-  capybara-screenshot
   clockwork
   createk_data_migrator
-  database_cleaner
+  cuprite
   descriptive_statistics
   devise (~> 4.7.1)
   dotenv-rails
@@ -333,6 +337,7 @@ DEPENDENCIES
   ranked-model (~> 0.4)
   redis-namespace
   rspec-rails (= 3.7.0)
+  rspec-retry
   rspec-sidekiq
   rspec_junit_formatter
   sass-rails (~> 5.0)

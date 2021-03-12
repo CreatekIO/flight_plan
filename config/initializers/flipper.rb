@@ -4,16 +4,12 @@ Flipper.configure do |config|
   features = %i[realtime_updates kpis self_serve_features]
 
   config.default do
-    adapter = if Rails.env.test?
-      Flipper::Adapters::Memory.new
-    else
-      redis = Redis::Namespace.new(
-        :flipper,
-        redis: Redis.new(url: ENV[ENV['REDIS_PROVIDER'].presence || 'REDIS_URL'])
-      )
+    redis = Redis.new(url: ENV[ENV['REDIS_PROVIDER'].presence || 'REDIS_URL'])
+    namespace = [:flipper, *(Rails.env if Rails.env.test?)].join('/')
 
-      Flipper::Adapters::Redis.new(redis)
-    end
+    adapter = Flipper::Adapters::Redis.new(
+      Redis::Namespace.new(namespace, redis: redis)
+    )
 
     Flipper.new(
       Flipper::Adapters::Instrumented.new(
@@ -21,7 +17,7 @@ Flipper.configure do |config|
         instrumenter: ActiveSupport::Notifications
       )
     ).tap do |instance|
-      if Rails.env.development? || Rails.env.test?
+      if Rails.env.development?
         # Enable all features for everyone
         features.each { |feature| instance.enable(feature) }
       else

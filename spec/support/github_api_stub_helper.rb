@@ -19,6 +19,8 @@ module GitHubApiStubHelper
   end
 
   def expand_gh_url(path)
+    return path if path.start_with?("http")
+
     "https://api.github.com/repos/#{slug}/#{path}"
   end
 

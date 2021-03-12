@@ -17,8 +17,12 @@ RUN apk add --no-cache \
   git \
   tzdata curl \
   postgresql-dev \
-  libxml2-dev libxslt-dev \
-  python2
+  libxml2-dev libxslt-dev
+
+RUN apk add \
+  --no-cache \
+  --repository=https://dl-cdn.alpinelinux.org/alpine/edge/community \
+  chromium
 
 WORKDIR /flight_plan
 

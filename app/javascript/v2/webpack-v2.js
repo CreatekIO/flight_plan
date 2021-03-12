@@ -14,7 +14,7 @@ helpers.canProcess = (name, fn) =>
 // END MONKEYPATCHES
 
 const { webpackConfig, merge } = require('@rails/webpacker');
-const { isProduction } = require('@rails/webpacker/package/env');
+const { isDevelopment } = require('@rails/webpacker/package/env');
 const { NormalModuleReplacementPlugin } = require('webpack');
 const path = require('path');
 const fs = require('fs');
@@ -38,8 +38,14 @@ const customConfig = {
 
 const mergedConfig = merge(webpackConfig, customConfig);
 
-if (isProduction) {
+if (!isDevelopment) {
     delete mergedConfig.entry.component_demos;
+}
+
+if (process.env.NODE_ENV === "test") {
+    // Config used by webpacker for NODE_ENV=development
+    mergedConfig.mode = "development";
+    mergedConfig.devtool = "cheap-module-source-map";
 }
 
 module.exports = mergedConfig;
