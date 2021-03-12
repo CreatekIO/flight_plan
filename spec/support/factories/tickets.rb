@@ -3,6 +3,6 @@ FactoryBot.define do
     number { generate(:issue_number) }
     remote_id { generate(:issue_remote_id) }
     title { "Issue No. #{number}" }
-    state 'open'
+    state { 'open' }
   end
 end

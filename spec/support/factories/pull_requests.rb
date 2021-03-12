@@ -3,9 +3,9 @@ FactoryBot.define do
     number { generate(:pr_number) }
     remote_id { generate(:pr_remote_id) }
     title { "Pull Request No. #{number}" }
-    state 'open'
+    state { 'open' }
     head_branch { "feature/#{number}-test" }
     head_sha { generate(:sha) }
-    base_branch 'develop'
+    base_branch { 'develop' }
   end
 end
