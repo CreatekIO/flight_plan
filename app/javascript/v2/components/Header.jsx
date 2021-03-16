@@ -201,9 +201,6 @@ const Header = ({ boards, isWaiting, openPRsCount, pullRequests }) => {
                     KPIs
                 </HeaderItem>
             )}
-            <HeaderItem href={currentBoard.dashboardURL}>
-                PR Dashboard
-            </HeaderItem>
             {isWaiting ? (
                 <HeaderItem disabled>
                     Open Pull Requests

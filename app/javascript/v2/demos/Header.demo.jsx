@@ -11,7 +11,7 @@ const boards = [
 ].map((board, index) => {
     const id = board.id || index + 1;
 
-    return { id, url: `/boards/${id}`, dashboardURL: `/boards/${id}/pull_requests`, ...board };
+    return { id, url: `/boards/${id}`, ...board };
 });
 
 const Scenario = ({ name, ...props }) => (

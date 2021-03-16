@@ -126,9 +126,6 @@ const Header = ({ boards, isWaiting, openPRsCount, pullRequests }) => {
                 {isFeatureEnabled("kpis") && (
                     <a className="item" href={currentBoard.kpisURL}>KPIs</a>
                 )}
-                <a className="item" href={currentBoard.dashboardURL}>
-                    PR Dashboard
-                </a>
                 {isWaiting ? (
                     <span className="item">Open Pull Requests</span>
                 ) : (
