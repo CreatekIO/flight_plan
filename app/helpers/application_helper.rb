@@ -61,6 +61,16 @@ module ApplicationHelper
     swimlane_tickets_path(last.swimlane_id, after: last.swimlane_sequence)
   end
 
+  def to_or_sentence(collection, &block)
+    collection = collection.map { |item| capture { yield(item) }} if block_given?
+
+    to_sentence(
+      collection,
+      two_words_connector: ' or ',
+      last_word_connector: ', or '
+    )
+  end
+
   private
 
   def url_dropdown_menu(action)

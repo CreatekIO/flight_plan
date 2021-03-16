@@ -1,5 +1,6 @@
 class KpisController < AuthenticatedController
   load_and_authorize_resource :board
+  layout 'application_v2'
 
   def index
     authorize! :index, :kpis
