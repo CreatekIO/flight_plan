@@ -1,6 +1,5 @@
 class PagesController < ApplicationController
+  layout 'application_v2'
 
-  def index
-  end
-
+  def index; end
 end
