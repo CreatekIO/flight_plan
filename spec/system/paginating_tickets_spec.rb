@@ -4,7 +4,6 @@ RSpec.describe 'Paginating tickets', js: true do
   include_context 'board with swimlanes'
 
   before do
-    Flipper.enable(:v2_ui)
     sign_in create(:user)
   end
 

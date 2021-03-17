@@ -51,7 +51,6 @@ RSpec.describe 'Ticket modal', js: true do
   end
 
   before do
-    Flipper.enable(:v2_ui)
     sign_in create(:user)
   end
 

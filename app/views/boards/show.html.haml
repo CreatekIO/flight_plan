@@ -33,8 +33,4 @@
   window.flightPlanConfig = #{raw config.to_json};
 
 = javascript_include_tag polyfill_url
-
-- if use_v2_ui?
-  = v2_javascripts :application
-- else
-  = javascript_pack_tag 'application'
+= v2_javascripts :application

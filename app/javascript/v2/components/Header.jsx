@@ -174,11 +174,6 @@ const Header = ({ boards, isWaiting, openPRsCount, pullRequests }) => {
         <div className="fixed top-0 inset-x-0 h-14 z-10 border-b border-gray-200 divide-x flex flex-nowrap justify-end text-sm">
             <BoardsMenu boards={boards} currentBoard={currentBoard} />
             <AddNewIssueModal />
-            {isFeatureEnabled("self_serve_features") && (
-                <HeaderItem href="/user/features/v2_ui" data-method="delete">
-                    Back to V1
-                </HeaderItem>
-            )}
             <Menu
                 menuProps={{ className: "w-48" }}
                 title={<Avatar username={flightPlanConfig.currentUser.username} />}

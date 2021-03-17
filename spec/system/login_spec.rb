@@ -14,8 +14,6 @@ RSpec.describe 'User logging in via GitHub', js: true do
       ticket: ticket,
       swimlane: swimlane
     )
-
-    Flipper.enable(:v2_ui)
   end
 
   it 'allows user to login and redirects to first board' do
