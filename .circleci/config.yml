@@ -13,10 +13,10 @@ jobs:
           DB_PASSWORD: password
           DISABLE_SPRING: 1
           RAILS_ENV: test
-      - image: postgres:12.2-alpine
+      - image: postgres:12.6-alpine
         environment:
           POSTGRES_PASSWORD: password
-      - image: redis:3.2
+      - image: redis:5.0-alpine
 
     working_directory: ~/repo
 

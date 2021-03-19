@@ -1,7 +1,7 @@
 FactoryBot.define do
   factory :comment do
-    remote_id 1
-    author_username 'jsmith'
-    body 'text'
+    sequence(:remote_id, 70_000_000)
+    author_username { 'jsmith' }
+    body { 'text' }
   end
 end

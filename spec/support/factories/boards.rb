@@ -1,5 +1,5 @@
 FactoryBot.define do
   factory :board do
-    name 'My Board'
+    name { 'My Board' }
   end
 end

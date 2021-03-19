@@ -28,7 +28,7 @@ const BoardWrapper = ({ children, ...props }) => (
     <div className="flex flex-col h-screen">
         <Header boards={flightPlanConfig.boards} boardId={props.boardId} />
         <Board {...props} />
-        <Router>
+        <Router primary={false}>
             <TicketModal path=":owner/:repo/:number/*" />
         </Router>
     </div>

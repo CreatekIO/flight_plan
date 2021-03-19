@@ -3,6 +3,6 @@ FactoryBot.define do
     sequence(:remote_id, 1_000_000)
     sequence(:number)
     title { "Milestone #{number}" }
-    state 'open'
+    state { 'open' }
   end
 end

@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe Branch, type: :model do
   describe 'associations' do
     it { is_expected.to belong_to(:repo) }
-    it { is_expected.to belong_to(:ticket) }
+    it { is_expected.to belong_to(:ticket).optional }
   end
 
   describe 'attributes' do

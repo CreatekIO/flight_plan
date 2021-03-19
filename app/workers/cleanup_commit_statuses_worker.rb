@@ -4,7 +4,7 @@ class CleanupCommitStatusesWorker
   RANK_ALIAS = 'rank'.freeze
 
   def perform
-    ranked = CommitStatus.select(:id, :state, ranking).as('ranked')
+    ranked = CommitStatus.select(:id, :state, ranking).arel.as('ranked')
 
     ids = CommitStatus
       .from(ranked)

@@ -74,8 +74,10 @@ class Ticket < ApplicationRecord
   end
 
   def merged_to?(target_branch)
-    branch_names.inject(true) do |merged, branch|
-      merged && (repo.compare(target_branch, branch).total_commits.zero?)
+    escaped = URI.escape(target_branch)
+
+    branch_names.all? do |branch|
+      repo.compare(escaped, URI.escape(branch)).total_commits.zero?
     end
   end
 

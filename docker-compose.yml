@@ -1,7 +1,7 @@
 version: '3'
 services:
   lb:
-    image: traefik:2.3.6
+    image: traefik:2.4.7
     ports:
       - 80:80
       - 443:443
@@ -43,7 +43,7 @@ services:
       - .env
 
   db:
-    image: postgres:12.2-alpine
+    image: postgres:12.6-alpine
     environment:
       POSTGRES_PASSWORD: 'password'
     ports:
@@ -76,7 +76,7 @@ services:
       - traefik.http.routers.webpack.tls=true
 
   redis:
-    image: redis:3.2
+    image: redis:5.0-alpine
 
   sidekiq:
     image: createkio/flight_plan:${IMAGE_TAG:-latest}
