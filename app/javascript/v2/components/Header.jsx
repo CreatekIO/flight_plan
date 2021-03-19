@@ -11,7 +11,6 @@ import {
 
 import NextActionButton from "./NextActionButton";
 import Avatar from "./Avatar";
-import AddNewIssueModal from "./AddNewIssueModal";
 import Loading from "./Loading";
 import { getOpenPRs } from "../../reducers/selectors";
 import { isFeatureEnabled } from "../../features";
@@ -173,7 +172,6 @@ const Header = ({ boards, isWaiting, openPRsCount, pullRequests }) => {
     return (
         <div className="fixed top-0 inset-x-0 h-14 z-10 border-b border-gray-200 divide-x flex flex-nowrap justify-end text-sm">
             <BoardsMenu boards={boards} currentBoard={currentBoard} />
-            <AddNewIssueModal />
             <Menu
                 menuProps={{ className: "w-48" }}
                 title={<Avatar username={flightPlanConfig.currentUser.username} />}
