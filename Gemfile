@@ -34,7 +34,7 @@ gem 'sidekiq'
 gem 'slack-ruby-client'
 gem 'sprockets'
 gem 'uglifier'
-gem 'webpacker', '~> 3.4.3'
+gem 'webpacker', '6.0.0.beta.6'
 
 group :development, :test do
   gem 'active_record_query_trace'

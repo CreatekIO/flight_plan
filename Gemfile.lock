@@ -268,6 +268,7 @@ GEM
     sawyer (0.8.2)
       addressable (>= 2.3.5)
       faraday (> 0.8, < 2.0)
+    semantic_range (3.0.0)
     set (1.0.1)
     shoulda-matchers (4.5.1)
       activesupport (>= 4.2.0)
@@ -310,10 +311,11 @@ GEM
       addressable (>= 2.3.6)
       crack (>= 0.3.2)
       hashdiff (>= 0.4.0, < 2.0.0)
-    webpacker (3.4.3)
-      activesupport (>= 4.2)
+    webpacker (6.0.0.beta.6)
+      activesupport (>= 5.2)
       rack-proxy (>= 0.6.1)
-      railties (>= 4.2)
+      railties (>= 5.2)
+      semantic_range (>= 2.3.0)
     websocket-driver (0.7.3)
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.5)
@@ -368,7 +370,7 @@ DEPENDENCIES
   timecop
   uglifier
   webmock
-  webpacker (~> 3.4.3)
+  webpacker (= 6.0.0.beta.6)
 
 RUBY VERSION
    ruby 2.6.6p146

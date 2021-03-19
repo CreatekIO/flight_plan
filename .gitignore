@@ -41,3 +41,10 @@
 /app/javascript/v2/node_modules
 /app/javascript/v2/yarn-error.log
 /public/packs-v2
+
+/public/packs
+/public/packs-test
+/node_modules
+/yarn-error.log
+yarn-debug.log*
+.yarn-integrity
