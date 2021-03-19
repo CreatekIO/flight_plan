@@ -9,7 +9,7 @@ import Label, { Milestone } from "./Label";
 import PullRequest from "./PullRequest";
 import Avatar from "./Avatar";
 import HarvestButton from "./HarvestButton";
-import { isFeatureEnabled } from "../../features";
+import { isFeatureEnabled } from "../features";
 
 const GroupedPullRequestList = connect(
     (_, { id: boardTicketId }) => ({ entities: { pullRequests: allPRs, boardTickets, repos }}) => {

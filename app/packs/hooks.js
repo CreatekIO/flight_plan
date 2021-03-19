@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import ActionCable from "actioncable";
 import useScrollbarSize from "react-scrollbar-size";
 
-import { isFeatureDisabled } from "../features";
+import { isFeatureDisabled } from "./features";
 
 // You can't use regexes with Reach Router, so this hook provides
 // a way to set additional constraints on path params, like Rails

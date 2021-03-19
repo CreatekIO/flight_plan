@@ -3,8 +3,8 @@ const defaultTheme = require('tailwindcss/defaultTheme');
 module.exports = {
   purge: {
     content: [
-      './components/**/*.{js,jsx}',
-      '../../views/**/*.{html,js}.*'
+      './app/packs/components/**/*.{js,jsx}',
+      './app/views/**/*.{html,js}.*'
     ],
     options: {
       safelist: [/task-list-item/]

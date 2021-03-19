@@ -12,8 +12,8 @@ import {
 import NextActionButton from "./NextActionButton";
 import Avatar from "./Avatar";
 import Loading from "./Loading";
-import { getOpenPRs } from "../../reducers/selectors";
-import { isFeatureEnabled } from "../../features";
+import { getOpenPRs } from "../reducers/selectors";
+import { isFeatureEnabled } from "../features";
 
 const menuItemClasses = "block p-2 text-left";
 const countClasses = "w-6 h-6 font-bold leading-6 ml-2 text-center rounded-full bg-gray-400 text-white text-xs";
