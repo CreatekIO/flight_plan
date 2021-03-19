@@ -16,7 +16,7 @@ jobs:
       - image: postgres:12.2-alpine
         environment:
           POSTGRES_PASSWORD: password
-      - image: redis:3.2
+      - image: redis:5.0-alpine
 
     working_directory: ~/repo
 

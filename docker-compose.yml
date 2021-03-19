@@ -76,7 +76,7 @@ services:
       - traefik.http.routers.webpack.tls=true
 
   redis:
-    image: redis:3.2
+    image: redis:5.0-alpine
 
   sidekiq:
     image: createkio/flight_plan:${IMAGE_TAG:-latest}
