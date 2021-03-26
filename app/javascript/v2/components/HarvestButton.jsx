@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import Octicon, { Clock } from "@githubprimer/octicons-react";
 import classNames from "classnames";
 
@@ -48,6 +48,31 @@ const loadHarvestScript = () => new Promise((resolve, reject) => {
     document.body.addEventListener("harvest-event:ready", onReady);
 });
 
+const useAttributesObserver = ({ ignore = [] }) => {
+    const ref = useRef(null);
+    const [extraAttributes, setExtraAttributes] = useState({});
+
+    useEffect(() => {
+        if (!ref.current) return;
+
+        const observer = new MutationObserver(records => {
+            const changes = {};
+            for (const { attributeName, target } of records) {
+                if (!ignore.includes(attributeName)) {
+                    changes[attributeName] = target.getAttribute(attributeName);
+                }
+            }
+
+            setExtraAttributes(previous => ({ ...previous, ...changes }));
+        });
+
+        observer.observe(ref.current, { attributes: true })
+        return () => observer.disconnect();
+    }, [ref.current, ...ignore]);
+
+    return { ref, ...extraAttributes };
+};
+
 const HarvestButton = ({ ticketId }) => {
     const [harvestState, setHarvestState] = useState("idle");
 
@@ -63,6 +88,8 @@ const HarvestButton = ({ ticketId }) => {
     const { slug } = useEntity("repo", repoId);
     const [_, repoName] = slug.split("/");
 
+    const extraProps = useAttributesObserver({ ignore: ["class"] });
+
     return (
         <button
             onClick={onClick}
@@ -75,6 +102,7 @@ const HarvestButton = ({ ticketId }) => {
             data-item={JSON.stringify({ id: number, name: `#${number}: ${title}` })}
             data-group={JSON.stringify({ id: repoName, name: repoName })}
             data-permalink={`https://github.com/${slug}/issues/${number}`}
+            {...extraProps}
         >
             {harvestState === "loading"
                 ? <Loading size="xsmall" className="inline-block mr-2" />
