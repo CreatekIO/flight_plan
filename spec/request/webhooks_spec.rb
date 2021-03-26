@@ -9,9 +9,16 @@ RSpec.describe 'Webhooks', type: :request do
   end
 
   around do |example|
+    previous_value = ActionController::Base.allow_forgery_protection
+
     Sidekiq::Testing.fake! do
-      example.run
-      Sidekiq::Worker.clear_all
+      begin
+        ActionController::Base.allow_forgery_protection = true
+        example.run
+      ensure
+        ActionController::Base.allow_forgery_protection = previous_value
+        Sidekiq::Worker.clear_all
+      end
     end
   end
 
