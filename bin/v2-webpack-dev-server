@@ -11,7 +11,7 @@ env = {
 Dir.chdir(v2_path) do
   Kernel.exec(
     env,
-    File.expand_path('./node14', __dir__),
+    'node',
     File.join(v2_path, 'node_modules/.bin/webpack'),
     'serve',
     '--config', File.join(v2_path, 'webpack-v2.js')
