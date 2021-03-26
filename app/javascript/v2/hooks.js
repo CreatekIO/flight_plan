@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useMatch, useLocation } from "@reach/router";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import ActionCable from "actioncable";
 
 import { isFeatureDisabled } from "../features";
@@ -48,4 +48,10 @@ export const useLocationState = () => {
     const { state } = useLocation();
 
     return state || EMPTY_STATE;
+};
+
+export const useEntity = (rawType, id) => {
+    const type = rawType.endsWith("s") ? rawType : `${rawType}s`;
+
+    return useSelector(({ entities }) => entities[type][id]);
 };
