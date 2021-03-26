@@ -35,6 +35,12 @@ class Ticket < ApplicationRecord
       return ticket
     end
 
+    if remote_issue[:number].blank?
+      Bugsnag.notify('Blank ticket number') do |report|
+        report.add_tab(:debugging, payload: remote_issue, ticket: ticket.attributes)
+      end
+    end
+
     ticket.update_attributes(
       number: remote_issue[:number],
       title: remote_issue[:title],
