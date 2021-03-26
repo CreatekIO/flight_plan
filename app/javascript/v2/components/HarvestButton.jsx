@@ -1,12 +1,31 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Octicon, { Clock } from "@githubprimer/octicons-react";
 import classNames from "classnames";
 
 import { useEntity } from "../hooks";
 
+const notifyHarvestOfButton = element => {
+    const harvest = document.querySelector("#harvest-messaging");
+    if (!harvest) return;
+
+    const event = new CustomEvent("harvest-event:timers:add", {
+        detail: { element }
+    });
+
+    harvest.dispatchEvent(event);
+};
+
 const HarvestButton = ({ ticketId }) => {
+    const [harvestReady, setHarvestReady] = useState(false);
+
     useEffect(() => {
-        if (document.querySelector("script[data-platform-config]")) return;
+        if (document.querySelector("script[data-platform-config]")) {
+            setHarvestReady(true);
+            return;
+        }
+
+        const onReady = () => setHarvestReady(true);
+        document.body.addEventListener("harvest-event:ready", onReady);
 
         const script = document.createElement("script");
         script.src = "https://platform.harvestapp.com/assets/platform.js";
@@ -15,6 +34,8 @@ const HarvestButton = ({ ticketId }) => {
             skipStyling: true
         });
         document.head.appendChild(script);
+
+        return () => document.body.removeEventListener("harvest-event:ready", onReady);
     }, []);
 
     const ref = useRef(null);
@@ -24,20 +45,16 @@ const HarvestButton = ({ ticketId }) => {
     const [_, repoName] = slug.split("/");
 
     useEffect(() => {
-        const harvest = document.querySelector("#harvest-messaging");
-        if (!harvest) return;
         if (!ref.current) return;
+        if (!harvestReady) return;
 
-        const event = new CustomEvent("harvest-event:timers:add", {
-            detail: { element: ref.current }
-        });
-
-        harvest.dispatchEvent(event);
-    }, [ref.current]);
+        notifyHarvestOfButton(ref.current);
+    }, [ref.current, harvestReady]);
 
     return (
         <button
             ref={ref}
+            disabled={!harvestReady}
             type="button"
             className={classNames(
                 "block w-full text-xs text-gray-500 border border-gray-300 rounded px-4 py-1",
