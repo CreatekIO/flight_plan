@@ -1,7 +1,12 @@
 require 'flipper/instrumentation/log_subscriber'
 
 Flipper.configure do |config|
-  features = %i[realtime_updates kpis self_serve_features]
+  features = %i[
+    harvest_button
+    kpis
+    realtime_updates
+    self_serve_features
+  ]
 
   config.default do
     redis = Redis.new(url: ENV[ENV['REDIS_PROVIDER'].presence || 'REDIS_URL'])

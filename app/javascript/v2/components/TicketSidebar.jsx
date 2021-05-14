@@ -9,6 +9,7 @@ import Label, { Milestone } from "./Label";
 import PullRequest from "./PullRequest";
 import Avatar from "./Avatar";
 import HarvestButton from "./HarvestButton";
+import { isFeatureEnabled } from "../../features";
 
 const GroupedPullRequestList = connect(
     (_, { id: boardTicketId }) => ({ entities: { pullRequests: allPRs, boardTickets, repos }}) => {
@@ -97,7 +98,7 @@ const Sidebar = ({
     ticket: { id: ticketId, state, repo: { name: repoName }}
 }) => (
     <div className={classNames("bg-white", className)}>
-        <HarvestButton ticketId={ticketId} />
+        {isFeatureEnabled("harvest_button") && <HarvestButton ticketId={ticketId} />}
 
         <SidebarEntry title="Repo">
             <span className="text-sm text-gray-500">{repoName}</span>
