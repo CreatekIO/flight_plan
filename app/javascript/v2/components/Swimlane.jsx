@@ -1,10 +1,11 @@
 import React, { Fragment, useState, useCallback } from "react";
-import { connect } from "react-redux";
+import { useDispatch } from "react-redux";
 import { Droppable } from "react-beautiful-dnd";
 import classNames from "classnames";
 import { Tooltip } from "@reach/tooltip";
 import Octicon, { Fold, Unfold } from "@githubprimer/octicons-react";
 
+import { useEntity } from "../hooks";
 import TicketCard from "./TicketCard";
 
 import {
@@ -28,23 +29,22 @@ const TicketList = React.memo(({ boardTicketIds, shouldDisplayDuration }) => (
     </Fragment>
 ));
 
-const Swimlane = ({
-    id,
-    name,
-    isCollapsed,
-    board_tickets: boardTicketIds,
-    display_duration: shouldDisplayDuration,
-    next_board_tickets_url: nextBoardTicketsURL,
-    all_board_tickets_loaded: areAllBoardTicketsLoaded,
-    fetchSwimlaneTickets,
-    collapseSwimlane,
-    expandSwimlane
-}) => {
+const Swimlane = ({ id }) => {
     const [isLoadingMore, setIsLoadingMore] = useState(false);
+    const dispatch = useDispatch();
+
+    const {
+        name,
+        isCollapsed,
+        board_tickets: boardTicketIds,
+        display_duration: shouldDisplayDuration,
+        next_board_tickets_url: nextBoardTicketsURL,
+        all_board_tickets_loaded: areAllBoardTicketsLoaded
+    } = useEntity("swimlane", id);
 
     const loadMore = useCallback(() => {
         setIsLoadingMore(true);
-        fetchSwimlaneTickets(nextBoardTicketsURL)
+        dispatch(fetchSwimlaneTickets(nextBoardTicketsURL))
             .finally(() => setIsLoadingMore(false));
     }, [fetchSwimlaneTickets, nextBoardTicketsURL]);
 
@@ -78,7 +78,7 @@ const Swimlane = ({
                             "absolute pointer",
                             { "right-2": !isCollapsed, "right-3 top-2": isCollapsed }
                         )}
-                        onClick={() => isCollapsed ? expandSwimlane(id) : collapseSwimlane(id)}
+                        onClick={() => dispatch(isCollapsed ? expandSwimlane(id) : collapseSwimlane(id))}
                     >
                         <Octicon
                             icon={isCollapsed ? Unfold : Fold}
@@ -123,9 +123,4 @@ const Swimlane = ({
     );
 }
 
-const mapStateToProps = (_, { id }) => ({ entities }) => entities.swimlanes[id];
-
-export default connect(
-    mapStateToProps,
-    { fetchSwimlaneTickets, collapseSwimlane, expandSwimlane }
-)(Swimlane);
+export default Swimlane;
