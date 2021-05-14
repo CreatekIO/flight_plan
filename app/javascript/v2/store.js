@@ -13,7 +13,15 @@ const current = (state = {}, action) => {
     }
 };
 
-const rootReducer = combineReducers({ entities, current });
+const ui = (state = { scrollbarHeight: 0 }, { type, payload }) => {
+    if (type === "ui/scrollbarHeightChanged") {
+        return { ...state, scrollbarHeight: payload.height };
+    } else {
+        return state;
+    }
+};
+
+const rootReducer = combineReducers({ entities, current, ui });
 
 const setupStore = () => configureStore({
     reducer: rootReducer,

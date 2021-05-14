@@ -5,7 +5,7 @@ import update from "immutability-helper";
 
 import Swimlane from "./Swimlane";
 import Loading from "./Loading";
-import { useSubscription } from "../hooks";
+import { useScrollbarHeight, useSubscription } from "../hooks";
 import { fetchBoard } from "../slices/boards";
 import { moveTicket } from "../slices/board_tickets";
 import { fetchNextActions } from "../slices/pull_requests";
@@ -29,6 +29,8 @@ const Board = ({
     subscribeToBoard
 }) => {
     const [isLoading, setLoading] = useState(true);
+
+    useScrollbarHeight();
 
     useEffect(() => {
         fetchBoard(boardId).finally(() => setLoading(false));
