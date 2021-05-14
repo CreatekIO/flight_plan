@@ -27,6 +27,9 @@ class Repo < ApplicationRecord
   octokit_methods :branches, prefix_with: :slug
 
   URL_TEMPLATE = 'https://github.com/%s'.freeze
+  DEFAULT_DEPLOYMENT_BRANCH = 'master'.freeze
+
+  after_initialize :set_defaults
 
   def html_url
     format(URL_TEMPLATE, slug)
@@ -49,7 +52,7 @@ class Repo < ApplicationRecord
 
   def update_merged_tickets
     tickets.unmerged.each do |ticket|
-      if ticket.merged_to?('master')
+      if ticket.merged_to?(deployment_branch)
         ticket.update_attributes(merged: true)
       end
     end
@@ -57,5 +60,11 @@ class Repo < ApplicationRecord
 
   def branch_names
     @branch_names ||= octokit_branches.map { |branch| branch[:name] }
+  end
+
+  private
+
+  def set_defaults
+    self.deployment_branch ||= DEFAULT_DEPLOYMENT_BRANCH
   end
 end

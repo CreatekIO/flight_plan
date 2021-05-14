@@ -10,11 +10,11 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20210218135636) do
+ActiveRecord::Schema.define(version: 2021_05_14_142848) do
 
   # These are extensions that must be enabled in order to support this database
-  enable_extension "plpgsql"
   enable_extension "citext"
+  enable_extension "plpgsql"
 
   create_table "board_repos", force: :cascade do |t|
     t.bigint "board_id"
@@ -248,6 +248,7 @@ ActiveRecord::Schema.define(version: 20210218135636) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "auto_deploy", default: false, null: false
+    t.string "deployment_branch"
   end
 
   create_table "swimlane_transitions", force: :cascade do |t|
