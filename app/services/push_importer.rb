@@ -1,6 +1,4 @@
 class PushImporter
-  MASTER_REF = 'refs/heads/master'.freeze
-
   def self.import(payload, repo)
     new(payload, repo).import
   end
@@ -20,7 +18,7 @@ class PushImporter
       branch = Branch.import(payload, repo)
       return if branch.blank? || branch.destroyed?
 
-      if master_branch?
+      if deployment_branch?
         repo.update_merged_tickets
       elsif ticket_for_issue_number.present?
         branch.update_attributes!(ticket: ticket_for_issue_number)
@@ -33,8 +31,8 @@ class PushImporter
 
   attr_reader :payload, :repo
 
-  def master_branch?
-    payload[:ref] == MASTER_REF
+  def deployment_branch?
+    payload[:ref] == "refs/heads/#{repo.deployment_branch}"
   end
 
   def issue_number
