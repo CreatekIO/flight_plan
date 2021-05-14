@@ -2,8 +2,9 @@ import React from "react";
 import classNames from "classnames";
 
 const SIZES = {
-    small: { width: 24, thickness: 4, classes: "w-5 h-5" },
-    large: { width: 56, thickness: 6, classes: "w-14 h-14" }
+    xsmall: { width: 16, thickness: 3, classes: "w-4 h-5" },
+    small:  { width: 24, thickness: 4, classes: "w-5 h-5" },
+    large:  { width: 56, thickness: 6, classes: "w-14 h-14" }
 };
 
 const Loading = ({ className = null, size = "small" }) => {

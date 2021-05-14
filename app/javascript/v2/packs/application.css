@@ -17,3 +17,7 @@
 [data-reach-tooltip] {
   @apply bg-black border-black text-white rounded shadow-xl text-xs px-2 py-1 z-50;
 }
+
+[hidden] {
+  @apply hidden;
+}

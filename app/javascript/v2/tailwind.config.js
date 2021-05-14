@@ -18,7 +18,8 @@ module.exports = {
           green: '#6cc644',
           red: '#bd2c00',
           purple: '#6e5494'
-        }
+        },
+        'harvest-orange': '#f36c00'
       },
       fontFamily: {
         sans: ['Lato', ...defaultTheme.fontFamily.sans]

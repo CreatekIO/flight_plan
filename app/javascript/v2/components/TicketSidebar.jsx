@@ -8,6 +8,8 @@ import Octicon, { Gear } from "@githubprimer/octicons-react";
 import Label, { Milestone } from "./Label";
 import PullRequest from "./PullRequest";
 import Avatar from "./Avatar";
+import HarvestButton from "./HarvestButton";
+import { isFeatureEnabled } from "../../features";
 
 const GroupedPullRequestList = connect(
     (_, { id: boardTicketId }) => ({ entities: { pullRequests: allPRs, boardTickets, repos }}) => {
@@ -93,9 +95,11 @@ const Sidebar = ({
     milestone: milestoneId,
     labels: labelIds,
     state_durations: stateDurations = [],
-    ticket: { state, repo: { name: repoName }}
+    ticket: { id: ticketId, state, repo: { name: repoName }}
 }) => (
     <div className={classNames("bg-white", className)}>
+        {isFeatureEnabled("harvest_button") && <HarvestButton ticketId={ticketId} />}
+
         <SidebarEntry title="Repo">
             <span className="text-sm text-gray-500">{repoName}</span>
         </SidebarEntry>
