@@ -4318,6 +4318,11 @@ react-remove-scroll@^2.4.1:
     use-callback-ref "^1.2.3"
     use-sidecar "^1.0.1"
 
+react-scrollbar-size@^4.0.0-rc.0:
+  version "4.0.0-rc.0"
+  resolved "https://registry.yarnpkg.com/react-scrollbar-size/-/react-scrollbar-size-4.0.0-rc.0.tgz#f1c47cbeacda60b014f87d18725cd5bb613c2202"
+  integrity sha512-zf73c2DRmWSKh0z/hACKxdjvac1lZX6UmewnGiiZt8Taflg0dOrbBvpb60TA6ZKPvXBoaZke+8NIiLyQ3/5Ncg==
+
 react-style-singleton@^2.1.0:
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/react-style-singleton/-/react-style-singleton-2.1.1.tgz#ce7f90b67618be2b6b94902a30aaea152ce52e66"

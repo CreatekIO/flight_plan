@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Provider } from "react-redux";
+import { Provider, useSelector } from "react-redux";
 import { Router } from "@reach/router";
 
 import ErrorBoundary from "./ErrorBoundary";
@@ -24,15 +24,19 @@ const TicketModalWrapper = ({ owner, repo, number, location: { state }}) => (
 // Use a nested <Router> here instead of a <Match> so that
 // further nested routers don't need to include the full
 // owner-repo-number path in their routes
-const BoardWrapper = ({ children, ...props }) => (
-    <div className="flex flex-col h-screen">
-        <Header boards={flightPlanConfig.boards} boardId={props.boardId} />
-        <Board {...props} />
-        <Router primary={false}>
-            <TicketModal path=":owner/:repo/:number/*" />
-        </Router>
-    </div>
-);
+const BoardWrapper = ({ children, ...props }) => {
+    const scrollbarHeight = useSelector(({ ui: { scrollbarHeight }}) => scrollbarHeight);
+
+    return (
+        <div className="flex flex-col" style={{ height: `calc(100vh - ${scrollbarHeight}px` }}>
+            <Header boards={flightPlanConfig.boards} boardId={props.boardId} />
+            <Board {...props} />
+            <Router primary={false}>
+                <TicketModal path=":owner/:repo/:number/*" />
+            </Router>
+        </div>
+    );
+}
 
 const Application = () => {
     useEffect(() => { store.dispatch(rehydrateStore()) }, []);

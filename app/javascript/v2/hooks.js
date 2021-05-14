@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useMatch, useLocation } from "@reach/router";
 import { useDispatch, useSelector } from "react-redux";
 import ActionCable from "actioncable";
+import useScrollbarSize from "react-scrollbar-size";
 
 import { isFeatureDisabled } from "../features";
 
@@ -54,4 +55,13 @@ export const useEntity = (rawType, id) => {
     const type = rawType.endsWith("s") ? rawType : `${rawType}s`;
 
     return useSelector(({ entities }) => entities[type][id]);
+};
+
+export const useScrollbarHeight = () => {
+    const { height } = useScrollbarSize();
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        dispatch({ type: "ui/scrollbarHeightChanged", payload: { height }});
+    }, [height]);
 };
