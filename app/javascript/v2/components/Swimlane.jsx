@@ -1,5 +1,5 @@
 import React, { Fragment, useState, useCallback } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Droppable } from "react-beautiful-dnd";
 import classNames from "classnames";
 import { Tooltip } from "@reach/tooltip";
@@ -29,6 +29,8 @@ const TicketList = React.memo(({ boardTicketIds, shouldDisplayDuration }) => (
     </Fragment>
 ));
 
+const HEADER_HEIGHT = 98; // px
+
 const Swimlane = ({ id }) => {
     const [isLoadingMore, setIsLoadingMore] = useState(false);
     const dispatch = useDispatch();
@@ -47,6 +49,9 @@ const Swimlane = ({ id }) => {
         dispatch(fetchSwimlaneTickets(nextBoardTicketsURL))
             .finally(() => setIsLoadingMore(false));
     }, [fetchSwimlaneTickets, nextBoardTicketsURL]);
+
+    const scrollbarHeight = useSelector(({ ui: { scrollbarHeight }}) => scrollbarHeight);
+    const heightOffset = HEADER_HEIGHT + scrollbarHeight;
 
     return (
         <div
@@ -96,7 +101,10 @@ const Swimlane = ({ id }) => {
                             "bg-blue-50": isDraggingOver,
                             "hidden": isCollapsed
                         })}
-                        style={{ ...droppableProps.style, height: 'calc(100vh - 98px)' }}
+                        style={{
+                            ...droppableProps.style,
+                            height: `calc(100vh - ${heightOffset}px)`
+                        }}
                     >
                         {isCollapsed || (
                             <Fragment>
