@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe PushImporter do
   describe '#import' do
-    let(:repo) { create(:repo) }
+    let(:repo) { create(:repo, deployment_branch: 'main') }
     let(:payload) { webhook_payload(:branch_updated_push).merge!(ref: ref) }
 
     subject { described_class.new(payload, repo) }
@@ -27,8 +27,8 @@ RSpec.describe PushImporter do
       let(:branch) { create(:branch, repo: repo, name: branch_name) }
       let(:ref) { "refs/heads/#{branch_name}" }
 
-      context 'on master' do
-        let(:branch_name) { 'master' }
+      context 'on Repo#deployment_branch' do
+        let(:branch_name) { repo.deployment_branch }
 
         it 'imports the branch' do
           subject.import

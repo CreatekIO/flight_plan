@@ -14,7 +14,7 @@ RSpec.describe ReleaseManager, type: :service do
   end
 
   describe '#open_pr?' do
-    let(:repo) { create(:repo) }
+    let(:repo) { create(:repo, deployment_branch: 'main') }
     let(:board) { create(:board, repos: [repo]) }
     let(:slug) { repo.slug }
 
@@ -22,7 +22,7 @@ RSpec.describe ReleaseManager, type: :service do
       stub_gh_get('pulls') { body }
     end
 
-    context 'when there are no PRs open to master' do
+    context 'when there are no PRs open to Repo#deployment_branch' do
       let(:body) { [] }
 
       it 'returns false' do
@@ -30,10 +30,10 @@ RSpec.describe ReleaseManager, type: :service do
       end
     end
 
-    context 'when there is an open non-release PR to master' do
+    context 'when there is an open non-release PR to Repo#deployment_branch' do
       let(:body) do
         [
-          base: { ref: 'master' },
+          base: { ref: repo.deployment_branch },
           head: { ref: 'hotfix/fix-bugs' }
         ]
       end
@@ -43,10 +43,10 @@ RSpec.describe ReleaseManager, type: :service do
       end
     end
 
-    context 'when there is an open release PR to master' do
+    context 'when there is an open release PR to Repo#deployment_branch' do
       let(:body) do
         [
-          base: { ref: 'master' },
+          base: { ref: repo.deployment_branch },
           head: { ref: 'release/20180102-103000' }
         ]
       end
@@ -60,6 +60,7 @@ RSpec.describe ReleaseManager, type: :service do
   describe 'create_release' do
     include_context 'board with swimlanes'
 
+    let(:repo) { create(:repo, slug: slug, deployment_branch: 'main') }
     let(:deploying) { create(:swimlane, name: 'Deploying', board: board, position: 2) }
 
     def self.create_ticket(name)
@@ -73,7 +74,7 @@ RSpec.describe ReleaseManager, type: :service do
     create_ticket(:non_deploying_ticket)
     let(:unmerged_tickets) { [unmerged_ticket_1, unmerged_ticket_2] }
 
-    let(:master_sha) { SecureRandom.hex(20) }
+    let(:deployment_branch_head_sha) { SecureRandom.hex(20) }
     let(:release_branch_name) { Time.now.strftime('release/%Y%m%d-%H%M%S') }
 
     def branch_name(ticket)
@@ -91,7 +92,7 @@ RSpec.describe ReleaseManager, type: :service do
 
       stub_gh_get('branches') do
         [
-          { name: 'master' },
+          { name: repo.deployment_branch },
           { name: 'configuration_changes' },
           *unmerged_tickets.map { |ticket| { name: branch_name(ticket) } },
           { name: branch_name(non_deploying_ticket) }
@@ -99,20 +100,22 @@ RSpec.describe ReleaseManager, type: :service do
       end
 
       unmerged_tickets.each do |ticket|
-        stub_gh_get("compare/master...#{URI.escape branch_name(ticket)}") do
+        stub_gh_get("compare/#{repo.deployment_branch}...#{URI.escape branch_name(ticket)}") do
           { total_commits: 2 }
         end
       end
 
-      stub_gh_get("compare/master...#{URI.escape branch_name(non_deploying_ticket)}") do
+      stub_gh_get("compare/#{repo.deployment_branch}...#{URI.escape branch_name(non_deploying_ticket)}") do
         { total_commits: 2 }
       end
 
-      stub_gh_get('git/refs/heads/master') { { object: { sha: master_sha } } }
+      stub_gh_get("git/refs/heads/#{repo.deployment_branch}") do
+        { object: { sha: deployment_branch_head_sha } }
+      end
     end
 
     let!(:branch_request) do
-      stub_gh_post('git/refs', ref: "refs/heads/#{release_branch_name}", sha: master_sha)
+      stub_gh_post('git/refs', ref: "refs/heads/#{release_branch_name}", sha: deployment_branch_head_sha)
     end
 
     around do |example|
@@ -132,7 +135,7 @@ RSpec.describe ReleaseManager, type: :service do
       end
 
       let!(:pr_request) do
-        stub_gh_post('pulls', hash_including(base: 'master', head: release_branch_name)) do
+        stub_gh_post('pulls', hash_including(base: repo.deployment_branch, head: release_branch_name)) do
           { html_url: "https://github.com/#{slug}/pulls/1" }
         end
       end
@@ -169,7 +172,7 @@ RSpec.describe ReleaseManager, type: :service do
 
       let!(:pr_request) do
         params = hash_including(
-          base: 'master',
+          base: repo.deployment_branch,
           head: release_branch_name,
           title: /(CONFLICTS)/i,
           body: /could not merge all branches/i
@@ -202,7 +205,7 @@ RSpec.describe ReleaseManager, type: :service do
         end
         stub_gh_post('merges', hash_including(base: release_branch_name, head: 'configuration_changes'))
 
-        stub_gh_post('pulls', hash_including(base: 'master', head: release_branch_name), status: 503)
+        stub_gh_post('pulls', hash_including(base: repo.deployment_branch, head: release_branch_name), status: 503)
       end
 
       let!(:branch_deletion_request) do
@@ -236,8 +239,8 @@ RSpec.describe ReleaseManager, type: :service do
       end
 
       let!(:pr_request) do
-        stub_gh_post('pulls', hash_including(base: 'master', head: release_branch_name), status: 422) do
-          { message: "No commits between master and #{release_branch_name}" }
+        stub_gh_post('pulls', hash_including(base: repo.deployment_branch, head: release_branch_name), status: 422) do
+          { message: "No commits between #{repo.deployment_branch} and #{release_branch_name}" }
         end
       end
 
@@ -259,7 +262,7 @@ RSpec.describe ReleaseManager, type: :service do
   end
 
   describe '#merge_prs' do
-    let(:repo) { create(:repo) }
+    let(:repo) { create(:repo, deployment_branch: 'main') }
     let(:board) { create(:board, repos: [repo]) }
     let(:slug) { repo.slug }
 
@@ -271,7 +274,7 @@ RSpec.describe ReleaseManager, type: :service do
       stub_gh_put('pulls/{number}/merge')
     end
 
-    context 'when there are no PRs open to master' do
+    context 'when there are no PRs open to Repo#deployment_branch' do
       let(:body) { [] }
 
       it 'does not merge anything' do
@@ -284,12 +287,12 @@ RSpec.describe ReleaseManager, type: :service do
       end
     end
 
-    context 'when there is an open non-release PR to master' do
+    context 'when there is an open non-release PR to Repo#deployment_branch' do
       let(:body) do
         [
           number: 1,
           title: 'Hotfix',
-          base: { ref: 'master' },
+          base: { ref: repo.deployment_branch },
           head: { ref: 'hotfix/fix-bugs' }
         ]
       end
@@ -304,12 +307,12 @@ RSpec.describe ReleaseManager, type: :service do
       end
     end
 
-    context 'when there is an open release PR to master' do
+    context 'when there is an open release PR to Repo#deployment_branch' do
       let(:body) do
         [
           number: 1,
           title: 'Release',
-          base: { ref: 'master' },
+          base: { ref: repo.deployment_branch },
           head: { ref: 'release/20180102-103000' }
         ]
       end
@@ -329,7 +332,7 @@ RSpec.describe ReleaseManager, type: :service do
         [
           number: 1,
           title: 'Release (CONFLICTS)',
-          base: { ref: 'master' },
+          base: { ref: repo.deployment_branch },
           head: { ref: 'release/20180102-103000' }
         ]
       end
@@ -350,13 +353,13 @@ RSpec.describe ReleaseManager, type: :service do
           {
             number: 1,
             title: 'Hotfix',
-            base: { ref: 'master' },
+            base: { ref: repo.deployment_branch },
             head: { ref: 'hotfix/fix-bugs' }
           },
           {
             number: 2,
             title: 'Release',
-            base: { ref: 'master' },
+            base: { ref: repo.deployment_branch },
             head: { ref: 'release/20180102-103000' }
           }
         ]

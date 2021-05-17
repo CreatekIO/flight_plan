@@ -19,7 +19,7 @@ class ReleaseManager
     announce_pr_opened if create_pull_request
   end
 
-  def merge_prs(branch = 'master')
+  def merge_prs(branch = repo.deployment_branch)
     repo.pull_requests.each do |pr|
       next unless release_pr?(pr, base: branch)
       next if pr[:title].include?('CONFLICTS')
@@ -31,14 +31,14 @@ class ReleaseManager
   end
 
   def unmerged_tickets
-    @unmerged_tickets ||= tickets.reject { |t| t.merged_to?('master') }
+    @unmerged_tickets ||= tickets.reject { |t| t.merged_to?(repo.deployment_branch) }
   end
 
   private
 
   attr_reader :board, :repo, :release_branch_name, :merge_conflicts, :remote_pr
 
-  def release_pr?(remote_pr, base: 'master')
+  def release_pr?(remote_pr, base: repo.deployment_branch)
     remote_pr[:base][:ref] == base && remote_pr[:head][:ref].starts_with?('release/')
   end
 
@@ -74,7 +74,7 @@ class ReleaseManager
 
     log 'Creating pull request...'
     @remote_pr = repo.create_pull_request(
-      'master',
+      repo.deployment_branch,
       release_branch_name,
       release_pr_name,
       pr_body
@@ -90,7 +90,7 @@ class ReleaseManager
 
   def initialize_release_branch
     log "Creating release branch '#{release_branch_name}' on '#{repo.slug}'..."
-    repo.create_ref("heads/#{release_branch_name}", master.object.sha)
+    repo.create_ref("heads/#{release_branch_name}", deployment_branch_head_sha)
     log 'done'
   end
 
@@ -118,8 +118,8 @@ class ReleaseManager
     @branches_to_merge ||= unmerged_tickets.flat_map(&:branch_names) + extra_branches
   end
 
-  def master
-    @master ||= repo.refs('heads/master')
+  def deployment_branch_head_sha
+    @deployment_branch_head_sha ||= repo.refs("heads/#{repo.deployment_branch}").object.sha
   end
 
   def all_branches_conflict?
