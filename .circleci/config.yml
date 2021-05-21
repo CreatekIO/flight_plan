@@ -61,10 +61,8 @@ jobs:
 
             bin/rake db:reset
       - run:
-          name: Build V2 assets for system specs
-          environment:
-            NODE_ENV: test
-          command: bin/rake v2:compile
+          name: Build packs for system specs
+          command: bin/rake webpacker:compile
       - run:
           name: Run Specs
           environment:

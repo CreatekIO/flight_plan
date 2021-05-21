@@ -23,7 +23,6 @@ services:
       - .:/flight_plan
       - gems:/usr/local/bundle
       - node_modules:/flight_plan/node_modules
-      - node_modules_v2:/flight_plan/app/javascript/v2/node_modules
     depends_on:
       - db
       - redis
@@ -67,7 +66,6 @@ services:
       - .:/flight_plan
       - gems:/usr/local/bundle
       - node_modules:/flight_plan/node_modules
-      - node_modules_v2:/flight_plan/app/javascript/v2/node_modules
     expose:
       - 443
     labels:
@@ -99,4 +97,3 @@ volumes:
   postgresql_data:
   gems:
   node_modules:
-  node_modules_v2:

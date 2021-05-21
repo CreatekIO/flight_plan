@@ -29,9 +29,6 @@ WORKDIR /flight_plan
 COPY package.json yarn.lock node-sass-stub ./
 RUN yarn install
 
-COPY app/javascript/v2/package.json app/javascript/v2/yarn.lock ./app/javascript/v2/
-RUN yarn --cwd app/javascript/v2 install
-
 COPY Gemfile Gemfile.lock ./
 RUN bundle config build.nokogiri --use-system-libraries && \
   bundle install --jobs "$(getconf _NPROCESSORS_ONLN)"
