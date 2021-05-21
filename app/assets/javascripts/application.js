@@ -12,7 +12,6 @@
 //
 //= require rails-ujs
 //= require jquery3
-//= require semantic-ui-css/semantic
 //= require flight-plan-app
 //= require_tree ./flight-plan/common
 //= require_tree ./flight-plan

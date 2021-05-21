@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { connect } from "react-redux";
 import { DragDropContext } from "react-beautiful-dnd";
-import update from "immutability-helper";
 
 import Swimlane from "./Swimlane";
 import Loading from "./Loading";
