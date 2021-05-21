@@ -3,16 +3,6 @@ module ApplicationHelper
     @hide_container
   end
 
-  def polyfill_url
-    query_string = {
-      features: 'fetch|gated'
-    }
-
-    minify = Rails.env.production? ? '.min' : ''
-
-    "https://cdn.polyfill.io/v2/polyfill#{minify}.js?#{query_string.to_query}"
-  end
-
   def calculate_percentage(number, total)
     return '0%' if total.zero?
 
