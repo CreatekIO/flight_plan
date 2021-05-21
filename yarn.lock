@@ -4854,6 +4854,11 @@ raf-schd@^4.0.2:
   resolved "https://registry.yarnpkg.com/raf-schd/-/raf-schd-4.0.2.tgz#bd44c708188f2e84c810bf55fcea9231bcaed8a0"
   integrity sha512-VhlMZmGy6A6hrkJWHLNTGl5gtgMUm+xfGza6wbwnE914yeQ5Ybm18vgM734RZhMgfw4tacUrWseGZlpUrrakEQ==
 
+rails-ujs@5.2.4-5:
+  version "5.2.4-5"
+  resolved "https://registry.yarnpkg.com/rails-ujs/-/rails-ujs-5.2.4-5.tgz#a272032bcf87f155f46216a0eac9936dbecbe2a8"
+  integrity sha512-ajVYoQ2pR7aey83XL7GiYDp4RGDjgBLMGIKupAAzaZlRhcC51mU1zc34qdHx2src+x0E5hwtOF17C37CHkh/Ag==
+
 randombytes@^2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/randombytes/-/randombytes-2.1.0.tgz#df6f84372f0270dc65cdf6291349ab7a473d4f2a"
