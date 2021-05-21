@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Provider, useSelector } from "react-redux";
 import { Router } from "@reach/router";
 
@@ -39,7 +39,14 @@ const BoardWrapper = ({ children, ...props }) => {
 }
 
 const Application = () => {
-    useEffect(() => { store.dispatch(rehydrateStore()) }, []);
+    const [rehydrated, setRehydrated] = useState(false);
+
+    useEffect(() => {
+        store.dispatch(rehydrateStore())
+        setRehydrated(true);
+    }, []);
+
+    if (!rehydrated) return null;
 
     return (
         <ErrorBoundary>
