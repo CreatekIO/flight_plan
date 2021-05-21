@@ -39,7 +39,11 @@ export const useSubscription = (channel, id) => {
             { received: dispatch }
         );
 
-        return subscription.unsubscribe;
+        return () => {
+            try {
+                subscription.unsubscribe();
+            } catch(_) {}
+        };
     }, [channel, id])
 };
 
