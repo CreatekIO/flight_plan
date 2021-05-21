@@ -18,7 +18,6 @@ gem 'flipper-redis'
 gem 'github_webhook'
 gem 'haml'
 gem 'jbuilder'
-gem 'jquery-rails'
 gem 'octokit'
 
 # upgrade once Devise updated
@@ -29,11 +28,8 @@ gem 'pg'
 gem 'puma'
 gem 'ranked-model'
 gem 'redis-namespace'
-gem 'sass-rails'
 gem 'sidekiq'
 gem 'slack-ruby-client'
-gem 'sprockets'
-gem 'uglifier'
 gem 'webpacker', '6.0.0.beta.6'
 
 group :development, :test do

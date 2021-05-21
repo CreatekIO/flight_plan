@@ -26,7 +26,7 @@ RUN apk add \
 
 WORKDIR /flight_plan
 
-COPY package.json yarn.lock node-sass-stub ./
+COPY package.json yarn.lock ./
 RUN yarn install
 
 COPY Gemfile Gemfile.lock ./
