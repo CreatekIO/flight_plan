@@ -49,6 +49,6 @@ class Webhook::GithubController < Webhook::BaseController
   end
 
   def repo
-    @repo ||= Repo.find_by!(slug: json_body[:repository][:full_name])
+    @repo ||= Repo.find_by!(remote_id: json_body[:repository][:id])
   end
 end

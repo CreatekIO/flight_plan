@@ -63,7 +63,7 @@ class Ticket < ApplicationRecord
   def self.find_by_remote(remote_issue, remote_repo)
     ticket = Ticket.find_or_initialize_by(remote_id: remote_issue[:id])
     if ticket.repo_id.blank?
-      ticket.repo = Repo.find_by!(slug: remote_repo[:full_name])
+      ticket.repo = Repo.find_by!(remote_id: remote_repo[:id])
     end
     ticket
   end

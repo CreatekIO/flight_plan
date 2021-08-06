@@ -54,7 +54,7 @@ class PullRequest < ApplicationRecord
   def self.find_by_remote(remote_pr, remote_repo)
     pull_request = find_or_initialize_by(remote_id: remote_pr[:id])
     if pull_request.repo_id.blank?
-      pull_request.repo = Repo.find_by!(slug: remote_repo[:full_name])
+      pull_request.repo = Repo.find_by!(remote_id: remote_repo[:id])
     end
     pull_request
   end

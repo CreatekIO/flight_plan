@@ -16,7 +16,7 @@ RSpec.describe TicketCreationService do
     end
 
     let(:remote_ticket) do
-      { remote_id: -1, labels: [], assignees: [] }
+      { id: -1, labels: [], assignees: [] }
     end
 
     let!(:issue_request) do
@@ -59,7 +59,11 @@ RSpec.describe TicketCreationService do
         )
       end
       let(:remote_ticket) do
-        { remote_id: -1, labels: [{ id: label.remote_id, name: label.name}], assignees: [] }
+        {
+          id: -1,
+          labels: [{ id: label.remote_id, name: label.name}],
+          assignees: []
+        }
       end
 
       it 'allows a ticket to be created with a specified swimlane' do
