@@ -43,11 +43,12 @@ class CircleciBuildsCalculator
   end
 
   def builds_for_quarter
-    @builds_for_quarter ||= CommitStatus.joins(:repo, :branches).where(
+    @builds_for_quarter ||= CommitStatus.joins(:repo, :branches).merge(
+      Repo.with_slugs(SLUG)
+    ).where(
       remote_created_at: quarter.as_time_range,
       context: CONTEXTS,
       state: STATES,
-      repos: { slug: REPOS },
       branches: { name: BRANCH_NAMES }
     ).group(year_and_month.to_sql, :state, Repo.arel_table[:slug]).distinct.count
   end

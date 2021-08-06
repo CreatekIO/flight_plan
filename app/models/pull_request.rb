@@ -92,11 +92,12 @@ class PullRequest < ApplicationRecord
 
   def update_pull_request_connections
     new_connections = referenced_issues.map do |issue|
-      query = { repos: { slug: issue[:repo] }, tickets: { number: issue[:number] } }
-      existing = pull_request_connections.joins(ticket: :repo).find_by(query)
+      query = Repo.with_slug(issue[:repo]).where(tickets: { number: issue[:number] })
+
+      existing = pull_request_connections.joins(ticket: :repo).merge(query).first
       next(existing) if existing.present?
 
-      matching_ticket = associated_tickets.find_by(query)
+      matching_ticket = associated_tickets.merge(query).first
       next if matching_ticket.blank?
 
       pull_request_connections.build(ticket: matching_ticket)

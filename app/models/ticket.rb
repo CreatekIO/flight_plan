@@ -60,13 +60,18 @@ class Ticket < ApplicationRecord
     ticket
   end
 
+  def self.with_slug_and_number(slug, number)
+    joins(:repo).merge(Repo.with_slug(slug)).find_by(number: number)
+  end
+
+  def self.find_by_slug_and_number(slug, number)
+    with_slug_and_number(slug, number).first
+  end
+
   def self.find_by_html_url(html_url)
     org, repo_name, _, issue_number = URI.parse(html_url).path.split('/')
 
-    joins(:repo).find_by(
-      repos: { slug: "#{org}/#{repo_name}" },
-      tickets: { number: issue_number }
-    )
+    find_by_slug_and_number("#{org}/#{repo_name}", issue_number)
   rescue URI::Error
     nil
   end

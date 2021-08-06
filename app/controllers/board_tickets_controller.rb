@@ -30,10 +30,9 @@ class BoardTicketsController < AuthenticatedController
     scope = @board.board_tickets
 
     @board_ticket = if params[:slug]
-      scope.joins(ticket: :repo).find_by!(
-        repos: { slug: params[:slug] },
-        tickets: { number: params[:number] }
-      )
+      scope.joins(ticket: :repo).merge(
+        Ticket.with_slug_and_number(params[:slug], params[:number])
+      ).first!
     else
       scope.find(params[:id])
     end
