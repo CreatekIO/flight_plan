@@ -13,7 +13,7 @@ class Comment < ApplicationRecord
 
     if comment.new_record?
       comment.ticket = if remote_issue.present?
-        Ticket.find_by_remote(remote_issue, id: repo.remote_id)
+        repo.tickets.find_or_initialize_by(remote_id: remote_issue[:id])
       else
         Ticket.find_by_html_url(remote_comment[:html_url])
       end

@@ -18,7 +18,7 @@ class TicketCreationService
   def create_ticket!
     Ticket.transaction do
       remote_ticket = create_remote_ticket
-      Ticket.import(remote_ticket, id: repo.remote_id)
+      Ticket.import(remote_ticket.to_hash, repo)
     end
   end
 

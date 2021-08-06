@@ -68,7 +68,7 @@ RSpec.describe TicketRefresher do
         expect(gh_issue_stub).to have_been_requested
         expect(Ticket).to have_received(:import).with(
           gh_ticket_payload,
-          full_name: repo.slug
+          repo
         )
       end
     end

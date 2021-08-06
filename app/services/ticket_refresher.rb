@@ -20,7 +20,7 @@ class TicketRefresher
   attr_reader :ticket
 
   def update_ticket
-    @ticket = Ticket.import(gh_ticket, remote_id: repo.remote_id)
+    @ticket = Ticket.import(gh_ticket, repo)
   end
 
   def update_ticket_comments
