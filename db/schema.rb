@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_07_16_145236) do
+ActiveRecord::Schema.define(version: 2021_08_06_144119) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
@@ -258,6 +258,8 @@ ActiveRecord::Schema.define(version: 2021_07_16_145236) do
     t.datetime "updated_at", null: false
     t.boolean "auto_deploy", default: false, null: false
     t.string "deployment_branch"
+    t.bigint "remote_id"
+    t.index ["remote_id"], name: "index_repos_on_remote_id", unique: true
   end
 
   create_table "swimlane_transitions", force: :cascade do |t|

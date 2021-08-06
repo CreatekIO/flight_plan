@@ -44,17 +44,40 @@ RSpec.describe 'Releases', type: :request do
     board.update(deploy_swimlane: swimlane)
   end
 
+  attr_reader :slug
+
+  def with_each_slug_from(*repos)
+    repos.each do |repo|
+      begin
+        previous_slug = @slug
+        @slug = repo.slug
+        yield
+      ensure
+        @slug = previous_slug
+      end
+    end
+  end
+
   describe 'POST' do
     it 'creates a release' do
-      stub_gh_remote_branches
-      stub_gh_diff_feature_branch_to_master(feature_branch_name_1)
-      stub_gh_diff_feature_branch_to_master(feature_branch_name_2)
-      stub_gh_get_master_sha
-      stub_gh_create_release_branch
-      stub_gh_merge_feature_branch(feature_branch_name_1)
-      stub_gh_merge_feature_branch(feature_branch_name_2)
-      stub_gh_create_pull_request(ticket_1)
-      stub_gh_create_pull_request(ticket_2)
+      with_each_slug_from(repo_1, repo_2) do
+        stub_gh_remote_branches
+        stub_gh_get_master_sha
+        stub_gh_create_release_branch
+      end
+
+      with_each_slug_from(repo_1) do
+        stub_gh_diff_feature_branch_to_master(feature_branch_name_1)
+        stub_gh_merge_feature_branch(feature_branch_name_1)
+        stub_gh_create_pull_request(ticket_1)
+      end
+
+      with_each_slug_from(repo_2) do
+        stub_gh_diff_feature_branch_to_master(feature_branch_name_2)
+        stub_gh_merge_feature_branch(feature_branch_name_2)
+        stub_gh_create_pull_request(ticket_2)
+      end
+
       stub_slack_message
 
       # fix date/time to ensure release branch name matches
@@ -79,6 +102,8 @@ RSpec.describe 'Releases', type: :request do
     end
 
     context 'when a single repo_id is provided' do
+      let(:slug) { repo_1.slug }
+
       let(:release_params) {
         {
           release: {
@@ -116,75 +141,32 @@ RSpec.describe 'Releases', type: :request do
   end
 
   def stub_gh_remote_branches
-    stub_request(
-      :get,
-      'https://api.github.com/repos/user/repo_name/branches?per_page=100'
-    ).to_return(
-      status: :ok,
-      body: remote_branch_names
-    )
+    stub_gh_get('branches') { remote_branch_names }
   end
 
   def stub_gh_diff_feature_branch_to_master(branch)
-    stub_request(
-      :get,
-      "https://api.github.com/repos/user/repo_name/compare/master...origin/#{URI::encode(branch)}"
-    ).to_return(
-      status: :ok,
-      body: remote_commits.to_json,
-      headers: application_json
-    )
+    stub_gh_get("compare/master...origin/#{URI.encode(branch)}") { remote_commits }
   end
 
   def stub_gh_get_master_sha
-    stub_request(
-      :get,
-      'https://api.github.com/repos/user/repo_name/git/refs/heads/master?per_page=100'
-    ).to_return(
-      status: :ok,
-      body: remote_master.to_json,
-      headers: application_json
-    )
+    stub_gh_get('git/refs/heads/master') { remote_master }
   end
 
   def stub_gh_create_release_branch
-    stub_request(
-      :post,
-      'https://api.github.com/repos/user/repo_name/git/refs'
-    ).with(
-      body: create_branch_params.to_json
-    ).to_return(
-      status: :ok,
-      headers: application_json
-    )
+    stub_gh_post('git/refs', create_branch_params)
   end
 
   def stub_gh_merge_feature_branch(feature_branch_name)
-    merge_params = {
+    stub_gh_post(
+      'merges',
       base: release_branch_name,
       head: "origin/#{feature_branch_name}",
       commit_message: "Merging origin/#{feature_branch_name} into release"
-    }
-    stub_request(
-      :post,
-      'https://api.github.com/repos/user/repo_name/merges'
-    ).with(
-      body: merge_params
-    ).to_return(
-      status: :ok
     )
   end
 
   def stub_gh_create_pull_request(ticket)
-    stub_request(
-      :post,
-      'https://api.github.com/repos/user/repo_name/pulls'
-    ).with(
-      body: pull_request_params(ticket)
-    ).to_return(
-      body: pull_request_response.to_json,
-      headers: application_json
-    )
+    stub_gh_post('pulls', pull_request_params(ticket)) { pull_request_response }
   end
 
   def stub_slack_message

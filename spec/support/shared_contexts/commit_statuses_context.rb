@@ -23,8 +23,17 @@ RSpec.shared_context 'commit statuses' do
     end
 
     def self.repos
+      @repo_count ||= 0
+
       @repos ||= Hash.new do |cache, name|
-        cache[name] = FactoryBot.create(:repo, name: name, slug: "CreatekIO/#{name}")
+        @repo_count += 1
+
+        cache[name] = FactoryBot.create(
+          :repo,
+          name: name,
+          slug: "CreatekIO/#{name}",
+          remote_id: 200_000_000 + @repo_count
+        )
       end
     end
 
