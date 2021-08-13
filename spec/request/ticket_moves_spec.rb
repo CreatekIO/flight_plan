@@ -102,7 +102,13 @@ RSpec.describe TicketMovesController, type: :request do
       let(:destination_position) { 0 }
 
       let(:expected_duration) do
-        Time.now.during_business_hours? ? '< 1h' : '1h'
+        if Time.current.during_business_hours?
+          '< 1h'
+        elsif Date.today.friday?
+          '1d'
+        else
+          '1h'
+        end
       end
 
       it 'moves ticket to new swimlane in correct position' do
