@@ -32,7 +32,8 @@ RSpec.describe IssueNumberExtractor do
 
       [
         *nums.map { |n| { repo: repo.slug, number: n } },
-        *nums.map { |n| { repo: 'another/repo_name', number: n } }
+        *nums.map { |n| { repo: 'another/repo_name', number: n } },
+        *nums.map { |n| { repo: 'referencing/repo_by_url', number: n } }
       ]
     end
 
@@ -51,6 +52,13 @@ RSpec.describe IssueNumberExtractor do
         connects another/repo_name#32
         Connected another/repo_name#43
         connected another/repo_name#54
+
+        Connect https://github.com/referencing/repo_by_url/issues/1
+        connect https://github.com/referencing/repo_by_url/issues/10
+        Connects https://github.com/referencing/repo_by_url/issues/21
+        connects https://github.com/referencing/repo_by_url/issues/32
+        Connected https://github.com/referencing/repo_by_url/issues/43
+        connected https://github.com/referencing/repo_by_url/issues/54
       TEXT
 
       expect(described_class.connections(text, current_repo: repo)).to match_array(
@@ -73,6 +81,13 @@ RSpec.describe IssueNumberExtractor do
         connects to another/repo_name#32
         Connected to another/repo_name#43
         connected to another/repo_name#54
+
+        Connect to https://github.com/referencing/repo_by_url/issues/1
+        connect to https://github.com/referencing/repo_by_url/issues/10
+        Connects to https://github.com/referencing/repo_by_url/issues/21
+        connects to https://github.com/referencing/repo_by_url/issues/32
+        Connected to https://github.com/referencing/repo_by_url/issues/43
+        connected to https://github.com/referencing/repo_by_url/issues/54
       TEXT
 
       expect(described_class.connections(text, current_repo: repo)).to match_array(
