@@ -61,7 +61,7 @@ class Ticket < ApplicationRecord
   end
 
   def self.with_slug_and_number(slug, number)
-    joins(:repo).merge(Repo.with_slug(slug)).find_by(number: number)
+    joins(:repo).merge(Repo.with_slug(slug)).where(number: number)
   end
 
   def self.find_by_slug_and_number(slug, number)
