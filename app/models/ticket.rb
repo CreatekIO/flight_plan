@@ -26,55 +26,54 @@ class Ticket < ApplicationRecord
 
   DELETED_ACTIONS = %w[deleted transferred].freeze
 
-  def self.import(remote_issue, remote_repo, action: nil)
-    remote_issue = HashWithIndifferentAccess.new(remote_issue)
-    ticket = find_by_remote(remote_issue, remote_repo)
+  def self.import(payload, repo, action: nil)
+    payload = HashWithIndifferentAccess.new(payload)
+    return if payload[:pull_request].present? # actually a PR, ignore
+
+    ticket = repo.tickets.find_or_initialize_by(remote_id: payload.fetch(:id))
 
     if DELETED_ACTIONS.include?(action)
       ticket.destroy if ticket.persisted?
       return ticket
     end
 
-    if remote_issue[:number].blank?
+    if payload[:number].blank?
       Bugsnag.notify('Blank ticket number') do |report|
-        report.add_tab(:debugging, payload: remote_issue, ticket: ticket.attributes)
+        report.add_tab(:debugging, payload: payload, ticket: ticket.attributes)
       end
     end
 
     ticket.update_attributes(
-      number: remote_issue[:number],
-      title: remote_issue[:title],
-      body: remote_issue[:body],
-      state: remote_issue[:state],
-      remote_created_at: remote_issue[:created_at],
-      remote_updated_at: remote_issue[:updated_at],
-      creator_remote_id: remote_issue.dig(:user, :id),
-      creator_username: remote_issue.dig(:user, :login),
-      milestone: Milestone.import(remote_issue[:milestone], ticket.repo),
-      remote_closed_at: remote_issue[:closed_at]
+      number: payload[:number],
+      title: payload[:title],
+      body: payload[:body],
+      state: payload[:state],
+      remote_created_at: payload[:created_at],
+      remote_updated_at: payload[:updated_at],
+      creator_remote_id: payload.dig(:user, :id),
+      creator_username: payload.dig(:user, :login),
+      milestone: Milestone.import(payload[:milestone], ticket.repo),
+      remote_closed_at: payload[:closed_at]
     )
 
-    ticket.update_board_tickets_from_remote(remote_issue)
-    ticket.update_labels_from_remote(remote_issue)
-    ticket.update_assignments_from_remote(remote_issue)
+    ticket.update_board_tickets_from_remote(payload)
+    ticket.update_labels_from_remote(payload)
+    ticket.update_assignments_from_remote(payload)
     ticket
   end
 
-  def self.find_by_remote(remote_issue, remote_repo)
-    ticket = Ticket.find_or_initialize_by(remote_id: remote_issue[:id])
-    if ticket.repo_id.blank?
-      ticket.repo = Repo.find_by!(slug: remote_repo[:full_name])
-    end
-    ticket
+  def self.with_slug_and_number(slug, number)
+    joins(:repo).merge(Repo.with_slug(slug)).where(number: number)
+  end
+
+  def self.find_by_slug_and_number(slug, number)
+    with_slug_and_number(slug, number).first
   end
 
   def self.find_by_html_url(html_url)
     org, repo_name, _, issue_number = URI.parse(html_url).path.split('/')
 
-    joins(:repo).find_by(
-      repos: { slug: "#{org}/#{repo_name}" },
-      tickets: { number: issue_number }
-    )
+    find_by_slug_and_number("#{org}/#{repo_name}", issue_number)
   rescue URI::Error
     nil
   end

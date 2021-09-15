@@ -7,6 +7,10 @@ class Board < ApplicationRecord
   has_many :board_tickets, dependent: :destroy
   has_many :releases, dependent: :destroy
   belongs_to :deploy_swimlane, class_name: 'Swimlane', optional: true
+
+  validates :slack_channel, presence: true, format: {
+    with: /\A#[a-z0-9\-._]{1,80}\z/, allow_blank: true
+  }
   validate :check_additional_branches_regex
 
   scope :with_auto_deploy_repos, -> { joins(:repos).merge(Repo.auto_deployable).distinct }

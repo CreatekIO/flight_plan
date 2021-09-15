@@ -11,7 +11,7 @@ RSpec.describe Ticket do
     include_context 'board with swimlanes'
     include_context 'remote issue'
 
-    let(:subject) { described_class.import(remote_issue, remote_repo) }
+    let(:subject) { described_class.import(remote_issue, repo) }
 
     context 'when the ticket does not already exist' do
       it 'adds the issue to the repo' do
@@ -156,7 +156,7 @@ RSpec.describe Ticket do
       end
 
       context 'when ticket has been transferred to another repo' do
-        subject { described_class.import(remote_issue, remote_repo, action: 'transferred') }
+        subject { described_class.import(remote_issue, repo, action: 'transferred') }
 
         it 'deletes ticket' do
           expect { subject }.to change { Ticket.where(id: ticket.id).count }.by(-1)
@@ -164,39 +164,11 @@ RSpec.describe Ticket do
       end
 
       context 'when ticket has been deleted' do
-        subject { described_class.import(remote_issue, remote_repo, action: 'deleted') }
+        subject { described_class.import(remote_issue, repo, action: 'deleted') }
 
         it 'deletes ticket' do
           expect { subject }.to change { Ticket.where(id: ticket.id).count }.by(-1)
         end
-      end
-    end
-  end
-
-  describe '.find_by_remote' do
-    let(:remote_issue_id) { 100 }
-    let(:remote_issue) {
-      {
-        id: remote_issue_id
-      }
-    }
-    let(:remote_repo) {
-      {
-        full_name: 'org_name/repo_name'
-      }
-    }
-    let!(:repo) { create(:repo, slug: 'org_name/repo_name') }
-    context "when the ticket doesn't exist" do
-      it 'builds a new ticket' do
-        ticket = described_class.find_by_remote(remote_issue, remote_repo)
-        expect(ticket.persisted?).to be(false)
-      end
-    end
-    context "when the ticket exists" do
-      it 'finds the ticket' do
-        create(:ticket, repo: repo, remote_id: remote_issue_id)
-        ticket = described_class.find_by_remote(remote_issue, remote_repo)
-        expect(ticket.persisted?).to be(true)
       end
     end
   end
@@ -220,6 +192,8 @@ RSpec.describe Ticket do
       )
     end
 
+    subject { Ticket.import(payload, repo) }
+
     before do
       3.times do
         ticket = create(:ticket, repo: repo)
@@ -234,7 +208,7 @@ RSpec.describe Ticket do
       let(:board_ticket) { nil }
 
       it 'moves board ticket to the top of the first swimlane' do
-        ticket = Ticket.import(payload, full_name: slug)
+        ticket = Ticket.import(payload, repo)
         board_ticket = ticket.board_tickets.find_by!(board: board)
 
         expect(board_ticket.swimlane).to eq(backlog)
@@ -255,7 +229,7 @@ RSpec.describe Ticket do
 
       it 'moves board ticket to the top of the last swimlane' do
         expect {
-          Ticket.import(payload, full_name: slug)
+          subject
         }.to change { board_ticket.reload.swimlane }.from(dev).to(closed)
           .and change { closed.reload.board_tickets.first }.to(board_ticket)
       end
@@ -272,7 +246,7 @@ RSpec.describe Ticket do
 
       it 'moves board ticket to the top of the first swimlane' do
         expect {
-          Ticket.import(payload, full_name: slug)
+          subject
         }.to change { board_ticket.reload.swimlane }.from(closed).to(backlog)
           .and change { backlog.reload.board_tickets.first }.to(board_ticket)
       end
@@ -283,7 +257,7 @@ RSpec.describe Ticket do
 
       it 'does not move board ticket' do
         expect {
-          Ticket.import(payload, full_name: slug)
+          subject
         }.not_to change { board_ticket.reload.swimlane }
       end
     end
@@ -293,7 +267,7 @@ RSpec.describe Ticket do
 
       it 'moves board ticket to the top of the new swimlane' do
         expect {
-          Ticket.import(payload, full_name: slug)
+          subject
         }.to change { board_ticket.reload.swimlane }.from(backlog).to(acceptance)
           .and change { acceptance.reload.board_tickets.first }.to(board_ticket)
       end

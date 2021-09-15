@@ -31,7 +31,7 @@ RSpec.describe 'BoardTickets', type: :request do
     end
 
     let(:remote_ticket) do
-      { remote_id: -1, labels: [], assignees: [] }
+      { id: -1, labels: [], assignees: [] }
     end
 
     let!(:issue_request) do

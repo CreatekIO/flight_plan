@@ -210,7 +210,7 @@ class ReleaseManager
   end
 
   def slack_notifier
-    @slack_notifier ||= SlackNotifier.new
+    @slack_notifier ||= SlackNotifier.new(board.slack_channel)
   end
 
   def log(message)

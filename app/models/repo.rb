@@ -15,6 +15,7 @@ class Repo < ApplicationRecord
     where.not(arel_table[:name].matches('status: %')).order(:name)
   }, class_name: 'Label'
   has_many :milestones
+  has_many :aliases, class_name: 'RepoAlias'
 
   scope :auto_deployable, -> { where(auto_deploy: true) }
 
@@ -30,6 +31,24 @@ class Repo < ApplicationRecord
   DEFAULT_DEPLOYMENT_BRANCH = 'master'.freeze
 
   after_initialize :set_defaults
+
+  def self.with_slug(slug)
+    where(slug: slug).or(
+      where(repo_aliases: { slug: slug })
+    ).left_outer_joins(:aliases)
+  end
+
+  class << self
+    alias_method :with_slugs, :with_slug
+  end
+
+  def self.find_by_slug(slug)
+    with_slug(slug).first
+  end
+
+  def self.find_by_slug!(slug)
+    with_slug(slug).first!
+  end
 
   def html_url
     format(URL_TEMPLATE, slug)

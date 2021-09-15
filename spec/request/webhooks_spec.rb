@@ -30,7 +30,10 @@ RSpec.describe 'Webhooks', type: :request do
     action :created do
       let(:payload) do
         {
-          repository: { full_name: repo.slug },
+          repository: {
+            id: repo.remote_id,
+            full_name: repo.slug
+          },
           pull_request: {
             id: generate(:pr_remote_id),
             mergeable: merge_status,

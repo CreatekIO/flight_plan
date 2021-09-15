@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_05_14_142848) do
+ActiveRecord::Schema.define(version: 2021_09_15_094925) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
@@ -44,6 +44,7 @@ ActiveRecord::Schema.define(version: 2021_05_14_142848) do
     t.datetime "updated_at", null: false
     t.bigint "deploy_swimlane_id"
     t.string "additional_branches_regex"
+    t.string "slack_channel"
   end
 
   create_table "branch_heads", force: :cascade do |t|
@@ -218,6 +219,15 @@ ActiveRecord::Schema.define(version: 2021_05_14_142848) do
     t.index ["board_id"], name: "index_releases_on_board_id"
   end
 
+  create_table "repo_aliases", force: :cascade do |t|
+    t.bigint "repo_id"
+    t.citext "slug"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["repo_id"], name: "index_repo_aliases_on_repo_id"
+    t.index ["slug"], name: "index_repo_aliases_on_slug", unique: true
+  end
+
   create_table "repo_release_board_tickets", force: :cascade do |t|
     t.bigint "repo_release_id"
     t.bigint "board_ticket_id"
@@ -249,6 +259,8 @@ ActiveRecord::Schema.define(version: 2021_05_14_142848) do
     t.datetime "updated_at", null: false
     t.boolean "auto_deploy", default: false, null: false
     t.string "deployment_branch"
+    t.bigint "remote_id"
+    t.index ["remote_id"], name: "index_repos_on_remote_id", unique: true
   end
 
   create_table "swimlane_transitions", force: :cascade do |t|
@@ -338,6 +350,7 @@ ActiveRecord::Schema.define(version: 2021_05_14_142848) do
   add_foreign_key "pull_request_connections", "tickets"
   add_foreign_key "pull_request_reviews", "repos"
   add_foreign_key "pull_requests", "repos"
+  add_foreign_key "repo_aliases", "repos"
   add_foreign_key "repo_releases", "releases"
   add_foreign_key "repo_releases", "repos"
   add_foreign_key "ticket_assignments", "tickets"

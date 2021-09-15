@@ -6,7 +6,7 @@ RSpec.describe ReleaseManager, type: :service do
   let(:slack_notifier) { double('SlackNotifier', notify: true) }
 
   before do
-    allow(SlackNotifier).to receive(:new).and_return(slack_notifier)
+    allow(SlackNotifier).to receive(:new).with(board.slack_channel).and_return(slack_notifier)
   end
 
   def have_sent_message(title, attachments = a_hash_including(:attachments))

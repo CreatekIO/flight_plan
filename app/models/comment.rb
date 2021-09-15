@@ -6,6 +6,7 @@ class Comment < ApplicationRecord
   def self.import(payload, repo)
     remote_comment = payload[:comment]
     remote_issue = payload[:issue]
+    return if remote_issue[:pull_request].present? # actually a comment on a PR, ignore
 
     comment = Comment.find_or_initialize_by(remote_id: remote_comment[:id])
 
@@ -13,7 +14,7 @@ class Comment < ApplicationRecord
 
     if comment.new_record?
       comment.ticket = if remote_issue.present?
-        Ticket.find_by_remote(remote_issue, full_name: repo.slug)
+        repo.tickets.find_or_initialize_by(remote_id: remote_issue[:id])
       else
         Ticket.find_by_html_url(remote_comment[:html_url])
       end

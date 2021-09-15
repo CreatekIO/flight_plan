@@ -33,30 +33,22 @@ class PullRequest < ApplicationRecord
 
   before_save :update_pull_request_connections
 
-  def self.import(remote_pr, remote_repo)
-    pull_request = find_by_remote(remote_pr, remote_repo)
-    pull_request.update_attributes(
-      number: remote_pr[:number],
-      title: remote_pr[:title],
-      body: remote_pr[:body],
-      state: remote_pr[:state],
-      head_branch: remote_pr[:head][:ref],
-      head_sha: remote_pr[:head][:sha],
-      base_branch: remote_pr[:base][:ref],
-      merge_status: remote_pr[:mergeable],
-      merged: remote_pr[:merged],
-      creator_remote_id: remote_pr[:user][:id],
-      creator_username: remote_pr[:user][:login],
-    )
-    pull_request
-  end
-
-  def self.find_by_remote(remote_pr, remote_repo)
-    pull_request = find_or_initialize_by(remote_id: remote_pr[:id])
-    if pull_request.repo_id.blank?
-      pull_request.repo = Repo.find_by!(slug: remote_repo[:full_name])
+  def self.import(payload, repo)
+    repo.pull_request_models.find_or_initialize_by(remote_id: payload.fetch(:id)).tap do |pull_request|
+      pull_request.update_attributes(
+        number: payload[:number],
+        title: payload[:title],
+        body: payload[:body],
+        state: payload[:state],
+        head_branch: payload[:head][:ref],
+        head_sha: payload[:head][:sha],
+        base_branch: payload[:base][:ref],
+        merge_status: payload[:mergeable],
+        merged: payload[:merged],
+        creator_remote_id: payload[:user][:id],
+        creator_username: payload[:user][:login],
+      )
     end
-    pull_request
   end
 
   # See: https://developer.github.com/v3/pulls/#response-1
@@ -100,11 +92,12 @@ class PullRequest < ApplicationRecord
 
   def update_pull_request_connections
     new_connections = referenced_issues.map do |issue|
-      query = { repos: { slug: issue[:repo] }, tickets: { number: issue[:number] } }
-      existing = pull_request_connections.joins(ticket: :repo).find_by(query)
+      query = Repo.with_slug(issue[:repo]).where(tickets: { number: issue[:number] })
+
+      existing = pull_request_connections.joins(ticket: :repo).merge(query).first
       next(existing) if existing.present?
 
-      matching_ticket = associated_tickets.find_by(query)
+      matching_ticket = associated_tickets.merge(query).first
       next if matching_ticket.blank?
 
       pull_request_connections.build(ticket: matching_ticket)

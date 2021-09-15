@@ -11,6 +11,7 @@ RSpec.describe CleanupCommitStatusesWorker do
   after(:context) do
     # Clean up once we've finished this test file
     CommitStatus.delete_all
+    Repo.delete_all
   end
 
   describe '#perform' do

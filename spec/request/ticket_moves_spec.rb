@@ -101,6 +101,16 @@ RSpec.describe TicketMovesController, type: :request do
       let(:destination_swimlane) { dev }
       let(:destination_position) { 0 }
 
+      let(:expected_duration) do
+        if Time.current.during_business_hours?
+          '< 1h'
+        elsif Date.today.friday?
+          '1d'
+        else
+          '1h'
+        end
+      end
+
       it 'moves ticket to new swimlane in correct position' do
         aggregate_failures do
           expect {
@@ -111,7 +121,7 @@ RSpec.describe TicketMovesController, type: :request do
 
           expect(response).to have_http_status(:created)
           expect(JSON.parse(response.body)).to include(
-            'time_since_last_transition' => '< 1h'
+            'time_since_last_transition' => expected_duration
           )
           expect(
             replace_all_labels_call.with(
