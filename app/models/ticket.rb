@@ -28,6 +28,8 @@ class Ticket < ApplicationRecord
 
   def self.import(payload, repo, action: nil)
     payload = HashWithIndifferentAccess.new(payload)
+    return if payload[:pull_request].present? # actually a PR, ignore
+
     ticket = repo.tickets.find_or_initialize_by(remote_id: payload.fetch(:id))
 
     if DELETED_ACTIONS.include?(action)

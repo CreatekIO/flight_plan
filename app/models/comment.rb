@@ -6,6 +6,7 @@ class Comment < ApplicationRecord
   def self.import(payload, repo)
     remote_comment = payload[:comment]
     remote_issue = payload[:issue]
+    return if remote_issue[:pull_request].present? # actually a comment on a PR, ignore
 
     comment = Comment.find_or_initialize_by(remote_id: remote_comment[:id])
 
