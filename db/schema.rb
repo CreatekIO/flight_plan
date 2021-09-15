@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_08_06_144119) do
+ActiveRecord::Schema.define(version: 2021_09_15_094925) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
@@ -44,6 +44,7 @@ ActiveRecord::Schema.define(version: 2021_08_06_144119) do
     t.datetime "updated_at", null: false
     t.bigint "deploy_swimlane_id"
     t.string "additional_branches_regex"
+    t.string "slack_channel"
   end
 
   create_table "branch_heads", force: :cascade do |t|
