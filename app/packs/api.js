@@ -1,3 +1,9 @@
+const csrfToken = () => {
+    const meta = document.querySelector('meta[name="csrf-token"]');
+
+    return meta && meta.content;
+}
+
 const handleResponse = response => {
     const { status, ok } = response;
     if (status == 204) return Promise.resolve({ success: true });
@@ -22,7 +28,7 @@ const createApiFunction = method => (url, body) => {
 
     if (method !== "GET") {
         props.headers["Content-Type"] = "application/json";
-        props.headers["X-CSRF-Token"] = Rails.csrfToken();
+        props.headers["X-CSRF-Token"] = csrfToken();
         props.body = JSON.stringify(body);
     }
 
@@ -47,6 +53,8 @@ export default ["GET", "POST", "PUT", "PATCH"].reduce(
 
         removeFromStorage(key) {
             safely(() => localStorage.removeItem(key));
-        }
+        },
+
+        deleteRequest: createApiFunction("DELETE") // `delete` is a reserved word in JS
     }
 );

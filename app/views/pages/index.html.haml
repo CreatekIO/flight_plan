@@ -5,5 +5,5 @@
 
 .text-center.p-6
   %h1.text-3xl.mb-7.font-bold Flight Plan
-  = link_to user_github_omniauth_authorize_path, method: :post, class: 'bg-blue-500 text-white font-bold rounded text-lg px-6 py-3 hover:bg-blue-700 focus:bg-blue-700' do
+  = button_to user_github_omniauth_authorize_path, method: :post, class: 'bg-blue-500 text-white font-bold rounded text-lg px-6 py-3 hover:bg-blue-700 focus:bg-blue-700' do
     Sign in with GitHub

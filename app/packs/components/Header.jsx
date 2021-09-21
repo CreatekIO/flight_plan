@@ -6,6 +6,7 @@ import {
     MenuButton,
     MenuLink,
     MenuPopover,
+    MenuItem,
     MenuItems
 } from "@reach/menu-button";
 
@@ -14,6 +15,7 @@ import Avatar from "./Avatar";
 import Loading from "./Loading";
 import { getOpenPRs } from "../reducers/selectors";
 import { isFeatureEnabled } from "../features";
+import api from "../api";
 
 const menuItemClasses = "block p-2 text-left";
 const countClasses = "w-6 h-6 font-bold leading-6 ml-2 text-center rounded-full bg-gray-400 text-white text-xs";
@@ -166,6 +168,11 @@ const BoardsMenu = ({ boards, currentBoard }) => {
     );
 };
 
+const signOut = () => {
+    api.deleteRequest(flightPlanConfig.api.logoutURL)
+        .then(() => { window.location.href = "/" });
+}
+
 const Header = ({ boards, isWaiting, openPRsCount, pullRequests }) => {
     const currentBoard = boards.find(board => board.current);
 
@@ -181,13 +188,9 @@ const Header = ({ boards, isWaiting, openPRsCount, pullRequests }) => {
                     <strong>@{flightPlanConfig.currentUser.username}</strong>
                 </div>
                 <hr/>
-                <MenuLink
-                    href={flightPlanConfig.api.logoutURL}
-                    data-method="delete"
-                    className={menuItemClasses}
-                >
+                <MenuItem className={menuItemClasses} onSelect={signOut}>
                     Sign out
-                </MenuLink>
+                </MenuItem>
             </Menu>
             {isFeatureEnabled("kpis") && (
                 <HeaderItem href={currentBoard.kpisURL}>
