@@ -28,6 +28,8 @@ services:
       - redis
     expose:
       - 3000
+    ports:
+      - 31000:31000 # capybara port for host Chrome
     environment:
       - REDIS_URL=redis://redis:6379
       - DB_HOST=db
