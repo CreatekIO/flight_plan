@@ -23,12 +23,13 @@ services:
       - .:/flight_plan
       - gems:/usr/local/bundle
       - node_modules:/flight_plan/node_modules
-      - node_modules_v2:/flight_plan/app/javascript/v2/node_modules
     depends_on:
       - db
       - redis
     expose:
       - 3000
+    ports:
+      - 31000:31000 # capybara port for host Chrome
     environment:
       - REDIS_URL=redis://redis:6379
       - DB_HOST=db
@@ -67,7 +68,6 @@ services:
       - .:/flight_plan
       - gems:/usr/local/bundle
       - node_modules:/flight_plan/node_modules
-      - node_modules_v2:/flight_plan/app/javascript/v2/node_modules
     expose:
       - 443
     labels:
@@ -99,4 +99,3 @@ volumes:
   postgresql_data:
   gems:
   node_modules:
-  node_modules_v2:

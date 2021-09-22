@@ -7,7 +7,6 @@ RSpec.describe 'Realtime updates', js: true do
   let(:other_user) { create(:user) }
 
   before do
-    Flipper.enable(:v2_ui)
     Flipper.enable(:realtime_updates)
   end
 

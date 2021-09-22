@@ -4,7 +4,6 @@ RSpec.describe 'Dragging tickets', js: true do
   include_context 'board with swimlanes'
 
   before do
-    Flipper.enable(:v2_ui)
     sign_in create(:user)
 
     stub_gh_get("issues/#{ticket_to_move.number}/labels") do

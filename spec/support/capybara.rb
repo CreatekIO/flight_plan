@@ -23,9 +23,22 @@ Capybara.register_driver(:cuprite) do |app|
   # 2. Ensure network connections are allowed
   # 3. Open XQuartz.app
   # 4. Allow connections from localhost: `xhost + 127.0.0.1` (think you have to do this every time)
-  if ENV['CHROMIUM_MODE'] == 'x11'
+  case ENV['CHROMIUM_MODE']
+  when 'x11'
     ENV['DISPLAY'] = 'host.docker.internal:0'
     options[:headless] = false
+  when 'host'
+    require 'resolv'
+
+    host_ip = Resolv.getaddress('host.docker.internal')
+    options[:url] = "http://#{host_ip}:9222"
+
+    WebMock.disable_net_connect!(
+      allow_localhost: true,
+      allow: "#{host_ip}:9222"
+    )
+    Capybara.server_host = '0.0.0.0'
+    Capybara.server_port = 31000
   end
 
   Capybara::Cuprite::Driver.new(app, options)

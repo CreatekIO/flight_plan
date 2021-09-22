@@ -1,4 +1,0 @@
-- if user_signed_in?
-  = link_to 'Sign out', destroy_user_session_path, method: 'delete', class: 'btn btn-primary'
--else
-  = link_to "Sign in with github", user_github_omniauth_authorize_path, class: 'btn btn-primary'

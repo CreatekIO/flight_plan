@@ -1,57 +1,57 @@
-%h2.ui.block.header
+%h2.text-xl.mt-10
   Cycle time
-  .sub.header
-    = form_for :cycle_time, method: :get, html: { class: 'ui form', id: 'cycle_time_settings' } do |f|
-      = hidden_field_tag :date, params[:date]
 
-      Time in business days (Mon-Fri) for tickets to go from
-      %span.inline.field
-        = f.collection_select :start_swimlane_id, @board.swimlanes, :id, :name
-      to
-      %span.inline.field
-        = f.collection_select :end_swimlane_id, @board.swimlanes, :id, :name
-      in this quarter
+= form_for :cycle_time, method: :get, html: { class: 'text-gray-500 my-5 text-sm', id: 'cycle_time_settings' } do |f|
+  = hidden_field_tag :date, params[:date]
 
-%table.ui.collapsing.definition.table
-  %tbody
-    %tr
-      %td Tickets
-      %td= @cycle_time.results.count
-    %tr
-      %td Mean (average)
-      %td
-        = number_with_precision @cycle_time.mean
-        days
-    %tr
-      %td Standard deviation
-      %td= number_with_precision @cycle_time.standard_deviation
-    %tr
-      %td 90th percentile
-      %td
-        = @cycle_time.percentile(90).try(:ceil)
-        days
+  Time in business days (Mon-Fri) for tickets to go from
+  = f.collection_select :start_swimlane_id, @board.swimlanes, :id, :name, {}, class: 'border border-gray-500 rounded mx-0.5'
+  to
+  = f.collection_select :end_swimlane_id, @board.swimlanes, :id, :name, {}, class: 'border border-gray-500 rounded mx-0.5'
+  in this quarter
+
+%dl.flex.justify-center.-ml-5.pb-7.pt-3.text-sm
+  - term_classes = 'px-2 py-1 border border-gray-300 rounded-l ml-7'
+  - stat_classes = 'px-3 py-1 border border-gray-300 bg-gray-50 font-bold -ml-px rounded-r'
+
+  %dt{ class: term_classes } Tickets
+  %dd{ class: stat_classes }= @cycle_time.results.count
+
+  %dt{ class: term_classes } Mean (average)
+  %dd{ class: stat_classes }
+    = number_with_precision @cycle_time.mean
+    days
+
+  %dt{ class: term_classes } Standard deviation
+  %dd{ class: stat_classes }
+    = number_with_precision @cycle_time.standard_deviation
+
+  %dt{ class: term_classes } 90th percentile
+  %dd{ class: stat_classes }
+    = @cycle_time.percentile(90).try(:ceil)
+    days
 
 
-%table.ui.celled.striped.small.compact.table
+%table.w-full.text-left.text-sm.mb-10
+  - cell_classes = 'px-3 py-2 border border-gray-300'
+
   %thead
     %tr
-      %th(colspan="2") Ticket
-      %th Repo
-      %th Started at
-      %th Completed at
-      %th Cycle time (days)
+      - ['Ticket', 'Repo', 'Started at', 'Completed at', 'Cycle time (days)'].each_with_index do |header, index|
+        %th.bg-gray-50{ colspan: (2 if index.zero?), class: cell_classes }= header
 
   %tbody
     - @cycle_time.results.each do |result|
       %tr
-        %td= link_to result.number, result.github_url, target: :_blank
-        %td
-          = link_to client_side_board_path(@board, "#{result.slug}/#{result.number}") do
+        %td{ class: cell_classes }
+          = link_to result.number, result.github_url, target: :_blank, class: 'text-blue-500 hover:text-blue-800'
+        %td{ class: cell_classes }
+          = link_to client_side_board_path(@board, "#{result.slug}/#{result.number}"), class: 'text-blue-500 hover:text-blue-800' do
             = result.title.truncate(100)
-        %td= result.repo_name
-        %td= l result.started_at, format: :short
-        %td= l result.ended_at, format: :short
-        %td= result.duration.ceil
+        %td{ class: cell_classes }= result.repo_name
+        %td{ class: cell_classes }= l result.started_at, format: :short
+        %td{ class: cell_classes }= l result.ended_at, format: :short
+        %td{ class: cell_classes }= result.duration.ceil
 
 :javascript
   document.querySelector('#cycle_time_settings').addEventListener('change', function(event) {

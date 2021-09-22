@@ -4,9 +4,6 @@ RSpec.describe 'Viewing board', js: true do
   include_context 'board with swimlanes'
 
   before do
-    Flipper.enable(:v2_ui)
-    Flipper.enable(:self_serve_features)
-
     sign_in user
   end
 
@@ -39,7 +36,6 @@ RSpec.describe 'Viewing board', js: true do
     visit board_path(board)
 
     expect(page).to have_text(board.name)
-    expect(page).to have_text('Back to V1')
 
     board.swimlanes.each do |swimlane|
       expect(page).to have_text(swimlane.name)

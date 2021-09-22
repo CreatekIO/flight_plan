@@ -1,43 +1,45 @@
-%h2.ui.block.header
+%h2.text-xl.mt-10
   CircleCI builds
-  .sub.header
-    Passing vs. failing CircleCI builds for "build" jobs for #{CircleciBuildsCalculator::BRANCH_NAMES.map { |branch| content_tag(:code, branch) }.to_sentence(two_words_connector: ' or ').html_safe} on
-    = link_to 'MyRewards', 'https://github.com/CorporateRewards/myrewards', target: :_blank
-    or
-    = link_to 'GPS', 'https://github.com/CorporateRewards/redstone', target: :_blank
 
-%table.ui.celled.table
+.text-gray-500.my-5.text-sm
+  Passing vs. failing CircleCI builds for "build" jobs for
+  = to_or_sentence(CircleciBuildsCalculator::BRANCH_NAMES) do |branch|
+    %code= branch
+  on
+  = link_to 'MyRewards', 'https://github.com/CorporateRewards/myrewards', target: :_blank, class: 'text-blue-400 hover:text-blue-800'
+  or
+  = link_to 'GPS', 'https://github.com/CorporateRewards/redstone', target: :_blank, class: 'text-blue-400 hover:text-blue-800'
+
+%table.w-full.text-left.text-sm
+  - cell_classes = 'px-3 py-2 border border-gray-300'
+
   %thead
-    %th Month
-    %th Repo
-    %th State
-    %th Builds
-    %th By Repo + Month
-    %th By Month
-    %th By Quarter
+    - ['Month', 'Repo', 'State', 'Builds', 'By Repo + Month', 'By Month', 'By Quarter'].each do |header|
+      %th.bg-gray-50{ class: cell_classes }= header
 
   %tbody
     - builds = @circleci_builds.to_a
     - builds.each.with_index do |stat, index|
       %tr
         - if index.multiple_of?(4)
-          %td{ rowspan: 4 }= stat.date
+          %td{ rowspan: 4, class: cell_classes }= stat.date
         - if index.multiple_of?(2)
-          %td{ rowspan: 2 }= stat.repo
-        %td{ class: stat.success? ? 'positive' : 'negative' }= stat.human_state
-        %td= stat.count
+          %td{ rowspan: 2, class: cell_classes }= stat.repo
+        %td{ class: "#{cell_classes} #{stat.success? ? 'bg-green-100' : 'bg-red-100'}" }
+          = stat.human_state
+        %td{ class: cell_classes }= stat.count
         - if index.multiple_of?(2)
-          %td{ rowspan: 2 }
+          %td{ rowspan: 2, class: cell_classes }
             - total = stat.count + builds[index + 1].count
             #{total} builds (#{calculate_percentage(stat.count, total)} passing)
         - if index.multiple_of?(4)
-          %td{ rowspan: 4 }
+          %td{ rowspan: 4, class: cell_classes }
             - stats = builds[index..(index + 3)]
             - successes = stats.select(&:success?).sum(&:count)
             - total = stats.sum(&:count)
             #{total} builds (#{calculate_percentage(successes, total)} passing)
         - if index.zero?
-          %td{ rowspan: 12 }
+          %td{ rowspan: 12, class: cell_classes }
             - successes = builds.select(&:success?).sum(&:count)
             - total = builds.sum(&:count)
             #{total} builds (#{calculate_percentage(successes, total)} passing)

@@ -1,22 +1,17 @@
-.ui.text.menu
-  .left.menu
-    = link_to board_kpis_path(@board, date: @quarter.previous), class: 'item' do
-      %i.angle.left.large.icon
+- btn_classes = 'border border-gray-300 px-2 py-1 rounded w-40 hover:border-gray-800 focus:bg-gray-100'
+
+.container.mx-auto.text-center
+  .flex.py-4.items-center
+    = link_to board_kpis_path(@board, date: @quarter.previous), class: btn_classes do
       Previous quarter
 
-  .header.item= @quarter.to_s
+    .flex-1.text-sm.font-bold.uppercase= @quarter.to_s
 
-  - next_quarter = @quarter.next
-  .right.menu
-    - if next_quarter.future?
-      .disabled.item
+    - next_quarter = @quarter.next
+    - unless next_quarter.future?
+      = link_to board_kpis_path(@board, date: next_quarter), class: btn_classes do
         Next quarter
-        %i.angle.right.large.icon
-    - else
-      = link_to board_kpis_path(@board, date: next_quarter), class: 'item' do
-        Next quarter
-        %i.angle.right.large.icon
 
-= render 'bug_tickets'
-= render 'circleci_builds'
-= render 'cycle_time'
+  = render 'bug_tickets'
+  = render 'circleci_builds'
+  = render 'cycle_time'

@@ -23,7 +23,6 @@
     boards: @boards.map do |board|
       board.slice(:id, :name).merge(
         url: board_path(board),
-        dashboardURL: board_pull_requests_path(board),
         kpisURL: board_kpis_path(board),
         current: @board == board
       )
@@ -33,9 +32,4 @@
 :javascript
   window.flightPlanConfig = #{raw config.to_json};
 
-= javascript_include_tag polyfill_url
-
-- if use_v2_ui?
-  = v2_javascripts :application
-- else
-  = javascript_pack_tag 'application'
+= javascript_pack_tag 'application'

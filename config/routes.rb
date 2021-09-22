@@ -25,7 +25,6 @@ Rails.application.routes.draw do
     get 'tickets/:slug/:number' => 'board_tickets#show', as: :slugged_ticket, constraints: {
       slug: %r{[a-z0-9\-]+/[a-z0-9\-_]+}i
     }
-    get 'pull_requests' => 'pull_request_dashboards#index', as: :pull_requests
     resources :next_actions, only: :index
 
     resources :kpis, only: :index
