@@ -40,6 +40,12 @@ class BoardsController < AuthenticatedController
         :display_labels,
         :assignments
       )
+      fetch(
+        Timesheet.joins(:swimlane).select(
+          Timesheet.arel_table[Arel.star],
+          Swimlane.arel_table[:display_duration].as('swimlane_displays_duration')
+        )
+      )
     end
   end
 end
