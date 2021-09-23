@@ -1,11 +1,19 @@
 class BoardsController < AuthenticatedController
   def show
     respond_to do |format|
-      format.html
-      format.json do
-        loader.merge!(Board.where.not(id: params[:id]))
+      format.html do
+        @board = Board.find(params[:id])
+        @boards = Board.all
+      end
 
-        render json: loader
+      format.json do
+        if feature?(:normalised_responses)
+          loader.merge!(Board.where.not(id: params[:id]))
+
+          render json: loader
+        else
+          @board = Board.find(params[:id])
+        end
       end
     end
   end
