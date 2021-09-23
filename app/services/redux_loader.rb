@@ -3,11 +3,14 @@ class ReduxLoader
     alias_method :from, :new
   end
 
+  delegate :dig, to: :to_h
+
   def initialize(klass, id, &block)
     queue[klass] << id
     @associations = []
     @queries = []
     @loaded = false
+    @serializers = {}
     instance_exec(&block) if block_given?
   end
 
@@ -29,6 +32,10 @@ class ReduxLoader
     @queries << query
   end
 
+  def serialize(specs)
+    serializers.merge!(specs)
+  end
+
   def to_h
     load!
     records
@@ -40,12 +47,21 @@ class ReduxLoader
   end
 
   def as_json(*)
-    to_h.transform_keys(&:name)
+    to_h.each_with_object({}) do |(klass, records), json|
+      key = klass.model_name.plural.camelize(:lower)
+
+      blueprint = "#{klass}Blueprint".safe_constantize || ApplicationBlueprint
+      view = serializers[klass]
+
+      json[key] = records.transform_values do |record|
+        blueprint.render_as_hash(record, view: view, records: self)
+      end
+    end
   end
 
   private
 
-  attr_reader :queries, :associations
+  attr_reader :queries, :associations, :serializers
 
   def queue
     @queue ||= Hash.new { |hash, key| hash[key] = Set.new }
