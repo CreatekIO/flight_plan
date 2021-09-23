@@ -25,6 +25,10 @@ class ApplicationRecord < ActiveRecord::Base
     end
   end
 
+  def self.with_association_ids(association, &block)
+    AssociationIdsQuery.new(all, association, &block).to_relation
+  end
+
   # For flipper gem
   def flipper_id
     to_gid
