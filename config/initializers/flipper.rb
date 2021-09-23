@@ -32,3 +32,8 @@ Flipper.configure do |config|
     end
   end
 end
+
+Flipper::UI.configure do |config|
+  config.feature_creation_enabled = false
+  config.feature_removal_enabled = false
+end
