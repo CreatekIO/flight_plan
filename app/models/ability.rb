@@ -1,8 +1,8 @@
 class Ability
   include CanCan::Ability
 
-  SELF_SERVE_FEATURES = %i[v2_ui].flat_map do |name|
-    [name, name.to_s]
+  SELF_SERVE_FEATURES = FEATURES.flat_map do |feature|
+    [feature.name.to_sym, name.to_s]
   end.freeze
 
   def initialize(user)
