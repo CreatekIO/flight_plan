@@ -6,6 +6,7 @@ ruby '2.6.6'
 gem 'rails', '~> 5.2.4', '>= 5.2.4.5'
 
 gem 'activerecord-import'
+gem 'blueprinter'
 gem 'bootsnap', '>= 1.1.0', require: false
 gem 'bugsnag'
 gem 'business_time'
