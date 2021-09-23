@@ -1,14 +1,37 @@
 class BoardsController < AuthenticatedController
   def show
-    @hide_container = true
-    # TODO: this needs to come from the logged in user
-    @boards = Board.all
-    @board = Board.find(params[:id])
+    respond_to do |format|
+      format.html
+      format.json do
+        loader.merge!(Board.where.not(id: params[:id]))
 
-    respond_to :html, :json
+        render json: loader
+      end
+    end
   end
 
   def index
     redirect_to Board.first
+  end
+
+  private
+
+  def loader
+    @loader ||= ReduxLoader.from(Board, params[:id]) do
+      fetch(Board, :repos, :swimlanes)
+      fetch(Swimlane, board_tickets: -> { limit(10) })
+      fetch(
+        BoardTicket,
+        :ticket,
+        timesheets: -> { where(ended_at: nil).reorder(started_at: :desc).limit(1) }
+      )
+      fetch(
+        Ticket.except_columns(:body),
+        :pull_requests,
+        :milestone,
+        :display_labels,
+        :assignments
+      )
+    end
   end
 end

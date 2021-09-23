@@ -30,8 +30,13 @@ class ReduxLoader
   end
 
   def to_h
-    load! unless loaded?
+    load!
     records
+  end
+
+  def merge!(relation)
+    load!
+    add(relation)
   end
 
   def as_json(*)
@@ -55,7 +60,7 @@ class ReduxLoader
   end
 
   def load!
-    @loaded = true
+    return if loaded?
 
     loop do
       next_query = queries.shift
@@ -69,6 +74,8 @@ class ReduxLoader
       add(results)
       enqueue(results)
     end
+
+    @loaded = true
   end
 
   def add(results)
