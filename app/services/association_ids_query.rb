@@ -1,6 +1,12 @@
 class AssociationIdsQuery
   ARRAY_ALIAS = "ids"
 
+  delegate :attribute_for, to: :class
+
+  def self.attribute_for(association_name)
+    :"preloaded_#{association_name.to_s.singularize}_ids"
+  end
+
   def initialize(scope, association_name, &block)
     @current_scope = scope
     @parent_class = scope.klass
@@ -24,7 +30,7 @@ class AssociationIdsQuery
   def select_values
     values = [
       Arel::Table.new(subquery_name)[ARRAY_ALIAS].as(
-        "preloaded_#{association_name.to_s.singularize}_ids"
+        attribute_for(association_name).to_s
       )
     ]
 
