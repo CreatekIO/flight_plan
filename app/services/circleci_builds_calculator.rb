@@ -44,7 +44,7 @@ class CircleciBuildsCalculator
 
   def builds_for_quarter
     @builds_for_quarter ||= CommitStatus.joins(:repo, :branches).merge(
-      Repo.with_slugs(SLUG)
+      Repo.with_slugs(REPOS)
     ).where(
       remote_created_at: quarter.as_time_range,
       context: CONTEXTS,
