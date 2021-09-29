@@ -43,16 +43,16 @@ class BoardTicket < ApplicationRecord
 
   def state_durations
     timesheets.includes(:swimlane).each_with_object(Hash.new(0)) do |timesheet, durations|
-      durations[timesheet.swimlane.name] += timesheet.started_at.business_time_until(timesheet.ended_at || Time.now)
+      durations[timesheet.swimlane.name] += timesheet.duration
     end
   end
 
   def current_state_duration
-    format_duration(state_durations[swimlane.name])
+    Timesheet.format_duration(state_durations[swimlane.name])
   end
 
   def time_since_last_transition
-    format_duration(open_timesheet.started_at.business_time_until(Time.now))
+    Timesheet.format_duration(open_timesheet.duration)
   end
 
   def displayable_durations(board)
@@ -64,7 +64,7 @@ class BoardTicket < ApplicationRecord
       {
         id: swimlane.id,
         name: swimlane.name,
-        duration: format_duration(durations[swimlane.name])
+        duration: Timesheet.format_duration(durations[swimlane.name])
       }
     end.compact
   end
@@ -87,16 +87,6 @@ class BoardTicket < ApplicationRecord
       @update_remote = ENV['DO_NOT_SYNC_TO_GITHUB'].blank?
     end
     @update_remote
-  end
-
-  def format_duration(seconds)
-    if seconds < 1.hour
-      '< 1h'
-    elsif seconds < 8.hours
-      "#{(seconds / 1.hour).floor}h"
-    else
-      "#{(seconds / 8.hours).floor}d"
-    end
   end
 
   def update_timesheet

@@ -5,6 +5,10 @@ Rails.application.routes.draw do
 
   root to: 'pages#index'
 
+  authenticate :user do
+    mount Flipper::UI.app(Flipper), at: '/__flipper__'
+  end
+
   devise_for :users, controllers: { omniauth_callbacks: 'users/omniauth_callbacks' }
 
   devise_scope :user do

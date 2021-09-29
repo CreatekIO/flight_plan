@@ -1,5 +1,5 @@
 # Adapted from https://github.com/rails/arel/pull/481/files
-# Merged into Arel v9 (which is used by Rails v5.2)
+# Merged into Arel v10 which is used by Rails v6.0 onwards
 raise 'This backport probably not needed' if Arel::SelectManager.instance_methods.include?(:lateral)
 
 class ArelBackPortLateral < Arel::Nodes::Unary; end

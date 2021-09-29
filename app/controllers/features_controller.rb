@@ -19,7 +19,7 @@ class FeaturesController < AuthenticatedController
   private
 
   def check_self_serve_enabled
-    return if Flipper.enabled?(:self_serve_features, current_user)
+    return if feature?(:self_serve_features)
 
     render file: 'public/404.html', status: :not_found, layout: false
   end

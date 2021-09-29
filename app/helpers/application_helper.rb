@@ -1,8 +1,4 @@
 module ApplicationHelper
-  def hide_container?
-    @hide_container
-  end
-
   def calculate_percentage(number, total)
     return '0%' if total.zero?
 

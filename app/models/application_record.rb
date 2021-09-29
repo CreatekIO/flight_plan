@@ -25,6 +25,14 @@ class ApplicationRecord < ActiveRecord::Base
     end
   end
 
+  def self.with_association_ids(association, &block)
+    AssociationIdsQuery.new(all, association, &block).to_relation
+  end
+
+  def self.except_columns(*names)
+    select(column_names - names.map(&:to_s))
+  end
+
   # For flipper gem
   def flipper_id
     to_gid

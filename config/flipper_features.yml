@@ -1,0 +1,21 @@
+---
+features:
+  - name: harvest_button
+    description: >
+      Show a "Track time with Harvest" button on the ticket modal
+
+  - name: kpis
+    description: >
+      Enable the KPIs dashboard at /boards/:id/kpis
+
+  - name: normalised_responses
+    description: >
+      Use ReduxLoader to generate JSON in normalised form
+
+  - name: realtime_updates
+    description: >
+      Send updates to board over WebSockets
+
+  - name: self_serve_features
+    description: >
+      Allow users to enable certain features for themselves
