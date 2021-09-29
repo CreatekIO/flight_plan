@@ -11,14 +11,33 @@ class App
   # Installation tokens last for 1 hour, so set our TTL to a bit less
   CACHE_TTL = 55.minutes
 
+  class << self
+    delegate :installation_client_for, :uninstall, to: :new
+  end
+
+  def installation_client_for(repo_or_id)
+    id = repo_or_id.try(:remote_installation_id) || repo_or_id
+
+    Octokit::Client.new(
+      bearer_token: nil,
+      access_token: installation_token_for(id)
+    )
+  end
+
+  # https://docs.github.com/en/rest/reference/apps#delete-an-installation-for-the-authenticated-app
+  def uninstall(installation_id:)
+    app_client.delete("/app/installations/#{installation_id}") # no method for this yet in Octokit
+    app_client.last_response.status == 204
+  end
+
+  private
+
   # Use this value for Octokit::Client#access_token
   def installation_token_for(installation_id)
     Rails.cache.fetch("octokit:installation_token/#{installation_id}", expires_in: CACHE_TTL) do
       app_client.create_installation_access_token(installation_id).token
     end
   end
-
-  private
 
   def app_client
     @app_client ||= Octokit::Client.new(bearer_token: jwt, access_token: nil)

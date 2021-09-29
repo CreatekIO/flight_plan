@@ -12,6 +12,8 @@ FactoryBot.define do
   sequence(:label_id, 2_000_000_000)
   sequence(:repo_id, 100_000_000)
 
+  sequence(:github_id, 10_000_000)
+
   # Generates odd numbers
   sequence(:issue_number, fp_number_generator(1))
   sequence(:issue_remote_id, fp_number_generator(200_000_001))

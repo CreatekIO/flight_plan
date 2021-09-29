@@ -6,6 +6,10 @@ class Webhook::GithubController < Webhook::BaseController
 
   private
 
+  def github_installation(payload)
+    InstallationImporter.import(payload)
+  end
+
   def github_issues(payload)
     repo.with_lock do
       Ticket.import(payload[:issue], repo, action: payload[:action])

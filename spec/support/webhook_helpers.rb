@@ -1,11 +1,11 @@
 module WebhookHelpers
-  extend ActiveSupport::Concern
-
   module ClassMethods
     def event_type(event, &block)
-      let(:event_type) { event }
+      context("`#{event}` event") do
+        let!(:event_type) { event }
 
-      context("`#{event}` event", &block)
+        instance_exec(&block)
+      end
     end
 
     def action(name, &block)
@@ -37,4 +37,5 @@ end
 
 RSpec.configure do |config|
   config.include WebhookHelpers
+  config.extend WebhookHelpers::ClassMethods
 end

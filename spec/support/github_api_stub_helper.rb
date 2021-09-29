@@ -1,4 +1,6 @@
 module GitHubApiStubHelper
+  JWT_REGEX = /([a-zA-Z0-9\-_]+\.){2}[a-zA-Z0-9\-_]+/
+
   def stub_gh_get(path, status: 200, &block)
     stub_gh_request(:get, path, status: status, &block)
       .with(query: hash_including({}))
@@ -24,6 +26,21 @@ module GitHubApiStubHelper
     "https://api.github.com/repos/#{slug}/#{path}"
   end
 
+  def stub_gh_installation_token_request
+    request = stub_gh_request(
+      :post,
+      "https://api.github.com/app/installations/{id}/access_tokens",
+      status: 201
+    ) do
+      {
+        token: "ghs_#{SecureRandom.urlsafe_base64}",
+        expires_at: 1.hour.from_now.utc.iso8601
+      }
+    end
+
+    request.with(headers: { 'Authorization' => /^Bearer #{JWT_REGEX}$/ })
+  end
+
   private
 
   def stub_gh_request(verb, path, status:)
@@ -47,4 +64,9 @@ end
 
 RSpec.configure do |config|
   config.include GitHubApiStubHelper
+
+  config.before do
+    # Generally want this to succeed so always stub it
+    stub_gh_installation_token_request
+  end
 end

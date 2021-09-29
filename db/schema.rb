@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_09_15_094925) do
+ActiveRecord::Schema.define(version: 2021_09_29_144518) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
@@ -260,6 +260,7 @@ ActiveRecord::Schema.define(version: 2021_09_15_094925) do
     t.boolean "auto_deploy", default: false, null: false
     t.string "deployment_branch"
     t.bigint "remote_id"
+    t.bigint "remote_installation_id"
     t.index ["remote_id"], name: "index_repos_on_remote_id", unique: true
   end
 
