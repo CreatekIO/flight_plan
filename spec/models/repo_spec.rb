@@ -49,23 +49,6 @@ RSpec.describe Repo, type: :model do
     end
   end
 
-  describe '#branch_names' do
-    let(:branches) do
-      [
-        { name: 'develop' },
-        { name: 'master' },
-        { name: 'feature/#1-fix-me' }
-      ]
-    end
-
-    it 'returns the names of all the branches on a repo' do
-      stub = stub_gh_get('branches') { branches }
-
-      expect(subject.branch_names).to include('master', 'develop', 'feature/#1-fix-me')
-      expect(stub).to have_been_requested.once
-    end
-  end
-
   describe '#regex_branches' do
     let(:branch_names) {
       %w[
@@ -108,77 +91,5 @@ RSpec.describe Repo, type: :model do
         expect(result).to contain_exactly('feature/#123-test', 'feature/#456-test-2')
       end
     end
-  end
-
-  describe '#compare' do
-    it 'returns the diff between two branches' do
-      stub = stub_gh_get('compare/develop...master')
-      subject.compare('develop', 'master')
-
-      expect(stub).to have_been_requested.once
-    end
-  end
-
-  describe '#pull_requests' do
-    it 'returns pull request details' do
-      stub = stub_gh_get('pulls')
-      subject.pull_requests
-
-      expect(stub).to have_been_requested.once
-    end
-  end
-
-  describe '#create_pull_request' do
-    let(:title) { 'Pull Request Name' }
-    let(:body) { 'Body text' }
-    let(:base) { 'master' }
-    let(:head) { 'branch-to-be-merged ' }
-
-    let(:params) do
-      {
-        base: base,
-        head: head,
-        title: title,
-        body: body
-      }
-    end
-
-    it 'creates a pull requests' do
-      stub = stub_gh_post('pulls', params)
-      subject.create_pull_request(base, head, title, body)
-
-      expect(stub).to have_been_requested.once
-    end
-  end
-
-  describe '#create_ref' do
-    let(:branch_name) { 'release/123' }
-    let(:sha) { '5g32345676a44545' }
-
-    let(:params) do
-      {
-        ref: "refs/#{branch_name}",
-        sha: sha,
-      }
-    end
-
-    it 'create a branch on github' do
-      stub = stub_gh_post('git/refs', params)
-      subject.create_ref(branch_name, sha)
-
-      expect(stub).to have_been_requested.once
-    end
-  end
-
-  describe '#merge' do
-    pending
-  end
-
-  describe '#refs' do
-    pending
-  end
-
-  describe '#delete_branch' do
-    pending
   end
 end

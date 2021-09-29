@@ -33,6 +33,15 @@ module OctokitClient
     octokit.access_token = new_token
   end
 
+  def without_octokit_pagination
+    original = octokit.auto_paginate
+    octokit.auto_paginate = false
+
+    yield
+  ensure
+    octokit.auto_paginate = original
+  end
+
   def retry_with_global_token_if_fails
     retried = false
 

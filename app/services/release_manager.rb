@@ -1,5 +1,13 @@
 class ReleaseManager
+  include OctokitClient
+
   class AllBranchesConflict < StandardError; end
+
+  octokit_methods(
+    :pull_requests, :merge_pull_request, :create_pull_request,
+    :create_ref, :merge, :refs, :delete_branch,
+    prefix_with: 'repo.slug'
+  )
 
   def initialize(board, repo)
     @board = board
@@ -9,7 +17,7 @@ class ReleaseManager
   end
 
   def open_pr?
-    repo.pull_requests.any? { |pr| release_pr?(pr) }
+    octokit_pull_requests.any? { |pr| release_pr?(pr) }
   end
 
   def create_release
@@ -20,18 +28,20 @@ class ReleaseManager
   end
 
   def merge_prs(branch = repo.deployment_branch)
-    repo.pull_requests.each do |pr|
+    octokit_pull_requests.each do |pr|
       next unless release_pr?(pr, base: branch)
       next if pr[:title].include?('CONFLICTS')
       log "Merging PR ##{pr[:number]} - #{pr[:title]}"
 
-      repo.merge_pull_request(pr[:number])
+      octokit_merge_pull_request(pr[:number])
       announce_pr_merged(pr)
     end
   end
 
   def unmerged_tickets
-    @unmerged_tickets ||= tickets.reject { |t| t.merged_to?(repo.deployment_branch) }
+    @unmerged_tickets ||= tickets.reject do |ticket|
+      ticket.merged_to?(repo.deployment_branch)
+    end
   end
 
   private
@@ -73,7 +83,7 @@ class ReleaseManager
     raise AllBranchesConflict, 'All branches in release had merge conflicts' if all_branches_conflict?
 
     log 'Creating pull request...'
-    @remote_pr = repo.create_pull_request(
+    @remote_pr = octokit_create_pull_request(
       repo.deployment_branch,
       release_branch_name,
       release_pr_name,
@@ -84,13 +94,13 @@ class ReleaseManager
   rescue Octokit::Error, AllBranchesConflict => error
     log 'Could not create pull request, deleting branch'
     announce_pr_failed(error)
-    repo.delete_branch(release_branch_name)
+    octokit_delete_branch(release_branch_name)
     false
   end
 
   def initialize_release_branch
     log "Creating release branch '#{release_branch_name}' on '#{repo.slug}'..."
-    repo.create_ref("heads/#{release_branch_name}", deployment_branch_head_sha)
+    octokit_create_ref("heads/#{release_branch_name}", deployment_branch_head_sha)
     log 'done'
   end
 
@@ -98,7 +108,7 @@ class ReleaseManager
     branches_to_merge.each do |work_branch|
       begin
         log "Merging '#{work_branch}' into release..."
-        repo.merge(
+        octokit_merge(
           release_branch_name,
           work_branch,
           commit_message: "Merging #{work_branch} into release"
@@ -119,7 +129,7 @@ class ReleaseManager
   end
 
   def deployment_branch_head_sha
-    @deployment_branch_head_sha ||= repo.refs("heads/#{repo.deployment_branch}").object.sha
+    @deployment_branch_head_sha ||= octokit_refs("heads/#{repo.deployment_branch}").object.sha
   end
 
   def all_branches_conflict?

@@ -19,13 +19,7 @@ class Repo < ApplicationRecord
 
   scope :auto_deployable, -> { where(auto_deploy: true) }
 
-  octokit_methods(
-    :compare, :pull_requests, :merge_pull_request, :create_pull_request,
-    :create_ref, :merge, :refs, :delete_branch,
-    prefix_with: :slug, add_aliases: true
-  )
-
-  octokit_methods :branches, prefix_with: :slug
+  octokit_methods :branches, :compare, prefix_with: :slug
 
   URL_TEMPLATE = 'https://github.com/%s'.freeze
   DEFAULT_DEPLOYMENT_BRANCH = 'master'.freeze
@@ -67,6 +61,18 @@ class Repo < ApplicationRecord
 
   def regex_branches(regex)
     branch_names.grep(regex)
+  end
+
+  def branch_up_to_date?(name, with:)
+    without_octokit_pagination do
+      octokit_compare(
+        URI.escape(name),
+        URI.escape(with),
+        # Speed up responses - we don't want the details of each commit,
+        # just whether the diff contains any commits
+        per_page: 1
+      ).total_commits.zero?
+    end
   end
 
   def update_merged_tickets
