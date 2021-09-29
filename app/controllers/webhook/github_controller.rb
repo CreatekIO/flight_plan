@@ -10,6 +10,8 @@ class Webhook::GithubController < Webhook::BaseController
     InstallationImporter.import(payload)
   end
 
+  alias_method :github_installation_repositories, :github_installation
+
   def github_issues(payload)
     repo.with_lock do
       Ticket.import(payload[:issue], repo, action: payload[:action])

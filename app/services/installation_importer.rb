@@ -11,12 +11,12 @@ module InstallationImporter
       end
 
       case action
-      when 'created'
-        repos.each do |repo|
+      when 'created', 'added', 'unsuspend'
+        (payload[:repositories_added] || repos).each do |repo|
           capture_errors { Installation.new(repo, installation[:id]).import }
         end
-      when 'deleted'
-        repos.each do |repo|
+      when 'deleted', 'removed', 'suspend'
+        (payload[:repositories_removed] || repos).each do |repo|
           capture_errors { remove_installation_from(repo[:id]) }
         end
       when 'new_permissions_accepted'

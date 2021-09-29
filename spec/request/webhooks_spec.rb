@@ -147,6 +147,98 @@ RSpec.describe 'Webhooks', type: :request do
     end
   end
 
+  event_type :installation_repositories do
+    let(:installation_id) { payload[:installation][:id] }
+
+    action :added do
+      let(:payload) { webhook_payload(:installation_repositories_added) }
+      let(:remote_repo) { payload[:repositories_added].first }
+
+      let(:existing_repo) do
+        create(
+          :repo,
+          name: remote_repo[:name],
+          remote_id: remote_repo[:id],
+          slug: remote_repo[:full_name],
+          remote_installation_id: nil
+        )
+      end
+
+      let(:slug) { existing_repo.slug }
+      let(:old_webhook_id) { FactoryBot.generate(:github_id) }
+
+      before do
+        stub_gh_get('hooks') do
+          [
+            {
+              id: old_webhook_id,
+              config: { url: 'https://flightplan.createk.io/webhook/github' }
+            },
+            {
+              id: old_webhook_id + 1,
+              config: { url: 'https://circleci.com/hooks/github' }
+            }
+          ]
+        end
+      end
+
+      let!(:webhook_delete_request) do
+        stub_gh_delete("hooks/#{old_webhook_id}").with(
+          headers: { 'Authorization' => /^token ghs_/ }
+        )
+      end
+
+      it 'adds installation id to existing repo' do
+        expect { deliver_webhook(payload) }
+          .to change { existing_repo.reload.remote_installation_id }
+          .from(nil)
+          .to(payload[:installation][:id])
+          .and not_change(Repo.where(remote_id: existing_repo.remote_id), :count)
+      end
+
+      it 'creates record for new repo' do
+        query = Repo.where(
+          remote_id: remote_repo[:id],
+          slug: remote_repo[:full_name],
+          remote_installation_id: installation_id
+        ).where.not(deployment_branch: ['', nil], name: ['', nil])
+
+        expect { deliver_webhook(payload) }
+          .to change(query, :count).by(1)
+      end
+
+      it 'removes old webhook for existing repo' do
+        deliver_webhook(payload)
+
+        expect(webhook_delete_request).to have_been_requested
+      end
+    end
+
+    action :removed do
+      let(:payload) { webhook_payload(:installation_repositories_removed) }
+
+      let!(:existing_repo) do
+        remote = payload[:repositories_removed].first
+
+        create(
+          :repo,
+          name: remote[:name],
+          remote_id: remote[:id],
+          slug: remote[:full_name],
+          remote_installation_id: installation_id
+        )
+      end
+
+      it 'removes installation id from existing repo' do
+        expect { deliver_webhook(payload) }
+          .to change { existing_repo.reload.remote_installation_id }
+          .from(payload[:installation][:id])
+          .to(nil)
+          .and not_change(Repo, :count)
+      end
+    end
+  end
+
   event_type :pull_request do
     let!(:repo) do
       create(:repo, name: 'FlightPlan', slug: 'CreatekIO/flight_plan')
