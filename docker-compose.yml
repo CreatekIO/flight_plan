@@ -40,8 +40,6 @@ services:
       - traefik.enable=true
       - traefik.http.routers.app.rule=Host(`dev.createk.io`)
       - traefik.http.routers.app.tls=true
-    env_file:
-      - .env
 
   db:
     image: postgres:12.6-alpine
@@ -92,8 +90,6 @@ services:
       - DB_HOST=db
       - DB_USERNAME=postgres
       - DB_PASSWORD=password
-    env_file:
-      - .env
 
 volumes:
   postgresql_data:
