@@ -38,7 +38,7 @@ services:
       - WEBPACKER_DEV_SERVER_HOST=webpack
     labels:
       - traefik.enable=true
-      - traefik.http.routers.app.rule=Host(`dev.createk.io`)
+      - "traefik.http.routers.app.rule=Host(`dev.createk.io`, `smee.io`) || HostRegexp(`[^.]+.ngrok.io`)"
       - traefik.http.routers.app.tls=true
 
   db:
