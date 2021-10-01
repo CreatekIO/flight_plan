@@ -49,6 +49,8 @@ module InstallationImporter
   class Installation
     DEFAULT_DEPLOYMENT_BRANCH = 'master'.freeze
 
+    delegate :octokit, to: :repo
+
     def initialize(payload, installation_id)
       @payload = payload
       @slug = payload[:full_name]
@@ -85,8 +87,6 @@ module InstallationImporter
 
     def remove_old_webhook
       return if repo_created?
-
-      octokit = App.installation_client_for(installation_id)
 
       # Note that app webhooks aren't returned from this endpoint
       octokit.hooks(slug).each do |webhook|

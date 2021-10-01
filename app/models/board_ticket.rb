@@ -115,7 +115,7 @@ class BoardTicket < ApplicationRecord
     # TODO: need to be able to recover if github does not respond,
     # possibly moving to a background job
 
-    retry_with_global_token_if_fails do
+    retry_as_app_if_fails(repo) do
       if swimlane_id == closed_swimlane.id
         octokit_close_issue
       elsif attribute_before_last_save(:swimlane_id) == closed_swimlane.id

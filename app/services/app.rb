@@ -1,5 +1,7 @@
 # See https://docs.github.com/en/developers/apps/building-github-apps/authenticating-with-github-apps#authenticating-as-a-github-app
 class App
+  include OctokitClient
+
   JWT_ALGO = 'RS256'.freeze
 
   APP_ID = ENV.fetch('GITHUB_APP_ID')
@@ -12,35 +14,26 @@ class App
   CACHE_TTL = 55.minutes
 
   class << self
-    delegate :installation_client_for, :uninstall, to: :new
+    delegate :access_token_for, :uninstall, to: :new
   end
 
-  def installation_client_for(repo_or_id)
-    id = repo_or_id.try(:remote_installation_id) || repo_or_id
-
-    Octokit::Client.new(
-      bearer_token: nil,
-      access_token: installation_token_for(id)
-    )
+  # Use this value for Octokit::Client#access_token
+  def access_token_for(installation_id:)
+    Rails.cache.fetch("octokit:installation_token/#{installation_id}", expires_in: CACHE_TTL) do
+      octokit.create_installation_access_token(installation_id).token
+    end
   end
 
   # https://docs.github.com/en/rest/reference/apps#delete-an-installation-for-the-authenticated-app
   def uninstall(installation_id:)
-    app_client.delete("/app/installations/#{installation_id}") # no method for this yet in Octokit
-    app_client.last_response.status == 204
+    octokit.delete("/app/installations/#{installation_id}") # no method for this yet in Octokit
+    octokit.last_response.status == 204
   end
 
   private
 
-  # Use this value for Octokit::Client#access_token
-  def installation_token_for(installation_id)
-    Rails.cache.fetch("octokit:installation_token/#{installation_id}", expires_in: CACHE_TTL) do
-      app_client.create_installation_access_token(installation_id).token
-    end
-  end
-
-  def app_client
-    @app_client ||= Octokit::Client.new(bearer_token: jwt, access_token: nil)
+  def octokit_client_options
+    { bearer_token: jwt, access_token: nil }
   end
 
   def jwt

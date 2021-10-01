@@ -14,6 +14,7 @@ class ReleaseManager
     @repo = repo
     @release_branch_name = Time.now.strftime('release/%Y%m%d-%H%M%S')
     @merge_conflicts = []
+    @octokit = repo.octokit
   end
 
   def open_pr?

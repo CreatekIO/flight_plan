@@ -92,4 +92,14 @@ class Repo < ApplicationRecord
   def set_defaults
     self.deployment_branch ||= DEFAULT_DEPLOYMENT_BRANCH
   end
+
+  def octokit_client_options
+    token = if remote_installation_id.present?
+      App.access_token_for(installation_id: remote_installation_id)
+    else
+      OctokitClient::LEGACY_GLOBAL_TOKEN
+    end
+
+    { access_token: token }
+  end
 end

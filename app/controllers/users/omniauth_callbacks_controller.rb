@@ -1,4 +1,8 @@
 class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
+  include OctokitClient
+
+  octokit_methods :organization_member?
+
   before_action :ensure_org_member, only: :github
 
   def github
@@ -21,10 +25,13 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
 
   def ensure_org_member
     login = auth.extra.raw_info.login
-
-    return if allowed_orgs.any? { |org| Octokit.organization_member?(org, login) }
+    return if allowed_orgs.any? { |org| octokit_organization_member?(org, login) }
 
     redirect_to root_path, alert: 'Not a member of any permitted organisations' and return
+  end
+
+  def octokit_client_options
+    { access_token: auth.credentials.token }
   end
 
   def user

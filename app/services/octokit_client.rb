@@ -1,6 +1,8 @@
 module OctokitClient
   extend ActiveSupport::Concern
 
+  LEGACY_GLOBAL_TOKEN = ENV['GITHUB_API_TOKEN'].freeze
+
   module ClassMethods
     def octokit_methods(*names, prefix_with: nil, add_aliases: false)
       prefix_args = Array.wrap(prefix_with).map(&:to_s).join(', ')
@@ -26,7 +28,11 @@ module OctokitClient
   end
 
   def octokit
-    @octokit ||= Octokit::Client.new
+    @octokit ||= Octokit::Client.new(octokit_client_options)
+  end
+
+  def octokit_client_options
+    {}
   end
 
   def octokit_token=(new_token)
@@ -42,19 +48,24 @@ module OctokitClient
     octokit.auto_paginate = original
   end
 
-  def retry_with_global_token_if_fails
+  def retry_as_app_if_fails(repo)
     retried = false
+    original_client = @octokit
 
     begin
       yield
     rescue Octokit::NotFound => error
-      raise if octokit.access_token == Octokit.access_token || retried
+      raise if octokit.bearer_authenticated? \
+        || octokit.access_token == LEGACY_GLOBAL_TOKEN \
+        || retried
 
       logger.warn "Got #{error.class}: #{error.message}...retrying with global API token"
 
-      self.octokit_token = Octokit.access_token
+      @octokit = repo.octokit
       retried = true
       retry
+    ensure
+      @octokit = original_client
     end
   end
 end
