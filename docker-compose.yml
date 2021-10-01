@@ -74,7 +74,8 @@ services:
       - traefik.http.routers.webpack.tls=true
 
   redis:
-    image: redis:5.0-alpine
+    image: redis:6.2-alpine
+    command: '--maxmemory 25mb --maxclients 20' # match Heroku's "Hobby Dev" plan
 
   sidekiq:
     image: createkio/flight_plan:${IMAGE_TAG:-latest}
