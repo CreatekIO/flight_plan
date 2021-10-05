@@ -1,5 +1,11 @@
 class ApplicationRecord < ActiveRecord::Base
+  include Wisper.publisher
+
   self.abstract_class = true
+
+  after_create_commit :broadcast_create
+  after_update_commit :broadcast_update
+  after_destroy_commit :broadcast_destroy
 
   def self.permissive_enum(definitions)
     enum(definitions)
@@ -36,5 +42,19 @@ class ApplicationRecord < ActiveRecord::Base
   # For flipper gem
   def flipper_id
     to_gid
+  end
+
+  private
+
+  def broadcast_create
+    broadcast(:model_created, self)
+  end
+
+  def broadcast_update
+    broadcast(:model_updated, self)
+  end
+
+  def broadcast_destroyed
+    broadcast(:model_destroyed, self)
   end
 end

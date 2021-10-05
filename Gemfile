@@ -34,6 +34,7 @@ gem 'redis-namespace'
 gem 'sidekiq'
 gem 'slack-ruby-client'
 gem 'webpacker', '6.0.0.beta.6'
+gem 'wisper'
 
 group :development, :test do
   gem 'active_record_query_trace'
