@@ -7,4 +7,6 @@ Bugsnag.configure do |config|
   # - https://docs.bugsnag.com/build-integrations/heroku/#versioning-heroku-apps
   # - https://devcenter.heroku.com/articles/dyno-metadata
   config.app_version = ENV['HEROKU_RELEASE_VERSION']
+
+  config.meta_data_filters += %w[github.token]
 end
