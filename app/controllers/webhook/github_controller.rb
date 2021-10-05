@@ -50,8 +50,12 @@ class Webhook::GithubController < Webhook::BaseController
     raise error
   end
 
-  def webhook_secret(_payload)
-    ENV['GITHUB_WEBHOOK_SECRET']
+  def webhook_secret(payload)
+    if payload[:installation].present?
+      ENV['GITHUB_APP_WEBHOOK_SECRET']
+    else
+      ENV['GITHUB_WEBHOOK_SECRET']
+    end
   end
 
   def repo

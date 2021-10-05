@@ -2,10 +2,12 @@ require 'rails_helper'
 
 RSpec.describe 'Webhooks', type: :request do
   let(:webhook_secret) { SecureRandom.hex }
+  let(:app_webhook_secret) { "app-#{SecureRandom.hex}" }
 
   before do
     allow(ENV).to receive(:[]).and_call_original
     allow(ENV).to receive(:[]).with('GITHUB_WEBHOOK_SECRET').and_return(webhook_secret)
+    allow(ENV).to receive(:[]).with('GITHUB_APP_WEBHOOK_SECRET').and_return(app_webhook_secret)
   end
 
   around do |example|
@@ -24,6 +26,8 @@ RSpec.describe 'Webhooks', type: :request do
 
   event_type :installation do
     let(:installation_id) { payload[:installation][:id] }
+
+    subject { deliver_webhook(payload, secret: app_webhook_secret) }
 
     action :created do
       let(:payload) { webhook_payload(:installation_created) }
@@ -65,7 +69,7 @@ RSpec.describe 'Webhooks', type: :request do
       end
 
       it 'adds installation id to existing repo' do
-        expect { deliver_webhook(payload) }
+        expect { subject }
           .to change { existing_repo.reload.remote_installation_id }
           .from(nil)
           .to(payload[:installation][:id])
@@ -81,12 +85,12 @@ RSpec.describe 'Webhooks', type: :request do
           remote_installation_id: installation_id
         ).where.not(deployment_branch: ['', nil], name: ['', nil])
 
-        expect { deliver_webhook(payload) }
+        expect { subject }
           .to change(query, :count).by(1)
       end
 
       it 'removes old webhook for existing repo' do
-        deliver_webhook(payload)
+        subject
 
         expect(webhook_delete_request).to have_been_requested
       end
@@ -106,7 +110,7 @@ RSpec.describe 'Webhooks', type: :request do
 
         it 'does not change or create any repos' do
           aggregate_failures do
-            expect { deliver_webhook(payload) }
+            expect { subject }
               .to not_change { existing_repo.reload.attributes }
               .and not_change(Repo, :count)
 
@@ -115,7 +119,7 @@ RSpec.describe 'Webhooks', type: :request do
         end
 
         it 'deletes installation' do
-          deliver_webhook(payload)
+          subject
 
           expect(installation_delete_request).to have_been_requested
         end
@@ -138,7 +142,7 @@ RSpec.describe 'Webhooks', type: :request do
       end
 
       it 'removes installation id from existing repo' do
-        expect { deliver_webhook(payload) }
+        expect { subject }
           .to change { existing_repo.reload.remote_installation_id }
           .from(payload[:installation][:id])
           .to(nil)
@@ -149,6 +153,8 @@ RSpec.describe 'Webhooks', type: :request do
 
   event_type :installation_repositories do
     let(:installation_id) { payload[:installation][:id] }
+
+    subject { deliver_webhook(payload, secret: app_webhook_secret) }
 
     action :added do
       let(:payload) { webhook_payload(:installation_repositories_added) }
@@ -189,7 +195,7 @@ RSpec.describe 'Webhooks', type: :request do
       end
 
       it 'adds installation id to existing repo' do
-        expect { deliver_webhook(payload) }
+        expect { subject }
           .to change { existing_repo.reload.remote_installation_id }
           .from(nil)
           .to(payload[:installation][:id])
@@ -203,12 +209,12 @@ RSpec.describe 'Webhooks', type: :request do
           remote_installation_id: installation_id
         ).where.not(deployment_branch: ['', nil], name: ['', nil])
 
-        expect { deliver_webhook(payload) }
+        expect { subject }
           .to change(query, :count).by(1)
       end
 
       it 'removes old webhook for existing repo' do
-        deliver_webhook(payload)
+        subject
 
         expect(webhook_delete_request).to have_been_requested
       end
@@ -230,7 +236,7 @@ RSpec.describe 'Webhooks', type: :request do
       end
 
       it 'removes installation id from existing repo' do
-        expect { deliver_webhook(payload) }
+        expect { subject }
           .to change { existing_repo.reload.remote_installation_id }
           .from(payload[:installation][:id])
           .to(nil)

@@ -24,11 +24,11 @@ module WebhookHelpers
     )
   end
 
-  def deliver_webhook(payload, event: event_type)
+  def deliver_webhook(payload, event: event_type, secret: webhook_secret)
     headers, request_body = GithubWebhookFake.generate_request(
       event: event,
       payload: payload,
-      secret: webhook_secret
+      secret: secret
     )
 
     post webhook_github_url, params: request_body, headers: headers
