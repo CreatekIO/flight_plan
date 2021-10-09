@@ -250,7 +250,29 @@ Devise.setup do |config|
   # ==> OmniAuth
   # Add a new OmniAuth provider. Check the wiki for more information on setting
   # up on your models and hooks.
-  config.omniauth :github, ENV['GITHUB_CLIENT_ID'], ENV['GITHUB_CLIENT_SECRET']
+  config.omniauth :github, setup: -> (env) {
+    request = ActionDispatch::Request.new(env)
+    strategy = env['omniauth.strategy']
+
+    # This gets called twice - once before we send our request
+    # to GitHub, and again when we receive the callback from
+    # GitHub - so we need to make sure we use the same creds/config
+    # for both requests
+    use_app = if strategy.on_callback_path?
+      request.session.delete(:use_app_creds).present?
+    elsif request.params[:app].present?
+      request.session[:use_app_creds] = true
+      true
+    else
+      false
+    end
+
+    prefix = use_app ? 'GITHUB_APP' : 'GITHUB'
+
+    strategy.options[:client_id] = ENV["#{prefix}_CLIENT_ID"]
+    strategy.options[:client_secret] = ENV["#{prefix}_CLIENT_SECRET"]
+    strategy.options[:scope] = 'user,repo' unless use_app
+  }
 
   # ==> Warden configuration
   # If you want to use other strategies, that are not supported by Devise, or
