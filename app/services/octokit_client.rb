@@ -3,6 +3,10 @@ module OctokitClient
 
   LEGACY_GLOBAL_TOKEN = ENV['GITHUB_API_TOKEN'].freeze
 
+  def self.legacy_client
+    Octokit::Client.new(access_token: LEGACY_GLOBAL_TOKEN)
+  end
+
   module ClassMethods
     def octokit_methods(*names, prefix_with: nil, add_aliases: false)
       prefix_args = Array.wrap(prefix_with).map(&:to_s).join(', ')

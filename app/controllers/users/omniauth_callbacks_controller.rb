@@ -32,6 +32,34 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     { access_token: auth.credentials.token }
   end
 
+  def legacy_client
+    @legacy_client ||= OctokitClient.legacy_client
+  end
+
+  def octokit_organization_member?(org, username)
+    from_user_token = super
+    from_legacy = legacy_client.organization_member?(org, username)
+
+    return from_legacy if from_legacy == from_user_token
+
+    payload = {
+      org: org,
+      username: username,
+      token_prefix: auth.credentials.token.split('_').first,
+      from_user_token: from_user_token,
+      from_legacy: from_legacy,
+      org_memberships_method: octokit.org_memberships.map(&:organization).map(&:login)
+    }
+
+    logger.warn("Org member? mismatch: #{payload.inspect}")
+
+    Bugsnag.notify('Org member? mismatch') do |report|
+      report.add_tab(:debugging, payload)
+    end
+
+    from_legacy
+  end
+
   def user
     @user ||= User.from_omniauth(auth)
   end
