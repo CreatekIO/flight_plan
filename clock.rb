@@ -3,9 +3,7 @@ require './config/boot'
 require './config/environment'
 
 module Clockwork
-  handler do |job|
-    puts "Running #{job}"
-  end
+  error_handler { |error| Bugsnag.notify(error) }
 
   every 1.day, 'auto_deploy', at: '10:15', if: -> (time) { time.on_weekday? } do
     JobMonitor.measure('clock-auto_deploy') do
