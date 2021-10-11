@@ -1,3 +1,4 @@
+require 'timeout'
 require 'rspec/retry'
 
 RSpec.configure do |config|
@@ -5,7 +6,9 @@ RSpec.configure do |config|
   config.display_try_failure_messages = true
 
   config.around(:each, js: true) do |example|
-    example.run_with_retry(retry: 3)
+    Timeout.timeout(60) do
+      example.run_with_retry(retry: 3)
+    end
   end
 
   config.retry_callback = proc do |example|
