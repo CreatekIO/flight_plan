@@ -41,13 +41,43 @@ export const ticketUnlabelled = createAction("ws/ticket/unlabelled", identity);
 export const ticketAssigned = createAction("ws/ticket/assigned", identity);
 export const ticketUnassigned = createAction("ws/ticket/unassigned", identity);
 
+export const ticketMilestoned = createAction(
+    "ws/ticket/milestoned",
+    // Make payload `upsert`-able
+    ({ meta, payload: { boardTicketId, milestone }}) => ({
+        meta,
+        payload: {
+            entities: {
+                boardTickets: [{ id: boardTicketId, milestone: milestone.id }],
+                milestones: [milestone]
+            }
+        }
+    })
+);
+
+export const ticketDemilestoned = createAction(
+    "ws/ticket/demilestoned",
+    ({ meta, payload: { boardTicketId }}) => ({
+        meta,
+        payload: {
+            entities: { boardTickets: [{ id: boardTicketId, milestone: null }] }
+        }
+    })
+);
+
+export const milestoneRetitled = createAction("ws/milestone/title_changed", upsertPrepare);
+
 const handlers = [
     ticketWasMoved,
     ticketRetitled,
     ticketLabelled,
     ticketUnlabelled,
     ticketAssigned,
-    ticketUnassigned
+    ticketUnassigned,
+    ticketMilestoned,
+    ticketDemilestoned,
+
+    milestoneRetitled
 ];
 
 const middleware = _store => next => action => {

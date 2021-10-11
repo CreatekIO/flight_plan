@@ -12,7 +12,7 @@ class PullRequest < ApplicationRecord
   end
 
   belongs_to :repo
-  has_many :boards, through: :repo
+  has_many :boards, through: :repo, source: :boards
   belongs_to :creator, -> { where(provider: 'github') },
     optional: true, class_name: 'User',
     foreign_key: :creator_remote_id, primary_key: :uid

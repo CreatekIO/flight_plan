@@ -17,6 +17,9 @@ class Repo < ApplicationRecord
   has_many :milestones
   has_many :aliases, class_name: 'RepoAlias'
 
+  has_one :board_repo
+  has_one :board, through: :board_repo
+
   scope :auto_deployable, -> { where(auto_deploy: true) }
 
   octokit_methods :branches, :compare, prefix_with: :slug
