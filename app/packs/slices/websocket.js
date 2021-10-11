@@ -38,12 +38,16 @@ export const ticketWasMoved = createAction(
 export const ticketRetitled = createAction("ws/ticket/title_changed", upsertPrepare);
 export const ticketLabelled = createAction("ws/ticket/labelled", identity);
 export const ticketUnlabelled = createAction("ws/ticket/unlabelled", identity);
+export const ticketAssigned = createAction("ws/ticket/assigned", identity);
+export const ticketUnassigned = createAction("ws/ticket/unassigned", identity);
 
 const handlers = [
     ticketWasMoved,
     ticketRetitled,
     ticketLabelled,
-    ticketUnlabelled
+    ticketUnlabelled,
+    ticketAssigned,
+    ticketUnassigned
 ];
 
 const middleware = _store => next => action => {

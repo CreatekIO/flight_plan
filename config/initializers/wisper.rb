@@ -3,4 +3,5 @@ Rails.application.reloader.to_prepare do
 
   Labelling.subscribe(LabellingBroadcast)
   Ticket.subscribe(TicketBroadcast)
+  TicketAssignment.subscribe(TicketAssignmentBroadcast)
 end
