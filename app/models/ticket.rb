@@ -21,6 +21,9 @@ class Ticket < ApplicationRecord
   has_many :assignments, class_name: 'TicketAssignment', dependent: :destroy
   has_many :assignees, through: :assignments
 
+  has_one :board_ticket
+  has_one :board, through: :board_ticket
+
   scope :merged, -> { where(merged: true) }
   scope :unmerged, -> { where(merged: false) }
 
