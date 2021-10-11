@@ -14,7 +14,10 @@ class Ticket < ApplicationRecord
   has_many :pull_request_connections
   has_many :pull_requests, -> { order(created_at: :desc) }, through: :pull_request_connections
   has_many :labellings, dependent: :destroy
-  has_many :labels, -> { order(:name) }, through: :labellings
+  # Having `dependent: :destroy` on the `has_many ... through` associations
+  # doesn't actually destroy the records, it just ensures that the
+  # `after_destroy_commit` callbacks get called on the join models
+  has_many :labels, -> { order(:name) }, through: :labellings, dependent: :destroy
   has_many :display_labels, -> {
     where.not(arel_table[:name].matches('status: %')).order(:name)
   }, through: :labellings, source: :label

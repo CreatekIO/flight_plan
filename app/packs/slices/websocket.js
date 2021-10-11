@@ -12,7 +12,7 @@ const boardTicketSchema = new Entity("boardTickets", {
     pull_requests: [new Entity("pullRequests")]
 });
 
-const prepare = ({ meta, payload }) => {
+const upsertPrepare = ({ meta, payload }) => {
     const action = { meta, payload };
 
     if ("entities" in payload) return action;
@@ -20,6 +20,8 @@ const prepare = ({ meta, payload }) => {
     action.payload = { entities: payload };
     return action;
 }
+
+const identity = action => action;
 
 export const ticketWasMoved = createAction(
     "ws/TICKET_WAS_MOVED",
@@ -33,9 +35,16 @@ export const ticketWasMoved = createAction(
     })
 );
 
-export const ticketRetitled = createAction('ws/ticket/title_changed', prepare)
+export const ticketRetitled = createAction("ws/ticket/title_changed", upsertPrepare);
+export const ticketLabelled = createAction("ws/ticket/labelled", identity);
+export const ticketUnlabelled = createAction("ws/ticket/unlabelled", identity);
 
-const handlers = [ticketWasMoved, ticketRetitled];
+const handlers = [
+    ticketWasMoved,
+    ticketRetitled,
+    ticketLabelled,
+    ticketUnlabelled
+];
 
 const middleware = _store => next => action => {
     const handler = handlers.find(handler => handler.match(action));

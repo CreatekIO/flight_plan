@@ -56,7 +56,8 @@ class ApplicationBroadcast
 
         new(record, *args).#{event}
       rescue => error
-        Rails.logger.error("Broadcast (#{event}) error: \#{error.inspect}")
+        Rails.logger.error("\#{self} (#{event}) error: \#{error.inspect}")
+        Rails.logger.error(error.backtrace.join("\\n"))
         Bugsnag.notify(error)
       end
     RUBY
@@ -105,6 +106,8 @@ class ApplicationBroadcast
   end
 
   def broadcast_to_model(model, event, payload)
+    payload = payload.transform_keys { |key| ReduxLoader.to_key(key) } if payload.is_a?(Hash)
+
     "#{model.class}Channel".constantize.broadcast_to(
       model,
       type: "ws/#{event}",

@@ -16,6 +16,10 @@ class Label < ApplicationRecord
     end
   end
 
+  def for_swimlane_status?
+    /^state: /.match?(name)
+  end
+
   def to_builder
     Jbuilder.new do |json|
       json.extract! self, :id, :name, :colour

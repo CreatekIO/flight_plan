@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import { normalize, schema } from "normalizr";
 
 import { createRequestThunk } from "./utils";
+import { ticketLabelled, ticketUnlabelled } from "./websocket";
 
 const { htmlBoardURL } = flightPlanConfig.api;
 const { Entity } = schema;
@@ -77,7 +78,7 @@ export const updateLabelsForTicket = createRequestThunk.patch({
     condition: ({ add, remove }) => Boolean(add.length || remove.length)
 });
 
-const makeLabelChanges = (labels, { add, remove }) => {
+const makeLabelChanges = (labels, { add = [], remove = [] }) => {
     add.forEach(id => labels.includes(id) || labels.push(id));
 
     remove.forEach(id => {
@@ -103,6 +104,20 @@ const { reducer } = createSlice({
         [updateLabelsForTicket.rejected]: (state, { meta }) => {
             const { id, add, remove } = meta.arg;
             makeLabelChanges(state[id].labels, { add: remove, remove: add });
+        },
+        [ticketLabelled]: (state, { payload }) => {
+            const { boardTicketId, label } = payload;
+            const boardTicket = state[boardTicketId];
+            if (!boardTicket) return;
+
+            makeLabelChanges(boardTicket.labels, { add: [label.id] });
+        },
+        [ticketUnlabelled]: (state, { payload }) => {
+            const { boardTicketId, labelId } = payload;
+            const boardTicket = state[boardTicketId];
+            if (!boardTicket) return;
+
+            makeLabelChanges(boardTicket.labels, { remove: [labelId] });
         }
     }
 });
