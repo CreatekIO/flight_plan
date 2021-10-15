@@ -4,7 +4,10 @@ RSpec.describe TicketMovesController, type: :request do
   describe 'POST #create' do
     include_context 'board with swimlanes'
 
+    let(:repo) { create(:repo, slug: slug, remote_installation_id: installation_id) }
+    let(:installation_id) { nil }
     let(:ticket) { create(:ticket, repo: repo) }
+
     let!(:board_ticket) do
       Timecop.travel(1.day.ago) do # ensure we get an 'old' #started_at on BoardTicket#open_timesheet
         create(:board_ticket, board: board, ticket: ticket, swimlane: backlog)
@@ -147,28 +150,58 @@ RSpec.describe TicketMovesController, type: :request do
         let(:global_token) { 'github-api-global-token' }
 
         before do
-          allow(Octokit).to receive(:access_token).and_return(global_token)
+          stub_const('OctokitClient::LEGACY_GLOBAL_TOKEN', global_token)
         end
 
-        it 'retries API calls with global token' do
-          aggregate_failures do
-            expect {
-              subject
-            }.to change { board_ticket.reload.swimlane }.from(backlog).to(dev)
-              .and change { dev.reload.board_tickets[destination_position] }.to(board_ticket)
-              .and have_broadcasted_to([:board, board]).from_channel(BoardChannel).with(expected_payload)
+        context 'repo does not have an installation_id' do
+          let(:installation_id) { nil }
 
-            expect(response).to have_http_status(:created)
+          it 'retries API calls with global token' do
+            aggregate_failures do
+              expect {
+                subject
+              }.to change { board_ticket.reload.swimlane }.from(backlog).to(dev)
+                .and change { dev.reload.board_tickets[destination_position] }.to(board_ticket)
+                .and have_broadcasted_to([:board, board]).from_channel(BoardChannel).with(expected_payload)
 
-            expect(get_all_labels_call_invalid).to have_been_requested
-            expect(replace_all_labels_call_invalid).not_to have_been_requested
+              expect(response).to have_http_status(:created)
 
-            expect(
-              replace_all_labels_call.with(
-                body: ['type: bug', "status: #{dev.name.downcase}"].to_json,
-                headers: { 'Authorization' => "token #{global_token}" }
-              )
-            ).to have_been_requested
+              expect(get_all_labels_call_invalid).to have_been_requested
+              expect(replace_all_labels_call_invalid).not_to have_been_requested
+
+              expect(
+                replace_all_labels_call.with(
+                  body: ['type: bug', "status: #{dev.name.downcase}"].to_json,
+                  headers: { 'Authorization' => "token #{global_token}" }
+                )
+              ).to have_been_requested
+            end
+          end
+        end
+
+        context 'repo has an installation_id' do
+          let(:installation_id) { FactoryBot.generate(:github_id) }
+
+          it 'retries API calls as app installation' do
+            aggregate_failures do
+              expect {
+                subject
+              }.to change { board_ticket.reload.swimlane }.from(backlog).to(dev)
+                .and change { dev.reload.board_tickets[destination_position] }.to(board_ticket)
+                .and have_broadcasted_to([:board, board]).from_channel(BoardChannel).with(expected_payload)
+
+              expect(response).to have_http_status(:created)
+
+              expect(get_all_labels_call_invalid).to have_been_requested
+              expect(replace_all_labels_call_invalid).not_to have_been_requested
+
+              expect(
+                replace_all_labels_call.with(
+                  body: ['type: bug', "status: #{dev.name.downcase}"].to_json,
+                  headers: { 'Authorization' => /^token ghs_/ }
+                )
+              ).to have_been_requested
+            end
           end
         end
       end

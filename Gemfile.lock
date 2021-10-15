@@ -339,6 +339,7 @@ DEPENDENCIES
   github_webhook
   haml
   jbuilder
+  jwt
   octokit
   omniauth-github (~> 1)
   omniauth-rails_csrf_protection (< 1)

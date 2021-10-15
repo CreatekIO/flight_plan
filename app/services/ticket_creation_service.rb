@@ -12,7 +12,7 @@ class TicketCreationService
     @repo_id = attributes[:repo_id]
     @board = board_repo.board
 
-    self.octokit_token = attributes[:octokit_token]
+    @octokit_token = attributes[:octokit_token]
   end
 
   def create_ticket!
@@ -23,6 +23,10 @@ class TicketCreationService
   end
 
   private
+
+  def octokit_client_options
+    { access_token: @octokit_token }
+  end
 
   def board_repo
     BoardRepo.find(repo_id)

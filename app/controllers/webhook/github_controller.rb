@@ -6,6 +6,12 @@ class Webhook::GithubController < Webhook::BaseController
 
   private
 
+  def github_installation(payload)
+    InstallationImporter.import(payload)
+  end
+
+  alias_method :github_installation_repositories, :github_installation
+
   def github_issues(payload)
     repo.with_lock do
       Ticket.import(payload[:issue], repo, action: payload[:action])
@@ -44,8 +50,12 @@ class Webhook::GithubController < Webhook::BaseController
     raise error
   end
 
-  def webhook_secret(_payload)
-    ENV['GITHUB_WEBHOOK_SECRET']
+  def webhook_secret(payload)
+    if payload[:installation].present?
+      ENV['GITHUB_APP_WEBHOOK_SECRET']
+    else
+      ENV['GITHUB_WEBHOOK_SECRET']
+    end
   end
 
   def repo

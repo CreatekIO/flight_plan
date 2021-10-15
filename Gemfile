@@ -20,6 +20,7 @@ gem 'flipper-ui'
 gem 'github_webhook'
 gem 'haml'
 gem 'jbuilder'
+gem 'jwt'
 gem 'octokit'
 
 # upgrade once Devise updated

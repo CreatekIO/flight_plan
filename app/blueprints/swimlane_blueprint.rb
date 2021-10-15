@@ -8,7 +8,7 @@ class SwimlaneBlueprint < ApplicationBlueprint
     Swimlane.all_board_tickets_loaded?(swimlane.preloaded_board_ticket_ids)
   end
 
-  field :next_swimlane_tickets_url do |swimlane, options|
+  field :next_board_tickets_url do |swimlane, options|
     last = swimlane.preloaded_board_ticket_ids.last
     next if last.blank?
 

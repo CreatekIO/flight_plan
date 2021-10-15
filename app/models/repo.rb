@@ -19,13 +19,7 @@ class Repo < ApplicationRecord
 
   scope :auto_deployable, -> { where(auto_deploy: true) }
 
-  octokit_methods(
-    :compare, :pull_requests, :merge_pull_request, :create_pull_request,
-    :create_ref, :merge, :refs, :delete_branch,
-    prefix_with: :slug, add_aliases: true
-  )
-
-  octokit_methods :branches, prefix_with: :slug
+  octokit_methods :branches, :compare, prefix_with: :slug
 
   URL_TEMPLATE = 'https://github.com/%s'.freeze
   DEFAULT_DEPLOYMENT_BRANCH = 'master'.freeze
@@ -69,6 +63,18 @@ class Repo < ApplicationRecord
     branch_names.grep(regex)
   end
 
+  def branch_up_to_date?(name, with:)
+    without_octokit_pagination do
+      octokit_compare(
+        URI.escape(name),
+        URI.escape(with),
+        # Speed up responses - we don't want the details of each commit,
+        # just whether the diff contains any commits
+        per_page: 1
+      ).total_commits.zero?
+    end
+  end
+
   def update_merged_tickets
     tickets.unmerged.each do |ticket|
       if ticket.merged_to?(deployment_branch)
@@ -85,5 +91,15 @@ class Repo < ApplicationRecord
 
   def set_defaults
     self.deployment_branch ||= DEFAULT_DEPLOYMENT_BRANCH
+  end
+
+  def octokit_client_options
+    token = if remote_installation_id.present?
+      App.access_token_for(installation_id: remote_installation_id)
+    else
+      OctokitClient::LEGACY_GLOBAL_TOKEN
+    end
+
+    { access_token: token }
   end
 end

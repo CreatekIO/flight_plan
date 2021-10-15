@@ -6,7 +6,7 @@ class TicketLabelChangeset
   attr_reader :errors
 
   def initialize(ticket:, changes:, token:)
-    self.octokit_token = token
+    @octokit_token = token
     @ticket = ticket
     @additions = changes[:add].presence || []
     @deletions = changes[:remove].presence || []
@@ -35,6 +35,10 @@ class TicketLabelChangeset
   private
 
   attr_reader :ticket, :additions, :deletions, :latest_labels_from_github
+
+  def octokit_client_options
+    { access_token: @octokit_token }
+  end
 
   def add_labels
     return unless additions.any?

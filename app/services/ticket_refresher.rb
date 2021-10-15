@@ -7,6 +7,7 @@ class TicketRefresher
 
   def initialize(ticket)
     @ticket = ticket
+    @octokit = ticket.repo.octokit
   end
 
   def run

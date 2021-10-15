@@ -1,11 +1,11 @@
 module WebhookHelpers
-  extend ActiveSupport::Concern
-
   module ClassMethods
     def event_type(event, &block)
-      let(:event_type) { event }
+      context("`#{event}` event") do
+        let!(:event_type) { event }
 
-      context("`#{event}` event", &block)
+        instance_exec(&block)
+      end
     end
 
     def action(name, &block)
@@ -24,11 +24,11 @@ module WebhookHelpers
     )
   end
 
-  def deliver_webhook(payload, event: event_type)
+  def deliver_webhook(payload, event: event_type, secret: webhook_secret)
     headers, request_body = GithubWebhookFake.generate_request(
       event: event,
       payload: payload,
-      secret: webhook_secret
+      secret: secret
     )
 
     post webhook_github_url, params: request_body, headers: headers
@@ -37,4 +37,5 @@ end
 
 RSpec.configure do |config|
   config.include WebhookHelpers
+  config.extend WebhookHelpers::ClassMethods
 end

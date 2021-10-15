@@ -26,22 +26,22 @@ services:
     depends_on:
       - db
       - redis
+      - cache
     expose:
       - 3000
     ports:
       - 31000:31000 # capybara port for host Chrome
     environment:
       - REDIS_URL=redis://redis:6379
+      - REDIS_CACHE_URL=redis://cache:6379
       - DB_HOST=db
       - DB_USERNAME=postgres
       - DB_PASSWORD=password
       - WEBPACKER_DEV_SERVER_HOST=webpack
     labels:
       - traefik.enable=true
-      - traefik.http.routers.app.rule=Host(`dev.createk.io`)
+      - "traefik.http.routers.app.rule=Host(`dev.createk.io`, `smee.io`) || HostRegexp(`[^.]+.ngrok.io`)"
       - traefik.http.routers.app.tls=true
-    env_file:
-      - .env
 
   db:
     image: postgres:12.6-alpine
@@ -76,7 +76,12 @@ services:
       - traefik.http.routers.webpack.tls=true
 
   redis:
-    image: redis:5.0-alpine
+    image: redis:6.2-alpine
+    command: '--maxmemory 25mb --maxclients 20' # match Heroku's "Hobby Dev" plan
+
+  cache:
+    image: redis:6.2-alpine
+    command: '--maxmemory 25mb --maxclients 20 --maxmemory-policy allkeys-lru'
 
   sidekiq:
     image: createkio/flight_plan:${IMAGE_TAG:-latest}
@@ -87,13 +92,13 @@ services:
     depends_on:
       - db
       - redis
+      - cache
     environment:
       - REDIS_URL=redis://redis:6379
+      - REDIS_CACHE_URL=redis://cache:6379
       - DB_HOST=db
       - DB_USERNAME=postgres
       - DB_PASSWORD=password
-    env_file:
-      - .env
 
 volumes:
   postgresql_data:

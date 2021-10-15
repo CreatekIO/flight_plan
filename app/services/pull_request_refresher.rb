@@ -7,6 +7,7 @@ class PullRequestRefresher
 
   def initialize(pull_request)
     @pull_request = pull_request
+    @octokit = pull_request.repo.octokit
   end
 
   def run
