@@ -51,5 +51,42 @@ RSpec.configure do |config|
 
   config.before(:each, type: :system, js: true) do
     driven_by :cuprite
+
+    @fp_debug_thread = Thread.new do
+      Thread.current.abort_on_exception = true
+
+      sleep 30
+
+      # Taken from sidekiq
+      Thread.list.each do |thread|
+        Rails.logger.warn "#{thread.object_id} #{thread.name}"
+        puts "#{thread.object_id} #{thread.name}"
+        $stdout.flush
+
+        if thread.backtrace
+          Rails.logger.warn thread.backtrace.join("\n")
+          puts thread.backtrace.join("\n")
+          $stdout.flush
+        else
+          Rails.logger.warn "<no backtrace available>"
+          puts "<no backtrace available>"
+          $stdout.flush
+        end
+      end
+    end
+  end
+
+  config.after(:each, type: :system, js: true) do
+    begin
+      if defined?(@fp_debug_thread)
+        @fp_debug_thread.kill
+        @fp_debug_thread.join
+      end
+    rescue => error
+      Rails.logger.error(error.inspect)
+      p error
+      puts error.backtrace.join("\n")
+      $stdout.flush
+    end
   end
 end
