@@ -1,11 +1,12 @@
 Rails.application.reloader.to_prepare do
   Wisper.clear if Rails.env.development? || Rails.env.test?
 
-  Label.subscribe(LabelBroadcast)
-  Labelling.subscribe(LabellingBroadcast)
-  Milestone.subscribe(MilestoneBroadcast)
-  Ticket.subscribe(TicketBroadcast)
-  TicketAssignment.subscribe(TicketAssignmentBroadcast)
+  Wisper
+    .subscribe(LabelBroadcast, scope: 'Label')
+    .subscribe(LabellingBroadcast, scope: 'Labelling')
+    .subscribe(MilestoneBroadcast, scope: 'Milestone')
+    .subscribe(TicketBroadcast, scope: 'Ticket')
+    .subscribe(TicketAssignmentBroadcast, scope: 'TicketAssignment')
 end
 
 if Rails.env.development? || Rails.env.test? || ENV['WISPER_LOGGING'].present?
