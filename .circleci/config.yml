@@ -69,6 +69,7 @@ jobs:
             DISABLE_SPRING: 1
             FERRUM_PROCESS_TIMEOUT: 10
             FERRUM_DEFAULT_TIMEOUT: 20
+          no_output_timeout: '5m'
           command: >
             circleci tests glob "spec/**/*_spec.rb" | circleci tests split | \
               tee /dev/stderr | xargs bin/rspec \
