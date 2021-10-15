@@ -64,17 +64,31 @@ jobs:
           name: Build packs for system specs
           command: bin/rake webpacker:compile
       - run:
+          name: Determine spec files
+          command: >
+            circleci tests glob "spec/**/*_spec.rb" | circleci tests split | tee tests.txt
+      - run:
           name: Run Specs
+          environment:
+            DISABLE_SPRING: 1
+          command: >
+            cat tests.txt | xargs bin/rspec \
+              --tag ~js \
+              --require rspec_junit_formatter \
+              --format RspecJunitFormatter --out tmp/test-results/rspec/results.xml \
+              --format documentation
+      - run:
+          name: Run JS System Specs
           environment:
             DISABLE_SPRING: 1
             FERRUM_PROCESS_TIMEOUT: 10
             FERRUM_DEFAULT_TIMEOUT: 20
           no_output_timeout: '5m'
           command: >
-            circleci tests glob "spec/**/*_spec.rb" | circleci tests split | \
-              tee /dev/stderr | xargs bin/rspec \
+            cat tests.txt | xargs bin/rspec \
+              --tag js \
               --require rspec_junit_formatter \
-              --format RspecJunitFormatter --out tmp/test-results/rspec/results.xml \
+              --format RspecJunitFormatter --out tmp/test-results/rspec-system/results.xml \
               --format documentation
       - store_artifacts:
           path: log
