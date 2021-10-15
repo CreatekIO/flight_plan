@@ -10,7 +10,9 @@ import {
     ticketRetitled,
     ticketMilestoned,
     ticketDemilestoned,
-    milestoneRetitled
+    milestoneRetitled,
+    labelRenamed,
+    labelRecoloured
 } from "./websocket";
 import { reduceReducers, upsert } from "./utils";
 
@@ -26,7 +28,9 @@ const isUpsertable = isAnyOf(
     ticketRetitled,
     ticketMilestoned,
     ticketDemilestoned,
-    milestoneRetitled
+    milestoneRetitled,
+    labelRenamed,
+    labelRecoloured
 );
 
 // Initial state comes from `combined` reducer below

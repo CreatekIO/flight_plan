@@ -67,6 +67,9 @@ export const ticketDemilestoned = createAction(
 
 export const milestoneRetitled = createAction("ws/milestone/title_changed", upsertPrepare);
 
+export const labelRenamed = createAction("ws/label/name_changed", upsertPrepare);
+export const labelRecoloured = createAction("ws/label/colour_changed", upsertPrepare);
+
 const handlers = [
     ticketWasMoved,
     ticketRetitled,
@@ -76,8 +79,9 @@ const handlers = [
     ticketUnassigned,
     ticketMilestoned,
     ticketDemilestoned,
-
-    milestoneRetitled
+    milestoneRetitled,
+    labelRenamed,
+    labelRecoloured
 ];
 
 const middleware = _store => next => action => {
