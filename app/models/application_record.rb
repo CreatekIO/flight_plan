@@ -46,6 +46,10 @@ class ApplicationRecord < ActiveRecord::Base
     to_gid
   end
 
+  def broadcast(*)
+    super if Flipper.enabled?(:broadcasts)
+  end
+
   private
 
   # We need to capture changes here, since they get wiped

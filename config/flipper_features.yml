@@ -19,3 +19,7 @@ features:
   - name: self_serve_features
     description: >
       Allow users to enable certain features for themselves
+
+  - name: broadcasts
+    description: >
+      Broadcast model changes over WebSockets using after_commit hooks
