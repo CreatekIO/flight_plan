@@ -51,11 +51,15 @@ class Webhook::GithubController < Webhook::BaseController
   end
 
   def webhook_secret(payload)
-    if payload[:installation].present?
+    if payload[:installation].present? || app_ping?
       ENV['GITHUB_APP_WEBHOOK_SECRET']
     else
       ENV['GITHUB_WEBHOOK_SECRET']
     end
+  end
+
+  def app_ping?
+    request.headers['X-GitHub-Event'] == 'ping' && /^App/i.match?(json_body[:hook][:type])
   end
 
   def repo
