@@ -2,6 +2,7 @@ import { createSlice, isFulfilled } from "@reduxjs/toolkit";
 import { createRequestThunk } from "./utils";
 
 import { updateLabelsForTicket } from "./board_tickets";
+import { ticketLabelled } from "./websocket";
 import { upsert } from "./utils";
 
 export const fetchLabelsForRepo = createRequestThunk.get({
@@ -17,6 +18,9 @@ const slice = createSlice({
     // the time when we are no longer using V1
     initialState: {},
     extraReducers: builder => {
+        builder.addCase(ticketLabelled, (state, { payload: { label }}) =>
+            upsert(state, [label])
+        );
         builder.addMatcher(hasLabelsPayload, (state, { payload }) =>
             upsert(state, payload)
         );

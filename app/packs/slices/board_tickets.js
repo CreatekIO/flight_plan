@@ -2,6 +2,12 @@ import { createSlice } from "@reduxjs/toolkit";
 import { normalize, schema } from "normalizr";
 
 import { createRequestThunk } from "./utils";
+import {
+    ticketLabelled,
+    ticketUnlabelled,
+    ticketAssigned,
+    ticketUnassigned
+} from "./websocket";
 
 const { htmlBoardURL } = flightPlanConfig.api;
 const { Entity } = schema;
@@ -77,7 +83,7 @@ export const updateLabelsForTicket = createRequestThunk.patch({
     condition: ({ add, remove }) => Boolean(add.length || remove.length)
 });
 
-const makeLabelChanges = (labels, { add, remove }) => {
+const makeLabelChanges = (labels, { add = [], remove = [] }) => {
     add.forEach(id => labels.includes(id) || labels.push(id));
 
     remove.forEach(id => {
@@ -85,6 +91,14 @@ const makeLabelChanges = (labels, { add, remove }) => {
         if (index > -1) labels.splice(index, 1);
     });
 };
+
+const withBoardTicket = callback => (state, { payload }) => {
+    const { boardTicketId } = payload;
+    const boardTicket = state[boardTicketId];
+    if (!boardTicket) return;
+
+    callback({ boardTicket, ...payload });
+}
 
 const { reducer } = createSlice({
     name: "boardTickets",
@@ -103,7 +117,40 @@ const { reducer } = createSlice({
         [updateLabelsForTicket.rejected]: (state, { meta }) => {
             const { id, add, remove } = meta.arg;
             makeLabelChanges(state[id].labels, { add: remove, remove: add });
-        }
+        },
+        [ticketLabelled]: withBoardTicket(({ boardTicket, label }) => {
+            makeLabelChanges(boardTicket.labels, { add: [label.id] });
+        }),
+        [ticketUnlabelled]: withBoardTicket(({ boardTicket, labelId }) => {
+            makeLabelChanges(boardTicket.labels, { remove: [labelId] });
+        }),
+        [ticketAssigned]: withBoardTicket(({ boardTicket, assignee }) => {
+            const { remote_id: newId, username } = assignee;
+
+            if (!boardTicket.assignees) {
+                boardTicket.assignees = [{ remote_id: newId, username }];
+                return
+            }
+
+            const existing = boardTicket.assignees.find(
+                ({ remote_id }) => newId === remote_id
+            );
+
+            if (existing) return;
+
+            boardTicket.assignees.push({ remote_id: newId, username });
+        }),
+        [ticketUnassigned]: withBoardTicket(({ boardTicket, assignee }) => {
+            if (!boardTicket.assignees) return;
+
+            const { remote_id: removedId } = assignee;
+
+            const index = boardTicket.assignees.findIndex(
+                ({ remote_id }) => removedId === remote_id
+            );
+
+            if (index > -1) boardTicket.assignees.splice(index, 1);
+        })
     }
 });
 

@@ -5,6 +5,17 @@ class ReduxLoader
 
   delegate :dig, to: :to_h
 
+  def self.to_key(object)
+    name = case object
+    when Class, ActiveRecord::Base
+      object.model_name.plural
+    when String, Symbol
+      object.to_s
+    end
+
+    name.camelize(:lower)
+  end
+
   def initialize(klass, id, &block)
     queue[klass] << id
     @associations = []
@@ -48,9 +59,8 @@ class ReduxLoader
 
   def as_json(*)
     to_h.each_with_object({}) do |(klass, records), json|
-      key = klass.model_name.plural.camelize(:lower)
-
       blueprint = "#{klass}Blueprint".safe_constantize || ApplicationBlueprint
+      key = self.class.to_key(klass)
       view = serializers[klass]
 
       json[key] = records.transform_values do |record|

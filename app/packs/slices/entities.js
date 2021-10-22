@@ -5,7 +5,15 @@ import boards, { fetchBoard } from "./boards";
 import labels from "./labels";
 import pullRequests, { fetchNextActions } from "./pull_requests";
 import swimlanes, { fetchSwimlaneTickets } from "./swimlanes";
-import { ticketWasMoved } from "./websocket";
+import {
+    ticketWasMoved,
+    ticketRetitled,
+    ticketMilestoned,
+    ticketDemilestoned,
+    milestoneRetitled,
+    labelRenamed,
+    labelRecoloured
+} from "./websocket";
 import { reduceReducers, upsert } from "./utils";
 
 const isUpsertable = isAnyOf(
@@ -16,7 +24,13 @@ const isUpsertable = isAnyOf(
         fetchTicket,
         moveTicket
     ),
-    ticketWasMoved
+    ticketWasMoved,
+    ticketRetitled,
+    ticketMilestoned,
+    ticketDemilestoned,
+    milestoneRetitled,
+    labelRenamed,
+    labelRecoloured
 );
 
 // Initial state comes from `combined` reducer below
