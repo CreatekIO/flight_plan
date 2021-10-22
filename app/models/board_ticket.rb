@@ -69,6 +69,19 @@ class BoardTicket < ApplicationRecord
     end.compact
   end
 
+  def in_swimlane?(matcher)
+    case matcher
+    when Numeric
+      swimlane_id == matcher
+    when Swimlane
+      swimlane == matcher
+    when Regexp, String
+      matcher === swimlane.try(:name)
+    else
+      raise ArgumentError, "Unsupported: #{matcher.inspect}"
+    end
+  end
+
   private
 
   def handle_ranking

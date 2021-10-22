@@ -7,6 +7,8 @@ Rails.application.reloader.to_prepare do
     .subscribe(MilestoneBroadcast, scope: 'Milestone')
     .subscribe(TicketBroadcast, scope: 'Ticket')
     .subscribe(TicketAssignmentBroadcast, scope: 'TicketAssignment')
+
+  InDevelopmentRule.listen!
 end
 
 if Rails.env.development? || Rails.env.test? || ENV['WISPER_LOGGING'].present?
