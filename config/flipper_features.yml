@@ -3,10 +3,12 @@ features:
   - name: harvest_button
     description: >
       Show a "Track time with Harvest" button on the ticket modal
+    default: on
 
   - name: kpis
     description: >
       Enable the KPIs dashboard at /boards/:id/kpis
+    default: on
 
   - name: normalised_responses
     description: >
@@ -15,6 +17,7 @@ features:
   - name: realtime_updates
     description: >
       Send updates to board over WebSockets
+    default: on
 
   - name: self_serve_features
     description: >
