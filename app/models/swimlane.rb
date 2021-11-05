@@ -34,7 +34,7 @@ class Swimlane < ApplicationRecord
   scope :ordered, -> { order(:position) }
 
   def self.find_by_label!(label)
-    where(name: label.remove(/^status: /)).first!
+    where(name: label.remove(/^#{Label::STATUS_PREFIX}/)).first!
   end
 
   def self.all_board_tickets_loaded?(collection)
@@ -47,6 +47,10 @@ class Swimlane < ApplicationRecord
 
   def preloaded_board_tickets(after:)
     first_board_tickets.after(after)
+  end
+
+  def label_name
+    "#{Label::STATUS_PREFIX}#{name.downcase}"
   end
 
   def to_builder

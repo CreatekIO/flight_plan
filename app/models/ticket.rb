@@ -18,9 +18,7 @@ class Ticket < ApplicationRecord
   # doesn't actually destroy the records, it just ensures that the
   # `after_destroy_commit` callbacks get called on the join models
   has_many :labels, -> { order(:name) }, through: :labellings, dependent: :destroy
-  has_many :display_labels, -> {
-    where.not(arel_table[:name].matches('status: %')).order(:name)
-  }, through: :labellings, source: :label
+  has_many :display_labels, -> { for_display }, through: :labellings, source: :label
   has_many :assignments, class_name: 'TicketAssignment', dependent: :destroy
   has_many :assignees, through: :assignments
 
@@ -155,7 +153,7 @@ class Ticket < ApplicationRecord
       board.closed_swimlane
     else
       status_label = remote_issue[:labels].find do |label|
-        label[:name].starts_with? 'status:'
+        Label.for_status?(label[:name])
       end
 
       if status_label
