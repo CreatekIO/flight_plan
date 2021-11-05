@@ -11,9 +11,7 @@ class Repo < ApplicationRecord
   has_many :branches
   has_many :commit_statuses
   has_many :labels
-  has_many :display_labels, -> {
-    where.not(arel_table[:name].matches('status: %')).order(:name)
-  }, class_name: 'Label'
+  has_many :display_labels, -> { for_display }, class_name: 'Label'
   has_many :milestones
   has_many :aliases, class_name: 'RepoAlias'
 

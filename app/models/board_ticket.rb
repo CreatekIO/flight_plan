@@ -129,11 +129,11 @@ class BoardTicket < ApplicationRecord
   def new_github_labels
     non_status_labels = octokit_labels_for_issue
       .map(&:name)
-      .reject { |label| label.start_with? 'status:' }
+      .reject { |label_name| Label.for_status?(label_name) }
 
     [
       *non_status_labels,
-      *("status: #{swimlane.name.downcase}" unless [open_swimlane, closed_swimlane].include?(swimlane))
+      *(swimlane.label_name unless [open_swimlane, closed_swimlane].include?(swimlane))
     ]
   end
 
