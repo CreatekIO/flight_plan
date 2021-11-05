@@ -17,7 +17,7 @@ class Label < ApplicationRecord
   end
 
   def for_swimlane_status?
-    /^state: /.match?(name)
+    /^status: /.match?(name)
   end
 
   def to_builder
