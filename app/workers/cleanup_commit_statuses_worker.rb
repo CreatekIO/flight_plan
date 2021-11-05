@@ -18,13 +18,12 @@ class CleanupCommitStatusesWorker
   private
 
   def ranking
-    dense_rank = Arel::Nodes::NamedFunction.new('DENSE_RANK', [])
     table = CommitStatus.arel_table
 
-    partition = Arel::Nodes::Window.new
+    partition = SQLHelper.window
       .partition(table[:repo_id], table[:sha], table[:context])
       .order(table[:remote_created_at].desc)
 
-    dense_rank.over(partition).as(RANK_ALIAS)
+    SQLHelper.dense_rank.over(partition).as(RANK_ALIAS)
   end
 end

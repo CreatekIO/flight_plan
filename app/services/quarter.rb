@@ -19,10 +19,7 @@ class Quarter
   end
 
   def self.calculate_sql(column)
-    Arel::Nodes::NamedFunction.new(
-      'to_char',
-      [column, Arel.sql("'#{SQL_FORMAT}'")]
-    )
+    SQLHelper.to_char(column, SQLHelper.quote(SQL_FORMAT))
   end
 
   attr_reader :range
