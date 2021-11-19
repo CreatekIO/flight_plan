@@ -60,4 +60,12 @@ class Quarter
   def number
     START_MONTHS.index(start.month) + 1
   end
+
+  def as_date_range
+    first.to_date..last.to_date
+  end
+
+  def holidays
+    as_date_range.select(&:weekday?).reject(&:workday?)
+  end
 end
