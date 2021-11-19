@@ -33,3 +33,7 @@ en:
   time:
     formats:
       short: "%a %d %b %H:%M"
+
+  date:
+    formats:
+      with_day: "%a %-d %b %y"
