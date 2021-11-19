@@ -31,8 +31,6 @@ class CycleTimeCalculator
     end
   end
 
-  SQL_TRUE = Arel::Nodes::True.new
-
   def initialize(board, quarter: Quarter.current, start_swimlane_id: nil, end_swimlane_id: nil)
     @board = board
     @quarter = quarter
@@ -66,8 +64,8 @@ class CycleTimeCalculator
     BoardTicket
       .joins(ticket: :repo)
       .arel
-      .join(starts).on(SQL_TRUE)
-      .join(ends).on(SQL_TRUE)
+      .join(starts).on(SQLHelper.true)
+      .join(ends).on(SQLHelper.true)
       .project(
         Ticket.arel_table[:title].as('title'),
         Ticket.arel_table[:number].as('number'),

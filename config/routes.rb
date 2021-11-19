@@ -32,6 +32,7 @@ Rails.application.routes.draw do
     resources :next_actions, only: :index
 
     resources :kpis, only: :index
+    resource :cumulative_flow, only: :show, controller: 'cumulative_flow'
 
     # This needs to be last to avoid it intercepting the routes above
     get '*extras' => :show, as: :client_side, on: :member, constraints: { format: :html }

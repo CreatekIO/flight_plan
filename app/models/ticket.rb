@@ -4,10 +4,7 @@ class Ticket < ApplicationRecord
 
   has_many :comments, -> {
     order(
-      Arel::Nodes::NamedFunction.new(
-        'COALESCE',
-        [arel_table[:remote_created_at], arel_table[:created_at]]
-      ).asc
+      SQLHelper.coalesce(arel_table[:remote_created_at], arel_table[:created_at]).asc
     )
   }, dependent: :destroy
   has_many :board_tickets, dependent: :destroy

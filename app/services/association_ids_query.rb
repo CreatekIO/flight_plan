@@ -1,4 +1,6 @@
 class AssociationIdsQuery
+  include SQLHelper
+
   ARRAY_ALIAS = "ids"
 
   delegate :attribute_for, to: :class
@@ -29,12 +31,10 @@ class AssociationIdsQuery
 
   def select_values
     values = [
-      Arel::Table.new(subquery_name)[ARRAY_ALIAS].as(
-        attribute_for(association_name).to_s
-      )
+      sql[subquery_name, ARRAY_ALIAS].as(attribute_for(association_name).to_s)
     ]
 
-    values.unshift(parent_class.arel_table[Arel.star]) if current_scope.select_values.none?
+    values.unshift(sql[parent_class, :*]) if current_scope.select_values.none?
     values
   end
 
