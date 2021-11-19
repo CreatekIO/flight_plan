@@ -193,9 +193,14 @@ const Header = ({ boards, isWaiting, openPRsCount, pullRequests }) => {
                 </MenuItem>
             </Menu>
             {isFeatureEnabled("kpis") && (
-                <HeaderItem href={currentBoard.kpisURL}>
-                    KPIs
-                </HeaderItem>
+                <Menu title="Reports">
+                    <MenuLink href={`/boards/${currentBoard.id}/kpis`}>
+                        KPIs
+                    </MenuLink>
+                    <MenuLink href={`/boards/${currentBoard.id}/cumulative_flow`}>
+                        Cumulative flow
+                    </MenuLink>
+                </Menu>
             )}
             {isWaiting ? (
                 <HeaderItem disabled>
