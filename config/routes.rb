@@ -45,6 +45,7 @@ Rails.application.routes.draw do
 
   resources :repos, only: [] do
     resources :labels, only: :index
+    resources :assignees, only: :index
   end
 
   namespace :webhook do

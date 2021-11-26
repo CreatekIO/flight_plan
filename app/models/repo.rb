@@ -20,7 +20,8 @@ class Repo < ApplicationRecord
 
   scope :auto_deployable, -> { where(auto_deploy: true) }
 
-  octokit_methods :branches, :compare, prefix_with: :slug
+  octokit_methods :branches, :compare, :repo_assignees, prefix_with: :slug
+  alias_method :remote_assignees, :octokit_repo_assignees
 
   URL_TEMPLATE = 'https://github.com/%s'.freeze
   DEFAULT_DEPLOYMENT_BRANCH = 'master'.freeze
