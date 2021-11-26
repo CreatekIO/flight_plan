@@ -3,6 +3,8 @@ class ReleaseManager
 
   class AllBranchesConflict < StandardError; end
 
+  BRANCH_PREFIX = 'release/'.freeze
+
   octokit_methods(
     :pull_requests, :merge_pull_request, :create_pull_request,
     :create_ref, :merge, :refs, :delete_branch,
@@ -12,7 +14,7 @@ class ReleaseManager
   def initialize(board, repo)
     @board = board
     @repo = repo
-    @release_branch_name = Time.now.strftime('release/%Y%m%d-%H%M%S')
+    @release_branch_name = Time.now.strftime("#{BRANCH_PREFIX}%Y%m%d-%H%M%S")
     @merge_conflicts = []
     @octokit = repo.octokit
   end
@@ -50,7 +52,7 @@ class ReleaseManager
   attr_reader :board, :repo, :release_branch_name, :merge_conflicts, :remote_pr
 
   def release_pr?(remote_pr, base: repo.deployment_branch)
-    remote_pr[:base][:ref] == base && remote_pr[:head][:ref].starts_with?('release/')
+    remote_pr[:base][:ref] == base && Branch.release?(remote_pr[:head][:ref])
   end
 
   def release_pr_name
