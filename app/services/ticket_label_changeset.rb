@@ -25,7 +25,7 @@ class TicketLabelChangeset
   def error_messages
     message = errors.map do |(type, names)|
       label = 'label'.pluralize(names.size)
-      formatted_names = names.map { |name| "'#{name}'"}.join(', ')
+      formatted_names = names.map { |name| "'#{name}'" }.join(', ')
       "#{type} #{label} #{formatted_names}"
     end.join(' or ')
 
