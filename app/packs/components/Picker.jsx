@@ -48,7 +48,8 @@ const Picker = ({
     icon: Icon,
     enableAfter,
     nameProp,
-    onSubmit
+    onSubmit,
+    itemClassName
 }) => {
     const [inputItems, setInputItems] = useState(availableItems);
     const [selectedIds, setSelectedIds] = useState(currentIds);
@@ -144,7 +145,9 @@ const Picker = ({
                                 {isSelected && <Octicon icon={Check} className="mr-2" />}
 
                                 {Icon && <Icon isSelected={isSelected} item={item} />}
-                                <span className="flex-grow truncate">{item[nameProp]}</span>
+                                <span className={classNames("flex-grow truncate", itemClassName)}>
+                                    {item[nameProp]}
+                                </span>
 
                                 {isSelected && <Octicon icon={X} />}
                             </li>

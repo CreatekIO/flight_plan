@@ -68,7 +68,7 @@ const getIn = (object, path, notFound = null) => {
     return current;
 };
 
-const idsToNames = (ids, state) =>
+const labelIdsToNames = (ids, state) =>
     ids.map(id => getIn(state, `entities.labels.${id}.name`)).filter(Boolean);
 
 export const updateLabelsForTicket = createRequestThunk.patch({
@@ -76,8 +76,20 @@ export const updateLabelsForTicket = createRequestThunk.patch({
     path: ({ id }) => `${htmlBoardURL}/board_tickets/${id}/labels`,
     body: ({ add: idsToAdd, remove: idsToRemove }, { getState }) => ({
         labelling: {
-            add: idsToNames(idsToAdd, getState()),
-            remove: idsToNames(idsToRemove, getState())
+            add: labelIdsToNames(idsToAdd, getState()),
+            remove: labelIdsToNames(idsToRemove, getState())
+        }
+    }),
+    condition: ({ add, remove }) => Boolean(add.length || remove.length)
+});
+
+export const updateAssigneesForTicket = createRequestThunk.patch({
+    name: "boardTickets/updateAssignees",
+    path: ({ id }) => `${htmlBoardURL}/board_tickets/${id}/assignees`,
+    body: ({ add, remove }) => ({
+        assignment: {
+            add: add.map(({ username }) => username),
+            remove: remove.map(({ username }) => username)
         }
     }),
     condition: ({ add, remove }) => Boolean(add.length || remove.length)
@@ -92,6 +104,33 @@ const makeLabelChanges = (labels, { add = [], remove = [] }) => {
     });
 };
 
+const makeAssigneeChanges = (boardTicket, { add = [], remove = [] }) => {
+    add.forEach(({ remote_id: newId, username }) => {
+        if (!boardTicket.assignees) {
+            boardTicket.assignees = [{ remote_id: newId, username }];
+            return
+        }
+
+        const existing = boardTicket.assignees.find(
+            ({ remote_id }) => newId === remote_id
+        );
+
+        if (existing) return;
+
+        boardTicket.assignees.push({ remote_id: newId, username });
+    });
+
+    if (!boardTicket.assignees) return;
+
+    remove.forEach(({ remote_id: removedId }) => {
+        const index = boardTicket.assignees.findIndex(
+            ({ remote_id }) => removedId === remote_id
+        );
+
+        if (index > -1) boardTicket.assignees.splice(index, 1);
+    });
+};
+
 const withBoardTicket = callback => (state, { payload }) => {
     const { boardTicketId } = payload;
     const boardTicket = state[boardTicketId];
@@ -102,8 +141,6 @@ const withBoardTicket = callback => (state, { payload }) => {
 
 const { reducer } = createSlice({
     name: "boardTickets",
-    // This won't be used since V1 will set it first, but set it for
-    // the time when we are no longer using V1
     initialState: {},
     extraReducers: {
         [updateLabelsForTicket.pending]: (state, { meta }) => {
@@ -124,32 +161,25 @@ const { reducer } = createSlice({
         [ticketUnlabelled]: withBoardTicket(({ boardTicket, labelId }) => {
             makeLabelChanges(boardTicket.labels, { remove: [labelId] });
         }),
-        [ticketAssigned]: withBoardTicket(({ boardTicket, assignee }) => {
-            const { remote_id: newId, username } = assignee;
-
-            if (!boardTicket.assignees) {
-                boardTicket.assignees = [{ remote_id: newId, username }];
-                return
-            }
-
-            const existing = boardTicket.assignees.find(
-                ({ remote_id }) => newId === remote_id
+        [updateAssigneesForTicket.pending]: (state, { meta }) => {
+            const { id, add, remove } = meta.arg;
+            makeAssigneeChanges(state[id], { add, remove });
+        },
+        [updateAssigneesForTicket.fulfilled]: (state, { payload, meta }) => {
+            const { id } = meta.arg;
+            state[id].assignees = payload.map(
+                ({ username, remote_id }) => ({ username, remote_id })
             );
-
-            if (existing) return;
-
-            boardTicket.assignees.push({ remote_id: newId, username });
+        },
+        [updateAssigneesForTicket.rejected]: (state, { meta }) => {
+            const { id, add, remove } = meta.arg;
+            makeAssigneeChanges(state[id], { add: remove, remove: add });
+        },
+        [ticketAssigned]: withBoardTicket(({ boardTicket, assignee }) => {
+            makeAssigneeChanges(boardTicket, { add: [assignee] });
         }),
         [ticketUnassigned]: withBoardTicket(({ boardTicket, assignee }) => {
-            if (!boardTicket.assignees) return;
-
-            const { remote_id: removedId } = assignee;
-
-            const index = boardTicket.assignees.findIndex(
-                ({ remote_id }) => removedId === remote_id
-            );
-
-            if (index > -1) boardTicket.assignees.splice(index, 1);
+            makeAssigneeChanges(boardTicket, { remove: [assignee] });
         })
     }
 });

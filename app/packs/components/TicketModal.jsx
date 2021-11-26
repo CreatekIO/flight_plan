@@ -9,6 +9,7 @@ import Loading from "./Loading";
 import Sidebar from "./TicketSidebar";
 import Feed from "./TicketFeed";
 import FormWrapper from "./TicketFormWrapper";
+import AssigneePicker from "./AssigneePicker";
 import LabelPicker from "./LabelPicker";
 import { fetchTicket } from "../slices/board_tickets";
 
@@ -22,7 +23,7 @@ const TRANSITION_DURATION = 150; // should match `duration-*` class above
 
 const EDITORS = {
     labels: LabelPicker,
-    assignees: () => (<FormWrapper label="Edit assignees" backPath="." />),
+    assignees: AssigneePicker,
     milestone: () => (<FormWrapper label="Edit milestone" backPath="." />)
 };
 

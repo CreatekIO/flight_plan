@@ -4,6 +4,7 @@ import boardTickets, { fetchTicket, moveTicket } from "./board_tickets";
 import boards, { fetchBoard } from "./boards";
 import labels from "./labels";
 import pullRequests, { fetchNextActions } from "./pull_requests";
+import repos from "./repos";
 import swimlanes, { fetchSwimlaneTickets } from "./swimlanes";
 import {
     ticketWasMoved,
@@ -49,10 +50,10 @@ const combined = combineReducers({
     boards,
     labels,
     pullRequests,
+    repos,
     swimlanes,
     // These need to be here otherwise `combineReducers`
-    // discards the default state from the V1 reducer
-    repos: nullReducer,
+    // discards these keys
     tickets: nullReducer,
     milestones: nullReducer,
     comments: nullReducer
