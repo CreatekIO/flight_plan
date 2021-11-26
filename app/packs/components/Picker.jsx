@@ -1,14 +1,9 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { connect } from "react-redux";
-import { useNavigate } from "@reach/router";
 import { useCombobox } from "downshift";
 import classNames from "classnames";
 import Octicon, { Check, X } from "@githubprimer/octicons-react";
-import { toast } from "react-toastify";
 
 import FormWrapper from "./TicketFormWrapper";
-import { fetchLabelsForRepo } from "../slices/labels";
-import { updateLabelsForTicket } from "../slices/board_tickets";
 
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions#Escaping
 const escapeRegexp = text => text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -21,9 +16,9 @@ const {
     ControlledPropUpdatedSelectedItem
 } = useCombobox.stateChangeTypes;
 
-const filterItems = (items, search) => {
+const filterItems = (items, nameProp, search) => {
     const matcher = new RegExp(escapeRegexp(search), "i");
-    return items.filter(({ name }) => matcher.test(name));
+    return items.filter(item => matcher.test(item[nameProp]));
 };
 
 const useDelayedFocus = timeout => {
@@ -44,18 +39,20 @@ const useDelayedFocus = timeout => {
     return { disabled, ref };
 };
 
-const LabelPicker = ({
-    boardTicketId,
-    currentLabelIds,
-    repoLabels,
-    repoId,
+const Picker = ({
+    label,
+    placeholder,
+    currentIds,
+    availableItems, // the complete set of items available for selection
     backPath,
+    icon: Icon,
     enableAfter,
-    fetchLabelsForRepo,
-    updateLabelsForTicket
+    nameProp,
+    onSubmit,
+    itemClassName
 }) => {
-    const [inputItems, setInputItems] = useState(repoLabels);
-    const [selectedIds, setSelectedIds] = useState(currentLabelIds);
+    const [inputItems, setInputItems] = useState(availableItems);
+    const [selectedIds, setSelectedIds] = useState(currentIds);
 
     // Since we set `isOpen = true`, Downshift will try to focus the
     // combobox input on mount. If we're being transitioned into view,
@@ -71,10 +68,10 @@ const LabelPicker = ({
         highlightedIndex, inputValue
     } = useCombobox({
         isOpen: true,
-        itemToString: item => item ? item.name : "",
+        itemToString: item => item ? item[nameProp] : "",
         items: inputItems,
         selectedItem: null,
-        onSelectedItemChange({ selectedItem, inputValue, ...props }) {
+        onSelectedItemChange({ selectedItem, inputValue }) {
             if (!selectedItem) return;
 
             const { id: itemId } = selectedItem;
@@ -86,7 +83,7 @@ const LabelPicker = ({
         },
         onInputValueChange({ inputValue }) {
             setInputItems(
-                isBlank(inputValue) ? repoLabels : filterItems(repoLabels, inputValue)
+                isBlank(inputValue) ? availableItems : filterItems(availableItems, nameProp, inputValue)
             );
         },
         stateReducer(state, { type, changes, ...extras }) {
@@ -106,40 +103,20 @@ const LabelPicker = ({
         }
     });
 
-    // Update items every time we get an update on repoLabels
+    // Update items every time we get an update on availableItems
     useEffect(() => {
-        setInputItems(filterItems(repoLabels, inputValue));
-    }, [repoLabels]);
+        setInputItems(filterItems(availableItems, nameProp, inputValue));
+    }, [availableItems, nameProp]);
 
-    useEffect(() => { fetchLabelsForRepo(repoId) }, [repoId]);
-
-    const navigate = useNavigate();
-
-    const onSubmit = useCallback(() => {
-        updateLabelsForTicket({
-            id: boardTicketId,
-            add: selectedIds.filter(id => !currentLabelIds.includes(id)),
-            remove: currentLabelIds.filter(id => !selectedIds.includes(id))
-        }).then(({ meta, payload, error }) => {
-            if (error && !meta.condition) {
-                if (meta.rejectedWithValue) {
-                    payload.forEach(message => toast.error(message));
-                } else {
-                    toast.error("Failed to update labels");
-                }
-            } else {
-                toast.success("Labels updated");
-            }
-        });
-
-        navigate(`../${backPath}`);
-    }, [boardTicketId, currentLabelIds, selectedIds, backPath]);
+    const wrappedSubmit = useCallback(() => {
+        onSubmit(selectedIds);
+    }, [onSubmit, selectedIds]);
 
     return (
         <FormWrapper
-            label="Edit labels"
+            label={label}
             labelProps={getLabelProps()}
-            onSubmit={onSubmit}
+            onSubmit={wrappedSubmit}
             backPath={backPath}
         >
             <div className="relative">
@@ -147,13 +124,13 @@ const LabelPicker = ({
                     <input
                         {...getInputProps({ ref: inputRef })}
                         className="rounded border border-gray-300 text-gray-900 w-full py-1 px-3 text-sm"
-                        placeholder="Filter labels"
+                        placeholder={placeholder}
                         disabled={disabled}
                     />
                 </div>
                 <ul {...getMenuProps()} className="divide-y divide-gray-300 border-b border-gray-300">
                     {inputItems.map((item, index) => {
-                        const { id, name, colour } = item;
+                        const { id } = item;
                         const isSelected = selectedIds.includes(id);
 
                         return (
@@ -167,14 +144,10 @@ const LabelPicker = ({
                             >
                                 {isSelected && <Octicon icon={Check} className="mr-2" />}
 
-                                <span
-                                    className={classNames(
-                                        "rounded-full w-4 h-4 inline-block bg-gray-100 mr-2",
-                                        { "ml-5": !isSelected }
-                                    )}
-                                    style={{ backgroundColor: `#${colour}` }}
-                                />
-                                <span className="flex-grow truncate">{name}</span>
+                                {Icon && <Icon isSelected={isSelected} item={item} />}
+                                <span className={classNames("flex-grow truncate", itemClassName)}>
+                                    {item[nameProp]}
+                                </span>
 
                                 {isSelected && <Octicon icon={X} />}
                             </li>
@@ -185,40 +158,4 @@ const LabelPicker = ({
     );
 };
 
-const EMPTY = [];
-
-const mapStateToProps = (_, { boardTicketId }) => ({
-    entities: { boardTickets, labels, tickets }
-}) => {
-    const boardTicket = boardTickets[boardTicketId];
-    const ticket = boardTicket && tickets[boardTicket.ticket];
-
-    const currentLabelIds = boardTicket ? boardTicket.labels : EMPTY;
-
-    const repoId = ticket && ticket.repo;
-    const repoLabels = repoId
-        ? Object.values(labels).filter(({ repo }) => repo === repoId)
-        : EMPTY;
-
-    repoLabels.sort((a, b) => {
-        const aIsActive = currentLabelIds.includes(a.id);
-        const bIsActive = currentLabelIds.includes(b.id);
-
-        if (aIsActive != bIsActive) {
-            // put the active item first - if we get here it's guaranteed
-            // that if `a` is active, `b` is not, and vice-versa
-            return aIsActive ? -1 : 1;
-        } else {
-            // both are either active or inactive, so sort by name
-            // - should be case-insensitive by default
-            return a.name.localeCompare(b.name);
-        }
-    });
-
-    return { currentLabelIds, repoLabels, repoId };
-};
-
-export default connect(
-    mapStateToProps,
-    { fetchLabelsForRepo, updateLabelsForTicket }
-)(LabelPicker);
+export default Picker;

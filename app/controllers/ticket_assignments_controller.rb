@@ -1,17 +1,17 @@
-class LabellingsController < AuthenticatedController
+class TicketAssignmentsController < AuthenticatedController
   load_and_authorize_resource :board
   load_and_authorize_resource :board_ticket, through: :board, id_param: :ticket_id
   load_and_authorize_resource :ticket, through: :board_ticket, singleton: true
 
   def update
-    changeset = TicketLabelChangeset.new(
+    changeset = TicketAssigneeChangeset.new(
       ticket: @ticket,
-      changes: labelling_params,
+      changes: assignment_params,
       token: current_user_github_token
     )
 
     if changeset.save
-      render json: LabelBlueprint.render(@ticket.display_labels.reload), status: :ok
+      render json: TicketAssignmentBlueprint.render(@ticket.assignments.reload), status: :ok
     else
       render json: { errors: changeset.error_messages }, status: :unprocessable_entity
     end
@@ -19,7 +19,7 @@ class LabellingsController < AuthenticatedController
 
   private
 
-  def labelling_params
-    params.require(:labelling).permit(add: [], remove: [])
+  def assignment_params
+    params.require(:assignment).permit(add: [], remove: [])
   end
 end

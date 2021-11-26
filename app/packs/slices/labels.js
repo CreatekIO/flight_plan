@@ -14,8 +14,6 @@ const hasLabelsPayload = isFulfilled(fetchLabelsForRepo, updateLabelsForTicket);
 
 const slice = createSlice({
     name: "labels",
-    // This won't be used since V1 will set it first, but set it for
-    // the time when we are no longer using V1
     initialState: {},
     extraReducers: builder => {
         builder.addCase(ticketLabelled, (state, { payload: { label }}) =>
