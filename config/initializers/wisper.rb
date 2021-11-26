@@ -8,6 +8,7 @@ Rails.application.reloader.to_prepare do
     .subscribe(TicketBroadcast, scope: 'Ticket')
     .subscribe(TicketAssignmentBroadcast, scope: 'TicketAssignment')
 
+  AnnouncePullRequestRule.listen!
   InDevelopmentRule.listen!
   ReadyForCodeReviewRule.listen!
 end

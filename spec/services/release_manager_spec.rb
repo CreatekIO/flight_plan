@@ -3,14 +3,8 @@ require 'rails_helper'
 RSpec.describe ReleaseManager, type: :service do
   subject { described_class.new(board, repo) }
 
-  let(:slack_notifier) { double('SlackNotifier', notify: true) }
-
   before do
-    allow(SlackNotifier).to receive(:new).with(board.slack_channel).and_return(slack_notifier)
-  end
-
-  def have_sent_message(title, attachments = a_hash_including(:attachments))
-    have_received(:notify).with(title, attachments)
+    stub_slack(board.slack_channel)
   end
 
   describe '#open_pr?' do
@@ -218,7 +212,7 @@ RSpec.describe ReleaseManager, type: :service do
         aggregate_failures do
           expect(branch_deletion_request).to have_been_requested
 
-          expect(slack_notifier).to have_received(:notify).with(/pull request failed/i, a_hash_including(:attachments))
+          expect(slack_notifier).to have_sent_message(/pull request failed/i)
         end
       end
     end
@@ -255,7 +249,7 @@ RSpec.describe ReleaseManager, type: :service do
           expect(branch_deletion_request).to have_been_requested
           expect(pr_request).not_to have_been_requested
 
-          expect(slack_notifier).to have_received(:notify).with(/pull request failed/i, a_hash_including(:attachments))
+          expect(slack_notifier).to have_sent_message(/pull request failed/i)
         end
       end
     end
