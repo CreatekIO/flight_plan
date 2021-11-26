@@ -26,3 +26,7 @@ features:
   - name: broadcasts
     description: >
       Broadcast model changes over WebSockets using after_commit hooks
+
+  - name: edit_assignees
+    description: >
+      Allow users to assign/unassign people to tickets

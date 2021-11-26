@@ -110,7 +110,7 @@ const Sidebar = ({
             </span>
         </SidebarEntry>
 
-        <SidebarEntry title="Assignees" url="assignees/edit">
+        <SidebarEntry title="Assignees" url={isFeatureEnabled("edit_assignees") && "assignees/edit"}>
             {assignees.length ? (
                 <ul className="text-sm font-bold space-y-2 mt-1">
                     {assignees.map(({ username }) => <Assignee key={username} username={username} />)}
