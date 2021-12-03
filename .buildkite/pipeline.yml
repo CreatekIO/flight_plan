@@ -1,0 +1,21 @@
+steps:
+  - label: ':rspec:'
+    key: spec
+    plugins:
+      - docker-login#v2.1.0:
+          username: createkci
+          password-env: DOCKER_LOGIN_PASSWORD
+      - docker-compose#v3.9.0:
+          run: app
+          env:
+            - RAILS_ENV=test
+            - DISABLE_SPRING=1
+            - FERRUM_DEFAULT_TIMEOUT=10
+            - FERRUM_PROCESS_TIMEOUT=20
+    parallelism: 1
+    commands:
+      - .buildkite/test.sh
+    artifact_paths:
+      - log/**/*
+      - tmp/rspec-*.xml
+      - tmp/capybara/*
