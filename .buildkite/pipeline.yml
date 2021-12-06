@@ -12,6 +12,8 @@ steps:
             - DISABLE_SPRING=1
             - FERRUM_DEFAULT_TIMEOUT=10
             - FERRUM_PROCESS_TIMEOUT=20
+            # used for names of JUnit XML files
+            - BUILDKITE_JOB_ID
     parallelism: 1
     timeout_in_minutes: 5
     commands:
@@ -21,7 +23,17 @@ steps:
       DEBUGGER: '0'
     artifact_paths:
       - log/*.log
-      - tmp/rspec-*.xml
+      - tmp/rspec-junit-*.xml
       - tmp/rspec/*.txt
       - tmp/capybara/*
       - tmp/screenshots/*
+
+  - wait: ~
+    continue_on_failure: true
+
+  - label: ':junit:'
+    plugins:
+      - junit-annotate#v1.9.0:
+          artifacts: tmp/rspec-junit-*.xml
+          job-uuid-file-pattern: rspec-junit-([^.]+)\.xml
+          failure-format: file

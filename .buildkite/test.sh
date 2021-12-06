@@ -32,4 +32,8 @@ echo "~~~ Compiling assets"
 bin/rake webpacker:compile
 
 echo "+++ :rspec: Running specs"
-bin/rspec --format documentation
+bin/rspec \
+  --require rspec_junit_formatter \
+  --format RspecJunitFormatter \
+  --out "tmp/rspec-junit-$BUILDKITE_JOB_ID.xml" \
+  --format documentation
