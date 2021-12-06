@@ -1,13 +1,6 @@
 #!/usr/bin/env sh
 set -eu
 
-if [ -z "$(which chromium-browser)" ]; then
-  apk add \
-    --no-cache \
-    --repository=https://dl-cdn.alpinelinux.org/alpine/edge/community \
-    chromium
-fi
-
 echo "~~~ bundle install"
 bundle install \
   --jobs "$(getconf _NPROCESSORS_ONLN)" \
