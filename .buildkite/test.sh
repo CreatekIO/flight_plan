@@ -1,8 +1,6 @@
 #!/usr/bin/env sh
 set -eu
 
-echo "Installing dependencies..."
-
 if [ -z "$(which chromium-browser)" ]; then
   apk add \
     --no-cache \
@@ -10,14 +8,16 @@ if [ -z "$(which chromium-browser)" ]; then
     chromium
 fi
 
+echo "~~~ bundle install"
 bundle install \
   --jobs "$(getconf _NPROCESSORS_ONLN)" \
   --retry 2 \
   --without development
 
+echo "~~~ yarn install"
 yarn install --ignore-engines
 
-echo "Setting up database..."
+echo "~~~ Wait for database"
 retries=5
 
 until nc -z "$DB_HOST:5432"; do
@@ -32,10 +32,11 @@ until nc -z "$DB_HOST:5432"; do
   echo "Waiting for PostgreSQL ($retries retries left)"
 done
 
+echo "~~~ rake db:reset"
 bin/rake db:reset
 
-echo "Compiling assets..."
+echo "~~~ Compiling assets"
 bin/rake webpacker:compile
 
-echo "Running specs..."
+echo "+++ :rspec: Running specs"
 bin/rspec --format documentation
