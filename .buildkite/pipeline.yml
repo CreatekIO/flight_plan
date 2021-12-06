@@ -13,9 +13,15 @@ steps:
             - FERRUM_DEFAULT_TIMEOUT=10
             - FERRUM_PROCESS_TIMEOUT=20
     parallelism: 1
+    timeout_in_minutes: 5
     commands:
       - .buildkite/test.sh
+    env:
+      BYEBUG: '0'
+      DEBUGGER: '0'
     artifact_paths:
-      - log/**/*
+      - log/*.log
       - tmp/rspec-*.xml
+      - tmp/rspec/*.txt
       - tmp/capybara/*
+      - tmp/screenshots/*
