@@ -14,7 +14,11 @@ steps:
             - FERRUM_PROCESS_TIMEOUT=20
             # used for names of JUnit XML files
             - BUILDKITE_JOB_ID
-    parallelism: 1
+            # Used to choose which spec files to run
+            - BUILDKITE_BUILD_NUMBER
+            - BUILDKITE_PARALLEL_JOB
+            - BUILDKITE_PARALLEL_JOB_COUNT
+    parallelism: 2
     timeout_in_minutes: 5
     commands:
       - .buildkite/test.sh
