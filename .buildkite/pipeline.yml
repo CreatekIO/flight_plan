@@ -1,0 +1,75 @@
+steps:
+  - label: ':rspec:'
+    key: spec
+    plugins:
+      - docker-login#v2.1.0:
+          username: createkci
+          password-env: DOCKER_LOGIN_PASSWORD
+      - docker-compose#v3.9.0:
+          run: app
+          env:
+            - RAILS_ENV=test
+            - DISABLE_SPRING=1
+            - FERRUM_DEFAULT_TIMEOUT=10
+            - FERRUM_PROCESS_TIMEOUT=20
+            # used for names of JUnit XML files
+            - BUILDKITE_JOB_ID
+            # Used to choose which spec files to run
+            - BUILDKITE_BUILD_NUMBER
+            - BUILDKITE_PARALLEL_JOB
+            - BUILDKITE_PARALLEL_JOB_COUNT
+    parallelism: 2
+    timeout_in_minutes: 5
+    commands:
+      - .buildkite/test.sh
+    env:
+      BYEBUG: '0'
+      DEBUGGER: '0'
+    artifact_paths:
+      - log/*.log
+      - tmp/rspec-junit-*.xml
+      - tmp/rspec/*.txt
+      - tmp/capybara/*
+      - tmp/screenshots/*
+
+  - wait: ~
+    continue_on_failure: true
+
+  - label: ':junit:'
+    plugins:
+      - junit-annotate#v1.9.0:
+          artifacts: tmp/rspec-junit-*.xml
+          job-uuid-file-pattern: rspec-junit-([^.]+)\.xml
+          failure-format: file
+
+  # This relies on a `flightplan/git-credentials` file being in the Buildkite
+  # Elastic Stack S3 secrets bucket.  This needs a Heroku API token as the
+  # password (the username isn't used and thus doesn't matter, but it's useful
+  # to know who the token belongs to).
+  #
+  # Generate the file as follows:
+  #
+  # $ heroku authorizations:create --description='Buildkite: Heroku git push token for FlightPlan
+  # # copy the value for "Token:" (_not_ the "ID:")
+  # $ echo "https://<your-name>:<token from above>@git.heroku.com" > tmp-git-cred
+  # $ aws s3 cp --acl private --sse aws:kms tmp-git-cred s3://<bucket name>/<buildkite pipeline slug>/git-credentials
+  # $ rm tmp-git-cred
+  #
+  # The token generated above is not the same as your 'master' API token, and can
+  # be revoked independently. By default it doesn't expire, but can be made to if you wish.
+  #
+  # References:
+  # - https://devcenter.heroku.com/articles/heroku-cli-commands#heroku-authorizations-create
+  # - https://devcenter.heroku.com/articles/oauth#direct-authorization
+  - label: ':heroku:'
+    branches: master
+    depends_on:
+      - spec
+    concurrency: 1
+    concurrency_group: flight_plan/deploy
+    env:
+      APP_SLUG: flight-plan-createk
+    command:
+      git push --force
+        "https://git.heroku.com/$${APP_SLUG}.git"
+        HEAD:refs/heads/master
