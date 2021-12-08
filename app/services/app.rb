@@ -37,7 +37,7 @@ class App
   end
 
   def jwt
-    now = Time.now.utc
+    now = Time.find_zone!('UTC').now
 
     JWT.encode(
       {

@@ -90,7 +90,7 @@ class BoardTicket < ApplicationRecord
   end
 
   def update_timesheet
-    time_now = Time.now
+    time_now = Time.current
 
     open_timesheet.try(
       :update_attributes,
