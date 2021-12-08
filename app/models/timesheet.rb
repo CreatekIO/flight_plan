@@ -17,6 +17,6 @@ class Timesheet < ApplicationRecord
   end
 
   def duration
-    started_at.business_time_until(ended_at || Time.now)
+    started_at.business_time_until(ended_at || Time.current)
   end
 end
