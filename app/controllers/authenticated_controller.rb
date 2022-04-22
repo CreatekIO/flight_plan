@@ -4,6 +4,6 @@ class AuthenticatedController < ApplicationController
   private
 
   def current_user_github_token
-    user_session['github.token']
+    OctokitClient::Token.read_from_session(user_session)
   end
 end

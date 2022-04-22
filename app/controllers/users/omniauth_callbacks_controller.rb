@@ -8,7 +8,7 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
   def github
     if user.persisted?
       sign_in_and_redirect user, event: :authentication
-      user_session['github.token'] = auth.credentials.token
+      OctokitClient::Token.write_into_session(user_session, auth.credentials.token)
     else
       session['devise.github_data'] = auth
       redirect_to new_user_registration_url

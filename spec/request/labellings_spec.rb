@@ -57,7 +57,7 @@ RSpec.describe LabellingsController, type: :request do
       sign_in user
 
       Warden.on_next_request do |proxy|
-        proxy.session['github.token'] = github_token
+        proxy.session['github.token'] = { 'oauth' => github_token }
       end
     end
 

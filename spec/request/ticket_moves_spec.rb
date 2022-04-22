@@ -20,7 +20,9 @@ RSpec.describe TicketMovesController, type: :request do
       sign_in user
 
       Warden.on_next_request do |proxy|
-        proxy.session['github.token'] = user_token
+        proxy.session['github.token'] = {
+          (installation_id.present? ? 'app' : 'oauth') => user_token
+        }
       end
     end
 

@@ -6,6 +6,10 @@ RSpec.describe 'Dragging tickets', js: true do
   before do
     sign_in create(:user)
 
+    Warden.on_next_request do |proxy|
+      proxy.session['github.token'] = { 'oauth' => 'gho_github_token' }
+    end
+
     stub_gh_get("issues/#{ticket_to_move.number}/labels") do
       [{ id: '111', name: "status: #{source_swimlane.name}", color: '00ff00' }]
     end
