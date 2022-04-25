@@ -11,8 +11,9 @@ class BoardTicketsController < AuthenticatedController
   end
 
   def create
+    repo = @board.board_repos.find(ticket_params[:repo_id]).repo
     ticket = TicketCreationService.new(
-      ticket_params.merge(octokit_token: current_user_github_token)
+      ticket_params.merge(octokit_token: current_user_github_token.for(repo))
     ).create_ticket!
     @board_ticket = ticket.board_tickets.find_by(board: @board)
     render :create, status: :created

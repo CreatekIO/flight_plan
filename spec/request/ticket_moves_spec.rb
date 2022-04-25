@@ -21,12 +21,14 @@ RSpec.describe TicketMovesController, type: :request do
 
       Warden.on_next_request do |proxy|
         proxy.session['github.token'] = {
-          (installation_id.present? ? 'app' : 'oauth') => user_token
+          'oauth' => user_token_from_oauth,
+          'app' => user_token_from_app
         }
       end
     end
 
-    let(:user_token) { "github_token_user_#{user.id}" }
+    let(:user_token_from_oauth) { "gho_token_user_#{user.id}" }
+    let(:user_token_from_app) { "ghu_github_token_user_#{user.id}" }
 
     let(:board_ticket_params) do
       { swimlane_id: destination_swimlane.id, swimlane_position: destination_position }
@@ -121,7 +123,7 @@ RSpec.describe TicketMovesController, type: :request do
           expect(
             replace_all_labels_call.with(
               body: ['type: bug', "status: #{dev.name.downcase}"].to_json,
-              headers: { 'Authorization' => "token #{user_token}" }
+              headers: { 'Authorization' => "token #{user_token_from_oauth}" }
             )
           ).to have_been_requested
         end
@@ -147,6 +149,7 @@ RSpec.describe TicketMovesController, type: :request do
 
         context 'repo does not have an installation_id' do
           let(:installation_id) { nil }
+          let(:user_token) { user_token_from_oauth }
 
           it 'retries API calls with global token' do
             aggregate_failures do
@@ -173,6 +176,7 @@ RSpec.describe TicketMovesController, type: :request do
 
         context 'repo has an installation_id' do
           let(:installation_id) { FactoryBot.generate(:github_id) }
+          let(:user_token) { user_token_from_app }
 
           it 'retries API calls as app installation' do
             aggregate_failures do

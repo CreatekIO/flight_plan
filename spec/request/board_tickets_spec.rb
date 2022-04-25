@@ -16,6 +16,11 @@ RSpec.describe 'BoardTickets', type: :request do
 
   before do
     sign_in(user)
+
+    Warden.on_next_request do |proxy|
+      # Deliberately using 'legacy' storage format
+      proxy.session['github.token'] = "gho_github_token_user_#{user.id}"
+    end
   end
 
   context ':create' do

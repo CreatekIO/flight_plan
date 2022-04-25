@@ -7,7 +7,7 @@ class TicketAssignmentsController < AuthenticatedController
     changeset = TicketAssigneeChangeset.new(
       ticket: @ticket,
       changes: assignment_params,
-      token: current_user_github_token
+      token: current_user_github_token.for(@ticket.repo)
     )
 
     if changeset.save

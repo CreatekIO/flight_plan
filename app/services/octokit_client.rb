@@ -64,6 +64,10 @@ module OctokitClient
     def to_s
       (oauth.presence || app).to_s
     end
+
+    def for(repo)
+      repo.uses_app? ? app : oauth
+    end
   end
 
   module ClassMethods
