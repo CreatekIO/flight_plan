@@ -68,6 +68,10 @@ module OctokitClient
     def for(repo)
       repo.uses_app? ? app : oauth
     end
+
+    def app?
+      app.present?
+    end
   end
 
   module ClassMethods

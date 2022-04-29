@@ -60,4 +60,47 @@ RSpec.describe 'Viewing board', js: true do
       end
     end
   end
+
+  context 'with a repo that uses GH app', js: false do
+    before do
+      board.repos << create(:repo, :uses_app)
+    end
+
+    context 'no app token in session' do
+      before do
+        Warden.on_next_request do |proxy|
+          proxy.session['github.token'] = { 'oauth' => 'gho_token' }
+        end
+
+        stub_omniauth(user: user, token: 'ghu_token')
+      end
+
+      it 'renders sign in page' do
+        visit board_path(board)
+
+        expect(page).to have_text(/requires sign.in/i)
+
+        click_on 'Sign in with GitHub App'
+
+        expect(page).to have_current_path(board_path(board)).and have_css('#react_board')
+      end
+    end
+
+    context 'with app token in session' do
+      before do
+        Warden.on_next_request do |proxy|
+          proxy.session['github.token'] = {
+            'oauth' => 'gho_token',
+            'app' => 'ghu_token'
+          }
+        end
+      end
+
+      it 'renders board' do
+        visit board_path(board)
+
+        expect(page).to have_current_path(board_path(board)).and have_css('#react_board')
+      end
+    end
+  end
 end

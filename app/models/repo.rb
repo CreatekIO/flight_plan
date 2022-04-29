@@ -19,6 +19,7 @@ class Repo < ApplicationRecord
   has_one :board, through: :board_repo
 
   scope :auto_deployable, -> { where(auto_deploy: true) }
+  scope :using_app, -> { where.not(remote_installation_id: nil) }
 
   octokit_methods :branches, :compare, :repo_assignees, prefix_with: :slug
   alias_method :remote_assignees, :octokit_repo_assignees

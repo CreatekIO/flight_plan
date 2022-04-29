@@ -1,8 +1,9 @@
 class BoardsController < AuthenticatedController
+  before_action :check_for_apps, only: :show
+
   def show
     respond_to do |format|
       format.html do
-        @board = Board.find(params[:id])
         @boards = Board.all
       end
 
@@ -23,6 +24,19 @@ class BoardsController < AuthenticatedController
   end
 
   private
+
+  def check_for_apps
+    return unless request.format.html?
+
+    @board = Board.find(params[:id])
+    using_app_count = @board.repos.using_app.count
+    return if using_app_count.zero? || current_user_github_token.app?
+
+    @use_app_creds = true
+    flash.alert = I18n.t('boards.require_gh_app', count: using_app_count)
+    store_location_for(:user, board_path(@board))
+    render template: 'pages/index' and return
+  end
 
   def loader
     @loader ||= ReduxLoader.from(Board, params[:id]) do

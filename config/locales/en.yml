@@ -37,3 +37,8 @@ en:
   date:
     formats:
       with_day: "%a %-d %b %y"
+
+  boards:
+    require_gh_app:
+      one: "One of the repos on this board requires sign-in via our GitHub app"
+      other: "Some of the repos on this board require sign-in via our GitHub app"
