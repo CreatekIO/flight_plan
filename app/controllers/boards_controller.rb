@@ -4,6 +4,7 @@ class BoardsController < AuthenticatedController
   def show
     respond_to do |format|
       format.html do
+        self.last_board_id = @board.id
         @boards = Board.all
       end
 
@@ -20,7 +21,7 @@ class BoardsController < AuthenticatedController
   end
 
   def index
-    redirect_to Board.first
+    redirect_to action: :show, id: last_board_id.presence || Board.first
   end
 
   private

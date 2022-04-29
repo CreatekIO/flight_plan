@@ -52,6 +52,49 @@ RSpec.describe 'Omniauth', type: :request do
       end
     end
 
+    describe 'redirect location' do
+      let(:github_token) { 'gho_token' }
+      let!(:boards) { create_pair(:board) }
+      let(:board) { boards.last }
+
+      context 'with no cookie set' do
+        it 'redirects to root' do
+          subject
+
+          expect(response).to redirect_to(root_path)
+        end
+
+        context 'user tries to access board' do
+          before do
+            get board_path(board)
+          end
+
+          it 'redirects to stored location' do
+            subject
+
+            expect(response).to redirect_to(board_path(board))
+          end
+        end
+      end
+
+      context 'with board ID stored in cookie' do
+        before do
+          user.save!
+          sign_in(user)
+          get board_path(board)
+          delete destroy_user_session_path
+
+          expect(cookies[:last_board_id]).to be_present
+        end
+
+        it 'redirects to board specified by cookie' do
+          subject
+
+          expect(response).to redirect_to(board_path(board))
+        end
+      end
+    end
+
     describe 'token storage' do
       context 'no token stored' do
         context 'signing in via OAuth app' do
