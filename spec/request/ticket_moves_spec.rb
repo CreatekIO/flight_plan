@@ -17,14 +17,10 @@ RSpec.describe TicketMovesController, type: :request do
     let(:user) { create(:user) }
 
     before do
-      sign_in user
-
-      Warden.on_next_request do |proxy|
-        proxy.session['github.token'] = {
-          'oauth' => user_token_from_oauth,
-          'app' => user_token_from_app
-        }
-      end
+      sign_in(
+        user,
+        github_token: { oauth: user_token_from_oauth,app: user_token_from_app }
+      )
     end
 
     let(:user_token_from_oauth) { "gho_token_user_#{user.id}" }

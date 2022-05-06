@@ -121,11 +121,7 @@ RSpec.describe 'Omniauth', type: :request do
       context 'with token already stored' do
         before do
           user.save!
-          sign_in(user)
-
-          Warden.on_next_request do |proxy|
-            proxy.session['github.token'] = existing_token
-          end
+          sign_in user, github_token: existing_token
         end
 
         context 'in string format' do

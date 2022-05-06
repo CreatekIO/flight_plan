@@ -58,11 +58,7 @@ RSpec.describe TicketAssignmentsController, type: :request do
     end
 
     before do
-      sign_in user
-
-      Warden.on_next_request do |proxy|
-        proxy.session['github.token'] = { 'oauth' => github_token }
-      end
+      sign_in user, github_token: { oauth: github_token }
     end
 
     subject do

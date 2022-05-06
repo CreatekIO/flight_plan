@@ -4,10 +4,11 @@ RSpec.describe 'Viewing board', js: true do
   include_context 'board with swimlanes'
 
   before do
-    sign_in user
+    sign_in user, github_token: github_token
   end
 
   let(:user) { create(:user) }
+  let(:github_token) { nil }
 
   let!(:board_tickets) do
     board.swimlanes.map do |swimlane|
@@ -67,11 +68,9 @@ RSpec.describe 'Viewing board', js: true do
     end
 
     context 'no app token in session' do
-      before do
-        Warden.on_next_request do |proxy|
-          proxy.session['github.token'] = { 'oauth' => 'gho_token' }
-        end
+      let(:github_token) { :oauth }
 
+      before do
         stub_omniauth(user: user, token: 'ghu_token')
       end
 
@@ -87,14 +86,7 @@ RSpec.describe 'Viewing board', js: true do
     end
 
     context 'with app token in session' do
-      before do
-        Warden.on_next_request do |proxy|
-          proxy.session['github.token'] = {
-            'oauth' => 'gho_token',
-            'app' => 'ghu_token'
-          }
-        end
-      end
+      let(:github_token) { :both }
 
       it 'renders board' do
         visit board_path(board)
