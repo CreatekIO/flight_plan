@@ -11,6 +11,7 @@ Rails.application.reloader.to_prepare do
   AnnouncePullRequestRule.listen!
   InDevelopmentRule.listen!
   ReadyForCodeReviewRule.listen!
+  UnsuccessfulBuildOnMajorBranchRule.listen!
 end
 
 if Rails.env.development? || Rails.env.test? || ENV['WISPER_LOGGING'].present?
