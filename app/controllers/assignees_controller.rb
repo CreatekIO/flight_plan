@@ -10,7 +10,7 @@ class AssigneesController < AuthenticatedController
   private
 
   def octokit_client_options
-    { access_token: current_user_github_token }
+    { access_token: current_user_github_token.for(@repo) }
   end
 
   def remote_assignees

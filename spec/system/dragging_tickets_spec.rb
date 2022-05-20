@@ -4,7 +4,7 @@ RSpec.describe 'Dragging tickets', js: true do
   include_context 'board with swimlanes'
 
   before do
-    sign_in create(:user)
+    sign_in create(:user), github_token: true
 
     stub_gh_get("issues/#{ticket_to_move.number}/labels") do
       [{ id: '111', name: "status: #{source_swimlane.name}", color: '00ff00' }]

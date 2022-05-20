@@ -19,6 +19,7 @@ class Repo < ApplicationRecord
   has_one :board, through: :board_repo
 
   scope :auto_deployable, -> { where(auto_deploy: true) }
+  scope :using_app, -> { where.not(remote_installation_id: nil) }
 
   octokit_methods :branches, :compare, :repo_assignees, prefix_with: :slug
   alias_method :remote_assignees, :octokit_repo_assignees
@@ -89,6 +90,10 @@ class Repo < ApplicationRecord
     @branch_names ||= octokit_branches.map { |branch| branch[:name] }
   end
 
+  def uses_app?
+    remote_installation_id.present?
+  end
+
   private
 
   def set_defaults
@@ -96,7 +101,7 @@ class Repo < ApplicationRecord
   end
 
   def octokit_client_options
-    token = if remote_installation_id.present?
+    token = if uses_app?
       App.access_token_for(installation_id: remote_installation_id)
     else
       OctokitClient::LEGACY_GLOBAL_TOKEN

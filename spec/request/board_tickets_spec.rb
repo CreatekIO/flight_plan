@@ -15,7 +15,8 @@ RSpec.describe 'BoardTickets', type: :request do
   let(:user) { create(:user) }
 
   before do
-    sign_in(user)
+    # Deliberately using 'legacy' storage format
+    sign_in user, github_token: "gho_github_token_user_#{user.id}"
   end
 
   context ':create' do

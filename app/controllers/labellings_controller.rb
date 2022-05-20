@@ -7,7 +7,7 @@ class LabellingsController < AuthenticatedController
     changeset = TicketLabelChangeset.new(
       ticket: @ticket,
       changes: labelling_params,
-      token: current_user_github_token
+      token: current_user_github_token.for(@ticket.repo)
     )
 
     if changeset.save
