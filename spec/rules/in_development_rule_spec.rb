@@ -34,6 +34,7 @@ RSpec.describe InDevelopmentRule do
 
   before do
     Flipper.enable(:broadcasts)
+    Flipper.enable_actor(:automation, board)
 
     stub_gh_get("issues/#{ticket.number}/labels") do
       [{ id: '111', name: "status: #{board_ticket.swimlane.name}", color: '00ff00' }]
@@ -51,6 +52,16 @@ RSpec.describe InDevelopmentRule do
         .to change { board_ticket.reload.swimlane }.from(planning_done).to(development)
         .and change { ticket.assignments.pluck(:assignee_username, :assignee_remote_id) }
         .from([]).to([payload[:sender].values_at(:login, :id)])
+    end
+
+    context 'feature is disabled for board' do
+      before { Flipper.disable_actor(:automation, board) }
+
+      it 'does nothing' do
+        expect { subject }
+          .to not_change { board_ticket.reload.swimlane }
+          .and not_change { ticket.assignments.pluck(:assignee_username, :assignee_remote_id) }
+      end
     end
 
     context 'branch already exists' do

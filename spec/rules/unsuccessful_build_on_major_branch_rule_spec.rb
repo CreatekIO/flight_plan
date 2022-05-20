@@ -18,6 +18,7 @@ RSpec.describe UnsuccessfulBuildOnMajorBranchRule do
 
   before do
     Flipper.enable(:broadcasts)
+    Flipper.enable_actor(:automation, board)
 
     stub_slack(board.slack_channel)
   end
@@ -32,6 +33,16 @@ RSpec.describe UnsuccessfulBuildOnMajorBranchRule do
         subject
 
         expect(slack_notifier).to have_sent_message(/build failed on `#{branch_name}`/i)
+      end
+
+      context 'feature disabled for board' do
+        before { Flipper.disable_actor(:automation, board) }
+
+        it 'does not post any messages to Slack' do
+          subject
+
+          expect(slack_notifier).not_to have_received(:notify)
+        end
       end
     end
 

@@ -6,6 +6,8 @@ class ApplicationRule
   class_attribute :trigger_classes, instance_writer: false, default: [].freeze
   attr_reader :event
 
+  set_callback :execute, :feature_enabled_for_board?
+
   def self.trigger(klass, event, *attrs, &block)
     klass = klass.to_s
     event = :updated if event == :changed
@@ -65,6 +67,23 @@ class ApplicationRule
   def halted_callback_hook(filter)
     Rails.logger.info do
       "#{self.class} for #{record.class}##{record.id} failed precondition #{filter.inspect}"
+    end
+  end
+
+  def feature_enabled_for_board?
+    Flipper.enabled?(:automation, to_board(record))
+  end
+
+  def to_board(record)
+    if record.is_a?(Board)
+      record
+    elsif record.respond_to?(:board)
+      record.board
+    elsif record.respond_to?(:repo)
+      to_board(record.repo)
+    else
+      Rails.logger.warn("Can't find Board for #{record.class}##{record.id}")
+      nil
     end
   end
 end

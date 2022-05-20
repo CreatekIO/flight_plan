@@ -12,6 +12,7 @@ RSpec.describe AnnouncePullRequestRule do
 
   before do
     Flipper.enable(:broadcasts)
+    Flipper.enable_actor(:automation, board)
 
     stub_slack(board.slack_channel)
   end
@@ -21,6 +22,16 @@ RSpec.describe AnnouncePullRequestRule do
       subject
 
       expect(slack_notifier).to have_sent_message(/pull request opened/i)
+    end
+
+    context 'feature disabled for board' do
+      before { Flipper.disable_actor(:automation, board) }
+
+      it 'does not announce PR' do
+        subject
+
+        expect(slack_notifier).not_to have_received(:notify)
+      end
     end
   end
 

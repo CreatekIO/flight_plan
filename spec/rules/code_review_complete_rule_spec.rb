@@ -39,6 +39,7 @@ RSpec.describe CodeReviewCompleteRule do
 
   before do
     Flipper.enable(:broadcasts)
+    Flipper.enable_actor(:automation, board)
 
     board_tickets.each do |board_ticket|
       stub_gh_get("issues/#{board_ticket.ticket.number}/labels") do
@@ -70,6 +71,14 @@ RSpec.describe CodeReviewCompleteRule do
       it 'moves ticket to "Code Review - DONE"' do
         expect { subject }
           .to change { board_ticket.reload.swimlane }.from(code_review).to(code_review_done)
+      end
+
+      context 'feature is disabled for board' do
+        before { Flipper.disable_actor(:automation, board) }
+
+        it 'does nothing' do
+          expect { subject }.not_to change { board_ticket.reload.swimlane }
+        end
       end
 
       context 'connected ticket connected to another PR' do
