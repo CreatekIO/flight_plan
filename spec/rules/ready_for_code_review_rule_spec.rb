@@ -32,6 +32,7 @@ RSpec.describe ReadyForCodeReviewRule do
   before do
     Flipper.enable(:broadcasts)
     Flipper.enable_actor(:automation, board)
+    Flipper.enable_actor(:automation, described_class)
 
     stub_gh_get("issues/#{ticket.number}/labels") do
       [{ id: '111', name: "status: #{board_ticket.swimlane.name}", color: '00ff00' }]

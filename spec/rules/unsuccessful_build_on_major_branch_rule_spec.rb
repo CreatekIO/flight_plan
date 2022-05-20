@@ -19,6 +19,7 @@ RSpec.describe UnsuccessfulBuildOnMajorBranchRule do
   before do
     Flipper.enable(:broadcasts)
     Flipper.enable_actor(:automation, board)
+    Flipper.enable_actor(:automation, described_class)
 
     stub_slack(board.slack_channel)
   end

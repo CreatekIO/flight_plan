@@ -6,7 +6,9 @@ class ApplicationRule
   class_attribute :trigger_classes, instance_writer: false, default: [].freeze
   attr_reader :event
 
-  set_callback :execute, :feature_enabled_for_board?
+  delegate :flipper_id, to: :class
+
+  set_callback :execute, :enabled?, :feature_enabled_for_board?
 
   def self.trigger(klass, event, *attrs, &block)
     klass = klass.to_s
@@ -46,6 +48,10 @@ class ApplicationRule
     RUBY
   end
 
+  def self.flipper_id
+    name
+  end
+
   def call
     raise NotImplementedError
   end
@@ -68,6 +74,10 @@ class ApplicationRule
     Rails.logger.info do
       "#{self.class} for #{record.class}##{record.id} failed precondition #{filter.inspect}"
     end
+  end
+
+  def enabled?
+    Flipper.enabled?(:automation, self)
   end
 
   def feature_enabled_for_board?

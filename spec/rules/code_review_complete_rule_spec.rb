@@ -40,6 +40,7 @@ RSpec.describe CodeReviewCompleteRule do
   before do
     Flipper.enable(:broadcasts)
     Flipper.enable_actor(:automation, board)
+    Flipper.enable_actor(:automation, described_class)
 
     board_tickets.each do |board_ticket|
       stub_gh_get("issues/#{board_ticket.ticket.number}/labels") do
