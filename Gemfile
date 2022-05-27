@@ -53,6 +53,7 @@ end
 group :test do
   gem 'action-cable-testing'
   gem 'capybara'
+  gem 'clockwork-test', require: 'clockwork/test'
   gem 'cuprite'
   gem 'rspec-retry'
   gem 'rspec-sidekiq'
