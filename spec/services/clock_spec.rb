@@ -7,6 +7,13 @@ RSpec.describe Clockwork do
   let(:time_window) { Date.today.next_weekday.all_day }
 
   before do
+    if defined?(early_deploy_boards)
+      allow(ENV).to receive(:[]).and_call_original
+      allow(ENV).to receive(:[]).with('EARLY_DEPLOY_BOARD_IDS').and_return(
+        early_deploy_boards.map(&:id).join(',')
+      )
+    end
+
     Clockwork::Test.run(
       start_time: time_window.begin,
       end_time: time_window.end,
@@ -53,26 +60,56 @@ RSpec.describe Clockwork do
     end
   end
 
-  describe 'auto_deploy' do
+  context 'auto deploy jobs' do
     let!(:boards_with_tickets_to_deploy) do
       Array.new(2) { create_board(with_auto_deploy_repos: true, with_tickets_to_deploy: true) }
     end
+
+    let!(:boards_with_tickets_to_deploy_early) do
+      Array.new(2) { create_board(with_auto_deploy_repos: true, with_tickets_to_deploy: true) }
+    end
+
+    let!(:other_early_deploy_boards) do
+      [
+        create_board(with_auto_deploy_repos: false, with_tickets_to_deploy: true),
+        create_board(with_auto_deploy_repos: true, with_tickets_to_deploy: false),
+        create_board(with_auto_deploy_repos: false, with_tickets_to_deploy: false)
+      ]
+    end
+
+    let(:early_deploy_boards) { boards_with_tickets_to_deploy_early + other_early_deploy_boards }
 
     before do
       create_board(with_auto_deploy_repos: false, with_tickets_to_deploy: true)
       create_board(with_auto_deploy_repos: true, with_tickets_to_deploy: false)
       create_board(with_auto_deploy_repos: false, with_tickets_to_deploy: false)
+
     end
 
-    subject { Clockwork::Test.block_for('auto_deploy') }
+    describe 'auto_deploy' do
+      subject { Clockwork::Test.block_for('auto_deploy') }
 
-    it 'enqueues deploy workers for boards with tickets to deploy' do
-      subject.call
+      it 'enqueues deploy workers for boards with tickets to deploy' do
+        subject.call
 
-      board_ids = DeployWorker.jobs.map { |job| job['args'].first }
-      expected_board_ids = boards_with_tickets_to_deploy.map(&:id)
+        board_ids = DeployWorker.jobs.map { |job| job['args'].first }
+        expected_board_ids = boards_with_tickets_to_deploy.map(&:id)
 
-      expect(board_ids).to match_array(expected_board_ids)
+        expect(board_ids).to match_array(expected_board_ids)
+      end
+    end
+
+    describe 'auto_deploy_early' do
+      subject { Clockwork::Test.block_for('auto_deploy_early') }
+
+      it 'enqueues deploy workers for early-deploy boards with tickets to deploy' do
+        subject.call
+
+        board_ids = DeployWorker.jobs.map { |job| job['args'].first }
+        expected_board_ids = boards_with_tickets_to_deploy_early.map(&:id)
+
+        expect(board_ids).to match_array(expected_board_ids)
+      end
     end
   end
 

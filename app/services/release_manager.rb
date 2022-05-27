@@ -10,7 +10,10 @@ class ReleaseManager
   )
 
   def self.enqueue_deploy_workers
-    Board.with_auto_deploy_repos.each do |board|
+    scope = Board.with_auto_deploy_repos
+    scope = yield(scope) if block_given?
+
+    scope.each do |board|
       if board.deploy_swimlane.tickets.none?
         Rails.logger.info("Nothing to deploy for Board##{board.id} '#{board.name}'")
         next
