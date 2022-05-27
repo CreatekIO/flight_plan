@@ -10,7 +10,13 @@ class JobMonitor
   def self.measure(name)
     instance = new(name)
     instance.start
-    yield.tap { instance.done }
+
+    begin
+      yield(instance).tap { instance.done }
+    rescue Exception
+      instance.fail
+      raise
+    end
   end
 
   def self.new(name)
@@ -28,6 +34,11 @@ class JobMonitor
 
   def done
     request(name)
+  end
+
+  # https://healthchecks.io/docs/signaling_failures/
+  def fail
+    request("#{name}/fail")
   end
 
   private

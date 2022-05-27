@@ -55,5 +55,20 @@ RSpec.describe JobMonitor do
         end
       end
     end
+
+    context 'error raised by block' do
+      class CustomTestError < Exception; end
+
+      it 'propagates error, but sends requests for start and fail' do
+        aggregate_failures do
+          expect {
+            described_class.measure(name) { raise CustomTestError, 'block failed' }
+          }.to raise_error(CustomTestError)
+
+          expect(WebMock).to have_requested(:get, "https://hc-ping.com/#{api_key}/#{name}/start")
+          expect(WebMock).to have_requested(:get, "https://hc-ping.com/#{api_key}/#{name}/fail")
+        end
+      end
+    end
   end
 end
