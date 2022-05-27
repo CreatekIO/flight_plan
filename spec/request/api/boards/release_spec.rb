@@ -42,6 +42,7 @@ RSpec.describe 'Releases', type: :request do
 
   before do
     board.update(deploy_swimlane: swimlane)
+    stub_slack
   end
 
   attr_reader :slug
@@ -77,8 +78,6 @@ RSpec.describe 'Releases', type: :request do
         stub_gh_merge_feature_branch(feature_branch_name_2)
         stub_gh_create_pull_request(ticket_2)
       end
-
-      stub_slack_message
 
       # fix date/time to ensure release branch name matches
       Timecop.freeze(time_of_release) do
@@ -119,7 +118,6 @@ RSpec.describe 'Releases', type: :request do
         stub_gh_create_release_branch
         stub_gh_merge_feature_branch(feature_branch_name_1)
         stub_gh_create_pull_request(ticket_1)
-        stub_slack_message
 
         Timecop.freeze(time_of_release) do
           post path, params: release_params, headers: api_headers
@@ -167,9 +165,5 @@ RSpec.describe 'Releases', type: :request do
 
   def stub_gh_create_pull_request(ticket)
     stub_gh_post('pulls', pull_request_params(ticket)) { pull_request_response }
-  end
-
-  def stub_slack_message
-    stub_request(:post, 'https://slack.com/api/chat.postMessage')
   end
 end

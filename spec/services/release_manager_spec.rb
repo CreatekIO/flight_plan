@@ -3,9 +3,7 @@ require 'rails_helper'
 RSpec.describe ReleaseManager, type: :service do
   subject { described_class.new(board, repo) }
 
-  before do
-    stub_slack(board.slack_channel)
-  end
+  before { stub_slack }
 
   describe '#open_pr?' do
     let(:repo) { create(:repo, deployment_branch: 'main') }

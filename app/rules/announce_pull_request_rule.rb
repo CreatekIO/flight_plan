@@ -6,10 +6,12 @@ class AnnouncePullRequestRule < ApplicationRule
   end
 
   delegate :repo, to: :pull_request
+  delegate :slack_channel, to: 'repo.board'
 
   def call
-    slack.notify(
+    SlackNotifier.notify(
       "Pull request opened by @#{pull_request.creator_username}",
+      channel: slack_channel,
       attachments: {
         title: "#{repo.name}: #{pull_request.title}",
         title_link: pull_request.html_url,
@@ -23,9 +25,5 @@ class AnnouncePullRequestRule < ApplicationRule
 
   def crowdin_update?
     pull_request.head_branch.match?(/^i18n_/)
-  end
-
-  def slack
-    @slack ||= SlackNotifier.new(repo.board.slack_channel)
   end
 end

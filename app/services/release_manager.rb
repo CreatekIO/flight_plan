@@ -196,12 +196,17 @@ class ReleaseManager
       }
     end
 
-    slack_notifier.notify('*Pull Request Created*', attachments: attachments)
+    SlackNotifier.notify(
+      '*Pull Request Created*',
+      channel: board.slack_channel,
+      attachments: attachments
+    )
   end
 
   def announce_pr_merged(pr)
-    slack_notifier.notify(
+    SlackNotifier.notify(
       '*Pull Request Merged*',
+      channel: board.slack_channel,
       attachments: {
         title: "#{repo.name}: Merged PR ##{pr[:number]} #{pr[:title]}",
         title_link: pr[:html_url],
@@ -212,18 +217,15 @@ class ReleaseManager
   end
 
   def announce_pr_failed(error)
-    slack_notifier.notify(
+    SlackNotifier.notify(
       '*Pull Request Failed*',
+      channel: board.slack_channel,
       attachments: {
         title: "#{repo.name}: Failed to create release",
         text: error.message,
         color: 'danger'
       }
     )
-  end
-
-  def slack_notifier
-    @slack_notifier ||= SlackNotifier.new(board.slack_channel)
   end
 
   def log(message)
