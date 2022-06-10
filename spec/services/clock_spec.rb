@@ -10,7 +10,7 @@ RSpec.describe Clockwork do
     if defined?(early_deploy_boards)
       allow(ENV).to receive(:[]).and_call_original
       allow(ENV).to receive(:[]).with('EARLY_DEPLOY_BOARD_IDS').and_return(
-        early_deploy_boards.map(&:id).join(',')
+        early_deploy_boards.map(&:id).join(',').presence
       )
     end
 
@@ -83,7 +83,6 @@ RSpec.describe Clockwork do
       create_board(with_auto_deploy_repos: false, with_tickets_to_deploy: true)
       create_board(with_auto_deploy_repos: true, with_tickets_to_deploy: false)
       create_board(with_auto_deploy_repos: false, with_tickets_to_deploy: false)
-
     end
 
     describe 'auto_deploy' do
@@ -97,6 +96,21 @@ RSpec.describe Clockwork do
 
         expect(board_ids).to match_array(expected_board_ids)
       end
+
+      context 'no early-deploy boards' do
+        let(:early_deploy_boards) { [] }
+
+        it 'enqueues deploy workers for all boards with tickets to deploy' do
+          subject.call
+
+          board_ids = DeployWorker.jobs.map { |job| job['args'].first }
+          expected_board_ids = (
+            boards_with_tickets_to_deploy + boards_with_tickets_to_deploy_early
+          ).map(&:id)
+
+          expect(board_ids).to match_array(expected_board_ids)
+        end
+      end
     end
 
     describe 'auto_deploy_early' do
@@ -109,6 +123,14 @@ RSpec.describe Clockwork do
         expected_board_ids = boards_with_tickets_to_deploy_early.map(&:id)
 
         expect(board_ids).to match_array(expected_board_ids)
+      end
+
+      context 'no early-deploy boards' do
+        let(:early_deploy_boards) { [] }
+
+        it 'does\'t enqueue any deploy workers' do
+          expect { subject.call }.not_to change { DeployWorker.jobs }
+        end
       end
     end
   end
