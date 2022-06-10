@@ -39,8 +39,9 @@ RSpec.describe CodeReviewCompleteRule do
 
   before do
     Flipper.enable(:broadcasts)
-    Flipper.enable_actor(:automation, board)
-    Flipper.enable_actor(:automation, described_class)
+    Flipper.enable(:automation)
+
+    described_class.enable!(board)
 
     board_tickets.each do |board_ticket|
       stub_gh_get("issues/#{board_ticket.ticket.number}/labels") do
@@ -74,8 +75,10 @@ RSpec.describe CodeReviewCompleteRule do
           .to change { board_ticket.reload.swimlane }.from(code_review).to(code_review_done)
       end
 
-      context 'feature is disabled for board' do
-        before { Flipper.disable_actor(:automation, board) }
+      context 'rule is disabled for board' do
+        before do
+          BoardRule.where(board: board, rule_class: described_class.name).delete_all
+        end
 
         it 'does nothing' do
           expect { subject }.not_to change { board_ticket.reload.swimlane }

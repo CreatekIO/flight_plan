@@ -34,8 +34,9 @@ RSpec.describe InDevelopmentRule do
 
   before do
     Flipper.enable(:broadcasts)
-    Flipper.enable_actor(:automation, board)
-    Flipper.enable_actor(:automation, described_class)
+    Flipper.enable(:automation)
+
+    described_class.enable!(board)
 
     stub_gh_get("issues/#{ticket.number}/labels") do
       [{ id: '111', name: "status: #{board_ticket.swimlane.name}", color: '00ff00' }]
@@ -55,8 +56,10 @@ RSpec.describe InDevelopmentRule do
         .from([]).to([payload[:sender].values_at(:login, :id)])
     end
 
-    context 'feature is disabled for board' do
-      before { Flipper.disable_actor(:automation, board) }
+    context 'rule is disabled for board' do
+      before do
+        BoardRule.where(board: board, rule_class: described_class.name).delete_all
+      end
 
       it 'does nothing' do
         expect { subject }

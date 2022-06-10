@@ -12,8 +12,9 @@ RSpec.describe AnnouncePullRequestRule do
 
   before do
     Flipper.enable(:broadcasts)
-    Flipper.enable_actor(:automation, board)
-    Flipper.enable_actor(:automation, described_class)
+    Flipper.enable(:automation)
+
+    described_class.enable!(board)
 
     stub_slack
   end
@@ -29,7 +30,9 @@ RSpec.describe AnnouncePullRequestRule do
     end
 
     context 'feature disabled for board' do
-      before { Flipper.disable_actor(:automation, board) }
+      before do
+        BoardRule.where(board: board, rule_class: described_class.name).delete_all
+      end
 
       it 'does not announce PR' do
         subject
