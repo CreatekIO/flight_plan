@@ -1,4 +1,5 @@
 class ApplicationRule
+  extend ActiveSupport::DescendantsTracker
   include ModelListener
 
   define_callbacks :execute, terminator: -> (_, callback) { !callback.call }
