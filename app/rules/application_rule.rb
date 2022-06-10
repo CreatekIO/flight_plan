@@ -9,6 +9,9 @@ class ApplicationRule
 
   delegate :flipper_id, to: :class
 
+  delegate :setting, to: :board_rule
+  private :setting
+
   set_callback :execute, :feature_enabled?, :enabled_for_board?
 
   def self.trigger(klass, event, *attrs, &block)
@@ -35,6 +38,18 @@ class ApplicationRule
   end
 
   private_class_method :alias_record_as
+
+  def self.setting(name, default:)
+    if default.respond_to?(:call)
+      define_method(name) do
+        setting(name) { instance_eval(&default) }
+      end
+    else
+      define_method(name) { setting(name, default) }
+    end
+
+    private name
+  end
 
   def self.listen!
     Wisper.subscribe(self, scope: trigger_classes)
