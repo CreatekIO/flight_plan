@@ -1,9 +1,8 @@
 class UnsuccessfulBuildOnMajorBranchRule < ApplicationRule
-  BRANCHES = %w[develop main master].freeze
-
   alias_record_as :commit_status
 
-  delegate :slack_channel, to: 'commit_status.repo.board'
+  setting :branches, default: %w[develop main master]
+  setting :slack_channel, default: proc { commit_status.repo.board.slack_channel }
 
   trigger 'CommitStatus', :created do
     commit_status.unsuccessful? && on_major_branch?
@@ -28,7 +27,7 @@ class UnsuccessfulBuildOnMajorBranchRule < ApplicationRule
   end
 
   def associated_major_branches
-    @associated_major_branches ||= commit_status.branches.where(name: BRANCHES).load
+    @associated_major_branches ||= commit_status.branches.where(name: branches).load
   end
 
   def branch_names

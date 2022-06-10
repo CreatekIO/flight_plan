@@ -1,6 +1,9 @@
 class InDevelopmentRule < ApplicationRule
   alias_record_as :head
 
+  setting :destination_swimlane_name, default: 'Development'
+  setting :assign_pusher?, default: true
+
   trigger 'BranchHead', :created do
     pushed_to_feature_branch? && board_ticket.in_swimlane?(/planning - done/i)
   end
@@ -9,8 +12,8 @@ class InDevelopmentRule < ApplicationRule
 
   def call
     ApplicationRecord.transaction do
-      move(board_ticket, to: 'Development')
-      assign_pusher
+      move(board_ticket, to: destination_swimlane_name)
+      assign_pusher if assign_pusher?
     end
   end
 

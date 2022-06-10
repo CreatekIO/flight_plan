@@ -29,6 +29,24 @@ RSpec.describe AnnouncePullRequestRule do
       )
     end
 
+    context 'custom slack channel set' do
+      before do
+        BoardRule.for(board: board, rule: described_class).tap do |rule|
+          rule.settings[:slack_channel] = '#custom'
+          rule.save!
+        end
+      end
+
+      it 'sends message to Slack on custom channel' do
+        subject
+
+        expect(slack_notifier).to have_sent_message(
+          /pull request opened/i,
+          to: '#custom'
+        )
+      end
+    end
+
     context 'feature disabled for board' do
       before do
         BoardRule.where(board: board, rule_class: described_class.name).delete_all

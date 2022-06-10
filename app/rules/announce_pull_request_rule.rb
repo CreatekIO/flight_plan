@@ -1,12 +1,13 @@
 class AnnouncePullRequestRule < ApplicationRule
   alias_record_as :pull_request
 
+  setting :slack_channel, default: proc { repo.board.slack_channel }
+
   trigger 'PullRequest', :created do
     !(pull_request.release? || crowdin_update?)
   end
 
   delegate :repo, to: :pull_request
-  delegate :slack_channel, to: 'repo.board'
 
   def call
     SlackNotifier.notify(

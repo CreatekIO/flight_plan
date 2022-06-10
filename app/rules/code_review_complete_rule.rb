@@ -1,6 +1,8 @@
 class CodeReviewCompleteRule < ApplicationRule
   alias_record_as :pull_request
 
+  setting :destination_swimlane_name, default: 'Code Review - DONE'
+
   trigger 'PullRequest', :changed, :merged do
     pull_request.merged? && connected_tickets.any? { |ticket| in_code_review?(ticket) }
   end
@@ -10,7 +12,7 @@ class CodeReviewCompleteRule < ApplicationRule
       next unless in_code_review?(ticket)
       next unless ticket.pull_requests.all?(&:merged?)
 
-      move(ticket.board_ticket, to: 'Code Review - DONE')
+      move(ticket.board_ticket, to: destination_swimlane_name)
     end
   end
 
