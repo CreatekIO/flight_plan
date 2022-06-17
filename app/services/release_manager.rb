@@ -9,6 +9,21 @@ class ReleaseManager
     prefix_with: 'repo.slug'
   )
 
+  def self.enqueue_deploy_workers
+    scope = Board.with_auto_deploy_repos
+    scope = yield(scope) if block_given?
+
+    scope.each do |board|
+      if board.deploy_swimlane.tickets.none?
+        Rails.logger.info("Nothing to deploy for Board##{board.id} '#{board.name}'")
+        next
+      end
+
+      Rails.logger.info("Enqueuing release for Board##{board.id} '#{board.name}'")
+      DeployWorker.perform_async(board.id)
+    end
+  end
+
   def initialize(board, repo)
     @board = board
     @repo = repo

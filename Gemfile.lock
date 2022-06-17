@@ -78,6 +78,9 @@ GEM
     clockwork (2.0.4)
       activesupport
       tzinfo
+    clockwork-test (0.4.0)
+      clockwork
+      timecop
     concurrent-ruby (1.1.8)
     connection_pool (2.2.3)
     crack (0.4.5)
@@ -329,6 +332,7 @@ DEPENDENCIES
   cancancan
   capybara
   clockwork
+  clockwork-test
   createk_data_migrator
   cuprite
   descriptive_statistics

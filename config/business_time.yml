@@ -55,8 +55,18 @@ business_time:
     - '26 December  2022' # Boxing Day
     - '27 December  2022' # Christmas Day
 
+    - '02 January   2023' # New Year’s Day
+    - '07 April     2023' # Good Friday
+    - '10 April     2023' # Easter Monday
+    - '01 May       2023' # Early May bank holiday
+    - '29 May       2023' # Spring bank holiday
+    - '28 August    2023' # Summer bank holiday
+    - '25 December  2023' # Christmas Day
+    - '26 December  2023' # Boxing Day
+
     # # Extra dates
     - '18 December  2020' # company-wide holiday
+    - '17 December  2021' # company-wide holiday
   work_week:
     - mon
     - tue
