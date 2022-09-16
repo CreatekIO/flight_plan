@@ -1,5 +1,6 @@
 class BranchHead < ApplicationRecord
   belongs_to :branch
+  has_one :repo, through: :branch
 
   self.ignored_columns = %w[payload]
 

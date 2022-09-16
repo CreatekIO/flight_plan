@@ -8,14 +8,5 @@ FactoryBot.define do
     committer_username { author_username }
     pusher_remote_id { generate(:user_id) }
     pusher_username { author_username }
-
-    trait :with_head do
-      after(:build) do |branch|
-        branch_head = build(:branch_head)
-
-        branch.heads << branch_head
-        branch.latest_head = branch_head
-      end
-    end
   end
 end

@@ -7,5 +7,10 @@ FactoryBot.define do
     head_branch { "feature/#{number}-test" }
     head_sha { generate(:sha) }
     base_branch { 'develop' }
+
+    trait :merged do
+      state { 'closed' }
+      merged { true }
+    end
   end
 end

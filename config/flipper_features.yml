@@ -30,3 +30,7 @@ features:
   - name: edit_assignees
     description: >
       Allow users to assign/unassign people to tickets
+
+  - name: automation
+    description: >
+      Automate ticket actions on board in response to model changes

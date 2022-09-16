@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_09_29_144518) do
+ActiveRecord::Schema.define(version: 2022_05_23_124420) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
@@ -23,6 +23,16 @@ ActiveRecord::Schema.define(version: 2021_09_29_144518) do
     t.datetime "updated_at", null: false
     t.index ["board_id"], name: "index_board_repos_on_board_id"
     t.index ["repo_id"], name: "index_board_repos_on_repo_id"
+  end
+
+  create_table "board_rules", force: :cascade do |t|
+    t.bigint "board_id", null: false
+    t.string "rule_class", null: false
+    t.boolean "enabled", default: true, null: false
+    t.jsonb "settings", default: {}, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["board_id"], name: "index_board_rules_on_board_id"
   end
 
   create_table "board_tickets", force: :cascade do |t|
@@ -341,6 +351,7 @@ ActiveRecord::Schema.define(version: 2021_09_29_144518) do
     t.index ["username"], name: "index_users_on_username"
   end
 
+  add_foreign_key "board_rules", "boards"
   add_foreign_key "branches", "repos"
   add_foreign_key "commit_statuses", "repos"
   add_foreign_key "labellings", "labels"

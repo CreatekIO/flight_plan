@@ -37,4 +37,12 @@ class Branch < ApplicationRecord
       branch
     end
   end
+
+  def self.release?(name)
+    name.starts_with?(ReleaseManager::BRANCH_PREFIX)
+  end
+
+  def for_release?
+    self.class.release?(name)
+  end
 end

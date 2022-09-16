@@ -1,7 +1,15 @@
 RSpec.configure do |config|
-  config.around(:each, type: -> (type) { type != :system }) do |example|
+  config.around(:each) do |example|
     original = Flipper.instance
-    Flipper.instance = Flipper.new(Flipper::Adapters::Memory.new)
+
+    unless example.metadata[:type] == :system
+      Flipper.instance = Flipper.new(
+        Flipper::Adapters::Instrumented.new(
+          Flipper::Adapters::Memory.new,
+          instrumenter: ActiveSupport::Notifications
+        )
+      )
+    end
 
     example.run
 

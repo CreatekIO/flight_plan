@@ -70,6 +70,10 @@ class PullRequest < ApplicationRecord
     !merged?
   end
 
+  def release?
+    Branch.release?(head_branch)
+  end
+
   URL_TEMPLATE = 'https://github.com/%{repo}/pull/%{number}'.freeze
 
   def html_url
