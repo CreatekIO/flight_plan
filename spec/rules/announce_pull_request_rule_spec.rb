@@ -24,7 +24,7 @@ RSpec.describe AnnouncePullRequestRule do
       subject
 
       expect(slack_notifier).to have_sent_message(
-        /pull request opened/i,
+        /pull request \*#{repo.slug}##{payload[:number]}\* opened/i,
         to: board.slack_channel
       )
     end
@@ -41,7 +41,7 @@ RSpec.describe AnnouncePullRequestRule do
         subject
 
         expect(slack_notifier).to have_sent_message(
-          /pull request opened/i,
+          /pull request \*#{repo.slug}##{payload[:number]}\* opened/i,
           to: '#custom'
         )
       end
@@ -81,6 +81,51 @@ RSpec.describe AnnouncePullRequestRule do
       subject
 
       expect(slack_notifier).not_to have_received(:notify)
+    end
+  end
+
+  context 'PR is already closed (but the first time we\'ve been notified)' do
+    let(:payload) do
+      webhook_payload(:pull_request_merged).fetch(:pull_request)
+    end
+
+    it 'does not announce PR' do
+      subject
+
+      expect(slack_notifier).not_to have_received(:notify)
+    end
+  end
+
+  context 'PR is updated' do
+    let!(:pull_request) { create(:pull_request, repo: repo) }
+    let(:slug) { repo.slug }
+
+    before do
+      stub_gh_get("pulls/#{pull_request.number}") do
+        {
+          id: pull_request.remote_id,
+          number: pull_request.number,
+          state: 'opened',
+          mergeable: true,
+          head: { sha: 'abc1234', ref: "feature/#{pull_request.number}-test" },
+          base: { sha: '4321cba', ref: 'master' },
+          user: { id: 1000 }
+        }
+      end
+
+      stub_gh_get("pulls/#{pull_request.number}/reviews") do
+        [{ id: 1000 }, { id: 1001 }]
+      end
+    end
+
+    subject { PullRequestRefreshWorker.new.perform(pull_request.id) }
+
+    it 'does not announce PR' do
+      expect(slack_notifier).to have_received(:notify).once
+
+      subject
+
+      expect(slack_notifier).to have_received(:notify).once
     end
   end
 end

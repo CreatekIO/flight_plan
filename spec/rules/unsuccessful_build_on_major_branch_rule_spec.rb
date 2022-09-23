@@ -4,7 +4,9 @@ RSpec.describe UnsuccessfulBuildOnMajorBranchRule do
   let(:payload) do
     webhook_payload(:status).merge(
       sha: status_branch.latest_head.head_sha,
-      state: state
+      state: state,
+      context: context,
+      description: description
     )
   end
 
@@ -13,6 +15,8 @@ RSpec.describe UnsuccessfulBuildOnMajorBranchRule do
   let!(:status_branch) { create(:branch, :with_head, name: branch_name, repo: repo) }
 
   let(:state) { 'failure' }
+  let(:context) { 'ci' }
+  let(:description) { nil }
 
   subject { CommitStatus.import(payload, repo) }
 
@@ -55,6 +59,51 @@ RSpec.describe UnsuccessfulBuildOnMajorBranchRule do
             /build failed on `#{branch_name}`/i,
             to: '#custom'
           )
+        end
+      end
+
+      context 'from Buildkite' do
+        let(:context) { 'buildkite/my-pipeline' }
+
+        context 'build was cancelled by Buildkite' do
+          let(:description) { 'Build #1234 canceled' }
+
+          it 'does not post any messages to Slack' do
+            subject
+
+            expect(slack_notifier).not_to have_received(:notify)
+          end
+        end
+
+        context 'build was cancelled by user' do
+          let(:description) { 'Build #1234 canceled by Users Name' }
+
+          it 'does not post any messages to Slack' do
+            subject
+
+            expect(slack_notifier).not_to have_received(:notify)
+          end
+        end
+
+        context 'build is failing' do
+          let(:description) { 'Build #1234 is failing' }
+
+          it 'does not post any messages to Slack' do
+            subject
+
+            expect(slack_notifier).not_to have_received(:notify)
+          end
+        end
+
+        context 'build skipped' do
+          let(:state) { 'error' }
+          let(:description) { 'Build #1234 skipped' }
+
+          it 'does not post any messages to Slack' do
+            subject
+
+            expect(slack_notifier).not_to have_received(:notify)
+          end
         end
       end
 
