@@ -52,6 +52,7 @@ class ApplicationRule
   end
 
   def self.listen!
+    Wisper.unsubscribe(self)
     Wisper.subscribe(self, scope: trigger_classes)
   end
 
