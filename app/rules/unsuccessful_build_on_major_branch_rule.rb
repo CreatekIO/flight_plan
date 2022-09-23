@@ -10,10 +10,10 @@ class UnsuccessfulBuildOnMajorBranchRule < ApplicationRule
 
   def call
     SlackNotifier.notify(
-      ":warning: *Build failed on #{branch_names}*",
+      ":warning: *Build failed on #{branch_names} - #{commit_status.context}*",
       channel: slack_channel,
       attachments: {
-        title: "[#{commit_status.context}] #{commit_status.description.presence || 'Build failed'}",
+        title: commit_status.description.presence || 'Build failed',
         title_link: commit_status.url,
         color: 'danger'
       }
