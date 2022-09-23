@@ -83,4 +83,16 @@ RSpec.describe AnnouncePullRequestRule do
       expect(slack_notifier).not_to have_received(:notify)
     end
   end
+
+  context 'PR is already closed (but the first time we\'ve been notified)' do
+    let(:payload) do
+      webhook_payload(:pull_request_merged).fetch(:pull_request)
+    end
+
+    it 'does not announce PR' do
+      subject
+
+      expect(slack_notifier).not_to have_received(:notify)
+    end
+  end
 end
