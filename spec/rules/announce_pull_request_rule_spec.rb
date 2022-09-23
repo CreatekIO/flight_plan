@@ -24,7 +24,7 @@ RSpec.describe AnnouncePullRequestRule do
       subject
 
       expect(slack_notifier).to have_sent_message(
-        /pull request opened/i,
+        /pull request \*#{repo.slug}##{payload[:number]}\* opened/i,
         to: board.slack_channel
       )
     end
@@ -41,7 +41,7 @@ RSpec.describe AnnouncePullRequestRule do
         subject
 
         expect(slack_notifier).to have_sent_message(
-          /pull request opened/i,
+          /pull request \*#{repo.slug}##{payload[:number]}\* opened/i,
           to: '#custom'
         )
       end
