@@ -4,16 +4,18 @@ class UnsuccessfulBuildOnMajorBranchRule < ApplicationRule
   setting :branches, default: %w[develop main master]
   setting :slack_channel, default: proc { commit_status.repo.board.slack_channel }
 
+  delegate :context, :description, to: :commit_status
+
   trigger 'CommitStatus', :created do
-    commit_status.unsuccessful? && on_major_branch?
+    commit_status.unsuccessful? && on_major_branch? && for_failing_build?
   end
 
   def call
     SlackNotifier.notify(
-      ":warning: *Build failed on #{branch_names} - #{commit_status.context}*",
+      ":warning: *Build failed on #{branch_names} - #{context}*",
       channel: slack_channel,
       attachments: {
-        title: commit_status.description.presence || 'Build failed',
+        title: description.presence || 'Build failed',
         title_link: commit_status.url,
         color: 'danger'
       }
@@ -32,5 +34,12 @@ class UnsuccessfulBuildOnMajorBranchRule < ApplicationRule
 
   def branch_names
     associated_major_branches.map { |branch| "`#{branch.name}`" }.sort.to_sentence
+  end
+
+  def for_failing_build?
+    return true unless context =~ /^buildkite/
+    return true if description.blank? # unable to tell, assume the worst
+
+    description !~ /\b(is failing|skipped|cancell?ed)\b/
   end
 end
