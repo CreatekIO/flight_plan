@@ -4,7 +4,10 @@ class ApplicationRule
 
   define_callbacks :execute, terminator: -> (_, callback) { !callback.call }
 
-  class_attribute :trigger_classes, instance_writer: false, default: [].freeze
+  Trigger = Struct.new(:klass, :event, :attrs, :callback)
+  private_constant :Trigger
+
+  class_attribute :triggers, instance_writer: false, default: [].freeze
   attr_reader :event
 
   delegate :flipper_id, to: :class
@@ -12,23 +15,13 @@ class ApplicationRule
   delegate :setting, to: :board_rule
   private :setting
 
-  set_callback :execute, :feature_enabled?, :enabled_for_board?
+  set_callback :execute, :feature_enabled?, :enabled_for_board?, :matches_triggers?
 
   def self.trigger(klass, event, *attrs, &block)
-    klass = klass.to_s
     event = :updated if event == :changed
-    self.trigger_classes += [klass]
+    trigger = Trigger.new(klass.to_s, event, attrs.to_set, block)
 
-    conditions = [
-      proc { record.class.name == klass && self.event == event }
-    ]
-
-    if event == :updated
-      attrs = attrs.to_set
-      conditions << proc { attrs.intersect?(changed_attributes) }
-    end
-
-    set_callback(:execute, if: conditions, &block)
+    self.triggers += [trigger]
   end
 
   private_class_method :trigger
@@ -53,7 +46,7 @@ class ApplicationRule
 
   def self.listen!
     Wisper.unsubscribe(self)
-    Wisper.subscribe(self, scope: trigger_classes)
+    Wisper.subscribe(self, scope: triggers.map(&:klass))
   end
 
   %i[created updated destroyed].each do |event|
@@ -112,6 +105,16 @@ class ApplicationRule
 
   def enabled_for_board?
     board_rule.present? && board_rule.enabled?
+  end
+
+  def matches_triggers?
+    self.class.triggers.any? do |trigger|
+      next if trigger.klass != record.class.name
+      next if trigger.event != event
+      next if event == :updated && !trigger.attrs.intersect?(changed_attributes)
+
+      instance_eval(&trigger.callback)
+    end
   end
 
   def board
