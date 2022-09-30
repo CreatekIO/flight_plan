@@ -125,7 +125,7 @@ class ApplicationRule
     elsif record.respond_to?(:board)
       record.board
     elsif record.respond_to?(:repo)
-      record.repo.board
+      record.repo.try(:board)
     else
       Rails.logger.warn("Can't find Board for #{record.class}##{record.id}")
       nil

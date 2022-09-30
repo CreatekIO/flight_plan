@@ -78,6 +78,25 @@ RSpec.describe InDevelopmentRule do
           .and change { ticket.assignments.pluck(:assignee_username, :assignee_remote_id) }
           .from([]).to([payload[:sender].values_at(:login, :id)])
       end
+
+      context 'push deletes branch' do
+        let(:payload) do
+          webhook_payload(:branch_deleted_push).deep_merge(
+            ref: "refs/heads/#{branch_name}",
+            before: branch.latest_head.head_sha,
+            repository: {
+              id: repo.remote_id,
+              full_name: repo.slug
+            }
+          )
+        end
+
+        it 'does nothing' do
+          expect { subject }
+            .to not_change { board_ticket.reload.swimlane }
+            .and not_change { ticket.assignments.pluck(:assignee_username, :assignee_remote_id) }
+        end
+      end
     end
 
     context 'user already assigned to ticket' do
