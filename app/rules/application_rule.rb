@@ -15,7 +15,7 @@ class ApplicationRule
   delegate :setting, to: :board_rule
   private :setting
 
-  set_callback :execute, :feature_enabled?, :enabled_for_board?, :matches_triggers?
+  set_callback :execute, :feature_enabled?, :matches_trigger_attributes?, :enabled_for_board?, :matches_trigger_callback?
 
   def self.trigger(klass, event, *attrs, &block)
     event = :updated if event == :changed
@@ -107,15 +107,21 @@ class ApplicationRule
     board_rule.present? && board_rule.enabled?
   end
 
+  def matches_trigger_callback?
+    matches_triggers? { |trigger| instance_eval(&trigger.callback) }
+  end
+
   def matches_triggers?
     self.class.triggers.any? do |trigger|
       next if trigger.klass != record.class.name
       next if trigger.event != event
       next if event == :updated && !trigger.attrs.intersect?(changed_attributes)
 
-      instance_eval(&trigger.callback)
+      block_given? ? yield(trigger) : true
     end
   end
+
+  alias_method :matches_trigger_attributes?, :matches_triggers?
 
   def board
     return @board if defined?(@board)
@@ -125,7 +131,7 @@ class ApplicationRule
     elsif record.respond_to?(:board)
       record.board
     elsif record.respond_to?(:repo)
-      record.repo.board
+      record.repo.try(:board)
     else
       Rails.logger.warn("Can't find Board for #{record.class}##{record.id}")
       nil
