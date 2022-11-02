@@ -9,7 +9,7 @@ end
 module Clockwork
   error_handler { |error| Bugsnag.notify(error) }
 
-  every 1.day, 'auto_deploy_early', at: '09:00', if: -> (time) { time.on_weekday? } do
+  every 1.day, 'auto_deploy_early', at: '09:20', if: -> (time) { time.on_weekday? } do
     JobMonitor.measure('clock-auto_deploy_early') do
       ReleaseManager.enqueue_deploy_workers do |boards|
         boards.where(id: EARLY_DEPLOY_BOARD_IDS)

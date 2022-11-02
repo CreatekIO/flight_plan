@@ -17,7 +17,7 @@ RSpec.describe Clockwork do
     Clockwork::Test.run(
       start_time: time_window.begin,
       end_time: time_window.end,
-      tick_speed: 15.minutes,
+      tick_speed: 5.minutes,
       file: clock_file
     )
   end
