@@ -62,10 +62,6 @@ class Repo < ApplicationRecord
     end
   end
 
-  def regex_branches(regex)
-    branch_names.grep(regex)
-  end
-
   def branch_up_to_date?(name, with:)
     without_octokit_pagination do
       octokit_compare(

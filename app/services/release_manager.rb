@@ -64,16 +64,9 @@ class ReleaseManager
   end
 
   def extra_branches
-    @extra_branches ||=
-      if board.additional_branches_regex.present?
-        begin
-          repo.regex_branches(Regexp.new(board.additional_branches_regex))
-        rescue RegexpError
-          []
-        end
-      else
-        []
-      end
+    @extra_branches ||= TextMatcher.from(
+      board.additional_branches_regex
+    ).filter(repo.branch_names)
   end
 
   def create_release_branch

@@ -35,8 +35,8 @@ class Board < ApplicationRecord
   private
 
   def check_additional_branches_regex
-    Regexp.new(additional_branches_regex.to_s)
-  rescue RegexpError => e
-    errors.add(:additional_branches_regex, e.message)
+    TextMatcher.from(additional_branches_regex) do |error|
+      errors.add(:additional_branches_regex, error.message)
+    end
   end
 end
