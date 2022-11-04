@@ -107,6 +107,21 @@ RSpec.describe UnsuccessfulBuildOnMajorBranchRule do
         end
       end
 
+      context 'context is ignored' do
+        before do
+          BoardRule.for(board: board, rule: described_class).tap do |rule|
+            rule.settings[:ignored_contexts] = "noisy|#{context}"
+            rule.save!
+          end
+        end
+
+        it 'does not post any messages to Slack' do
+          subject
+
+          expect(slack_notifier).not_to have_received(:notify)
+        end
+      end
+
       context 'rule disabled for board' do
         before do
           BoardRule.where(board: board, rule_class: described_class.name).delete_all

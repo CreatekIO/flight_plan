@@ -3,11 +3,12 @@ class UnsuccessfulBuildOnMajorBranchRule < ApplicationRule
 
   setting :branches, default: %w[develop main master]
   setting :slack_channel, default: proc { commit_status.repo.board.slack_channel }
+  setting :ignored_contexts, default: nil
 
   delegate :context, :description, to: :commit_status
 
   trigger 'CommitStatus', :created do
-    commit_status.unsuccessful? && on_major_branch? && for_failing_build?
+    commit_status.unsuccessful? && on_major_branch? && for_failing_build? && !ignored?
   end
 
   def call
@@ -41,5 +42,9 @@ class UnsuccessfulBuildOnMajorBranchRule < ApplicationRule
     return true if description.blank? # unable to tell, assume the worst
 
     description !~ /\b(is failing|skipped|cancell?ed)\b/
+  end
+
+  def ignored?
+    TextMatcher.from(ignored_contexts).matches?(context)
   end
 end

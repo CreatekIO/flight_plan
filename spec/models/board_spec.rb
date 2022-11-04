@@ -32,9 +32,20 @@ RSpec.describe Board, type: :model do
       end
     end
 
+    let(:valid_regex) do
+      custom_inspect("one|two") { 'a valid regex' }
+    end
+
+    let(:invalid_regex) do
+      custom_inspect('[a-') { 'an invalid regex' }
+    end
+
     it { should validate_presence_of(:slack_channel) }
     it { should allow_value(valid_channel).for(:slack_channel) }
     it { should_not allow_value(long_string, '#', channel_without_hash).for(:slack_channel) }
+
+    it { should allow_value(nil, '').for(:additional_branches_regex) }
+    it { should_not allow_value(invalid_regex).for(:additional_branches_regex) }
   end
 
   describe '#open_swimlane' do
