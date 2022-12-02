@@ -28,7 +28,7 @@ gem 'omniauth-github', '~> 1'
 gem 'omniauth-rails_csrf_protection', '< 1'
 
 gem 'pg'
-gem 'puma'
+gem 'puma', '~> 5'
 gem 'ranked-model'
 gem 'redis-namespace'
 gem 'sidekiq'
