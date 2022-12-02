@@ -3,7 +3,7 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
 ruby '2.6.6'
 
-gem 'rails', '~> 5.2.4', '>= 5.2.4.5'
+gem 'rails', '~> 5.2.7'
 
 gem 'activerecord-import'
 gem 'blueprinter'
@@ -28,10 +28,10 @@ gem 'omniauth-github', '~> 1'
 gem 'omniauth-rails_csrf_protection', '< 1'
 
 gem 'pg'
-gem 'puma'
+gem 'puma', '~> 5'
 gem 'ranked-model'
 gem 'redis-namespace'
-gem 'sidekiq'
+gem 'sidekiq', '~> 6'
 gem 'slack-ruby-client'
 gem 'webpacker', '6.0.0.beta.6'
 gem 'wisper'
