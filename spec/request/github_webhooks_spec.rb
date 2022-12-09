@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe 'Webhooks', type: :request do
+RSpec.describe 'GitHub webhooks', type: :request do
   let(:webhook_secret) { SecureRandom.hex }
   let(:app_webhook_secret) { "app-#{SecureRandom.hex}" }
 
@@ -10,17 +10,13 @@ RSpec.describe 'Webhooks', type: :request do
     allow(ENV).to receive(:[]).with('GITHUB_APP_WEBHOOK_SECRET').and_return(app_webhook_secret)
   end
 
-  around do |example|
-    previous_value = ActionController::Base.allow_forgery_protection
+  with_forgery_protection!
 
+  around do |example|
     Sidekiq::Testing.fake! do
-      begin
-        ActionController::Base.allow_forgery_protection = true
-        example.run
-      ensure
-        ActionController::Base.allow_forgery_protection = previous_value
-        Sidekiq::Worker.clear_all
-      end
+      example.run
+    ensure
+      Sidekiq::Worker.clear_all
     end
   end
 

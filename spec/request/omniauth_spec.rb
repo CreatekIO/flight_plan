@@ -16,16 +16,14 @@ RSpec.describe 'Omniauth', type: :request do
     end
 
     describe 'POST /users/auth/:provider without CSRF token' do
-      around do |example|
-        allow_forgery_protection = ActionController::Base.allow_forgery_protection
-        test_mode = OmniAuth.config.test_mode
+      with_forgery_protection!
 
-        ActionController::Base.allow_forgery_protection = true
+      around do |example|
+        test_mode = OmniAuth.config.test_mode
         OmniAuth.config.test_mode = false
 
         example.run
-
-        ActionController::Base.allow_forgery_protection = allow_forgery_protection
+      ensure
         OmniAuth.config.test_mode = test_mode
       end
 
