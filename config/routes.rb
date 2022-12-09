@@ -48,8 +48,9 @@ Rails.application.routes.draw do
     resources :assignees, only: :index
   end
 
-  namespace :webhook do
-    resource :github, only: :create, defaults: { formats: :json }, controller: 'github'
+  namespace :webhook, only: :create, format: :json do
+    resource :github, controller: 'github'
+    resource :opsworks
   end
 
   namespace :api do
