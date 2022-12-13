@@ -45,6 +45,8 @@ business_time:
     - '27 December  2021' # Christmas Day
     - '28 December  2021' # Boxing Day
 
+    # There was an extra Bank Holiday (19 Sept) for the Queen's Funeral,
+    # but we didn't add it in time. Leaving it off to preserve historic stats
     - '03 January   2022' # New Year’s Day
     - '15 April     2022' # Good Friday
     - '18 April     2022' # Easter Monday
@@ -59,6 +61,7 @@ business_time:
     - '07 April     2023' # Good Friday
     - '10 April     2023' # Easter Monday
     - '01 May       2023' # Early May bank holiday
+    - '08 May       2023' # King's Coronation
     - '29 May       2023' # Spring bank holiday
     - '28 August    2023' # Summer bank holiday
     - '25 December  2023' # Christmas Day
@@ -67,6 +70,7 @@ business_time:
     # # Extra dates
     - '18 December  2020' # company-wide holiday
     - '17 December  2021' # company-wide holiday
+    - '16 December  2022' # company-wide holiday
   work_week:
     - mon
     - tue
