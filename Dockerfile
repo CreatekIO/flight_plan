@@ -1,34 +1,30 @@
-# see: https://github.com/docker-library/ruby/blob/master/2.6/alpine3.13/Dockerfile
-FROM ruby:2.6.6-alpine3.13
+FROM ruby:2.7.7-alpine3.16
 
 # Should match version of Alpine used in `FROM`
-COPY --from=node:14.16.0-alpine3.13 /usr/local/bin/node /usr/local/bin
+COPY --from=node:18.13.0-alpine3.16 /usr/local/bin/node /usr/local/bin
 
 # Yarn version is that contained in node image above
-# see: https://github.com/nodejs/docker-node/blob/master/14/alpine3.13/Dockerfile
-COPY --from=node:14.16.0-alpine3.13 /opt/yarn-v1.22.5/ /opt/yarn/
+COPY --from=node:18.13.0-alpine3.16 /opt/yarn-v1.22.19/ /opt/yarn/
 # Ensure Yarn executables are in $PATH
 RUN ln -s /opt/yarn/bin/yarn /usr/local/bin/yarn && \
   ln -s /opt/yarn/bin/yarnpkg /usr/local/bin/yarnpkg
 
-RUN apk add --no-cache \
-  build-base \
-  libstdc++ \
-  git \
-  tzdata curl \
-  postgresql-dev \
-  libxml2-dev libxslt-dev
-
-RUN apk add \
-  --no-cache \
-  --repository=https://dl-cdn.alpinelinux.org/alpine/edge/community \
-  chromium
+# hadolint ignore=DL3018
+RUN apk upgrade --no-cache --available \
+  && apk add --no-cache \
+    build-base \
+    libstdc++ \
+    git \
+    tzdata curl \
+    postgresql-dev \
+    libxml2-dev libxslt-dev \
+    chromium
 
 WORKDIR /flight_plan
 
 COPY package.json yarn.lock ./
-RUN yarn install
+RUN yarn install && yarn cache clean
 
 COPY Gemfile Gemfile.lock ./
-RUN bundle config build.nokogiri --use-system-libraries && \
+RUN bundle config set force_ruby_platform true && \
   bundle install --jobs "$(getconf _NPROCESSORS_ONLN)"
