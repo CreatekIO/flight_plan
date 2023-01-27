@@ -20,9 +20,9 @@ RSpec.describe 'Releases', type: :request do
   let(:remote_no_2) { ticket_2.number }
   let(:remote_branch_names) {
     [
-      { name: 'origin/master' },
-      { name: "origin/#{feature_branch_name_1}" },
-      { name: "origin/#{feature_branch_name_2}" }
+      { name: 'master' },
+      { name: feature_branch_name_1 },
+      { name: feature_branch_name_2 }
     ]
   }
   let(:release_params) { { release: { title: 'new release' } } }
@@ -143,7 +143,7 @@ RSpec.describe 'Releases', type: :request do
   end
 
   def stub_gh_diff_feature_branch_to_master(branch)
-    stub_gh_get("compare/master...origin/#{URI.encode(branch)}") { remote_commits }
+    stub_gh_get("compare/master...#{CGI.escape(branch)}") { remote_commits }
   end
 
   def stub_gh_get_master_sha
@@ -158,8 +158,8 @@ RSpec.describe 'Releases', type: :request do
     stub_gh_post(
       'merges',
       base: release_branch_name,
-      head: "origin/#{feature_branch_name}",
-      commit_message: "Merging origin/#{feature_branch_name} into release"
+      head: feature_branch_name,
+      commit_message: "Merging #{feature_branch_name} into release"
     )
   end
 
