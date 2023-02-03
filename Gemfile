@@ -33,7 +33,7 @@ gem 'ranked-model'
 gem 'redis-namespace'
 gem 'sidekiq', '~> 6'
 gem 'slack-ruby-client'
-gem 'webpacker', '6.0.0.beta.6'
+gem 'vite_rails'
 gem 'wisper'
 
 group :development, :test do

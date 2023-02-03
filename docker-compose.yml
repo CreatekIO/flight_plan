@@ -37,7 +37,7 @@ services:
       - DB_HOST=db
       - DB_USERNAME=postgres
       - DB_PASSWORD=password
-      - WEBPACKER_DEV_SERVER_HOST=webpack
+      - VITE_RUBY_HOST=vite
     labels:
       - traefik.enable=true
       - "traefik.http.routers.app.rule=Host(`dev.createk.io`, `smee.io`) || HostRegexp(`[^.]+.ngrok.io`)"
@@ -52,7 +52,7 @@ services:
     volumes:
       - postgresql_data:/var/lib/postgresql/data
 
-  webpack:
+  vite:
     image: createkio/flight_plan:${IMAGE_TAG:-latest}
     command: >
       sh -c '
@@ -61,7 +61,7 @@ services:
         if [ "$DEBUGGER" -eq "1" ]; then
           sleep 100d;
         else
-          ./bin/webpack-dev-server
+          ./bin/vite dev
         fi
       '
     volumes:
@@ -70,10 +70,12 @@ services:
       - node_modules:/flight_plan/node_modules
     expose:
       - 443
+    environment:
+      - VITE_RUBY_HOST=0.0.0.0
     labels:
       - traefik.enable=true
-      - "traefik.http.routers.webpack.rule=Host(`webpack.dev.createk.io`) || (Host(`dev.createk.io`) && PathPrefix(`/sockjs-node/`))"
-      - traefik.http.routers.webpack.tls=true
+      - "traefik.http.routers.vite.rule=Host(`vite.dev.createk.io`) || (Host(`dev.createk.io`) && PathPrefix(`/vite-dev/`, `/vite-test/`))"
+      - traefik.http.routers.vite.tls=true
 
   redis:
     image: redis:6.2-alpine
