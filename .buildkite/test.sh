@@ -36,10 +36,11 @@ inline_link() {
 }
 
 echo "~~~ bundle install"
+bundle config set "without" "development"
+
 bundle install \
   --jobs "$(getconf _NPROCESSORS_ONLN)" \
-  --retry 2 \
-  --without development
+  --retry 2
 
 echo "~~~ yarn install"
 yarn install --ignore-engines
