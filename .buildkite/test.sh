@@ -48,7 +48,7 @@ yarn install --ignore-engines
 echo "~~~ Wait for database"
 retries=5
 
-until nc -z "$DB_HOST:5432"; do
+until ruby -rsocket -e 'Socket.tcp(ENV["DB_HOST"], 5432).close' 2>/dev/null; do
   retries="$(("$retries" - 1))"
 
   if [ "$retries" -eq 0 ]; then
