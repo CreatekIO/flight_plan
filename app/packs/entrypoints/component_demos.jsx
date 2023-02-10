@@ -1,11 +1,9 @@
-import "core-js/stable";
-import "regenerator-runtime/runtime";
 import React from "react";
 import ReactDOM from "react-dom";
 
-const rootRender = () => {
-    const Root = require("../demos").default;
+import Root from "../demos";
 
+const rootRender = () => {
     ReactDOM.render(
         <Root />,
         document.querySelector("#root")

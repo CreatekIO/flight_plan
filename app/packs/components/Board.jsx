@@ -62,7 +62,7 @@ const Board = ({
 
     return (
         <DragDropContext onDragEnd={onDragEnd}>
-            <main className="fp-board flex flex-1 flex-nowrap mt-14 relative">
+            <main className="flex flex-1 flex-nowrap mt-14 relative">
                 {swimlaneIds.map(id => <Swimlane key={id} id={id} />)}
 
                 {isLoading && <LoadingOverlay/>}
