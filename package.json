@@ -42,7 +42,7 @@
     "webpack-dev-server": "^3.11.2"
   },
   "engines": {
-    "node": "18.13.0",
+    "node": "18.14.0",
     "yarn": "1.22.19"
   },
   "babel": {
