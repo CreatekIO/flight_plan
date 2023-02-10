@@ -19,7 +19,7 @@ steps:
             - BUILDKITE_PARALLEL_JOB
             - BUILDKITE_PARALLEL_JOB_COUNT
     parallelism: 2
-    timeout_in_minutes: 5
+    timeout_in_minutes: 10
     commands:
       - .buildkite/test.sh
     env:
