@@ -64,7 +64,7 @@ echo "~~~ rake db:reset"
 bin/rake db:reset
 
 echo "~~~ Compiling assets"
-bin/rake webpacker:compile
+bin/rake vite:build
 
 echo "+++ :rspec: Running specs"
 unset GITHUB_API_TOKEN # prevent this interfering with specs
