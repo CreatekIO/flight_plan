@@ -79,9 +79,15 @@ echo "$specsToRun"
 echo "$specsToRun" > "$specsFile"
 inline_link "artifact://$specsFile" "Download list of specs run"
 
-xargs bin/rspec \
-  --require rspec_junit_formatter \
-  --format RspecJunitFormatter \
-  --out "tmp/rspec-junit-$BUILDKITE_JOB_ID.xml" \
-  --format documentation \
-  < "$specsFile"
+# Timeout with SIGINT after X mins, SIGKILL after X mins + 20 secs
+timeout \
+  --signal=INT \
+  --kill-after=20s \
+  --verbose \
+  "${TESTS_TIMEOUT_MINS}m" \
+  xargs bin/rspec \
+    --require rspec_junit_formatter \
+    --format RspecJunitFormatter \
+    --out "tmp/rspec-junit-$BUILDKITE_JOB_ID.xml" \
+    --format documentation \
+    < "$specsFile"
