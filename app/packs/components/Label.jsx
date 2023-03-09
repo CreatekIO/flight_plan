@@ -1,4 +1,3 @@
-import React from "react";
 import { connect } from "react-redux";
 import fontColor from "font-color-contrast";
 import classNames from "classnames";

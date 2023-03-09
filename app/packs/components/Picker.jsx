@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useCombobox } from "downshift";
 import classNames from "classnames";
 import Octicon, { Check, X } from "@githubprimer/octicons-react";

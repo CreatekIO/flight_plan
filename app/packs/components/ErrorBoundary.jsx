@@ -1,4 +1,4 @@
-import React from "react";
+import { Component } from "react";
 
 export const ErrorDisplay = ({ error, componentStack }) => {
     const message = (error && error.message) || "Unknown error";
@@ -39,7 +39,7 @@ export const ErrorDisplay = ({ error, componentStack }) => {
     );
 };
 
-class ErrorBoundary extends React.Component {
+class ErrorBoundary extends Component {
     state = { error: null, componentStack: null };
 
     componentDidCatch(error, { componentStack }) {

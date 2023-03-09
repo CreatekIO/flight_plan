@@ -1,4 +1,3 @@
-import React from "react";
 import Portal from "@reach/portal";
 import { ToastContainer, cssTransition, toast } from "react-toastify";
 import classNames from "classnames";

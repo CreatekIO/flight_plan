@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect } from "react";
+import { Fragment, useEffect } from "react";
 import { connect } from "react-redux";
 import { denormalize } from "normalizr";
 import showdown from "showdown";

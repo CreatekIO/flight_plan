@@ -1,4 +1,3 @@
-import React from "react";
 import { connect } from "react-redux";
 import Octicon, { GitMerge, GitPullRequest } from "@githubprimer/octicons-react";
 import { Tooltip } from "@reach/tooltip";

@@ -1,5 +1,3 @@
-import React from "react";
-
 import { FakeStore, makeTicket, assignees } from "./store";
 import TicketSidebar from "../components/TicketSidebar";
 

@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import { Fragment } from "react";
 import { connect } from "react-redux";
 import { Link } from "@reach/router";
 import { denormalize, schema } from "normalizr";
