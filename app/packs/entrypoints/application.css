@@ -1,7 +1,7 @@
 @import "@reach/dialog/styles";
 @import "@reach/menu-button/styles";
 @import "@reach/tooltip/styles";
-@import "react-toastify/dist/ReactToastify.minimal";
+@import "react-toastify/dist/ReactToastify.minimal.css";
 
 @import "tailwindcss/base";
 @import "tailwindcss/components";
