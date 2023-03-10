@@ -36,10 +36,11 @@ inline_link() {
 }
 
 echo "~~~ bundle install"
+bundle config set "without" "development"
+
 bundle install \
   --jobs "$(getconf _NPROCESSORS_ONLN)" \
-  --retry 2 \
-  --without development
+  --retry 2
 
 echo "~~~ yarn install"
 yarn install --ignore-engines
@@ -47,7 +48,7 @@ yarn install --ignore-engines
 echo "~~~ Wait for database"
 retries=5
 
-until nc -z "$DB_HOST:5432"; do
+until ruby -rsocket -e 'Socket.tcp(ENV["DB_HOST"], 5432).close' 2>/dev/null; do
   retries="$(("$retries" - 1))"
 
   if [ "$retries" -eq 0 ]; then
@@ -63,7 +64,7 @@ echo "~~~ rake db:reset"
 bin/rake db:reset
 
 echo "~~~ Compiling assets"
-bin/rake webpacker:compile
+bin/rake vite:build
 
 echo "+++ :rspec: Running specs"
 unset GITHUB_API_TOKEN # prevent this interfering with specs
@@ -78,9 +79,15 @@ echo "$specsToRun"
 echo "$specsToRun" > "$specsFile"
 inline_link "artifact://$specsFile" "Download list of specs run"
 
-xargs bin/rspec \
-  --require rspec_junit_formatter \
-  --format RspecJunitFormatter \
-  --out "tmp/rspec-junit-$BUILDKITE_JOB_ID.xml" \
-  --format documentation \
-  < "$specsFile"
+# Timeout with SIGINT after X mins, SIGKILL after X mins + 20 secs
+timeout \
+  --signal=INT \
+  --kill-after=20s \
+  --verbose \
+  "${TESTS_TIMEOUT_MINS}m" \
+  xargs bin/rspec \
+    --require rspec_junit_formatter \
+    --format RspecJunitFormatter \
+    --out "tmp/rspec-junit-$BUILDKITE_JOB_ID.xml" \
+    --format documentation \
+    < "$specsFile"

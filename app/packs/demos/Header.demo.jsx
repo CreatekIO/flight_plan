@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 
 import { FakeStore, nextActions } from "./store";
 import Header from "../components/Header";

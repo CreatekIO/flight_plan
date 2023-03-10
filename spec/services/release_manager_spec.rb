@@ -92,12 +92,12 @@ RSpec.describe ReleaseManager, type: :service do
       end
 
       unmerged_tickets.each do |ticket|
-        stub_gh_get("compare/#{repo.deployment_branch}...#{URI.escape branch_name(ticket)}") do
+        stub_gh_get("compare/#{repo.deployment_branch}...#{CGI.escape branch_name(ticket)}") do
           { total_commits: 2 }
         end
       end
 
-      stub_gh_get("compare/#{repo.deployment_branch}...#{URI.escape branch_name(non_deploying_ticket)}") do
+      stub_gh_get("compare/#{repo.deployment_branch}...#{CGI.escape branch_name(non_deploying_ticket)}") do
         { total_commits: 2 }
       end
 

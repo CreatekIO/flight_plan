@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import { Fragment } from "react";
 import { connect } from "react-redux";
 import { denormalize, schema } from "normalizr";
 import { Draggable } from "react-beautiful-dnd";

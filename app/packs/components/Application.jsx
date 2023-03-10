@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Provider, useSelector } from "react-redux";
 import { Router } from "@reach/router";
 

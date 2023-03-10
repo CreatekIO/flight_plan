@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useCallback } from "react";
+import { memo, Fragment, useState, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Droppable } from "react-beautiful-dnd";
 import classNames from "classnames";
@@ -16,7 +16,7 @@ import {
 
 // Performance optimisation as recommended by
 // https://github.com/atlassian/react-beautiful-dnd#recommended-droppable-performance-optimisation
-const TicketList = React.memo(({ boardTicketIds, shouldDisplayDuration }) => (
+const TicketList = memo(({ boardTicketIds, shouldDisplayDuration }) => (
     <Fragment>
         {boardTicketIds.map((id, index) => (
             <TicketCard

@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-ruby '2.6.6'
+ruby '2.7.7'
 
 gem 'rails', '~> 5.2.7'
 
@@ -33,7 +33,7 @@ gem 'ranked-model'
 gem 'redis-namespace'
 gem 'sidekiq', '~> 6'
 gem 'slack-ruby-client'
-gem 'webpacker', '6.0.0.beta.6'
+gem 'vite_rails'
 gem 'wisper'
 
 group :development, :test do

@@ -7,8 +7,10 @@
     = csrf_meta_tags
     = csp_meta_tag
     = action_cable_meta_tag
-    = stylesheet_pack_tag 'application'
+    = vite_stylesheet_tag 'application'
+    = vite_client_tag
+    = vite_react_refresh_tag
 
   %body.overscroll-none
     = yield
-    = javascript_pack_tag 'rails'
+    = vite_javascript_tag 'rails'

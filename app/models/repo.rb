@@ -65,8 +65,8 @@ class Repo < ApplicationRecord
   def branch_up_to_date?(name, with:)
     without_octokit_pagination do
       octokit_compare(
-        URI.escape(name),
-        URI.escape(with),
+        CGI.escape(name),
+        CGI.escape(with),
         # Speed up responses - we don't want the details of each commit,
         # just whether the diff contains any commits
         per_page: 1

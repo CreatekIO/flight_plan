@@ -1,4 +1,3 @@
-import React from "react";
 import { Link } from "@reach/router";
 
 const FormWrapper = ({ onSubmit, backPath, label, labelProps, children }) => (

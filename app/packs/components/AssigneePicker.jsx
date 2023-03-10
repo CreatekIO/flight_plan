@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback } from "react";
+import { useEffect, useCallback } from "react";
 import { connect } from "react-redux";
 import { useNavigate } from "@reach/router";
 import classNames from "classnames";
