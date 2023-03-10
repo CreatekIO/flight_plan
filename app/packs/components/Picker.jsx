@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useCombobox } from "downshift";
 import classNames from "classnames";
-import Octicon, { Check, X } from "@githubprimer/octicons-react";
+import { CheckIcon, XIcon } from "@primer/octicons-react";
 
 import FormWrapper from "./TicketFormWrapper";
 
@@ -142,14 +142,14 @@ const Picker = ({
                                 key={`${id}-${index}`}
                                 {...getItemProps({ item, index })}
                             >
-                                {isSelected && <Octicon icon={Check} className="mr-2" />}
+                                {isSelected && <CheckIcon className="mr-2" />}
 
                                 {Icon && <Icon isSelected={isSelected} item={item} />}
                                 <span className={classNames("flex-grow truncate", itemClassName)}>
                                     {item[nameProp]}
                                 </span>
 
-                                {isSelected && <Octicon icon={X} />}
+                                {isSelected && <XIcon />}
                             </li>
                         )})}
                 </ul>

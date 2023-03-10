@@ -1,7 +1,7 @@
 import Portal from "@reach/portal";
 import { ToastContainer, cssTransition, toast } from "react-toastify";
 import classNames from "classnames";
-import Octicon, { X } from "@githubprimer/octicons-react";
+import { XIcon } from "@primer/octicons-react";
 
 const { INFO, WARNING, ERROR, SUCCESS } = toast.TYPE;
 
@@ -29,7 +29,7 @@ const CloseButton = ({ closeToast }) => (
         aria-label="Close"
         onClick={closeToast}
     >
-        <Octicon icon={X} />
+        <XIcon />
     </button>
 );
 

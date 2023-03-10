@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef, useCallback } from "react";
-import Octicon, { Clock } from "@githubprimer/octicons-react";
+import { ClockIcon } from "@primer/octicons-react";
 import classNames from "classnames";
 
 import Loading from "./Loading";
@@ -106,7 +106,7 @@ const HarvestButton = ({ ticketId }) => {
         >
             {harvestState === "loading"
                 ? <Loading size="xsmall" className="inline-block mr-2" />
-                : <Octicon icon={Clock} className="mr-2.5" />
+                : <ClockIcon className="mr-2.5" />
             }
             {" "}
             Track time with Harvest

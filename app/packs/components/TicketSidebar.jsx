@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import { Link } from "@reach/router";
 import { denormalize, schema } from "normalizr";
 import classNames from "classnames";
-import Octicon, { Gear } from "@githubprimer/octicons-react";
+import { GearIcon } from "@primer/octicons-react";
 
 import Label, { Milestone } from "./Label";
 import PullRequest from "./PullRequest";
@@ -58,7 +58,7 @@ const SidebarEntry = ({ title, children, url }) => (
                     className="w-full flex items-center justify-start hover:text-blue-500 focus:text-blue-500 focus:outline-none"
                 >
                     <span className="flex-grow text-left">{title}</span>
-                    <Octicon icon={Gear} />
+                    <GearIcon />
                 </Link>
             ) : title}
         </h2>
