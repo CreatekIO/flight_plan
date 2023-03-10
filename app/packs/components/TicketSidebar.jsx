@@ -1,6 +1,6 @@
 import { Fragment } from "react";
 import { connect } from "react-redux";
-import { Link } from "@reach/router";
+import { Link } from "@gatsbyjs/reach-router";
 import { denormalize, schema } from "normalizr";
 import classNames from "classnames";
 import { GearIcon } from "@primer/octicons-react";

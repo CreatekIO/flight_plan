@@ -1,6 +1,6 @@
 import { Fragment, useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { navigate, Link } from "@reach/router";
+import { navigate, Link } from "@gatsbyjs/reach-router";
 import classNames from "classnames";
 
 import { useConstrainedMatch, useLocationState } from "../hooks";

@@ -1,6 +1,6 @@
 import { useEffect, useCallback } from "react";
 import { connect } from "react-redux";
-import { useNavigate } from "@reach/router";
+import { navigate } from "@gatsbyjs/reach-router";
 import classNames from "classnames";
 import { toast } from "react-toastify";
 
@@ -28,8 +28,6 @@ const AssigneePicker = ({
     updateAssigneesForTicket
 }) => {
     useEffect(() => { fetchAssigneesForRepo(repoId) }, [repoId]);
-
-    const navigate = useNavigate();
 
     const onSubmit = useCallback(selectedIds => {
         const add = selectedIds

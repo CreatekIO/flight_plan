@@ -1,4 +1,4 @@
-import { Link } from "@reach/router";
+import { Link } from "@gatsbyjs/reach-router";
 
 const FormWrapper = ({ onSubmit, backPath, label, labelProps, children }) => (
     <div className="flex flex-col h-full">

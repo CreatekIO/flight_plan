@@ -2,7 +2,7 @@ import { Fragment } from "react";
 import { connect } from "react-redux";
 import { denormalize, schema } from "normalizr";
 import { Draggable } from "react-beautiful-dnd";
-import { Link } from "@reach/router";
+import { Link } from "@gatsbyjs/reach-router";
 import classNames from "classnames";
 
 import PullRequest from "./PullRequest";

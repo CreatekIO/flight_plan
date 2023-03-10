@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Provider, useSelector } from "react-redux";
-import { Router } from "@reach/router";
+import { LocationProvider, Router } from "@gatsbyjs/reach-router";
 
 import ErrorBoundary from "./ErrorBoundary";
 import Board from "./Board";
@@ -51,9 +51,11 @@ const Application = () => {
     return (
         <ErrorBoundary>
             <Provider store={store}>
-                <Router>
-                    <BoardWrapper path="boards/:boardId/*" />
-                </Router>
+                <LocationProvider>
+                    <Router>
+                        <BoardWrapper path="boards/:boardId/*" />
+                    </Router>
+                </LocationProvider>
             </Provider>
 
             <Notifications />
