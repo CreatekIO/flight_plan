@@ -1,12 +1,8 @@
-import ReactDOM from "react-dom";
+import { createRoot } from "react-dom/client";
 
 import Application from "../components/Application";
 
-const rootRender = () => {
-    ReactDOM.render(
-        <Application />,
-        document.querySelector("#react_board")
-    );
-};
+const rootRender = () =>
+    createRoot(document.querySelector("#react_board")).render(<Application />);
 
 document.addEventListener("DOMContentLoaded", rootRender);
