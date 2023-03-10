@@ -64,7 +64,7 @@ const Picker = ({
     const { disabled, ref: inputRef } = useDelayedFocus(enableAfter);
 
     const {
-        getLabelProps, getInputProps, getComboboxProps, getMenuProps, getItemProps,
+        getLabelProps, getInputProps, getMenuProps, getItemProps,
         highlightedIndex, inputValue
     } = useCombobox({
         isOpen: true,
@@ -120,7 +120,7 @@ const Picker = ({
             backPath={backPath}
         >
             <div className="relative">
-                <div {...getComboboxProps()} className="p-3 sticky inset-x-0 top-0 bg-white border-b border-gray-300">
+                <div className="p-3 sticky inset-x-0 top-0 bg-white border-b border-gray-300">
                     <input
                         {...getInputProps({ ref: inputRef })}
                         className="rounded border border-gray-300 text-gray-900 w-full py-1 px-3 text-sm"
