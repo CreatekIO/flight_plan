@@ -15,11 +15,11 @@ const hasLabelsPayload = isFulfilled(fetchLabelsForRepo, updateLabelsForTicket);
 const slice = createSlice({
     name: "labels",
     initialState: {},
-    extraReducers: builder => {
-        builder.addCase(ticketLabelled, (state, { payload: { label }}) =>
+    extraReducers: ({ addCase, addMatcher }) => {
+        addCase(ticketLabelled, (state, { payload: { label }}) =>
             upsert(state, [label])
         );
-        builder.addMatcher(hasLabelsPayload, (state, { payload }) =>
+        addMatcher(hasLabelsPayload, (state, { payload }) =>
             upsert(state, payload)
         );
     }

@@ -142,45 +142,45 @@ const withBoardTicket = callback => (state, { payload }) => {
 const { reducer } = createSlice({
     name: "boardTickets",
     initialState: {},
-    extraReducers: {
-        [updateLabelsForTicket.pending]: (state, { meta }) => {
+    extraReducers: ({ addCase }) => {
+        addCase(updateLabelsForTicket.pending, (state, { meta }) => {
             const { id, add, remove } = meta.arg;
             makeLabelChanges(state[id].labels, { add, remove });
-        },
-        [updateLabelsForTicket.fulfilled]: (state, { payload, meta }) => {
+        });
+        addCase(updateLabelsForTicket.fulfilled, (state, { payload, meta }) => {
             const { id } = meta.arg;
             state[id].labels = payload.map(({ id }) => id);
-        },
-        [updateLabelsForTicket.rejected]: (state, { meta }) => {
+        });
+        addCase(updateLabelsForTicket.rejected, (state, { meta }) => {
             const { id, add, remove } = meta.arg;
             makeLabelChanges(state[id].labels, { add: remove, remove: add });
-        },
-        [ticketLabelled]: withBoardTicket(({ boardTicket, label }) => {
+        });
+        addCase(ticketLabelled, withBoardTicket(({ boardTicket, label }) => {
             makeLabelChanges(boardTicket.labels, { add: [label.id] });
-        }),
-        [ticketUnlabelled]: withBoardTicket(({ boardTicket, labelId }) => {
+        }));
+        addCase(ticketUnlabelled, withBoardTicket(({ boardTicket, labelId }) => {
             makeLabelChanges(boardTicket.labels, { remove: [labelId] });
-        }),
-        [updateAssigneesForTicket.pending]: (state, { meta }) => {
+        }));
+        addCase(updateAssigneesForTicket.pending, (state, { meta }) => {
             const { id, add, remove } = meta.arg;
             makeAssigneeChanges(state[id], { add, remove });
-        },
-        [updateAssigneesForTicket.fulfilled]: (state, { payload, meta }) => {
+        });
+        addCase(updateAssigneesForTicket.fulfilled, (state, { payload, meta }) => {
             const { id } = meta.arg;
             state[id].assignees = payload.map(
                 ({ username, remote_id }) => ({ username, remote_id })
             );
-        },
-        [updateAssigneesForTicket.rejected]: (state, { meta }) => {
+        });
+        addCase(updateAssigneesForTicket.rejected, (state, { meta }) => {
             const { id, add, remove } = meta.arg;
             makeAssigneeChanges(state[id], { add: remove, remove: add });
-        },
-        [ticketAssigned]: withBoardTicket(({ boardTicket, assignee }) => {
+        });
+        addCase(ticketAssigned, withBoardTicket(({ boardTicket, assignee }) => {
             makeAssigneeChanges(boardTicket, { add: [assignee] });
-        }),
-        [ticketUnassigned]: withBoardTicket(({ boardTicket, assignee }) => {
+        }));
+        addCase(ticketUnassigned, withBoardTicket(({ boardTicket, assignee }) => {
             makeAssigneeChanges(boardTicket, { remove: [assignee] });
-        })
+        }));
     }
 });
 

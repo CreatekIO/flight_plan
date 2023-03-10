@@ -70,8 +70,8 @@ const {
             if (swimlane) swimlane.isCollapsed = false;
         }
     },
-    extraReducers: {
-        [rehydrateStore]: (state, { payload }) => {
+    extraReducers: ({ addCase }) => {
+        addCase(rehydrateStore, (state, { payload }) => {
             const changes = [];
 
             for (const key in payload) {
@@ -82,27 +82,27 @@ const {
             }
 
             upsert(state, changes);
-        },
-        [fetchSwimlaneTickets.fulfilled]: (state, { payload: { swimlaneId: id, boardTicketIds }}) => {
+        });
+        addCase(fetchSwimlaneTickets.fulfilled, (state, { payload: { swimlaneId: id, boardTicketIds }}) => {
             const swimlane = state[id];
 
             swimlane.board_tickets = [
                 ...swimlane.board_tickets,
                 ...boardTicketIds
             ];
-        },
-        [moveTicket.pending]: (state, { meta: { arg }}) => {
+        });
+        addCase(moveTicket.pending, (state, { meta: { arg }}) => {
             const { boardTicketId, to: { swimlaneId, index }} = arg;
             moveTicketId(state, { boardTicketId, swimlaneId, index });
-        },
-        [moveTicket.rejected]: (state, { meta: { arg }}) => {
+        });
+        addCase(moveTicket.rejected, (state, { meta: { arg }}) => {
             const { boardTicketId, from: { swimlaneId, index }} = arg;
             moveTicketId(state, { boardTicketId, swimlaneId, index });
-        },
-        [ticketWasMoved]: (state, { payload }) => {
+        });
+        addCase(ticketWasMoved, (state, { payload }) => {
             const { boardTicketId, to: { swimlaneId, index }} = payload;
             moveTicketId(state, { boardTicketId, swimlaneId, index });
-        }
+        });
     }
 });
 
