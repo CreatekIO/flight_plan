@@ -41,6 +41,7 @@ const Notifications = () => (
             closeButton={CloseButton}
             draggable={false}
             hideProgressBar={true}
+            icon={false}
             newestOnTop={false}
             pauseOnFocusLoss={true}
             pauseOnHover={true}
