@@ -3,6 +3,7 @@ import { LocationProvider, Router, Link } from "@gatsbyjs/reach-router";
 import Header from "./Header.demo";
 import TicketCard from "./TicketCard.demo";
 import TicketSidebar from "./TicketSidebar.demo";
+import Notifications from "./Notifications.demo";
 
 const Default = () => (
     <div className="h-screen flex items-center justify-center text-gray-400">
@@ -13,7 +14,8 @@ const Default = () => (
 const components = Object.entries({
     Header,
     TicketCard,
-    TicketSidebar
+    TicketSidebar,
+    Notifications
 });
 
 const Root = () => (
