@@ -40,7 +40,7 @@ const Demo = () => {
 
     useEffect(() => {
         window.flightPlanConfig = {
-            features: {},
+            features: { kpis: true },
             currentUser: { username: "rjpaskin" },
             api: {
                 logoutURL: "/users/logout"
