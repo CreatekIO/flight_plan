@@ -80,7 +80,6 @@ const TicketModal = ({
 
     return (
         <Modal
-            isOpen
             onDismiss={() => navigate(flightPlanConfig.api.htmlBoardURL)}
             aria-labelledby={labelId}
         >
