@@ -1,4 +1,3 @@
-@import "@reach/menu-button/styles";
 @import "react-toastify/dist/ReactToastify.minimal.css";
 
 @import "tailwindcss/base";
@@ -7,8 +6,8 @@
 
 @import url("https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic&subset=latin");
 
-/* Easier to style here rather than from React callback */
-.fp-header-menu [data-reach-menu-item][data-selected] {
+/* Easier to style here rather than from render prop */
+.fp-header-menu [data-headlessui-state="active"] {
   @apply bg-blue-50 text-black;
 }
 

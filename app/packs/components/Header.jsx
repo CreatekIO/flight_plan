@@ -1,14 +1,7 @@
 import { Component, Fragment, createRef } from "react";
 import { connect } from "react-redux";
 import classNames from "classnames";
-import {
-    Menu as ReachMenu,
-    MenuButton,
-    MenuLink,
-    MenuPopover,
-    MenuItem,
-    MenuItems
-} from "@reach/menu-button";
+import { Menu } from "@headlessui/react";
 
 import NextActionButton from "./NextActionButton";
 import Avatar from "./Avatar";
@@ -44,7 +37,7 @@ const HeaderItem = ({
 }
 
 // See packs/application.css for additional styles
-const Menu = ({
+const HeaderMenu = ({
     title,
     pointing,
     children,
@@ -53,9 +46,9 @@ const Menu = ({
     menuProps: { className: menuClass, ...menuProps } = {}
 }) => (
     <div className={classNames("relative flex items-center justify-start", className)}>
-        <ReachMenu>
+        <Menu>
             <HeaderItem
-                as={MenuButton}
+                as={Menu.Button}
                 className="w-full h-full"
             >
                 {title}
@@ -66,23 +59,23 @@ const Menu = ({
                 }
             </HeaderItem>
 
-            <MenuPopover
-                portal={false}
+            <div
                 {...menuProps}
                 className={classNames(
                     "absolute top-full focus:outline-none",
                     { "left-0": position === "left", "right-0": position === "right" }
                 )}>
-                <MenuItems
+                <Menu.Items
+                    unmount={false} /* This is mostly for the component demo, but does no harm otherwise */
                     className={classNames(
                         "fp-header-menu p-0 bg-white shadow-xl rounded-b border-t border-gray-200 text-sm",
                         menuClass
                     )}
                 >
                     {children}
-                </MenuItems>
-            </MenuPopover>
-        </ReachMenu>
+                </Menu.Items>
+            </div>
+        </Menu>
     </div>
 );
 
@@ -97,7 +90,7 @@ const OpenPullRequests = ({ openPRsCount, pullRequests: pullRequestsByRepo }) =>
     if (openPRsCount === 0) return <HeaderItem disabled>{title}</HeaderItem>;
 
     return (
-        <Menu
+        <HeaderMenu
             title={title}
             menuProps={{ className: "p-3", style: { width: 600 }}}
             pointing
@@ -114,7 +107,8 @@ const OpenPullRequests = ({ openPRsCount, pullRequests: pullRequestsByRepo }) =>
                     </h4>
                     {pullRequests.map(({ id, next_action, html_url, number, title }) => (
                         <div className="mt-1 text-left relative" key={id}>
-                            <MenuLink
+                            <Menu.Item
+                                as="a"
                                 href={html_url}
                                 target="_blank"
                                 className="text-gray-500 truncate p-1"
@@ -122,7 +116,7 @@ const OpenPullRequests = ({ openPRsCount, pullRequests: pullRequestsByRepo }) =>
                                 <span className="text-blue-500">#{number}</span>
                                 {' '}
                                 <span className="ml-1 text-gray-500">{title}</span>
-                            </MenuLink>
+                            </Menu.Item>
                             {next_action && (
                                 <NextActionButton
                                     {...next_action}
@@ -134,7 +128,7 @@ const OpenPullRequests = ({ openPRsCount, pullRequests: pullRequestsByRepo }) =>
                     ))}
                 </Fragment>
             ))}
-        </Menu>
+        </HeaderMenu>
     );
 };
 
@@ -148,23 +142,25 @@ const BoardsMenu = ({ boards, currentBoard }) => {
         </HeaderItem>
     );
 
+    const boardsToShow = boards.filter(({ id }) => id !== currentBoard.id);
+
     return (
-        <Menu
+        <HeaderMenu
             pointing
             title={currentBoard.name}
             className={classNames(btnClasses, widthClass)}
             menuProps={{ className: widthClass }}
         >
-            {boards.map(({ id, name, url }) => {
+            {boardsToShow.map(({ id, name, url }) => {
                 if (id === currentBoard.id) return null;
 
                 return (
-                    <MenuLink href={url} key={id} className={menuItemClasses}>
+                    <Menu.Item as="a" href={url} key={id} className={menuItemClasses}>
                         {name}
-                    </MenuLink>
+                    </Menu.Item>
                 );
             })}
-        </Menu>
+        </HeaderMenu>
     );
 };
 
@@ -179,28 +175,35 @@ const Header = ({ boards, isWaiting, openPRsCount, pullRequests }) => {
     return (
         <div className="fixed top-0 inset-x-0 h-14 z-10 border-b border-gray-200 divide-x flex flex-nowrap justify-end text-sm">
             <BoardsMenu boards={boards} currentBoard={currentBoard} />
-            <Menu
+            <HeaderMenu
                 menuProps={{ className: "w-48" }}
                 title={<Avatar username={flightPlanConfig.currentUser.username} />}
             >
-                <div className={menuItemClasses}>
+                <Menu.Item disabled as="div" className={menuItemClasses}>
                     Signed in as{" "}
                     <strong>@{flightPlanConfig.currentUser.username}</strong>
-                </div>
+                </Menu.Item>
                 <hr/>
-                <MenuItem className={menuItemClasses} onSelect={signOut}>
+                <Menu.Item as="button" className={classNames(menuItemClasses, "w-full")} onClick={signOut}>
                     Sign out
-                </MenuItem>
-            </Menu>
+                </Menu.Item>
+            </HeaderMenu>
             {isFeatureEnabled("kpis") && (
-                <Menu title="Reports">
-                    <MenuLink href={`/boards/${currentBoard.id}/kpis`}>
+                <HeaderMenu title="Reports" menuProps={{ className: "w-max" }}>
+                    <Menu.Item
+                        as="a"
+                        href={`/boards/${currentBoard.id}/kpis`}
+                        className={classNames(menuItemClasses, "w-full")}
+                    >
                         KPIs
-                    </MenuLink>
-                    <MenuLink href={`/boards/${currentBoard.id}/cumulative_flow`}>
+                    </Menu.Item>
+                    <Menu.Item
+                        as="a" href={`/boards/${currentBoard.id}/cumulative_flow`}
+                        className={classNames(menuItemClasses, "w-full")}
+                    >
                         Cumulative flow
-                    </MenuLink>
-                </Menu>
+                    </Menu.Item>
+                </HeaderMenu>
             )}
             {isWaiting ? (
                 <HeaderItem disabled>

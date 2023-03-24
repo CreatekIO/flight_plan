@@ -56,24 +56,24 @@ const Demo = () => {
                 position: relative;
             }
 
-            [data-scenario="Open boards menu"] > .fixed > div:first-child [data-reach-menu] {
-                display: block;
+            [data-scenario="Open boards menu"] > .fixed > div:first-child [role="menu"] {
+                display: block !important;
             }
 
             [data-scenario="Open user menu"] > .fixed {
                 margin-bottom: 8rem;
             }
 
-            [data-scenario="Open user menu"] > .fixed > div:nth-child(2) [data-reach-menu] {
-                display: block;
+            [data-scenario="Open user menu"] > .fixed > div:nth-child(2) [role="menu"] {
+                display: block !important;
             }
 
             [data-scenario="PR with multi-action"] > .fixed {
                 margin-bottom: 10rem;
             }
 
-            [data-scenario*="PR"] [data-reach-menu][style*="width"] {
-                display: block;
+            [data-scenario*="PR"] [style*="width"] [role="menu"] {
+                display: block !important;
             }
         `;
 
