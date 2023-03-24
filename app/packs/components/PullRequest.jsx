@@ -1,9 +1,9 @@
 import { connect } from "react-redux";
 import { GitMergeIcon, GitPullRequestIcon } from "@primer/octicons-react";
-import { Tooltip } from "@reach/tooltip";
 import classNames from "classnames";
 
 import NextActionButton from "./NextActionButton";
+import Tooltip from "./Tooltip";
 
 const pullRequestIcons = {
     open: { Icon: GitPullRequestIcon, className: "text-github-green" },
@@ -30,7 +30,7 @@ const PullRequest = ({
             <div className="flex-grow">
                 <Icon className={classNames("mr-0.5", iconClassName)} />
                 &nbsp;
-                <Tooltip label={title}>
+                <Tooltip label={title} placement="bottom-start">
                     <a
                         href={htmlURL}
                         target="_blank"

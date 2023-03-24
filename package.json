@@ -2,11 +2,11 @@
   "name": "flight_plan",
   "private": true,
   "dependencies": {
+    "@floating-ui/react": "^0.21.0",
     "@gatsbyjs/reach-router": "^2.0.1",
     "@primer/octicons-react": "^18.2.0",
     "@reach/dialog": "^0.18.0",
     "@reach/menu-button": "^0.18.0",
-    "@reach/tooltip": "^0.18.0",
     "@reduxjs/toolkit": "^1.9.3",
     "@tailwindcss/typography": "^0.4.0",
     "actioncable": "5.2.4-5",

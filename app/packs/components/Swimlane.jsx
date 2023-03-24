@@ -2,11 +2,11 @@ import { memo, Fragment, useState, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Droppable } from "react-beautiful-dnd";
 import classNames from "classnames";
-import { Tooltip } from "@reach/tooltip";
 import { FoldIcon, UnfoldIcon } from "@primer/octicons-react";
 
 import { useEntity } from "../hooks";
 import TicketCard from "./TicketCard";
+import Tooltip from "./Tooltip";
 
 import {
     collapseSwimlane,
