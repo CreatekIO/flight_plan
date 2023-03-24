@@ -63,6 +63,11 @@ const Demo = () => {
         </div>
 
         <Notifications />
+
+        {/* To test that notifications appear above content */}
+        <div className="w-64 h-32 bg-gray-500 text-white fixed top-0 right-0 p-3">
+            Some test content
+        </div>
     </>;
 };
 

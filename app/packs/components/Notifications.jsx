@@ -1,4 +1,4 @@
-import { Portal } from "react-portal";
+import { FloatingPortal } from "@floating-ui/react";
 import { ToastContainer, cssTransition, toast } from "react-toastify";
 import classNames from "classnames";
 import { XIcon } from "@primer/octicons-react";
@@ -34,7 +34,7 @@ const CloseButton = ({ closeToast }) => (
 );
 
 const Notifications = () => (
-    <Portal>
+    <FloatingPortal>
         <ToastContainer
             autoClose={5000}
             className="fixed top-4 right-4 z-50"
@@ -49,7 +49,7 @@ const Notifications = () => (
             toastClassName={generateToastClassName}
             transition={Transition}
         />
-    </Portal>
+    </FloatingPortal>
 );
 
 
