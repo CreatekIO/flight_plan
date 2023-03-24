@@ -1,4 +1,4 @@
-import { Portal } from "@reach/portal";
+import { Portal } from "react-portal";
 import { ToastContainer, cssTransition, toast } from "react-toastify";
 import classNames from "classnames";
 import { XIcon } from "@primer/octicons-react";
