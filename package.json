@@ -11,7 +11,7 @@
     "actioncable": "5.2.4-5",
     "autoprefixer": "^10.2.1",
     "classnames": "^2.3.2",
-    "downshift": "^7.4.0",
+    "downshift": "^7.6.0",
     "font-color-contrast": "^1.0.3",
     "normalizr": "^3.6.2",
     "postcss": "^8.2.4",
