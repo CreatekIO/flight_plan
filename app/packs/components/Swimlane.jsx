@@ -71,10 +71,10 @@ const Swimlane = ({ id }) => {
                 }
             )}>
                 <span
-                    className={classNames({
-                        "inline-block absolute top-0 left-0 transform rotate-90 w-64 pl-16": isCollapsed
-                    })}
-                    style={{ transformOrigin: '20px center' }}
+                    className={classNames(
+                        "origin-[20px_center]",
+                        { "inline-block absolute top-0 left-0 rotate-90 w-64 pl-16": isCollapsed }
+                    )}
                 >
                     {name}
                 </span>
@@ -87,7 +87,7 @@ const Swimlane = ({ id }) => {
                         )}
                         onClick={() => dispatch(isCollapsed ? expandSwimlane(id) : collapseSwimlane(id))}
                     >
-                        <Icon className="transform rotate-90" />
+                        <Icon className="rotate-90" />
                     </button>
                 </Tooltip>
             </div>

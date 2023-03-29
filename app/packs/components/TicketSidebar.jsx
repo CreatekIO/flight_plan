@@ -57,7 +57,7 @@ const SidebarEntry = ({ title, children, url }) => (
                     to={url}
                     className="w-full flex items-center justify-start hover:text-blue-500 focus:text-blue-500 focus:outline-none"
                 >
-                    <span className="flex-grow text-left">{title}</span>
+                    <span className="grow text-left">{title}</span>
                     <GearIcon />
                 </Link>
             ) : title}

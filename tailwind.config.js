@@ -1,7 +1,7 @@
-const defaultTheme = require('tailwindcss/defaultTheme');
-const colors = require('tailwindcss/colors');
+import defaultTheme from 'tailwindcss/defaultTheme';
+import colors from 'tailwindcss/colors';
 
-module.exports = {
+export default {
   content: [
     './app/packs/{components,demos}/**/*.{js,jsx}',
     './app/views/**/*.{html,js}.*'
@@ -17,8 +17,7 @@ module.exports = {
           green: '#6cc644',
           red: '#bd2c00',
           purple: '#6e5494'
-        },
-        'harvest-orange': '#f36c00'
+        }
       },
       fontFamily: {
         sans: ['Lato', ...defaultTheme.fontFamily.sans]

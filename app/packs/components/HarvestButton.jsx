@@ -96,7 +96,7 @@ const HarvestButton = ({ ticketId }) => {
             type="button"
             className={classNames(
                 "block w-full flex items-center justify-center text-xs text-gray-500 border border-gray-300 rounded px-4",
-                "hover:text-harvest-orange hover:border-harvest-orange",
+                "hover:text-[#f36c00] hover:border-[#f36c00]",
                 harvestState === "loading" ? "py-1" : "py-1.5"
             )}
             data-item={JSON.stringify({ id: number, name: `#${number}: ${title}` })}

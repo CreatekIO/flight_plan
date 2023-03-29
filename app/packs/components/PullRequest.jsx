@@ -27,7 +27,7 @@ const PullRequest = ({
 
     return (
         <div className={classNames("flex pt-1", className)}>
-            <div className="flex-grow">
+            <div className="grow">
                 <Icon className={classNames("mr-0.5", iconClassName)} />
                 &nbsp;
                 <Tooltip label={title} placement="bottom-start">

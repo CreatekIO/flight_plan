@@ -145,7 +145,7 @@ const Picker = ({
                                 {isSelected && <CheckIcon className="mr-2" />}
 
                                 {Icon && <Icon isSelected={isSelected} item={item} />}
-                                <span className={classNames("flex-grow truncate", itemClassName)}>
+                                <span className={classNames("grow truncate", itemClassName)}>
                                     {item[nameProp]}
                                 </span>
 

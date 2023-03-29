@@ -1,10 +1,9 @@
 @import "react-toastify/dist/ReactToastify.minimal.css";
-
-@import "tailwindcss/base";
-@import "tailwindcss/components";
-@import "tailwindcss/utilities";
-
 @import url("https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic&subset=latin");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 /* Easier to style here rather than from render prop */
 .fp-header-menu [data-headlessui-state="active"] {

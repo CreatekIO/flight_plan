@@ -120,8 +120,7 @@ const OpenPullRequests = ({ openPRsCount, pullRequests: pullRequestsByRepo }) =>
                             {next_action && (
                                 <NextActionButton
                                     {...next_action}
-                                    className="absolute right-1 top-0"
-                                    style={{ marginTop: 3 }}
+                                    className="absolute right-1 top-0 mt-[3px]"
                                 />
                             )}
                         </div>
