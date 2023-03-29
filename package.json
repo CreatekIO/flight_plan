@@ -2,10 +2,10 @@
   "name": "flight_plan",
   "private": true,
   "dependencies": {
-    "@floating-ui/react": "^0.21.0",
+    "@floating-ui/react": "^0.22.2",
     "@gatsbyjs/reach-router": "^2.0.1",
     "@headlessui/react": "^1.7.13",
-    "@primer/octicons-react": "^18.2.0",
+    "@primer/octicons-react": "^18.3.0",
     "@reduxjs/toolkit": "^1.9.3",
     "@tailwindcss/typography": "^0.5.9",
     "actioncable": "^5.2.8-1",
@@ -21,7 +21,7 @@
     "react-dom": "^18.2.0",
     "react-redux": "^8.0.5",
     "react-scrollbar-size": "^5.0.0",
-    "react-toastify": "^9.1.1",
+    "react-toastify": "^9.1.2",
     "redux": "^4.2.1",
     "showdown": "^2.1.0",
     "tailwindcss": "^3.3.0"
