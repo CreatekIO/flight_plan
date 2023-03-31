@@ -1,7 +1,7 @@
 OmniAuth.config.test_mode = true
 
 module OmniAuthTestHelper
-  def stub_omniauth(user:, token: 'ghu_github_token_1234')
+  def stub_omniauth(user:, token: FactoryBot.generate(:github_app_token))
     OmniAuth.config.add_mock(
       :github,
       credentials: { token: token },
