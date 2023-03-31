@@ -8,6 +8,7 @@ import classNames from "classnames";
 import PullRequest from "./PullRequest";
 import Label, { Milestone } from "./Label";
 import Avatar from "./Avatar";
+import { isRepoDisabled } from "../slices/repos";
 
 const assigneeClassNames = {
     1: [/* no classes */],
@@ -61,17 +62,19 @@ const TicketCard = ({
     milestone: milestoneId,
     ticket: {
         number, title, html_url: htmlURL,
+        repo,
         repo: { slug, name: repoName }
     }
 }) => (
-    <Draggable draggableId={`TicketCard/boardTicket#${id}`} index={index}>
+    <Draggable draggableId={`TicketCard/boardTicket#${id}`} index={index} isDragDisabled={isRepoDisabled(repo)}>
         {({ innerRef, draggableProps, dragHandleProps }, snapshot) => (
             <div
                 ref={innerRef}
                 {...draggableProps}
                 className={classNames(
                     "flex flex-col rounded bg-white shadow border border-gray-400/50 mb-4 space-y-2 divide-y text-sm min-h-[88px]",
-                    pullRequestIds.length ? "pb-1" : "pb-2"
+                    pullRequestIds.length ? "pb-1" : "pb-2",
+                    isRepoDisabled(repo) && "opacity-60 grayscale"
                 )}
                 style={draggableProps.style}
             >

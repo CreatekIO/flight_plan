@@ -6,6 +6,11 @@ export const fetchAssigneesForRepo = createRequestThunk.get({
     path: id => `/repos/${id}/assignees`
 });
 
+export const isRepoDisabled = ({ uses_app: usesApp }) =>
+    usesApp && !flightPlanConfig.currentUser.signedInWithApp;
+
+export const isRepoEnabled = repo => !isRepoDisabled(repo);
+
 const slice = createSlice({
     name: "repos",
     initialState: {},
