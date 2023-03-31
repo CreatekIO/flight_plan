@@ -10,6 +10,7 @@ json.ticket do
   json.extract! ticket, :id, :number, :title, :html_url
   json.repo do
     json.extract! ticket.repo, :id, :name, :slug
+    json.uses_app ticket.repo.uses_app?
   end
 end
 

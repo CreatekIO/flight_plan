@@ -7,7 +7,7 @@
     end,
     currentBoardRepos: @board.board_repos.map {|board_repo| { id: board_repo.id, name: board_repo.name }},
     currentBoardSwimlanes: @board.swimlanes.map {|swimlane| { name: swimlane.name }},
-    currentUser: current_user.slice(:id, :username),
+    currentUser: current_user.slice(:id, :username).merge(signedInWithApp: current_user_github_token.app?),
     api: {
       logoutURL: destroy_user_session_path,
       htmlBoardURL: board_path(@board),

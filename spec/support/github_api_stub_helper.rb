@@ -33,7 +33,7 @@ module GitHubApiStubHelper
       status: 201
     ) do
       {
-        token: "ghs_#{SecureRandom.urlsafe_base64}",
+        token: generate(:github_server_token),
         expires_at: 1.hour.from_now.utc.iso8601
       }
     end

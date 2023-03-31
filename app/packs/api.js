@@ -1,8 +1,11 @@
-const csrfToken = () => {
-    const meta = document.querySelector('meta[name="csrf-token"]');
+const metaValue = name => () => {
+    const meta = document.querySelector(`meta[name="${name}"]`);
 
     return meta && meta.content;
 }
+
+const csrfToken = metaValue("csrf-token");
+const csrfParam = metaValue("csrf-param");
 
 const handleResponse = response => {
     const { status, ok } = response;
@@ -33,6 +36,17 @@ const createApiFunction = method => (url, body) => {
     }
 
     return fetch(url, props).then(handleResponse);
+}
+
+export const requestAndRedirectViaBrowser = (method, url) => {
+    const form = document.createElement("form");
+    form.method = method;
+    form.action = url;
+    form.style.display = "none";
+    form.innerHTML = `<input type="hidden" name="${csrfParam()}" value="${csrfToken()}"/>`;
+
+    document.body.appendChild(form);
+    form.requestSubmit();
 }
 
 const safely = fn => {

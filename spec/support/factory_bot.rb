@@ -21,6 +21,17 @@ FactoryBot.define do
   # Generates even numbers
   sequence(:pr_number, fp_number_generator(2))
   sequence(:pr_remote_id, fp_number_generator(200_000_002))
+
+  # See https://github.blog/2021-04-05-behind-githubs-new-authentication-token-formats/
+  #
+  # > `ghp` for GitHub personal access tokens
+  # > `gho` for OAuth access tokens
+  # > `ghu` for GitHub [app] user-to-server tokens
+  # > `ghs` for GitHub [app] server-to-server tokens
+  # > `ghr` for [app] refresh tokens
+  sequence(:github_oauth_token) { "gho_#{SecureRandom.base58(36)}" }
+  sequence(:github_app_token) { "ghu_#{SecureRandom.base58(36)}" }
+  sequence(:github_server_token) { "ghs_#{SecureRandom.base58(36)}" }
 end
 
 RSpec.configure do |config|

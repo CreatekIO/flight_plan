@@ -23,8 +23,8 @@ RSpec.describe TicketMovesController, type: :request do
       )
     end
 
-    let(:user_token_from_oauth) { "gho_token_user_#{user.id}" }
-    let(:user_token_from_app) { "ghu_github_token_user_#{user.id}" }
+    let(:user_token_from_oauth) { generate(:github_oauth_token) }
+    let(:user_token_from_app) { generate(:github_app_token) }
 
     let(:board_ticket_params) do
       { swimlane_id: destination_swimlane.id, swimlane_position: destination_position }

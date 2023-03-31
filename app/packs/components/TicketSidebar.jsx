@@ -9,7 +9,9 @@ import Label, { Milestone } from "./Label";
 import PullRequest from "./PullRequest";
 import Avatar from "./Avatar";
 import HarvestButton from "./HarvestButton";
+import GitHubAppWarning from "./GitHubAppWarning";
 import { isFeatureEnabled } from "../features";
+import { isRepoEnabled, isRepoDisabled } from "../slices/repos";
 
 const GroupedPullRequestList = connect(
     (_, { id: boardTicketId }) => ({ entities: { pullRequests: allPRs, boardTickets, repos }}) => {
@@ -95,7 +97,7 @@ const Sidebar = ({
     milestone: milestoneId,
     labels: labelIds,
     state_durations: stateDurations = [],
-    ticket: { id: ticketId, state, repo: { name: repoName }}
+    ticket: { id: ticketId, state, repo, repo: { name: repoName }}
 }) => (
     <div className={classNames("bg-white", className)}>
         {isFeatureEnabled("harvest_button") && <HarvestButton ticketId={ticketId} />}
@@ -110,7 +112,14 @@ const Sidebar = ({
             </span>
         </SidebarEntry>
 
-        <SidebarEntry title="Assignees" url={isFeatureEnabled("edit_assignees") && "assignees/edit"}>
+        {isRepoDisabled(repo) && (
+            <GitHubAppWarning verb="Editing" className="mt-3 bg-yellow-200 text-yellow-800 p-2"/>
+        )}
+
+        <SidebarEntry
+            title="Assignees"
+            url={isFeatureEnabled("edit_assignees") && isRepoEnabled(repo) && "assignees/edit"}
+        >
             {assignees.length ? (
                 <ul className="text-sm font-bold space-y-2 mt-1">
                     {assignees.map(({ username }) => <Assignee key={username} username={username} />)}
@@ -120,7 +129,7 @@ const Sidebar = ({
             )}
         </SidebarEntry>
 
-        <SidebarEntry title="Labels" url="labels/edit">
+        <SidebarEntry title="Labels" url={isRepoEnabled(repo) && "labels/edit"}>
             {labelIds.length ? (
                 <div className="space-y-1">
                     {labelIds.map(id => <Label key={id} id={id} className="w-full" />)}

@@ -8,6 +8,8 @@ import classNames from "classnames";
 import PullRequest from "./PullRequest";
 import Label, { Milestone } from "./Label";
 import Avatar from "./Avatar";
+import GitHubAppWarning from "./GitHubAppWarning";
+import { isRepoDisabled } from "../slices/repos";
 
 const assigneeClassNames = {
     1: [/* no classes */],
@@ -61,10 +63,11 @@ const TicketCard = ({
     milestone: milestoneId,
     ticket: {
         number, title, html_url: htmlURL,
+        repo,
         repo: { slug, name: repoName }
     }
 }) => (
-    <Draggable draggableId={`TicketCard/boardTicket#${id}`} index={index}>
+    <Draggable draggableId={`TicketCard/boardTicket#${id}`} index={index} isDragDisabled={isRepoDisabled(repo)}>
         {({ innerRef, draggableProps, dragHandleProps }, snapshot) => (
             <div
                 ref={innerRef}
@@ -112,6 +115,7 @@ const TicketCard = ({
                         </div>
                     )}
                 </div>
+                {isRepoDisabled(repo) && <GitHubAppWarning verb="Dragging" className="px-2 pt-2"/>}
                 {shouldDisplayDuration && (
                     <div className="px-2 pt-2 text-gray-400">
                         Since last move: {timeSinceLastTransition}

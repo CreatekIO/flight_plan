@@ -51,7 +51,7 @@ RSpec.describe 'Omniauth', type: :request do
     end
 
     describe 'redirect location' do
-      let(:github_token) { 'gho_token' }
+      let(:github_token) { generate(:github_oauth_token) }
       let!(:boards) { create_pair(:board) }
       let(:board) { boards.last }
 
@@ -78,7 +78,7 @@ RSpec.describe 'Omniauth', type: :request do
       context 'with board ID stored in cookie' do
         before do
           user.save!
-          sign_in(user)
+          sign_in(user, github_token: github_token)
           get board_path(board)
           delete destroy_user_session_path
 
@@ -96,7 +96,7 @@ RSpec.describe 'Omniauth', type: :request do
     describe 'token storage' do
       context 'no token stored' do
         context 'signing in via OAuth app' do
-          let(:github_token) { 'gho_token' }
+          let(:github_token) { generate(:github_oauth_token) }
 
           it 'adds token within hash' do
             subject
@@ -106,7 +106,7 @@ RSpec.describe 'Omniauth', type: :request do
         end
 
         context 'signing in via app' do
-          let(:github_token) { 'ghu_token' }
+          let(:github_token) { generate(:github_app_token) }
 
           it 'adds token within hash' do
             subject
@@ -123,10 +123,10 @@ RSpec.describe 'Omniauth', type: :request do
         end
 
         context 'in string format' do
-          let(:existing_token) { 'gho_existing_token' }
+          let(:existing_token) { generate(:github_oauth_token) }
 
           context 'signing in via OAuth app' do
-            let(:github_token) { 'gho_token' }
+            let(:github_token) { generate(:github_oauth_token) }
 
             it 'adds token within hash, overwriting old token' do
               subject
@@ -136,7 +136,7 @@ RSpec.describe 'Omniauth', type: :request do
           end
 
           context 'signing in via app' do
-            let(:github_token) { 'ghu_token' }
+            let(:github_token) { generate(:github_app_token) }
 
             it 'adds token within hash and keeps existing token' do
               subject
@@ -151,11 +151,11 @@ RSpec.describe 'Omniauth', type: :request do
 
         context 'in hash format' do
           let(:existing_token) do
-            { 'oauth' => 'gho_existing_token' }
+            { 'oauth' => generate(:github_oauth_token) }
           end
 
           context 'signing in via OAuth app' do
-            let(:github_token) { 'gho_token' }
+            let(:github_token) { generate(:github_oauth_token) }
 
             it 'adds token within hash, overwriting old token' do
               subject
@@ -165,7 +165,7 @@ RSpec.describe 'Omniauth', type: :request do
           end
 
           context 'signing in via app' do
-            let(:github_token) { 'ghu_token' }
+            let(:github_token) { generate(:github_app_token) }
 
             it 'adds token within hash and keeps existing token' do
               subject
