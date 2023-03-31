@@ -9,13 +9,13 @@ export const fetchAssigneesForRepo = createRequestThunk.get({
 const slice = createSlice({
     name: "repos",
     initialState: {},
-    extraReducers: {
-        [fetchAssigneesForRepo.fulfilled]: (state, { payload, meta }) => {
+    extraReducers: ({ addCase }) => {
+        addCase(fetchAssigneesForRepo.fulfilled, (state, { payload, meta }) => {
             const repo = state[meta.arg];
             if (!repo) return;
 
             repo.availableAssignees = payload;
-        }
+        });
     }
 });
 

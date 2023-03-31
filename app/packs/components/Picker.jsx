@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useCombobox } from "downshift";
 import classNames from "classnames";
-import Octicon, { Check, X } from "@githubprimer/octicons-react";
+import { CheckIcon, XIcon } from "@primer/octicons-react";
 
 import FormWrapper from "./TicketFormWrapper";
 
@@ -64,7 +64,7 @@ const Picker = ({
     const { disabled, ref: inputRef } = useDelayedFocus(enableAfter);
 
     const {
-        getLabelProps, getInputProps, getComboboxProps, getMenuProps, getItemProps,
+        getLabelProps, getInputProps, getMenuProps, getItemProps,
         highlightedIndex, inputValue
     } = useCombobox({
         isOpen: true,
@@ -120,7 +120,7 @@ const Picker = ({
             backPath={backPath}
         >
             <div className="relative">
-                <div {...getComboboxProps()} className="p-3 sticky inset-x-0 top-0 bg-white border-b border-gray-300">
+                <div className="p-3 sticky inset-x-0 top-0 bg-white border-b border-gray-300">
                     <input
                         {...getInputProps({ ref: inputRef })}
                         className="rounded border border-gray-300 text-gray-900 w-full py-1 px-3 text-sm"
@@ -142,14 +142,14 @@ const Picker = ({
                                 key={`${id}-${index}`}
                                 {...getItemProps({ item, index })}
                             >
-                                {isSelected && <Octicon icon={Check} className="mr-2" />}
+                                {isSelected && <CheckIcon className="mr-2" />}
 
                                 {Icon && <Icon isSelected={isSelected} item={item} />}
-                                <span className={classNames("flex-grow truncate", itemClassName)}>
+                                <span className={classNames("grow truncate", itemClassName)}>
                                     {item[nameProp]}
                                 </span>
 
-                                {isSelected && <Octicon icon={X} />}
+                                {isSelected && <XIcon />}
                             </li>
                         )})}
                 </ul>

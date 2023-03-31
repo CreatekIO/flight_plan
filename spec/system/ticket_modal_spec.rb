@@ -55,7 +55,7 @@ RSpec.describe 'Ticket modal', js: true do
   end
 
   def assert_modal_content
-    within("[data-reach-dialog-content]") do
+    within('[role="dialog"]') do
       expect(page).to have_text(ticket.title)
       expect(page).to have_link(href: ticket.html_url)
 

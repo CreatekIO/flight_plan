@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useMatch, useLocation } from "@reach/router";
+import { useMatch, useLocation } from "@gatsbyjs/reach-router";
 import { useDispatch, useSelector } from "react-redux";
 import ActionCable from "actioncable";
 import useScrollbarSize from "react-scrollbar-size";

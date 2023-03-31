@@ -1,4 +1,4 @@
-import { Link } from "@reach/router";
+import { Link } from "@gatsbyjs/reach-router";
 
 const FormWrapper = ({ onSubmit, backPath, label, labelProps, children }) => (
     <div className="flex flex-col h-full">
@@ -6,7 +6,7 @@ const FormWrapper = ({ onSubmit, backPath, label, labelProps, children }) => (
             {label}
         </label>
 
-        <div className="flex-grow bg-white overflow-auto">
+        <div className="grow bg-white overflow-auto">
             {children}
         </div>
         <div className="bg-gray-100 border-t border-gray-300 px-5 py-3 flex text-sm space-x-2 text-center">

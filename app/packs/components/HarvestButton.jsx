@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef, useCallback } from "react";
-import Octicon, { Clock } from "@githubprimer/octicons-react";
+import { ClockIcon } from "@primer/octicons-react";
 import classNames from "classnames";
 
 import Loading from "./Loading";
@@ -96,7 +96,7 @@ const HarvestButton = ({ ticketId }) => {
             type="button"
             className={classNames(
                 "block w-full flex items-center justify-center text-xs text-gray-500 border border-gray-300 rounded px-4",
-                "hover:text-harvest-orange hover:border-harvest-orange",
+                "hover:text-[#f36c00] hover:border-[#f36c00]",
                 harvestState === "loading" ? "py-1" : "py-1.5"
             )}
             data-item={JSON.stringify({ id: number, name: `#${number}: ${title}` })}
@@ -106,7 +106,7 @@ const HarvestButton = ({ ticketId }) => {
         >
             {harvestState === "loading"
                 ? <Loading size="xsmall" className="inline-block mr-2" />
-                : <Octicon icon={Clock} className="mr-2.5" />
+                : <ClockIcon className="mr-2.5" />
             }
             {" "}
             Track time with Harvest

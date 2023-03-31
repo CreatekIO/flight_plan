@@ -13,7 +13,7 @@ import { fetchNextActions } from "../slices/pull_requests";
 const extractId = id => parseInt(id.split("#")[1], 10);
 
 const LoadingOverlay = () => (
-    <div className="absolute inset-0 bg-white bg-opacity-50 flex flex-col items-center justify-center text-gray-600">
+    <div className="absolute inset-0 bg-white/50 flex flex-col items-center justify-center text-gray-600">
         <Loading size="large" />
         <p className="animate-pulse text-lg mt-3">Loading...</p>
     </div>

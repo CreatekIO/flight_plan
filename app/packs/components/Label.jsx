@@ -11,7 +11,7 @@ const UnwrappedLabel = ({ colour, name, bordered = false, className }) => (
         )}
         style={{
             backgroundColor: `#${colour}`,
-            color: fontColor(`#${colour}`)
+            color: fontColor(`#${colour}`, 0.6)
         }}
     >
         {name}

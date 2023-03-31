@@ -1,25 +1,23 @@
-const defaultTheme = require('tailwindcss/defaultTheme');
+import defaultTheme from 'tailwindcss/defaultTheme';
+import colors from 'tailwindcss/colors';
 
-module.exports = {
-  purge: {
-    content: [
-      './app/packs/{components,demos}/**/*.{js,jsx}',
-      './app/views/**/*.{html,js}.*'
-    ],
-    options: {
-      safelist: [/task-list-item/]
-    }
-  },
-  darkMode: false, // or 'media' or 'class'
+export default {
+  content: [
+    './app/packs/{components,demos}/**/*.{js,jsx}',
+    './app/views/**/*.{html,js}.*'
+  ],
+  safelist: [{ pattern: /task-list-item/ }],
   theme: {
     extend: {
       colors: {
+        green: colors.emerald,
+        yellow: colors.amber,
+        purple: colors.violet,
         github: {
           green: '#6cc644',
           red: '#bd2c00',
           purple: '#6e5494'
-        },
-        'harvest-orange': '#f36c00'
+        }
       },
       fontFamily: {
         sans: ['Lato', ...defaultTheme.fontFamily.sans]
@@ -97,11 +95,6 @@ module.exports = {
           }
         }
       })
-    }
-  },
-  variants: {
-    extend: {
-      display: ['group-hover']
     }
   },
   plugins: [

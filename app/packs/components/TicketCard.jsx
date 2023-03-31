@@ -2,7 +2,7 @@ import { Fragment } from "react";
 import { connect } from "react-redux";
 import { denormalize, schema } from "normalizr";
 import { Draggable } from "react-beautiful-dnd";
-import { Link } from "@reach/router";
+import { Link } from "@gatsbyjs/reach-router";
 import classNames from "classnames";
 
 import PullRequest from "./PullRequest";
@@ -70,15 +70,12 @@ const TicketCard = ({
                 ref={innerRef}
                 {...draggableProps}
                 className={classNames(
-                    "flex flex-col rounded bg-white shadow border border-gray-400 border-opacity-50 mb-4 space-y-2 divide-y text-sm",
+                    "flex flex-col rounded bg-white shadow border border-gray-400/50 mb-4 space-y-2 divide-y text-sm min-h-[88px]",
                     pullRequestIds.length ? "pb-1" : "pb-2"
                 )}
-                style={{ ...draggableProps.style, minHeight: 88 }}
+                style={draggableProps.style}
             >
-                <div
-                    {...dragHandleProps}
-                    className="px-2 pt-2"
-                >
+                <div {...dragHandleProps} className="px-2 pt-2">
                     <a className="pr-2 text-blue-600" href={htmlURL} target="_blank">
                         {number}
                     </a>
@@ -88,7 +85,7 @@ const TicketCard = ({
                     </span>
                 </div>
 
-                <div className="flex-grow px-2 flex flex-col justify-center border-transparent space-y-2">
+                <div className="px-2 flex grow flex-col justify-center border-transparent space-y-2">
                     <Link
                         to={`./${slug}/${number}`}
                         state={{ boardTicketId: id }}

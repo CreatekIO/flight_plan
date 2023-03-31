@@ -2,11 +2,11 @@ import { memo, Fragment, useState, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Droppable } from "react-beautiful-dnd";
 import classNames from "classnames";
-import { Tooltip } from "@reach/tooltip";
-import Octicon, { Fold, Unfold } from "@githubprimer/octicons-react";
+import { FoldIcon, UnfoldIcon } from "@primer/octicons-react";
 
 import { useEntity } from "../hooks";
 import TicketCard from "./TicketCard";
+import Tooltip from "./Tooltip";
 
 import {
     collapseSwimlane,
@@ -53,6 +53,8 @@ const Swimlane = ({ id }) => {
     const scrollbarHeight = useSelector(({ ui: { scrollbarHeight }}) => scrollbarHeight);
     const heightOffset = HEADER_HEIGHT + scrollbarHeight;
 
+    const Icon = isCollapsed ? UnfoldIcon : FoldIcon;
+
     return (
         <div
             className={classNames(
@@ -69,10 +71,10 @@ const Swimlane = ({ id }) => {
                 }
             )}>
                 <span
-                    className={classNames({
-                        "inline-block absolute top-0 left-0 transform rotate-90 w-64 pl-16": isCollapsed
-                    })}
-                    style={{ transformOrigin: '20px center' }}
+                    className={classNames(
+                        "origin-[20px_center]",
+                        { "inline-block absolute top-0 left-0 rotate-90 w-64 pl-16": isCollapsed }
+                    )}
                 >
                     {name}
                 </span>
@@ -85,10 +87,7 @@ const Swimlane = ({ id }) => {
                         )}
                         onClick={() => dispatch(isCollapsed ? expandSwimlane(id) : collapseSwimlane(id))}
                     >
-                        <Octicon
-                            icon={isCollapsed ? Unfold : Fold}
-                            className="transform rotate-90"
-                        />
+                        <Icon className="rotate-90" />
                     </button>
                 </Tooltip>
             </div>

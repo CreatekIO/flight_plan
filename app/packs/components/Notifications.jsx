@@ -1,7 +1,7 @@
-import Portal from "@reach/portal";
+import { FloatingPortal } from "@floating-ui/react";
 import { ToastContainer, cssTransition, toast } from "react-toastify";
 import classNames from "classnames";
-import Octicon, { X } from "@githubprimer/octicons-react";
+import { XIcon } from "@primer/octicons-react";
 
 const { INFO, WARNING, ERROR, SUCCESS } = toast.TYPE;
 
@@ -29,18 +29,19 @@ const CloseButton = ({ closeToast }) => (
         aria-label="Close"
         onClick={closeToast}
     >
-        <Octicon icon={X} />
+        <XIcon />
     </button>
 );
 
 const Notifications = () => (
-    <Portal>
+    <FloatingPortal>
         <ToastContainer
             autoClose={5000}
             className="fixed top-4 right-4 z-50"
             closeButton={CloseButton}
             draggable={false}
             hideProgressBar={true}
+            icon={false}
             newestOnTop={false}
             pauseOnFocusLoss={true}
             pauseOnHover={true}
@@ -48,7 +49,7 @@ const Notifications = () => (
             toastClassName={generateToastClassName}
             transition={Transition}
         />
-    </Portal>
+    </FloatingPortal>
 );
 
 

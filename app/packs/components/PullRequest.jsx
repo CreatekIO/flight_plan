@@ -1,14 +1,14 @@
 import { connect } from "react-redux";
-import Octicon, { GitMerge, GitPullRequest } from "@githubprimer/octicons-react";
-import { Tooltip } from "@reach/tooltip";
+import { GitMergeIcon, GitPullRequestIcon } from "@primer/octicons-react";
 import classNames from "classnames";
 
 import NextActionButton from "./NextActionButton";
+import Tooltip from "./Tooltip";
 
 const pullRequestIcons = {
-    open: { icon: GitPullRequest, className: "text-github-green" },
-    closed: { icon: GitPullRequest, className: "text-github-red" },
-    merged: { icon: GitMerge, className: "text-github-purple" }
+    open: { Icon: GitPullRequestIcon, className: "text-github-green" },
+    closed: { Icon: GitPullRequestIcon, className: "text-github-red" },
+    merged: { Icon: GitMergeIcon, className: "text-github-purple" }
 };
 
 const PullRequest = ({
@@ -22,15 +22,15 @@ const PullRequest = ({
 }) => {
     const {
         className: iconClassName,
-        icon
+        Icon
     } = pullRequestIcons[merged ? "merged" : state] || pullRequestIcons.open;
 
     return (
         <div className={classNames("flex pt-1", className)}>
-            <div className="flex-grow">
-                <Octicon icon={icon} className={classNames("mr-0.5", iconClassName)} />
+            <div className="grow">
+                <Icon className={classNames("mr-0.5", iconClassName)} />
                 &nbsp;
-                <Tooltip label={title}>
+                <Tooltip label={title} placement="bottom-start">
                     <a
                         href={htmlURL}
                         target="_blank"

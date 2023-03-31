@@ -17,11 +17,7 @@ const SingleURLButton = ({ url, text, className, ...props }) => (
 );
 
 const DownArrow = () => (
-    <span
-        className="align-text-top ml-0.5"
-        style={{ fontSize: "70%" }}
-        aria-hidden
-    >
+    <span className="align-text-top ml-0.5 text-[70%]" aria-hidden>
         &#9660;
     </span>
 );

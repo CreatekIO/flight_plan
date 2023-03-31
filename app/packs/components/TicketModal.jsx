@@ -1,6 +1,6 @@
 import { Fragment, useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { navigate, Link } from "@reach/router";
+import { navigate, Link } from "@gatsbyjs/reach-router";
 import classNames from "classnames";
 
 import { useConstrainedMatch, useLocationState } from "../hooks";
@@ -13,12 +13,7 @@ import AssigneePicker from "./AssigneePicker";
 import LabelPicker from "./LabelPicker";
 import { fetchTicket } from "../slices/board_tickets";
 
-// sidebar width = w-56 = 14rem
-// sidebar gutter = pl-5 = 1.25rem
-// => sum = 15.25rem
-const feedWidth = "calc(100% - 15.25rem)";
-
-const transitionClasses = "transform transition-transform duration-150";
+const transitionClasses = "transition-transform duration-150";
 const TRANSITION_DURATION = 150; // should match `duration-*` class above
 
 const EDITORS = {
@@ -80,7 +75,6 @@ const TicketModal = ({
 
     return (
         <Modal
-            isOpen
             onDismiss={() => navigate(flightPlanConfig.api.htmlBoardURL)}
             aria-labelledby={labelId}
         >
@@ -114,11 +108,14 @@ const TicketModal = ({
                 )}
 
                 {/* Put <Feed/> after <Sidebar/> in the DOM so that it has a higher z-index */}
-                <div className="absolute left-4 top-4 pr-5 bg-white" style={{ width: feedWidth }}>
+                {/* sidebar width = w-56 = 14rem */}
+                {/* sidebar gutter = pl-5 = 1.25rem */}
+                {/* => sum = 15.25rem */}
+                <div className="absolute left-4 top-4 pr-5 bg-white w-[calc(100%-15.25rem)]">
                     <Feed id={id} />
 
                     {!isLoaded && (
-                        <div className="flex justify-center text-gray-600 absolute inset-0 bg-white bg-opacity-50">
+                        <div className="flex justify-center text-gray-600 absolute inset-0 bg-white/50">
                             <Loading size="large" className="mt-14"/>
                         </div>
                     )}
@@ -128,7 +125,7 @@ const TicketModal = ({
             {isLoaded && (
                 <div
                     className={classNames(
-                        "w-56 absolute top-14 bottom-0 right-0 pt-4 bg-white mt-px border-l border-gray-300 bg-gray-100",
+                        "w-56 absolute top-14 bottom-0 right-0 pt-4 mt-px border-l border-gray-300 bg-gray-100",
                         transitionClasses,
                         section ? "translate-x-0" : "translate-x-56"
                     )}
