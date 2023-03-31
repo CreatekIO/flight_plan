@@ -8,6 +8,7 @@ import classNames from "classnames";
 import PullRequest from "./PullRequest";
 import Label, { Milestone } from "./Label";
 import Avatar from "./Avatar";
+import GitHubAppWarning from "./GitHubAppWarning";
 import { isRepoDisabled } from "../slices/repos";
 
 const assigneeClassNames = {
@@ -73,8 +74,7 @@ const TicketCard = ({
                 {...draggableProps}
                 className={classNames(
                     "flex flex-col rounded bg-white shadow border border-gray-400/50 mb-4 space-y-2 divide-y text-sm min-h-[88px]",
-                    pullRequestIds.length ? "pb-1" : "pb-2",
-                    isRepoDisabled(repo) && "opacity-60 grayscale"
+                    pullRequestIds.length ? "pb-1" : "pb-2"
                 )}
                 style={draggableProps.style}
             >
@@ -115,6 +115,7 @@ const TicketCard = ({
                         </div>
                     )}
                 </div>
+                {isRepoDisabled(repo) && <GitHubAppWarning verb="Dragging" className="px-2 pt-2"/>}
                 {shouldDisplayDuration && (
                     <div className="px-2 pt-2 text-gray-400">
                         Since last move: {timeSinceLastTransition}
