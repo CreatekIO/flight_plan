@@ -13,6 +13,7 @@ features:
   - name: normalised_responses
     description: >
       Use ReduxLoader to generate JSON in normalised form
+    default: on
 
   - name: realtime_updates
     description: >
@@ -30,6 +31,7 @@ features:
   - name: edit_assignees
     description: >
       Allow users to assign/unassign people to tickets
+    default: on
 
   - name: automation
     description: >
