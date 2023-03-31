@@ -13,6 +13,7 @@ json.ticket do
 
   json.repo do
     json.extract! ticket.repo, :id, :name, :slug
+    json.uses_app ticket.repo.uses_app?
   end
 end
 
@@ -28,6 +29,7 @@ json.pull_requests ticket.pull_requests.includes(:repo) do |pull_request|
   )
   json.repo do
     json.extract! pull_request.repo, :id, :name, :slug
+    json.uses_app ticket.repo.uses_app?
   end
 end
 
