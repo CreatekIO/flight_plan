@@ -5,11 +5,6 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Easier to style here rather than from render prop */
-.fp-header-menu [data-headlessui-state="active"] {
-  @apply bg-blue-50 text-black;
-}
-
 [hidden] {
   @apply hidden;
 }

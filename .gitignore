@@ -17,17 +17,12 @@
 /storage/*
 !/storage/.keep
 
-/node_modules
-/yarn-error.log
-
 /public/assets
 .byebug_history
 
 # Ignore master key for decrypting credentials and more.
 /config/master.key
 
-/public/packs
-/public/packs-test
 .env
 
 # FlightPlan
@@ -36,9 +31,6 @@
 # Rubocop remote URL cache
 .rubocop-*
 
-/public/packs
-/public/packs-test
-/node_modules
 /yarn-error.log
 yarn-debug.log*
 .yarn-integrity
@@ -49,4 +41,3 @@ node_modules
 # Vite uses dotenv and suggests to ignore local-only env files. See
 # https://vitejs.dev/guide/env-and-mode.html#env-files
 *.local
-
