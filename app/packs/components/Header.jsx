@@ -10,7 +10,8 @@ import { getOpenPRs } from "../reducers/selectors";
 import { isFeatureEnabled } from "../features";
 import api from "../api";
 
-const menuItemClasses = "block p-2 text-left";
+const menuItemActiveClasses = "data-[headlessui-state=active]:bg-blue-50 data-[headlessui-state=active]:text-black";
+const menuItemClasses = classNames("block p-2 text-left", menuItemActiveClasses);
 const countClasses = "w-6 h-6 font-bold leading-6 ml-2 text-center rounded-full bg-gray-400 text-white text-xs";
 
 const HeaderItem = ({
@@ -36,7 +37,6 @@ const HeaderItem = ({
     );
 }
 
-// See packs/application.css for additional styles
 const HeaderMenu = ({
     title,
     pointing,
@@ -68,7 +68,7 @@ const HeaderMenu = ({
                 <Menu.Items
                     unmount={false} /* This is mostly for the component demo, but does no harm otherwise */
                     className={classNames(
-                        "fp-header-menu p-0 bg-white shadow-xl rounded-b border-t border-gray-200 text-sm",
+                        "p-0 bg-white shadow-xl rounded-b border-t border-gray-200 text-sm",
                         menuClass
                     )}
                 >
@@ -111,7 +111,7 @@ const OpenPullRequests = ({ openPRsCount, pullRequests: pullRequestsByRepo }) =>
                                 as="a"
                                 href={html_url}
                                 target="_blank"
-                                className="text-gray-500 truncate p-1"
+                                className={classNames("text-gray-500 truncate p-1", menuItemActiveClasses)}
                             >
                                 <span className="text-blue-500">#{number}</span>
                                 {' '}
