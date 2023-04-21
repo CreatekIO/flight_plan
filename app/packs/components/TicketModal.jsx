@@ -108,10 +108,8 @@ const TicketModal = ({
                 )}
 
                 {/* Put <Feed/> after <Sidebar/> in the DOM so that it has a higher z-index */}
-                {/* sidebar width = w-56 = 14rem */}
-                {/* sidebar gutter = pl-5 = 1.25rem */}
-                {/* => sum = 15.25rem */}
-                <div className="absolute left-4 top-4 pr-5 bg-white w-[calc(100%-15.25rem)]">
+                {/* sidebar width (w-56) + gutter (pl-5) */}
+                <div className="absolute left-4 top-4 pr-5 bg-white w-[calc(100%-(theme(spacing.56)+theme(spacing.5)))]">
                     <Feed id={id} />
 
                     {!isLoaded && (
