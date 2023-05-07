@@ -28,6 +28,8 @@ gem 'pg'
 gem 'puma', '~> 5'
 gem 'ranked-model'
 gem 'redis-namespace'
+# v7 needs Redis v7, which is not yet supported by Redis Cloud:
+# https://github.com/sidekiq/sidekiq/blob/main/docs/7.0-Upgrade.md#known-issues
 gem 'sidekiq', '~> 6'
 gem 'slack-ruby-client'
 gem 'vite_rails'
