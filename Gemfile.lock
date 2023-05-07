@@ -363,7 +363,6 @@ DEPENDENCIES
   slack-ruby-client
   spring
   spring-commands-rspec
-  timecop
   vite_rails
   webmock
   wisper

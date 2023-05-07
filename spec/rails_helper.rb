@@ -35,6 +35,7 @@ RSpec.configure do |config|
   config.filter_rails_from_backtrace!
 
   config.include Clockwork::Test::RSpec::Matchers
+  config.include ActiveSupport::Testing::TimeHelpers
 end
 
 RSpec::Matchers.define_negated_matcher :not_change, :change

@@ -9,7 +9,7 @@ RSpec.describe TicketMovesController, type: :request do
     let(:ticket) { create(:ticket, repo: repo) }
 
     let!(:board_ticket) do
-      Timecop.travel(1.day.ago) do # ensure we get an 'old' #started_at on BoardTicket#open_timesheet
+      travel_to(1.day.ago) do # ensure we get an 'old' #started_at on BoardTicket#open_timesheet
         create(:board_ticket, board: board, ticket: ticket, swimlane: backlog)
       end
     end

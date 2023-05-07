@@ -112,7 +112,7 @@ RSpec.describe ReleaseManager, type: :service do
 
     around do |example|
       # Make it easier to match against release branch name
-      Timecop.freeze { example.run }
+      freeze_time { example.run }
     end
 
     context 'with no conflicts' do

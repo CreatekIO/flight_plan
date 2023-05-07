@@ -59,6 +59,5 @@ group :test do
   gem 'rspec-sidekiq'
   gem 'rspec_junit_formatter', require: false
   gem 'shoulda-matchers'
-  gem 'timecop'
   gem 'webmock'
 end
