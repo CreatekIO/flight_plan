@@ -5,14 +5,12 @@ ruby '2.7.7'
 
 gem 'rails', '~> 5.2.7'
 
-gem 'activerecord-import'
 gem 'blueprinter'
 gem 'bootsnap', '>= 1.1.0', require: false
 gem 'bugsnag'
 gem 'business_time'
 gem 'cancancan'
 gem 'clockwork'
-gem 'createk_data_migrator'
 gem 'descriptive_statistics', require: 'descriptive_statistics/safe'
 gem 'devise'
 gem 'flipper-redis'
@@ -37,8 +35,6 @@ gem 'vite_rails'
 gem 'wisper'
 
 group :development, :test do
-  gem 'active_record_query_trace'
-  gem 'bullet'
   gem 'byebug', platforms: %i[mri mingw x64_mingw]
   gem 'dotenv-rails'
   gem 'factory_bot'
