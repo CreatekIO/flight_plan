@@ -67,6 +67,24 @@ business_time:
     - '25 December  2023' # Christmas Day
     - '26 December  2023' # Boxing Day
 
+    - '01 January   2024' # New Year’s Day
+    - '29 March     2024' # Good Friday
+    - '01 April     2024' # Easter Monday
+    - '06 May       2024' # Early May bank holiday
+    - '27 May       2024' # Spring bank holiday
+    - '26 August    2024' # Summer bank holiday
+    - '25 December  2024' # Christmas Day
+    - '26 December  2024' # Boxing Day
+
+    - '01 January   2025' # New Year’s Day
+    - '18 April     2025' # Good Friday
+    - '21 April     2025' # Easter Monday
+    - '05 May       2025' # Early May bank holiday
+    - '26 May       2025' # Spring bank holiday
+    - '25 August    2025' # Summer bank holiday
+    - '25 December  2025' # Christmas Day
+    - '26 December  2025' # Boxing Day
+
     # # Extra dates
     - '18 December  2020' # company-wide holiday
     - '17 December  2021' # company-wide holiday
