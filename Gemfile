@@ -20,11 +20,8 @@ gem 'haml'
 gem 'jbuilder'
 gem 'jwt'
 gem 'octokit'
-
-# upgrade once Devise updated
-gem 'omniauth-github', '~> 1'
-gem 'omniauth-rails_csrf_protection', '< 1'
-
+gem 'omniauth-github'
+gem 'omniauth-rails_csrf_protection'
 gem 'pg'
 gem 'puma', '~> 5'
 gem 'ranked-model'
