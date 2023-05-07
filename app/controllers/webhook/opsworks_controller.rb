@@ -25,8 +25,8 @@ class Webhook::OpsworksController < Webhook::BaseController
       logger.warn("Signature mismatch! #{payload.inspect}")
     end
 
-    Bugsnag.notify('OpsWorks signature mismatch') do |report|
-      report.add_tab(:debugging, payload)
+    Bugsnag.notify('OpsWorks signature mismatch') do |event|
+      event.add_metadata(:debugging, payload)
     end
   end
 

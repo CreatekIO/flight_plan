@@ -53,8 +53,8 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
 
     logger.warn("Org member? mismatch: #{payload.inspect}")
 
-    Bugsnag.notify('Org member? mismatch') do |report|
-      report.add_tab(:debugging, payload)
+    Bugsnag.notify('Org member? mismatch') do |event|
+      event.add_metadata(:debugging, payload)
     end
 
     from_legacy

@@ -42,7 +42,7 @@ RSpec.describe 'OpsWorks webhooks', type: :request do
           expect(response).to have_http_status(:created)
 
           expect(Bugsnag).to have_received(:notify).with(/signature mismatch/i)
-          expect(bugsnag_reporter).to have_received(:add_tab)
+          expect(bugsnag_reporter).to have_received(:add_metadata)
           expect(Rails.logger).to have_received(:warn).with(/signature mismatch/i)
         end
       end
@@ -58,7 +58,7 @@ RSpec.describe 'OpsWorks webhooks', type: :request do
           expect(response).to have_http_status(:created)
 
           expect(Bugsnag).to have_received(:notify).with(/signature mismatch/i)
-          expect(bugsnag_reporter).to have_received(:add_tab)
+          expect(bugsnag_reporter).to have_received(:add_metadata)
           expect(Rails.logger).to have_received(:warn).with(/signature mismatch/i)
         end
       end

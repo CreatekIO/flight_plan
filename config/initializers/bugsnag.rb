@@ -8,5 +8,5 @@ Bugsnag.configure do |config|
   # - https://devcenter.heroku.com/articles/dyno-metadata
   config.app_version = ENV['HEROKU_RELEASE_VERSION']
 
-  config.meta_data_filters += %w[github.token]
+  config.redacted_keys += %w[github.token]
 end
