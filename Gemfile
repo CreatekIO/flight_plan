@@ -37,12 +37,13 @@ group :development, :test do
   gem 'byebug', platforms: %i[mri mingw x64_mingw]
   gem 'dotenv-rails'
   gem 'factory_bot'
-  gem 'rspec-rails', '~> 5'
-  gem 'spring-commands-rspec'
+  gem 'rspec-rails', '~> 5' # supports Rails 5.2 + 6.0
 end
 
 group :development do
-  gem 'spring'
+  # loaded when running tests, but not in :test group as we don't want it on CI
+  gem 'spring', '~> 3'
+  gem 'spring-commands-rspec'
 end
 
 group :test do

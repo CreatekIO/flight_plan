@@ -278,7 +278,7 @@ GEM
     sorted_set (1.0.3)
       rbtree
       set (~> 1.0)
-    spring (2.1.1)
+    spring (3.1.1)
     spring-commands-rspec (1.0.4)
       spring (>= 0.9.1)
     sprockets (4.1.1)
@@ -360,7 +360,7 @@ DEPENDENCIES
   shoulda-matchers
   sidekiq (~> 6)
   slack-ruby-client
-  spring
+  spring (~> 3)
   spring-commands-rspec
   vite_rails
   webmock
