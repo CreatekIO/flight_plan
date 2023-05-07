@@ -1,5 +1,4 @@
 class GithubWebhookFake
-  HMAC_DIGEST = OpenSSL::Digest.new('sha1')
   USER_AGENT = 'GitHub-Hookshot/0000000'.freeze
   CONTENT_TYPE = 'application/x-www-form-urlencoded'.freeze
 
@@ -9,8 +8,6 @@ class GithubWebhookFake
       payload: payload.is_a?(String) ? payload : JSON.generate(payload)
     }.to_query
 
-    signature = OpenSSL::HMAC.hexdigest(HMAC_DIGEST, secret, body)
-
     # See: https://developer.github.com/webhooks/#delivery-headers
     headers = {
       'Content-Length' => body.bytesize.to_s,
@@ -18,7 +15,8 @@ class GithubWebhookFake
       'User-Agent' => USER_AGENT,
       'X-GitHub-Delivery' => SecureRandom.uuid,
       'X-GitHub-Event' => event.to_s,
-      'X-Hub-Signature' => "sha1=#{signature}"
+      'X-Hub-Signature' => "sha1=#{OpenSSL::HMAC.hexdigest('sha1', secret, body)}",
+      'X-Hub-Signature-256' => "sha256=#{OpenSSL::HMAC.hexdigest('sha256', secret, body)}"
     }
 
     [headers, body]
