@@ -6,7 +6,7 @@ ruby '2.7.7'
 gem 'rails', '~> 5.2.7'
 
 gem 'blueprinter'
-gem 'bootsnap', '>= 1.1.0', require: false
+gem 'bootsnap', '~> 1.12.0', require: false
 gem 'bugsnag'
 gem 'business_time'
 gem 'cancancan'

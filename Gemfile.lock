@@ -49,8 +49,8 @@ GEM
     arel (9.0.0)
     bcrypt (3.1.18)
     blueprinter (0.25.3)
-    bootsnap (1.7.2)
-      msgpack (~> 1.0)
+    bootsnap (1.12.0)
+      msgpack (~> 1.2)
     bugsnag (6.19.0)
       concurrent-ruby (~> 1.0)
     builder (3.2.4)
@@ -152,7 +152,7 @@ GEM
     mini_mime (1.1.2)
     mini_portile2 (2.8.1)
     minitest (5.18.0)
-    msgpack (1.4.2)
+    msgpack (1.7.0)
     multi_xml (0.6.0)
     multipart-post (2.3.0)
     nio4r (2.5.8)
@@ -324,7 +324,7 @@ PLATFORMS
 DEPENDENCIES
   action-cable-testing
   blueprinter
-  bootsnap (>= 1.1.0)
+  bootsnap (~> 1.12.0)
   bugsnag
   business_time
   byebug
