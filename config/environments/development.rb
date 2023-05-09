@@ -51,4 +51,5 @@ Rails.application.configure do
   config.file_watcher = ActiveSupport::EventedFileUpdateChecker
 
   config.action_cable.allowed_request_origins = %w[https://dev.createk.io]
+  config.hosts << 'dev.createk.io'
 end
