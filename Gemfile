@@ -6,7 +6,7 @@ ruby '2.7.7'
 gem 'rails', '~> 6.0.6'
 
 gem 'blueprinter'
-gem 'bootsnap', '~> 1.12.0', require: false
+gem 'bootsnap', require: false
 gem 'bugsnag'
 gem 'business_time'
 gem 'cancancan'
@@ -45,7 +45,7 @@ end
 group :development do
   gem 'listen'
   # loaded when running tests, but not in :test group as we don't want it on CI
-  gem 'spring', '~> 3'
+  gem 'spring'
   gem 'spring-commands-rspec'
 end
 
