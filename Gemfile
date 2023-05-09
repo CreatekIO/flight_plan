@@ -25,7 +25,7 @@ gem 'octokit'
 gem 'omniauth-github'
 gem 'omniauth-rails_csrf_protection'
 gem 'pg'
-gem 'puma', '~> 5'
+gem 'puma'
 gem 'ranked-model'
 gem 'redis-namespace'
 # v7 needs Redis v7, which is not yet supported by Redis Cloud:
