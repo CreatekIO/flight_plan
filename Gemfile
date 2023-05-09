@@ -43,6 +43,7 @@ group :development, :test do
 end
 
 group :development do
+  gem 'listen'
   # loaded when running tests, but not in :test group as we don't want it on CI
   gem 'spring', '~> 3'
   gem 'spring-commands-rspec'
