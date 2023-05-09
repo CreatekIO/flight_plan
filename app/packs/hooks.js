@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useMatch, useLocation } from "@gatsbyjs/reach-router";
 import { useDispatch, useSelector } from "react-redux";
-import ActionCable from "actioncable";
+import { createConsumer } from "@rails/actioncable";
 import useScrollbarSize from "react-scrollbar-size";
 
 import { isFeatureDisabled } from "./features";
@@ -32,7 +32,7 @@ export const useSubscription = (channel, id) => {
     useEffect(() => {
         if (isFeatureDisabled("realtime_updates")) return () => {};
 
-        cable = cable || ActionCable.createConsumer();
+        cable = cable || createConsumer();
 
         const subscription = cable.subscriptions.create(
             { channel, id: parseInt(id, 10) },
