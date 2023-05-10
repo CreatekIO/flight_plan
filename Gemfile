@@ -21,6 +21,7 @@ gem 'github_webhook'
 gem 'haml'
 gem 'jbuilder'
 gem 'jwt'
+gem 'net-http' # needed to remove warnings about already-defined constants on Ruby 2.7
 gem 'octokit'
 gem 'omniauth-github'
 gem 'omniauth-rails_csrf_protection'

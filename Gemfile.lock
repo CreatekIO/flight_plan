@@ -179,6 +179,8 @@ GEM
     msgpack (1.7.0)
     multi_xml (0.6.0)
     multipart-post (2.3.0)
+    net-http (0.3.2)
+      uri
     net-imap (0.3.4)
       date
       net-protocol
@@ -332,6 +334,7 @@ GEM
     timeout (0.3.2)
     tzinfo (1.2.11)
       thread_safe (~> 0.1)
+    uri (0.12.1)
     version_gem (1.1.2)
     vite_rails (3.0.14)
       railties (>= 5.1, < 8)
@@ -383,6 +386,7 @@ DEPENDENCIES
   jbuilder
   jwt
   listen
+  net-http
   octokit
   omniauth-github
   omniauth-rails_csrf_protection
