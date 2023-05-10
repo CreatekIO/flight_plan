@@ -17,6 +17,11 @@ end
 
 require 'rspec/rails'
 
+file = Pathname('../tmp/workaround/selenium/webdriver.rb').expand_path(__dir__)
+file.dirname.mkpath unless file.dirname.directory?
+file.write('') unless file.exist?
+$LOAD_PATH << file.dirname.dirname.to_s
+
 Dir[Rails.root.join('spec/support/*.rb')].each { |file| require file }
 Dir[Rails.root.join('spec/support/shared_contexts/*.rb')].each { |file| require file }
 Dir[Rails.root.join('spec/support/shared_examples/*.rb')].each { |file| require file }
