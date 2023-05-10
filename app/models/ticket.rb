@@ -44,7 +44,7 @@ class Ticket < ApplicationRecord
       end
     end
 
-    ticket.update_attributes(
+    ticket.update(
       number: payload[:number],
       title: payload[:title],
       body: payload[:body],
@@ -112,7 +112,7 @@ class Ticket < ApplicationRecord
     end
 
     # Rails will delete removed labellings for us
-    update_attributes(labellings: new_labellings)
+    update(labellings: new_labellings)
   end
 
   def update_assignments_from_remote(remote_issue)
@@ -123,7 +123,7 @@ class Ticket < ApplicationRecord
     end
 
     # Rails will delete removed assignments for us
-    update_attributes(assignments: new_assignments)
+    update(assignments: new_assignments)
   end
 
   def to_builder

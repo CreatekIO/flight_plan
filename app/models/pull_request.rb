@@ -25,7 +25,7 @@ class PullRequest < ApplicationRecord
 
   def self.import(payload, repo)
     repo.pull_request_models.find_or_initialize_by(remote_id: payload.fetch(:id)).tap do |pull_request|
-      pull_request.update_attributes(
+      pull_request.update(
         number: payload[:number],
         title: payload[:title],
         body: payload[:body],

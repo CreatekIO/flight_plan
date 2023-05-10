@@ -106,7 +106,7 @@ class BoardTicket < ApplicationRecord
     time_now = Time.current
 
     open_timesheet.try(
-      :update_attributes,
+      :update,
       ended_at: time_now,
       after_swimlane: swimlane
     )

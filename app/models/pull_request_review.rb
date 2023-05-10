@@ -21,7 +21,7 @@ class PullRequestReview < ApplicationRecord
     raise ArgumentError, 'remote_id required' if remote_id.blank?
 
     repo.pull_request_reviews.find_or_initialize_by(remote_id: remote_id).tap do |review|
-      review.update_attributes(
+      review.update(
         remote_pull_request_id: payload.dig(:pull_request, :id),
         state: payload.dig(:review, :state),
         sha: payload.dig(:pull_request, :head, :sha),

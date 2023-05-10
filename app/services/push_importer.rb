@@ -21,8 +21,8 @@ class PushImporter
       if deployment_branch?
         repo.update_merged_tickets
       elsif ticket_for_issue_number.present?
-        branch.update_attributes!(ticket: ticket_for_issue_number)
-        ticket_for_issue_number.update_attributes!(merged: false)
+        branch.update!(ticket: ticket_for_issue_number)
+        ticket_for_issue_number.update!(merged: false)
       end
     end
   end

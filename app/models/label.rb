@@ -15,7 +15,7 @@ class Label < ApplicationRecord
     payload = payload[:label] || payload
 
     repo.labels.find_or_initialize_by(remote_id: payload.fetch(:id)).tap do |label|
-      label.update_attributes(
+      label.update(
         name: payload[:name],
         colour: payload[:color]
       )

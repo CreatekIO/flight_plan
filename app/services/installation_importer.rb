@@ -42,7 +42,7 @@ module InstallationImporter
       repo = Repo.find_by(remote_id: remote_repo_id)
       return if repo.blank?
 
-      repo.update_attributes!(remote_installation_id: nil)
+      repo.update!(remote_installation_id: nil)
     end
   end
 
@@ -82,7 +82,7 @@ module InstallationImporter
     end
 
     def import_repo
-      repo.update_attributes!(remote_installation_id: installation_id)
+      repo.update!(remote_installation_id: installation_id)
     end
 
     def remove_old_webhook

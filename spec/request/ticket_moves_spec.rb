@@ -69,7 +69,7 @@ RSpec.describe TicketMovesController, type: :request do
     end
 
     before do
-      dev.update_attributes!(display_duration: true)
+      dev.update!(display_duration: true)
 
       2.times do
         ticket = create(:ticket, repo: repo)
