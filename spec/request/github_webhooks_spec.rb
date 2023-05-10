@@ -78,8 +78,10 @@ RSpec.describe 'GitHub webhooks', type: :request do
         query = Repo.where(
           remote_id: remote[:id],
           slug: remote[:full_name],
-          remote_installation_id: installation_id
-        ).where.not(deployment_branch: ['', nil], name: ['', nil])
+          remote_installation_id: installation_id,
+          name: remote[:name],
+          deployment_branch: 'master'
+        )
 
         expect { subject }
           .to change(query, :count).by(1)
@@ -202,8 +204,10 @@ RSpec.describe 'GitHub webhooks', type: :request do
         query = Repo.where(
           remote_id: remote_repo[:id],
           slug: remote_repo[:full_name],
-          remote_installation_id: installation_id
-        ).where.not(deployment_branch: ['', nil], name: ['', nil])
+          remote_installation_id: installation_id,
+          name: remote_repo[:name],
+          deployment_branch: 'master'
+        )
 
         expect { subject }
           .to change(query, :count).by(1)
