@@ -80,7 +80,7 @@ RSpec.describe 'Releases', type: :request do
       end
 
       # fix date/time to ensure release branch name matches
-      Timecop.freeze(time_of_release) do
+      travel_to(time_of_release) do
         post path, params: release_params, headers: api_headers
       end
 
@@ -119,7 +119,7 @@ RSpec.describe 'Releases', type: :request do
         stub_gh_merge_feature_branch(feature_branch_name_1)
         stub_gh_create_pull_request(ticket_1)
 
-        Timecop.freeze(time_of_release) do
+        travel_to(time_of_release) do
           post path, params: release_params, headers: api_headers
         end
 

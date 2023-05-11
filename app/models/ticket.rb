@@ -39,8 +39,8 @@ class Ticket < ApplicationRecord
     end
 
     if payload[:number].blank?
-      Bugsnag.notify('Blank ticket number') do |report|
-        report.add_tab(:debugging, payload: payload, ticket: ticket.attributes)
+      Bugsnag.notify('Blank ticket number') do |event|
+        event.add_metadata(:debugging, payload: payload, ticket: ticket.attributes)
       end
     end
 
