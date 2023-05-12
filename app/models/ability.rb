@@ -2,7 +2,7 @@ class Ability
   include CanCan::Ability
 
   SELF_SERVE_FEATURES = FEATURES.flat_map do |feature|
-    [feature.name.to_sym, name.to_s]
+    [feature.name.to_sym, feature.name.to_s]
   end.freeze
 
   def initialize(user)
