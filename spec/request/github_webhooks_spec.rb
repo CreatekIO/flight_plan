@@ -290,4 +290,22 @@ RSpec.describe 'GitHub webhooks', type: :request do
       end
     end
   end
+
+  context 'with unhandled event' do
+    let(:event_type) { :star }
+
+    let(:payload) do
+      { repository: { id: 1 } }
+    end
+
+    before do
+      raise 'Pick another unhandled event!' if Webhook::GithubController.new.respond_to?("#github_#{event_type}", true)
+    end
+
+    it 'returns 200' do
+      deliver_webhook(payload)
+
+      expect(response).to have_http_status(:ok)
+    end
+  end
 end

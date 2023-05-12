@@ -2,7 +2,7 @@ class Webhook::GithubController < Webhook::BaseController
   include GithubWebhook::Processor
 
   rescue_from ActiveRecord::RecordNotFound, with: :not_found
-  rescue_from NoMethodError, with: :unhandled_event
+  rescue_from AbstractController::ActionNotFound, with: :unhandled_event
 
   private
 
