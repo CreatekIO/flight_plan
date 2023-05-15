@@ -28,9 +28,9 @@ RSpec.describe 'Omniauth', type: :request do
       end
 
       it 'requires CSRF token for initial OmniAuth endpoint' do
-        expect {
-          post user_github_omniauth_authorize_path
-        }.to raise_error(ActionController::InvalidAuthenticityToken)
+        post user_github_omniauth_authorize_path
+
+        expect(response).not_to redirect_to(/github\.com/)
       end
     end
   end

@@ -18,24 +18,14 @@ class PullRequest < ApplicationRecord
     foreign_key: :creator_remote_id, primary_key: :uid
   has_many :pull_request_connections, autosave: true
   has_many :tickets, through: :pull_request_connections
-  has_many :head_commit_statuses, -> (model = nil) {
-    if model
-      where(repo_id: model.repo_id)
-    else # eager-loading/join
-      joins(
-        table.join(PullRequest.arel_table).on(
-          PullRequest.arel_table[:head_sha].eq(table[:sha])
-        ).join_sources
-      ).where(PullRequest.arel_table[:repo_id].eq(table[:repo_id]))
-    end
-  }, class_name: 'CommitStatus', foreign_key: :sha, primary_key: :head_sha
+  has_many :head_commit_statuses, class_name: 'CommitStatus', foreign_key: :sha, primary_key: :head_sha
   has_many :reviews, class_name: 'PullRequestReview', foreign_key: :remote_pull_request_id, primary_key: :remote_id
 
   before_save :update_pull_request_connections
 
   def self.import(payload, repo)
     repo.pull_request_models.find_or_initialize_by(remote_id: payload.fetch(:id)).tap do |pull_request|
-      pull_request.update_attributes(
+      pull_request.update(
         number: payload[:number],
         title: payload[:title],
         body: payload[:body],
@@ -82,6 +72,7 @@ class PullRequest < ApplicationRecord
 
   def latest_commit_statuses
     head_commit_statuses
+      .where(repo_id: repo_id)
       .group_by(&:context)
       .map {|_, records| records.max_by(&:remote_created_at) }
   end

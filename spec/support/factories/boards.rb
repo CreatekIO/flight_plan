@@ -17,7 +17,7 @@ FactoryBot.define do
         swimlane = create(:swimlane, name: name, board: board, position: index)
         next unless index == (evaluator.swimlane_names.size - 1)
 
-        board.update_attributes!(deploy_swimlane: swimlane)
+        board.update!(deploy_swimlane: swimlane)
       end
     end
   end

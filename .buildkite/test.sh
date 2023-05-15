@@ -36,8 +36,6 @@ inline_link() {
 }
 
 echo "~~~ bundle install"
-bundle config set "without" "development"
-
 bundle install \
   --jobs "$(getconf _NPROCESSORS_ONLN)" \
   --retry 2

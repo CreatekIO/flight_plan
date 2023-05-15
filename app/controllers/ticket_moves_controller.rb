@@ -3,7 +3,7 @@ class TicketMovesController < AuthenticatedController
   load_and_authorize_resource :board_ticket, through: :board, id_param: :ticket_id
 
   def create
-    if @board_ticket.update_attributes(board_ticket_params)
+    if @board_ticket.update(board_ticket_params)
       broadcast_update
       render :create, status: :created
     else

@@ -50,7 +50,8 @@ RSpec.configure do |config|
   end
 
   config.before(:each, type: :system, js: true) do
-    driven_by :cuprite
+    # `using: :chrome` (the default) errors because Rails tries to use selenium-webdriver
+    driven_by :cuprite, using: :cuprite
 
     @fp_debug_thread = Thread.new do
       Thread.current.abort_on_exception = true

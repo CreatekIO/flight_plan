@@ -47,7 +47,7 @@ RSpec.describe Clockwork do
       swimlane_names: ['Backlog', 'Dev', 'Deploying', 'Deployed']
     ).tap do |board|
       deploy_swimlane = board.swimlanes.find_by!(name: 'Deploying')
-      board.update_attributes!(deploy_swimlane: deploy_swimlane)
+      board.update!(deploy_swimlane: deploy_swimlane)
 
       if with_tickets_to_deploy
         create(

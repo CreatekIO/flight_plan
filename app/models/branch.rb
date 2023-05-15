@@ -22,7 +22,7 @@ class Branch < ApplicationRecord
       unique_commits.compact!
       unique_commits.uniq!
 
-      new_head.update_attributes!(
+      new_head.update!(
         previous_head_sha: payload[:before],
         commits_in_push: unique_commits.size,
         force_push: payload[:forced].present?,
@@ -33,7 +33,7 @@ class Branch < ApplicationRecord
         pusher_username: payload.dig(:sender, :login)
       )
 
-      branch.update_attributes!(latest_head: new_head)
+      branch.update!(latest_head: new_head)
       branch
     end
   end

@@ -3,10 +3,10 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
 ruby '2.7.7'
 
-gem 'rails', '~> 5.2.7'
+gem 'rails', '~> 6.0.6'
 
 gem 'blueprinter'
-gem 'bootsnap', '~> 1.12.0', require: false
+gem 'bootsnap', require: false
 gem 'bugsnag'
 gem 'business_time'
 gem 'cancancan'
@@ -21,6 +21,7 @@ gem 'github_webhook'
 gem 'haml'
 gem 'jbuilder'
 gem 'jwt'
+gem 'net-http' # needed to remove warnings about already-defined constants on Ruby 2.7
 gem 'octokit'
 gem 'omniauth-github'
 gem 'omniauth-rails_csrf_protection'
@@ -43,13 +44,13 @@ group :development, :test do
 end
 
 group :development do
+  gem 'listen'
   # loaded when running tests, but not in :test group as we don't want it on CI
-  gem 'spring', '~> 3'
+  gem 'spring'
   gem 'spring-commands-rspec'
 end
 
 group :test do
-  gem 'action-cable-testing'
   gem 'capybara'
   gem 'clockwork-test', require: 'clockwork/test'
   gem 'cuprite'

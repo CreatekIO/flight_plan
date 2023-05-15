@@ -20,7 +20,7 @@ class Comment < ApplicationRecord
       end
     end
 
-    comment.update_attributes(
+    comment.update(
       body: remote_comment[:body],
       author_remote_id: remote_comment.dig(:user, :id),
       author_username: remote_comment.dig(:user, :login),

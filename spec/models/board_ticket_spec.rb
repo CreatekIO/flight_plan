@@ -64,7 +64,7 @@ RSpec.describe BoardTicket, type: :model do
 
       it 'creates a new open timesheet' do
         expect {
-          subject.update_attributes(swimlane_id: dev.id)
+          subject.update(swimlane_id: dev.id)
         }.to change {
           subject.timesheets.where(
             swimlane_id: dev.id,
@@ -77,7 +77,7 @@ RSpec.describe BoardTicket, type: :model do
 
       it 'closes the open timesheet' do
         expect {
-          subject.update_attributes(swimlane_id: dev.id)
+          subject.update(swimlane_id: dev.id)
         }.to change {
           subject.open_timesheet.id
         }
@@ -131,7 +131,7 @@ RSpec.describe BoardTicket, type: :model do
           expect {
             board_tickets.each do |board_ticket|
               board_ticket.update_remote = false
-              board_ticket.update_attributes(swimlane: after_swimlane, swimlane_position: :first)
+              board_ticket.update(swimlane: after_swimlane, swimlane_position: :first)
             end
           }.to_not raise_error
 
@@ -144,7 +144,7 @@ RSpec.describe BoardTicket, type: :model do
         it 'rolls back db changes if error arises during save' do
           board_tickets.first(bisection_count).each do |board_ticket|
             board_ticket.update_remote = false
-            board_ticket.update_attributes(swimlane: after_swimlane, swimlane_position: :first)
+            board_ticket.update(swimlane: after_swimlane, swimlane_position: :first)
           end
 
           expect(@rebalances.count).to be_zero
@@ -161,7 +161,7 @@ RSpec.describe BoardTicket, type: :model do
             board_ticket.update_remote = false
 
             begin
-              board_ticket.update_attributes(swimlane: after_swimlane, swimlane_position: :first)
+              board_ticket.update(swimlane: after_swimlane, swimlane_position: :first)
             rescue CustomError
               next
             end

@@ -77,7 +77,7 @@ class Repo < ApplicationRecord
   def update_merged_tickets
     tickets.unmerged.each do |ticket|
       if ticket.merged_to?(deployment_branch)
-        ticket.update_attributes(merged: true)
+        ticket.update(merged: true)
       end
     end
   end

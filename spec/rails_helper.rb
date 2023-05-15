@@ -4,18 +4,12 @@ require_relative '../config/environment'
 abort('The Rails environment is running in production mode!') if Rails.env.production?
 
 require 'spec_helper'
-require "action_cable/testing"
-require "rspec/rails/feature_check"
-
-RSpec::Rails::FeatureCheck.module_eval do
-  module_function
-
-  def has_action_cable_testing?
-    true
-  end
-end
-
 require 'rspec/rails'
+
+file = Pathname('../tmp/workaround/selenium/webdriver.rb').expand_path(__dir__)
+file.dirname.mkpath unless file.dirname.directory?
+file.write('') unless file.exist?
+$LOAD_PATH << file.dirname.dirname.to_s
 
 Dir[Rails.root.join('spec/support/*.rb')].each { |file| require file }
 Dir[Rails.root.join('spec/support/shared_contexts/*.rb')].each { |file| require file }

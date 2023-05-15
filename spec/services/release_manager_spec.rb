@@ -74,7 +74,7 @@ RSpec.describe ReleaseManager, type: :service do
     end
 
     before do
-      board.update_attributes!(deploy_swimlane: deploying, additional_branches_regex: '^configuration_changes$')
+      board.update!(deploy_swimlane: deploying, additional_branches_regex: '^configuration_changes$')
 
       [*unmerged_tickets, merged_ticket, ticket_without_branch].each do |ticket|
         board.board_tickets.create!(swimlane: deploying, ticket: ticket)

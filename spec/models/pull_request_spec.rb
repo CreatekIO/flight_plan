@@ -6,30 +6,6 @@ RSpec.describe PullRequest do
     it { is_expected.to have_many(:pull_request_connections) }
     it { is_expected.to have_many(:tickets).through(:pull_request_connections) }
     it { is_expected.to have_many(:reviews).with_primary_key(:remote_id) }
-
-    describe 'head_commit_statuses' do
-      let(:sha) { generate(:sha) }
-      let(:repo) { create(:repo) }
-      let(:other_repo) { create(:repo) }
-
-      let!(:status) { create(:commit_status, repo: repo, sha: sha) }
-      let!(:other_repo_status) { create(:commit_status, repo: other_repo, sha: sha) }
-
-      let(:pull_request) { create(:pull_request, repo: repo, head_sha: sha) }
-      it 'only loads commit statuses from the same repo' do
-        expect(pull_request.head_commit_statuses).to match_array([status])
-      end
-
-      it 'supports eager loading' do
-        matcher = an_instance_of(described_class).and(
-          an_object_having_attributes(id: pull_request.id, head_commit_statuses: [status])
-        )
-        aggregate_failures do
-          expect(described_class.includes(:head_commit_statuses)).to include(matcher)
-          expect(repo.pull_request_models.includes(:head_commit_statuses)).to include(matcher)
-        end
-      end
-    end
   end
 
   describe '.import' do

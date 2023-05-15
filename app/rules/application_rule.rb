@@ -68,7 +68,7 @@ class ApplicationRule
     BoardRule
       .create_with(settings: settings)
       .find_or_create_by!(board: board, rule_class: name)
-      .update_attributes!(enabled: true)
+      .update!(enabled: true)
   end
 
   def call
@@ -83,7 +83,7 @@ class ApplicationRule
     swimlane = board_ticket.board.swimlanes.find_by(name: to)
     return if swimlane.blank?
 
-    board_ticket.update_attributes!(
+    board_ticket.update!(
       swimlane: swimlane,
       swimlane_position: position
     )
