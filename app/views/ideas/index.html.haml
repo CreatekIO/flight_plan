@@ -1,10 +1,14 @@
 %h1.text-2xl Ideas
 
-#ideas{data:{controller: 'sortable'}}
-  = render @ideas
+%div.flex
+  %div{class: "w-1/2"}
+    #ideas{data:{controller: 'sortable', sortable_group_value: 'ideas' }}
+      = render @ideas
 
+    = turbo_frame_tag "new_idea" do
+      = link_to 'new idea', new_idea_path
 
-= turbo_frame_tag "new_idea" do
-  = link_to 'new idea', new_idea_path
+  %div{class: "w-1/2", data:{controller: 'sortable', sortable_group_value: 'ideas' }}
+
 
 = turbo_stream_from 'ideas'
