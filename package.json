@@ -5,6 +5,7 @@
     "@floating-ui/react": "^0.22.2",
     "@gatsbyjs/reach-router": "^2.0.1",
     "@headlessui/react": "^1.7.13",
+    "@hotwired/turbo-rails": "^7.3.0",
     "@primer/octicons-react": "^18.3.0",
     "@rails/actioncable": "6.0.6-1",
     "@rails/ujs": "6.0.6-1",

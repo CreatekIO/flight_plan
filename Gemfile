@@ -33,6 +33,7 @@ gem 'redis-namespace'
 # https://github.com/sidekiq/sidekiq/blob/main/docs/7.0-Upgrade.md#known-issues
 gem 'sidekiq', '~> 6'
 gem 'slack-ruby-client'
+gem 'turbo-rails'
 gem 'vite_rails'
 gem 'wisper'
 
