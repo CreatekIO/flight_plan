@@ -8,3 +8,8 @@
 [hidden] {
   @apply hidden;
 }
+
+turbo-frame {
+  display: block;
+  outline: 5px solid green;
+}
