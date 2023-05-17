@@ -6,3 +6,5 @@
 
 = turbo_frame_tag "new_idea" do
   = link_to 'new idea', new_idea_path
+
+= turbo_stream_from 'ideas'
