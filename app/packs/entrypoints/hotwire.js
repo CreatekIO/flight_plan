@@ -1,1 +1,1 @@
-import "@hotwired/turbo";
+import "@hotwired/turbo-rails";
