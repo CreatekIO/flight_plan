@@ -21,6 +21,8 @@ Rails.application.routes.draw do
     end
   end
 
+  resources :ideas
+
   resources :boards do
     resources :board_tickets, as: :tickets, only: %i[show create] do
       resources :moves, controller: :ticket_moves, only: :create
