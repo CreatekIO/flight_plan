@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_05_17_095131) do
+ActiveRecord::Schema.define(version: 2023_05_18_122022) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
@@ -140,6 +140,7 @@ ActiveRecord::Schema.define(version: 2023_05_17_095131) do
     t.bigint "submitter_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.integer "position"
     t.index ["submitter_id"], name: "index_ideas_on_submitter_id"
   end
 
