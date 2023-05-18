@@ -8,7 +8,7 @@
     "@hotwired/stimulus": "^3.2.1",
     "@hotwired/turbo-rails": "^7.3.0",
     "@primer/octicons-react": "^18.3.0",
-    "@rails/actioncable": "6.0.6-1",
+    "@rails/actioncable": "^7.0.4",
     "@rails/ujs": "6.0.6-1",
     "@reduxjs/toolkit": "^1.9.3",
     "@tailwindcss/typography": "^0.5.9",

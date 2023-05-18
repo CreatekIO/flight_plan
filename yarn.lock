@@ -206,12 +206,7 @@
   resolved "https://registry.yarnpkg.com/@primer/octicons-react/-/octicons-react-18.3.0.tgz#1b608048fe26e4e66d9f3de1eac8eb82195839f5"
   integrity sha512-kOoc4wrBw3bPe2ZPj9BmCwXdEkw8hxUX/tFCvcjOsZ6eywaQXm3PR0yZnPZxZ8o4RFj2tdg/cwGr4+cU83weHw==
 
-"@rails/actioncable@6.0.6-1":
-  version "6.0.6-1"
-  resolved "https://registry.yarnpkg.com/@rails/actioncable/-/actioncable-6.0.6-1.tgz#3979b5242ef0570f6f405480431aea38458eda71"
-  integrity sha512-S6wHt7sfEOeCS+H8oxFGRXt4sLM1HVGu64X9MyFNFL5RXjuUG5rsaH2bFye0mrmimmtF4+qDrlS3iUpnU7ZPCw==
-
-"@rails/actioncable@^7.0":
+"@rails/actioncable@^7.0", "@rails/actioncable@^7.0.4":
   version "7.0.4"
   resolved "https://registry.yarnpkg.com/@rails/actioncable/-/actioncable-7.0.4.tgz#70a3ca56809f7aaabb80af2f9c01ae51e1a8ed41"
   integrity sha512-tz4oM+Zn9CYsvtyicsa/AwzKZKL+ITHWkhiu7x+xF77clh2b4Rm+s6xnOgY/sGDWoFWZmtKsE95hxBPkgQQNnQ==
