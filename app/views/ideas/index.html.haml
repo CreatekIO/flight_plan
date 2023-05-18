@@ -1,14 +1,14 @@
-%h1.text-2xl Ideas
+%h1.text-2xl.text-center Ideas
 
-%div.flex
-  %div{class: "w-1/2"}
-    #ideas{data:{controller: 'sortable', sortable_group_value: 'ideas' }}
-      = render @ideas
-
+%div.flex{ class: 'max-w-[90vw] mx-auto' }
+  %div{class: "w-1/2 p-3 bg-blue-50"}
     = turbo_frame_tag "new_idea" do
       = link_to 'new idea', new_idea_path
 
-  %div{class: "w-1/2", data:{controller: 'sortable', sortable_group_value: 'ideas' }}
+    #ideas{data:{controller: 'sortable', sortable_group_value: 'ideas' }}
+      = render @ideas
+
+  %div{class: "w-1/2 p-3 bg-green-50", data:{controller: 'sortable', sortable_group_value: 'ideas' }}
 
 
 = turbo_stream_from 'ideas'

@@ -1,7 +1,7 @@
 = turbo_frame_tag "new_idea" do
   = form_with(model: @idea) do |f|
     = f.label :title
-    = f.text_field :title
+    = f.text_field :title, class: 'border border-gray-500'
     = f.label :description
-    = f.text_field :description
+    = f.text_field :description, class: 'border border-gray-500'
     = f.submit
