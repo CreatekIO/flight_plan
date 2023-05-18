@@ -3,7 +3,7 @@ class Idea < ApplicationRecord
   before_create :set_default_position
   after_create_commit -> { broadcast_append_to "ideas" }
 
-  enum status: { pending: 'pending' }
+  enum status: { pending: 'pending', accepted: 'accepted' }
 
   default_scope -> { order(:position) }
 

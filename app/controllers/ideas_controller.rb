@@ -2,7 +2,8 @@ class IdeasController < ApplicationController
   layout 'hotwire'
 
   def index
-    @ideas = Idea.all
+    @pending_ideas = Idea.pending
+    @accepted_ideas = Idea.accepted
   end
 
   def new

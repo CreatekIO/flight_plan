@@ -5,10 +5,11 @@
     = turbo_frame_tag "new_idea" do
       = link_to 'new idea', new_idea_path
 
-    #ideas{data:{controller: 'sortable', sortable_group_value: 'ideas' }}
-      = render @ideas
+    #ideas{data:{controller: 'sortable', sortable_group_value: 'ideas', action: 'sort->sortable#sort' }}
+      = render @pending_ideas
 
-  %div{class: "w-1/2 p-3 bg-green-50", data:{controller: 'sortable', sortable_group_value: 'ideas' }}
+  %div{class: "w-1/2 p-3 bg-green-50", data:{controller: 'sortable', sortable_group_value: 'ideas', action: 'sort->sortable#sort' }}
+    = render @accepted_ideas
 
 
 = turbo_stream_from 'ideas'
