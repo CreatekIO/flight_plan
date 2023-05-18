@@ -6,7 +6,7 @@ const stimulus = Application.start();
 
 class SortableController extends Controller {
 
-  static targets = ['draggable']
+  static targets = ['draggable', 'ideaIds']
   static values = { group: String }
     connect(){
       this.sortable = new Sortable(this.element, {
@@ -17,7 +17,10 @@ class SortableController extends Controller {
     }
 
     sort(event) {
-        console.log('sort', event, this.sortable.toArray());
+        console.log('sort', event, this.sortable.toArray(), this.ideaIdsTarget);
+        this.ideaIdsTarget.value = this.sortable.toArray().join(',')
+        this.ideaIdsTarget.form.requestSubmit()
+        console.log(this.element, this.ideaIdsTarget.form)
     }
 
  }

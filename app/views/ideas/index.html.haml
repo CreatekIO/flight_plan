@@ -7,9 +7,11 @@
 
     #ideas{data:{controller: 'sortable', sortable_group_value: 'ideas', action: 'sort->sortable#sort' }}
       = render @pending_ideas
+      = render 'form', status: 'pending'
 
   %div{class: "w-1/2 p-3 bg-green-50", data:{controller: 'sortable', sortable_group_value: 'ideas', action: 'sort->sortable#sort' }}
     = render @accepted_ideas
+    = render 'form', status: 'accepted'
 
 
 = turbo_stream_from 'ideas'

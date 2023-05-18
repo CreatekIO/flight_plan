@@ -21,7 +21,9 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :ideas
+  resources :ideas do
+    post 'update_multiple/:status', action: 'update_multiple', as: :update_multiple, on: :collection
+  end
 
   resources :boards do
     resources :board_tickets, as: :tickets, only: %i[show create] do
