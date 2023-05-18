@@ -21,8 +21,10 @@ class IdeasController < ApplicationController
 
   def update_multiple
     ActiveRecord::Base.transaction do
-      params[:idea_ids].split(',').each.with_index(1) do |id, idx|
-        Idea.find(id).update!(position: idx, status: params[:status])
+      %i[pending accepted].each do |status|
+        params["#{status}_ids"].split(',').each.with_index(1) do |id, idx|
+          Idea.find(id).update!(position: idx, status: status)
+        end
       end
     end
   end

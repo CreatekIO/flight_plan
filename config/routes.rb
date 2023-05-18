@@ -22,7 +22,7 @@ Rails.application.routes.draw do
   end
 
   resources :ideas do
-    post 'update_multiple/:status', action: 'update_multiple', as: :update_multiple, on: :collection
+    post :update_multiple, on: :collection
   end
 
   resources :boards do
