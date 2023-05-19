@@ -330,6 +330,10 @@ GEM
     tilt (2.1.0)
     timecop (0.9.6)
     timeout (0.3.2)
+    turbo-rails (1.4.0)
+      actionpack (>= 6.0.0)
+      activejob (>= 6.0.0)
+      railties (>= 6.0.0)
     tzinfo (1.2.11)
       thread_safe (~> 0.1)
     uri (0.12.1)
@@ -401,6 +405,7 @@ DEPENDENCIES
   slack-ruby-client
   spring
   spring-commands-rspec
+  turbo-rails
   vite_rails
   webmock
   wisper

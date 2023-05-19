@@ -1,0 +1,20 @@
+%h1.text-2xl.text-center Ideas
+
+= form_with url: update_multiple_ideas_path, method: :post, class: 'm-4' do |f|
+  %div.flex.gap-4{ class: 'max-w-[90vw] mx-auto' }
+    %div{class: "w-1/2 p-3 bg-blue-50"}
+      #ideas.mb-4{data:{controller: 'sortable', sortable_group_value: 'ideas', action: 'sort->sortable#sort' }}
+        %h2.uppercase.text-center.mb-2.text-sm.text-blue-700 Pending
+        = render @pending_ideas
+        = f.hidden_field :pending_ids, data: { sortable_target: 'ideaIds' }
+
+      = turbo_frame_tag "new_idea" do
+        = link_to 'New idea', new_idea_path, class: 'border border-blue-900 px-2 py-1 rounded mt-2'
+
+    %div{class: "w-1/2 p-3 bg-green-50", data:{controller: 'sortable', sortable_group_value: 'ideas', action: 'sort->sortable#sort' }}
+      %h2.uppercase.text-center.mb-2.text-sm.text-green-700 Accepted
+      = render @accepted_ideas
+      = f.hidden_field :accepted_ids, data: { sortable_target: 'ideaIds' }
+
+
+= turbo_stream_from 'ideas'

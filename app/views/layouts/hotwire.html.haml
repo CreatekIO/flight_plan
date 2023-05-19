@@ -1,0 +1,15 @@
+!!!
+%html
+  %head
+    %meta(charset="UTF-8")
+    %meta(name="viewport" content="width=device-width, initial-scale=1.0")
+    %title FlightPlan
+    = csrf_meta_tags
+    = csp_meta_tag
+    = action_cable_meta_tag
+    = vite_stylesheet_tag 'application'
+    = vite_client_tag
+    = vite_javascript_tag 'hotwire'
+
+  %body.overscroll-none
+    = yield
