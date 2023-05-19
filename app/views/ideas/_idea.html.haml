@@ -1,3 +1,6 @@
-.bg-white.shadow-md.p-2.mb-2.border.border-gray-500{data:{ sortable_target: 'draggable', id: idea.id }}
+.bg-white.shadow-md.p-2.mb-2.border.border-gray-500{
+  data:{ sortable_target: 'draggable', id: idea.id },
+  class: '[&.sortable-ghost.sortable-chosen]:invisible'
+}
   %h2.text-xl= idea.title
   %p.text-gray-500= idea.description
