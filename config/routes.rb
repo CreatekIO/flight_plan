@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  slug = %r{[a-z0-9\-]+/[a-z0-9\-_]+}i
+
   authenticated :user do
     root to: 'boards#index', as: :authenticated_root
   end
@@ -32,7 +34,7 @@ Rails.application.routes.draw do
       resource :assignment, path: 'assignees', controller: 'ticket_assignments', only: :update
     end
     get 'tickets/:slug/:number' => 'board_tickets#show', as: :slugged_ticket, constraints: {
-      slug: %r{[a-z0-9\-]+/[a-z0-9\-_]+}i
+      slug: slug
     }
     resources :next_actions, only: :index
 
@@ -56,6 +58,8 @@ Rails.application.routes.draw do
     resource :github, controller: 'github'
     resource :opsworks
   end
+
+  get '/gh_assets/:slug/*path' => 'github_assets#show', as: :github_asset, constraints: { slug: slug }
 
   namespace :api do
     resources :boards, only: :show do
