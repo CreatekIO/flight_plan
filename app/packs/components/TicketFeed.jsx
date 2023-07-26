@@ -14,6 +14,12 @@ const markdownConverter = new showdown.Converter({
             replace: (tag, isClosing) => (
                 isClosing ? `${tag}</div>`: `<div class="overflow-x-auto">${tag}`
             )
+        },
+        // Proxy stored-on-GitHub assets that need authentication through our server
+        {
+            type: "output",
+            regex: new RegExp("https://github.com/([a-zA-Z0-9\-]+/[a-zA-Z0-9\-_]+/assets/[^\"']+)"),
+            replace: (_url, path) => `${location.origin}/gh_assets/${path}`
         }
     ]
 });
