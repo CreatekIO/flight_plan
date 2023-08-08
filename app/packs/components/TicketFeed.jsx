@@ -18,7 +18,7 @@ const markdownConverter = new showdown.Converter({
         // Proxy stored-on-GitHub assets that need authentication through our server
         {
             type: "output",
-            regex: new RegExp("https://github.com/([a-zA-Z0-9\-]+/[a-zA-Z0-9\-_]+/assets/[^\"']+)"),
+            regex: new RegExp("https://github.com/([a-zA-Z0-9\-]+/[a-zA-Z0-9\-_]+/assets/[^\"']+)", "g"),
             replace: (_url, path) => `${location.origin}/gh_assets/${path}`
         }
     ]
